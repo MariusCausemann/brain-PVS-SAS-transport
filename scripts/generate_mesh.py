@@ -6,8 +6,8 @@ import json
 
 
 csg_tree = {"operation":"union",
-            "right":"mesh/surfaces/skull.ply",
-            "left":"mesh/surfaces/gm.ply"} 
+            "left":"mesh/surfaces/skull.ply",
+            "right":"mesh/surfaces/gm.ply"} 
 
 tetra = wm.Tetrahedralizer(epsilon=0.002, edge_length_r=0.05,
                            coarsen=False)
@@ -18,4 +18,4 @@ mesh = meshio.Mesh(
         point_array, [("tetra", cell_array)], cell_data={"label": [marker.ravel()]}
     )
 mesh = pv.from_meshio(mesh).clean()
-mesh.save("mesh/volmesh/mesh.xmdf")
+pv.save_meshio("mesh/volmesh/mesh.xdmf", mesh)

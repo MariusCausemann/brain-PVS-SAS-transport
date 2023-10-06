@@ -1,5 +1,7 @@
 mesh/networks/*
 mesh/surfaces/*
+mesh/volmesh/*
+__*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
