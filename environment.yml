@@ -1,0 +1,19 @@
+name: pvs_transport_env
+channels:
+  - conda-forge
+dependencies:
+  - fenics-dolfin
+  - python=3.9    
+  - numpy
+  - matplotlib
+  - pyvista
+  - scikit-image
+  - meshio
+  - seaborn
+  - nibabel
+  - pip
+  - pip:
+    - pyacvd
+    - dufte
+    - kimimaro
+    - git+https://github.com/MariusCausemann/wildmeshing-python.git
