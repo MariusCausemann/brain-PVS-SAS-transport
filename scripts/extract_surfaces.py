@@ -39,16 +39,16 @@ smooth_taubin_grey.save("mesh/surfaces/gm.ply")
 
 
 ## creating a skull 
-ball = skim.ball(4) 
+ball = skim.ball(5) 
 img = wmimg + gmimg
+img = np.pad(img, (0, 20))
 for i in range(3):
     img = skim.binary_dilation(img, footprint=ball)
 img = skim.remove_small_holes(img, 1e6)
-for i in range(5):
+for i in range(3):
     img = binary_smoothing(img, skim.ball(5))
 #img = skim.erosion(img, skim.ball(5))
 surf_dilated = extract_surface(img) 
 
 surf_dilated  = surf_dilated.smooth_taubin(n_iter=10, pass_band=0.05)
 surf_dilated.save("mesh/surfaces/skull.ply")
-
