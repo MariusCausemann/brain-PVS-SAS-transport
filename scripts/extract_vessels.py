@@ -27,19 +27,27 @@ def skeletonize(img):
                              teasar_params={"scale": scale, "const": const,})
     joined_skels = kimimaro.join_close_components(skels.values(), radius=50)
     ds_skel = joined_skels.downsample(2)
-    return skel_to_mesh(ds_skel) 
+    return skel_to_mesh(ds_skel), ds_skel 
 
 scale = 1.0
 const = 1
 
-os.makedirs("mesh/networks", exist_ok=True)
+os.makedirs("../mesh/networks", exist_ok=True)
 # get the network centerlines of the venous network 
-data = nibabel.load("data/pcbi.1007073.s007.nii.gz")
+data = nibabel.load("../data/pcbi.1007073.s007.nii")
 img = data.get_fdata().astype(int)
-arterial_network = skeletonize(img)
-arterial_network.save("mesh/networks/arteries.vtk")
+arterial_network, arteries = skeletonize(img)
+with open('../mesh/arteries.swc','w') as f:
+     f.write(arteries.to_swc())
 
-data = nibabel.load("data/pcbi.1007073.s008.nii.gz")
+arterial_network.save("../mesh/networks/arteries.vtk")
+
+data = nibabel.load("../data/pcbi.1007073.s008.nii")
 img = data.get_fdata().astype(int)
-venous_network = skeletonize(img)
-venous_network.save("mesh/networks/venes.vtk")
+venous_network, veins = skeletonize(img)
+with open('../mesh/veins.swc','w') as f:
+     f.write(veins.to_swc())
+
+venous_network.save("../mesh/networks/venes.vtk")
+
+

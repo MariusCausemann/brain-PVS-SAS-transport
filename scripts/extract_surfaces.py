@@ -24,27 +24,27 @@ def binary_smoothing(img, footprint=None):
     openend = skim.binary_opening(img, footprint=footprint)
     return skim.binary_closing(openend, footprint=footprint)
 
-os.makedirs("mesh/surfaces", exist_ok=True)
+os.makedirs("../mesh/surfaces", exist_ok=True)
 #load white matter data 
-wmdata = nibabel.load("data/pcbi.1007073.s005.nii.gz")
+wmdata = nibabel.load("../data/pcbi.1007073.s005.nii")
 wmimg = wmdata.get_fdata() 
 surf = extract_surface(wmimg)
 surf = surf.smooth_taubin(n_iter=20, pass_band=0.05)
-surf.save("mesh/surfaces/wm.ply")
+surf.save("../mesh/surfaces/wm.ply")
 
 #load grey matter data 
-gmdata = nibabel.load("data/pcbi.1007073.s006.nii.gz")
+gmdata = nibabel.load("../data/pcbi.1007073.s006.nii")
 gmimg = gmdata.get_fdata() 
 surf_grey = extract_surface(gmimg)
 smooth_taubin_grey = surf_grey.smooth_taubin(n_iter=20, pass_band=0.05)
-smooth_taubin_grey.save("mesh/surfaces/gm.ply")
+smooth_taubin_grey.save("../mesh/surfaces/gm.ply")
 
 # create parenchmya surface
 wmimg = np.pad(wmimg, ((0,0), (0,0), (0,8)))
 img = wmimg + gmimg
 surf_grey = extract_surface(img)
 smooth_taubin_parenchyma = surf_grey.smooth_taubin(n_iter=20, pass_band=0.05)
-smooth_taubin_parenchyma.save("mesh/surfaces/parenchyma.ply")
+smooth_taubin_parenchyma.save("../mesh/surfaces/parenchyma.ply")
 
 ## creating a skull 
 ball = skim.ball(5) 
@@ -58,4 +58,4 @@ for i in range(3):
 surf_dilated = extract_surface(img) 
 
 surf_dilated  = surf_dilated.smooth_taubin(n_iter=10, pass_band=0.05)
-surf_dilated.save("mesh/surfaces/skull.ply")
+surf_dilated.save("../mesh/surfaces/skull.ply")

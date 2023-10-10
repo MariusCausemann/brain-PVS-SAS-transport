@@ -6,8 +6,8 @@ import json
 import os
 
 csg_tree = {"operation":"union",
-            "left":"mesh/surfaces/skull.ply",
-            "right":"mesh/surfaces/parenchyma.ply",
+            "left":"../mesh/surfaces/skull.ply",
+            "right":"../mesh/surfaces/parenchyma.ply",
             #"right":{"operation":"union",
             #    "left":"mesh/surfaces/parenchyma.ply",
             #    "right":"mesh/surfaces/gm.ply",
@@ -23,5 +23,5 @@ mesh = meshio.Mesh(
         point_array, [("tetra", cell_array)], cell_data={"label": [marker.ravel()]}
     )
 mesh = pv.from_meshio(mesh).clean()
-os.makedirs("mesh/volmesh", exist_ok=True)
-pv.save_meshio("mesh/volmesh/mesh.xdmf", mesh)
+os.makedirs("../mesh/volmesh", exist_ok=True)
+pv.save_meshio("../mesh/volmesh/mesh.xdmf", mesh)
