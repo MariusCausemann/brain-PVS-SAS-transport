@@ -5,6 +5,7 @@ from skimage.filters import frangi, sato
 import skimage.morphology as skim
 from skimage.measure import label
 import kimimaro
+import os
 
 
 def np2pv(arr, resolution, origin):
@@ -31,6 +32,7 @@ def skeletonize(img):
 scale = 1.0
 const = 1
 
+os.makedirs("mesh/networks", exist_ok=True)
 # get the network centerlines of the venous network 
 data = nibabel.load("data/pcbi.1007073.s007.nii.gz")
 img = data.get_fdata().astype(int)
