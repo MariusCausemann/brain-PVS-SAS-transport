@@ -23,7 +23,7 @@ def binary_smoothing(img, footprint=None):
     openend = skim.binary_opening(img, footprint=footprint)
     return skim.binary_closing(openend, footprint=footprint)
 
-#laod white matter data 
+#load white matter data 
 wmdata = nibabel.load("data/pcbi.1007073.s005.nii.gz")
 wmimg = wmdata.get_fdata() 
 surf = extract_surface(wmimg)
@@ -37,10 +37,15 @@ surf_grey = extract_surface(gmimg)
 smooth_taubin_grey = surf_grey.smooth_taubin(n_iter=20, pass_band=0.05)
 smooth_taubin_grey.save("mesh/surfaces/gm.ply")
 
+# create parenchmya surface
+wmimg = np.pad(wmimg, ((0,0), (0,0), (0,8)))
+img = wmimg + gmimg
+surf_grey = extract_surface(img)
+smooth_taubin_parenchyma = surf_grey.smooth_taubin(n_iter=20, pass_band=0.05)
+smooth_taubin_parenchyma.save("mesh/surfaces/parenchyma.ply")
 
 ## creating a skull 
 ball = skim.ball(5) 
-img = wmimg + gmimg
 img = np.pad(img, (0, 20))
 for i in range(3):
     img = skim.binary_dilation(img, footprint=ball)

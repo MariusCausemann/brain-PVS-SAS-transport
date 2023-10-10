@@ -7,7 +7,12 @@ import json
 
 csg_tree = {"operation":"union",
             "left":"mesh/surfaces/skull.ply",
-            "right":"mesh/surfaces/gm.ply"} 
+            "right":"mesh/surfaces/parenchyma.ply",
+            #"right":{"operation":"union",
+            #    "left":"mesh/surfaces/parenchyma.ply",
+            #    "right":"mesh/surfaces/gm.ply",
+            #        } 
+            } 
 
 tetra = wm.Tetrahedralizer(epsilon=0.002, edge_length_r=0.05,
                            coarsen=False)
