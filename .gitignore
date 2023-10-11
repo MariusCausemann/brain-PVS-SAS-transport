@@ -1,6 +1,7 @@
 mesh/networks/*
 mesh/surfaces/*
 mesh/volmesh/*
+results/*
 __*
 
 # Byte-compiled / optimized / DLL files

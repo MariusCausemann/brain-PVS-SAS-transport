@@ -2,6 +2,7 @@ from petsc4py import PETSc
 from dolfin import *
 import xii 
 from solver import * 
+import os
 
 if __name__ == '__main__':
    
@@ -105,11 +106,14 @@ if __name__ == '__main__':
     ksp.setFromOptions()
     print('Start solve')
     t = 0.0 
-    vtkfile_1 = File('uh_sas.pvd') 
-    vtkfile_2 = File('uh_artery.pvd')
-    vtkfile_3 = File('uh_vein.pvd') 
-    vtkfile_4 = File('uh_real_sas.pvd') 
-    vtkfile_5 = File('uh_hemi1.pvd') 
+
+    results_dir = "../results/"
+    os.makedirs(results_dir, exist_ok=True)
+    vtkfile_1 = File(results_dir + 'uh_sas.pvd') 
+    vtkfile_2 = File(results_dir + 'uh_artery.pvd')
+    vtkfile_3 = File(results_dir + 'uh_vein.pvd') 
+    vtkfile_4 = File(results_dir + 'uh_real_sas.pvd') 
+    vtkfile_5 = File(results_dir + 'uh_hemi1.pvd') 
     #vtkfile_6 = File('uh_hemi2.pvd') 
 
     u_i.rename("SAS", "time")
