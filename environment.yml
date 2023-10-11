@@ -16,4 +16,6 @@ dependencies:
     - pyacvd
     - dufte
     - kimimaro
+    - git+https://github.com/blocknics/cbc.block.git
+    - git+https://github.com/MiroK/fenics_ii.git
     - git+https://github.com/MariusCausemann/wildmeshing-python.git
