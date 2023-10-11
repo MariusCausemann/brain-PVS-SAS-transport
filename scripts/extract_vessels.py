@@ -34,7 +34,7 @@ const = 1
 
 os.makedirs("../mesh/networks", exist_ok=True)
 # get the network centerlines of the venous network 
-data = nibabel.load("../data/pcbi.1007073.s007.nii")
+data = nibabel.load("../data/pcbi.1007073.s007.nii.gz")
 img = data.get_fdata().astype(int)
 arterial_network, arteries = skeletonize(img)
 with open('../mesh/arteries.swc','w') as f:
@@ -42,7 +42,7 @@ with open('../mesh/arteries.swc','w') as f:
 
 arterial_network.save("../mesh/networks/arteries.vtk")
 
-data = nibabel.load("../data/pcbi.1007073.s008.nii")
+data = nibabel.load("../data/pcbi.1007073.s008.nii.gz")
 img = data.get_fdata().astype(int)
 venous_network, veins = skeletonize(img)
 with open('../mesh/veins.swc','w') as f:
