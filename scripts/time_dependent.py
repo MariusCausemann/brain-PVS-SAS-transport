@@ -3,17 +3,12 @@ from dolfin import *
 import xii 
 from solver import * 
 
-
-
 if __name__ == '__main__':
-
    
-    vein = Mesh('../mesh/venous_network.xml')
-    vein_radii = MeshFunction('double', vein, '../mesh/venous_network_radii.xml')
+    vein, vein_radii = read_vtk_network("../mesh/networks/venes.vtk")
     vein_radii = as_P0_function(vein_radii)
 
-    artery = Mesh('../mesh/arterial_network.xml')
-    artery_radii = MeshFunction('double', artery, '../mesh/arterial_network_radii.xml')
+    artery, artery_radii = read_vtk_network("../mesh/networks/arteries.vtk")
     artery_radii = as_P0_function(artery_radii)
 
     sas = Mesh()

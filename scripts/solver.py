@@ -1,7 +1,30 @@
 from petsc4py import PETSc
 from dolfin import *
 import xii  
+import pyvista as pv
 
+
+def read_vtk_network(filename):
+
+    netw = pv.read(filename)
+    mesh = Mesh()
+    ed = MeshEditor()
+    ed.open(mesh, 'interval', 1, 3)
+    ed.init_vertices(netw.number_of_points)
+    ed.init_cells(netw.number_of_cells)
+
+    for vid, v in enumerate(netw.points):
+        ed.add_vertex(vid, v)
+    cells = netw.cells.reshape((-1,3))
+    for cid, c in enumerate(cells[:,1:]):
+        ed.add_cell(cid, c)
+    ed.close()
+
+    # Cell Function
+    mesh_f = MeshFunction('double', mesh, 1, 0)
+    netw = netw.point_data_to_cell_data()
+    mesh_f.array()[:] = netw["radius"]
+    return mesh, mesh_f
 
 
 def pcws_constant(subdomains, values):
@@ -45,18 +68,15 @@ def ksp_vec(tensor):
 
 if __name__ == '__main__':
 
-    vein = Mesh('../mesh/venous_network.xml')
-    vein_radii = MeshFunction('double', vein, '../mesh/venous_network_radii.xml')
+    vein, vein_radii = read_vtk_network("../mesh/networks/venes.vtk")
     vein_radii = as_P0_function(vein_radii)
 
-    artery = Mesh('../mesh/arterial_network.xml')
-    artery_radii = MeshFunction('double', artery, '../mesh/arterial_network_radii.xml')
+    artery, artery_radii = read_vtk_network("../mesh/networks/arteries.vtk")
     artery_radii = as_P0_function(artery_radii)
 
     sas = Mesh()
     with XDMFFile('../mesh/volmesh/mesh.xdmf') as f:
         f.read(sas)
-
 
     V = FunctionSpace(sas, 'CG', 1)
     Qa = FunctionSpace(artery, 'CG', 1)
