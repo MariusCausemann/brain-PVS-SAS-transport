@@ -1,7 +1,23 @@
 from petsc4py import PETSc
 from dolfin import *
-# import xii
+import xii  
 
+
+
+def pcws_constant(subdomains, values):
+    mesh = subdomains.mesh()
+    dx = Measure('dx', domain=mesh, subdomain_data=subdomains)
+
+    V = FunctionSpace(mesh, 'DG', 0)
+    v = TestFunction(V)
+    hK = CellVolume(mesh)
+
+    form = sum((1/hK)*inner(Constant(value), v)*dx(tag) for tag, value in values.items())
+
+    foo = Function(V)
+    assemble(form, foo.vector())
+
+    return foo
 
 def as_P0_function(mesh_f):
     '''Represent as DG0'''
@@ -26,22 +42,98 @@ def ksp_vec(tensor):
 
 # --------------------------------------------------------------------
 
+
 if __name__ == '__main__':
 
     vein = Mesh('../mesh/venous_network.xml')
     vein_radii = MeshFunction('double', vein, '../mesh/venous_network_radii.xml')
     vein_radii = as_P0_function(vein_radii)
 
-    file = File("../mesh/vein.pvd")
-
-    file << vein_radii
     artery = Mesh('../mesh/arterial_network.xml')
     artery_radii = MeshFunction('double', artery, '../mesh/arterial_network_radii.xml')
     artery_radii = as_P0_function(artery_radii)
 
-    file2 = File("../mesh/artery.pvd")
+    sas = Mesh()
+    with XDMFFile('../mesh/volmesh/mesh.xdmf') as f:
+        f.read(sas)
 
-    file2 << artery_radii
-#sas = Mesh()
-#with XDMFFile('../mesh/volmesh/mesh.xdmf') as f:
-#        f.read(sas)
+
+    V = FunctionSpace(sas, 'CG', 1)
+    Qa = FunctionSpace(artery, 'CG', 1)
+    Qv = FunctionSpace(vein, 'CG', 1)
+    W = [V, Qa, Qv]
+
+    u, pa, pv = map(TrialFunction, W)
+    v, qa, qv = map(TestFunction, W)
+
+    # Things for restriction
+    dx_a = Measure('dx', domain=artery)
+    artery_shape = xii.Circle(radius=artery_radii, degree=20)
+    ua, va = (xii.Average(x, artery, artery_shape) for x in (u, v))
+
+    dx_v = Measure('dx', domain=vein)
+    vein_shape = xii.Circle(radius=vein_radii, degree=20)
+    uv, vv = (xii.Average(x, vein, vein_shape) for x in (u, v))
+
+    a = xii.block_form(W, 2)
+    a[0][0] = inner(grad(u), grad(v))*dx + inner(u, v)*dx + inner(ua, va)*dx_a + inner(uv, vv)*dx_v
+    a[0][1] = -inner(pa, va)*dx_a
+    a[0][2] = -inner(pv, vv)*dx_v
+
+    a[1][0] = -inner(qa, ua)*dx_a
+    a[1][1] = inner(grad(pa), grad(qa))*dx + inner(pa, qa)*dx
+
+    a[2][0] = -inner(qv, uv)*dx_v
+    a[2][2] = inner(grad(pv), grad(qv))*dx + inner(pv, qv)*dx
+
+    L = xii.block_form(W, 1)
+    
+
+    V_bcs  =  []
+    Qa_bcs = [DirichletBC(Qa, Expression('x[0]+x[1]+x[2]', degree=1), 'on_boundary')]
+    Qv_bcs = [DirichletBC(Qv, Expression('x[0]+x[1]+x[2]', degree=1), 'on_boundary')]
+    W_bcs = [V_bcs, Qa_bcs, Qv_bcs]
+
+    AA, bb = map(xii.ii_assemble, (a, L))
+    A, b = xii.apply_bc(AA, bb, bcs=W_bcs)
+    A_, b_ = (ksp_mat(xii.ii_convert(A)), ksp_vec(xii.ii_convert(b)))
+
+    ksp = PETSc.KSP().create()
+
+    opts = PETSc.Options()
+    opts.setValue('ksp_type', 'cg')    
+    opts.setValue('ksp_view', None)
+    opts.setValue('ksp_view_eigenvalues', None)
+    opts.setValue('ksp_converged_reason', None)
+    opts.setValue('ksp_monitor_true_residual', None)
+    opts.setValue('ksp_rtol', 1E-40)
+    opts.setValue('ksp_atol', 1E-12)
+    opts.setValue('pc_type', 'hypre')
+    opts.setValue('ksp_initial_guess_nonzero', 1)
+
+    ksp.setOperators(A_, A_)
+    ksp.setFromOptions()
+    print('Start solve')
+    wh = xii.ii_Function(W)
+    
+    x_ = b_.copy()
+    x_ *= 0 
+    ksp.solve(b_, x_)
+    # NOTE: solve(b_, ksp_vec(wh.vector())) segfault most likely because
+    # of type incompatibility seq is expected and we have nest
+    wh.vector()[:] = PETScVector(x_)
+
+    File('../mesh/uh_sas.pvd') << wh[0]
+    File('../mesh/uh_artery.pvd') << wh[1]
+    File('../mesh/uh_vein.pvd') << wh[2]
+
+    import matplotlib.pyplot as plt
+    from scipy.sparse import csr_matrix
+
+    that = xii.ii_convert(AA[1][0])
+    that = csr_matrix(ksp_mat(that).getValuesCSR()[::-1],
+                      shape=(that.size(0), that.size(1)))
+    
+    fig, ax = plt.subplots()
+    ax.spy(that)
+    plt.show()
