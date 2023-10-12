@@ -12,14 +12,6 @@ def extract_surface(img):
     surf = mesh.extract_geometry()
     return surf
 
-def skel_to_mesh(skel):
-    n_segs = skel.edges.shape[0]
-    cells = np.concatenate([np.ones((n_segs,1), dtype=int)*2, skel.edges], axis=1)
-    celltypes = np.full(n_segs, fill_value=pv.CellType.LINE, dtype=np.uint8)
-    mesh = pv.UnstructuredGrid(cells.ravel(), celltypes, skel.vertices)
-    mesh["radius"] = skel.radius
-    return mesh
-
 def binary_smoothing(img, footprint=None):
     openend = skim.binary_opening(img, footprint=footprint)
     return skim.binary_closing(openend, footprint=footprint)
