@@ -21,10 +21,15 @@ def read_vtk_network(filename):
     ed.close()
 
     # Cell Function
-    mesh_f = MeshFunction('double', mesh, 1, 0)
+    radii = MeshFunction('double', mesh, 1, 0)
+    roots = MeshFunction('size_t', mesh, 1, 0)
     netw = netw.point_data_to_cell_data()
-    mesh_f.array()[:] = netw["radius"]
-    return mesh, mesh_f
+    radii.array()[:] = netw["radius"]
+    roots.array()[:] = netw["root"]
+
+    netw_orientation = Function(VectorFunctionSpace(mesh, "DG", 0))
+    netw_orientation.vector()[:] = netw["orientation"].ravel()
+    return mesh, radii, roots, netw_orientation
 
 
 def pcws_constant(subdomains, values):
@@ -68,10 +73,10 @@ def ksp_vec(tensor):
 
 if __name__ == '__main__':
 
-    vein, vein_radii = read_vtk_network("../mesh/networks/venes.vtk")
+    vein, vein_radii, vein_roots, vein_orientation = read_vtk_network("../mesh/networks/venes.vtk")
     vein_radii = as_P0_function(vein_radii)
 
-    artery, artery_radii = read_vtk_network("../mesh/networks/arteries.vtk")
+    artery, artery_radii, artery_roots, artery_orientation = read_vtk_network("../mesh/networks/arteries.vtk")
     artery_radii = as_P0_function(artery_radii)
 
     sas = Mesh()
@@ -143,9 +148,9 @@ if __name__ == '__main__':
     # of type incompatibility seq is expected and we have nest
     wh.vector()[:] = PETScVector(x_)
 
-    File('../mesh/uh_sas.pvd') << wh[0]
-    File('../mesh/uh_artery.pvd') << wh[1]
-    File('../mesh/uh_vein.pvd') << wh[2]
+    File('../results/uh_sas.pvd') << wh[0]
+    File('../results/uh_artery.pvd') << wh[1]
+    File('../results/uh_vein.pvd') << wh[2]
 
     import matplotlib.pyplot as plt
     from scipy.sparse import csr_matrix
