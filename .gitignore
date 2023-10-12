@@ -1,6 +1,4 @@
-mesh/networks/*
-mesh/surfaces/*
-mesh/volmesh/*
+mesh/*
 results/*
 __*
 
