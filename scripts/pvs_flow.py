@@ -52,14 +52,12 @@ if __name__ == '__main__':
     # is arbitrary as long same tau is used throught the code
     tau = TangentCurve(mesh)
 
-    a, L, W = pvs_flow_system(radius_f, tau, radius_ratio)
-
+    a, L, W = pvs_flow_system(radius_f, tau, radius_ratio, f=Constant(1e-3))
 
     # For the bcs just make something z dependent here for illustration
-    bc_out = DirichletBC(W.sub(1), 0, artery_roots, 1)
-    bc_in = DirichletBC(W.sub(1), 1, artery_roots, 2)
+    bc_in = DirichletBC(W.sub(1), 0, artery_roots, 2)
 
-    A, b = assemble_system(a, L, [bc_out, bc_in])
+    A, b = assemble_system(a, L, [bc_in])
 
     wh = Function(W)
     solve(A, wh.vector(), b)
