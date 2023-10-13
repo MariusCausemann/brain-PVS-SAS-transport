@@ -6,10 +6,10 @@ import os
 
 if __name__ == '__main__':
    
-    vein, vein_radii, vein_roots, vein_orientation = read_vtk_network("../mesh/networks/venes.vtk")
+    vein, vein_radii, vein_roots = read_vtk_network("../mesh/networks/venes_smooth.vtk")
     vein_radii = as_P0_function(vein_radii)
 
-    artery, artery_radii, artery_roots, artery_orientation = read_vtk_network("../mesh/networks/arteries.vtk")
+    artery, artery_radii, artery_roots = read_vtk_network("../mesh/networks/arteries_smooth.vtk")
     artery_radii = as_P0_function(artery_radii)
 
     sas = Mesh()

@@ -11,25 +11,24 @@ def read_vtk_network(filename):
     ed = MeshEditor()
     ed.open(mesh, 'interval', 1, 3)
     ed.init_vertices(netw.number_of_points)
-    ed.init_cells(netw.number_of_cells)
+    cells = netw.cells.reshape((-1,3))
+    ed.init_cells(cells.shape[0])
 
     for vid, v in enumerate(netw.points):
         ed.add_vertex(vid, v)
-    cells = netw.cells.reshape((-1,3))
     for cid, c in enumerate(cells[:,1:]):
         ed.add_cell(cid, c)
     ed.close()
 
     # Cell Function
     radii = MeshFunction('double', mesh, 1, 0)
-    roots = MeshFunction('size_t', mesh, 1, 0)
+    roots = MeshFunction('size_t', mesh, 0, 0)
+
+    roots.array()[:] = netw["root"]
     netw = netw.point_data_to_cell_data()
     radii.array()[:] = netw["radius"]
-    roots.array()[:] = netw["root"]
 
-    netw_orientation = Function(VectorFunctionSpace(mesh, "DG", 0))
-    netw_orientation.vector()[:] = netw["orientation"].ravel()
-    return mesh, radii, roots, netw_orientation
+    return mesh, radii, roots
 
 
 def pcws_constant(subdomains, values):
@@ -73,11 +72,12 @@ def ksp_vec(tensor):
 
 if __name__ == '__main__':
 
-    vein, vein_radii, vein_roots, vein_orientation = read_vtk_network("../mesh/networks/venes.vtk")
+    vein, vein_radii, vein_roots = read_vtk_network("../mesh/networks/venes_smooth.vtk")
     vein_radii = as_P0_function(vein_radii)
 
-    artery, artery_radii, artery_roots, artery_orientation = read_vtk_network("../mesh/networks/arteries.vtk")
+    artery, artery_radii, artery_roots = read_vtk_network("../mesh/networks/arteries_smooth.vtk")
     artery_radii = as_P0_function(artery_radii)
+    
 
     sas = Mesh()
     with XDMFFile('../mesh/volmesh/mesh.xdmf') as f:

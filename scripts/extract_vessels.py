@@ -30,6 +30,35 @@ def skeletonize(img):
     ds_skel = joined_skels.downsample(2)
     return ds_skel 
 
+def generate_splines(G, point_ratio=1):
+    G = G.to_undirected()
+    degrees = np.array([G.degree(i) for i in range(G.number_of_nodes())])
+    bifurcations = np.where(degrees > 2)[0]
+    points = np.array([G.nodes[i]["pos"] for i in range(G.number_of_nodes())])
+    Gwb = G.copy()
+    Gwb.remove_nodes_from(bifurcations)
+    splines = []
+
+    for seg in list(nx.connected_components(Gwb)):
+        g = G.subgraph(seg)
+        roots = [node for (node, order) in g.degree() if order<=1]
+        seg_nodes = seg
+        for r in roots:
+            seg_nodes = seg_nodes.union(set(G.neighbors(r)))
+        g = G.subgraph(seg_nodes)
+        newroots = [node for (node, order) in g.degree() if order==1]
+        spl = pv.Spline(points=points[list(nx.dfs_postorder_nodes(g, source=newroots[0]))],
+                         n_points=int(len(seg)*point_ratio))
+        splines.append(spl)
+    
+    for bi in bifurcations:
+        for nbi in G.neighbors(bi):
+            if nbi in bifurcations:
+                spl = pv.Spline(points=points[[bi, nbi]], n_points=int(2*point_ratio))
+                splines.append(spl)
+
+    return splines
+
 def as_networkx(skel, nroots):
     G = nx.DiGraph()
     G.add_edges_from(skel.edges)
@@ -45,7 +74,12 @@ def as_networkx(skel, nroots):
         orientation = 1 if e[2] == "forward" else -1
         vec_dict[e[:2]] = vec * orientation / np.linalg.norm(vec)
     nx.set_edge_attributes(G, vec_dict, "vector")
-    nx.set_node_attributes(G, {i:1 if i in rs else 0 for i in range(G.number_of_nodes())}, "root")
+    def root_mark(i):
+        if i in rs: return 2
+        if i in roots: return 1
+        return 0
+    nx.set_node_attributes(G, {i:root_mark(i)  for i in range(G.number_of_nodes())}, "root")
+
     return G
 
 def nx_to_pv(G):
@@ -63,23 +97,56 @@ def nx_to_pv(G):
     mesh["root"] = root
     return mesh
 
+def plot_radii(splines, filename):
+    import matplotlib.pyplot as plt
+    fig, axes = plt.subplots(nrows=int(len(splines)/3),
+                             ncols=3, sharey=True,
+                             sharex=True, figsize=(5, int(len(splines)/4)))
+    
+    for ax,spl in zip(axes.flatten(),splines):
+        radii = spl["radius"]
+        arcl = spl["arc_length"]
+        ax.plot(arcl, radii, "-*")
+
+    fig.supxlabel("vessel segment length (mm)", y=0.001)
+    fig.supylabel("radius (mm)")
+    fig.suptitle("radius over segment length", y=0.999)
+    plt.tight_layout()
+    plt.savefig(filename)
+
+def as_tubes(splines):
+    tubes = pv.MultiBlock()
+    for spl in splines:
+        tubes.append(spl.tube(scalars="radius", absolute=True))
+    return tubes
+
+
 scale = 1.0
 const = 1
 
 os.makedirs("../mesh/networks", exist_ok=True)
+os.makedirs("../plots", exist_ok=True)
 
-data = nibabel.load("../data/pcbi.1007073.s007.nii.gz")
-img = data.get_fdata().astype(int)
-arterial_skel = skeletonize(img)
-G_art = as_networkx(arterial_skel, nroots=5)
-arterial_network = nx_to_pv(G_art)
-arterial_network.save("../mesh/networks/arteries.vtk")
+files = ["../data/pcbi.1007073.s007.nii.gz", "../data/pcbi.1007073.s008.nii.gz"]
+names = ["arteries", "venes"]
+nroots = [4, 50]
 
-data = nibabel.load("../data/pcbi.1007073.s008.nii.gz")
-img = data.get_fdata().astype(int)
-venous_skel = skeletonize(img)
-G_ven = as_networkx(venous_skel, nroots=50)
-venous_network = nx_to_pv(G_ven)
-venous_network.save("../mesh/networks/venes.vtk")
-
-
+for file, name, nr in zip(files, names, nroots):
+    data = nibabel.load(file)
+    img = data.get_fdata().astype(int)
+    skel = skeletonize(img)
+    G = as_networkx(skel, nroots=nr)
+    orig_netw = nx_to_pv(G)
+    splines = generate_splines(G)
+    splines = [spl.interpolate(orig_netw, strategy="closest_point") for spl in splines]
+    lines = [pv.lines_from_points(spl.points) for spl in splines]
+    for l, spl in zip(lines, splines):
+        l["radius"] = spl["radius"]
+        l["root"] = spl["root"]
+    smooth_netw = pv.MultiBlock(lines).combine().clean()
+    orig_netw.save(f"../mesh/networks/{name}.vtk")
+    smooth_netw.save(f"../mesh/networks/{name}_smooth.vtk")
+    netw_tubes = as_tubes(splines).combine()
+    netw_tubes.save(f"../mesh/networks/{name}_tubes.vtk")
+    netw_tubes.plot(off_screen=True, screenshot=f"../plots/{name}_network.png", zoom=1.6)
+    plot_radii([s for s in splines if s.number_of_points > 4], f"../plots/{name}_arc_radii.png")
