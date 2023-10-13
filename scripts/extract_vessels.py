@@ -7,6 +7,7 @@ from skimage.measure import label
 import kimimaro
 import os
 import networkx as nx
+from cloudvolume import Bbox
 
 
 def np2pv(arr, resolution, origin):
@@ -78,8 +79,7 @@ def as_networkx(skel, nroots):
         if i in rs: return 2
         if i in roots: return 1
         return 0
-    nx.set_node_attributes(G, {i:root_mark(i)  for i in range(G.number_of_nodes())}, "root")
-
+    nx.set_node_attributes(G, {i:root_mark(i) for i in range(G.number_of_nodes())}, "root")
     return G
 
 def nx_to_pv(G):
@@ -127,17 +127,19 @@ const = 1
 os.makedirs("../mesh/networks", exist_ok=True)
 os.makedirs("../plots", exist_ok=True)
 
-files = ["../data/pcbi.1007073.s007.nii.gz", "../data/pcbi.1007073.s008.nii.gz"]
-names = ["arteries", "venes"]
-nroots = [4, 50]
+files = ["../data/pcbi.1007073.s007.nii.gz"]# "../data/pcbi.1007073.s008.nii.gz"]
+names = ["arteries",]# "venes"]
+nroots = [3,]# 50]
 
 for file, name, nr in zip(files, names, nroots):
     data = nibabel.load(file)
     img = data.get_fdata().astype(int)
     skel = skeletonize(img)
+    if name=="arteries":
+        skel = skel.crop(Bbox([0,0, 78], img.shape))
     G = as_networkx(skel, nroots=nr)
     orig_netw = nx_to_pv(G)
-    splines = generate_splines(G)
+    splines = generate_splines(G, point_ratio=3)
     splines = [spl.interpolate(orig_netw, strategy="closest_point") for spl in splines]
     lines = [pv.lines_from_points(spl.points) for spl in splines]
     for l, spl in zip(lines, splines):
@@ -149,4 +151,4 @@ for file, name, nr in zip(files, names, nroots):
     netw_tubes = as_tubes(splines).combine()
     netw_tubes.save(f"../mesh/networks/{name}_tubes.vtk")
     netw_tubes.plot(off_screen=True, screenshot=f"../plots/{name}_network.png", zoom=1.6)
-    plot_radii([s for s in splines if s.number_of_points > 4], f"../plots/{name}_arc_radii.png")
+    #plot_radii([s for s in splines if s.number_of_points > 4], f"../plots/{name}_arc_radii.png")
