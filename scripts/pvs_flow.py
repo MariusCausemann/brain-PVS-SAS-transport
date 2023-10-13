@@ -2,7 +2,7 @@ from dolfin import *
 from solver import read_vtk_network, as_P0_function
 import os
 
-def pvs_flow_system(radius_f, tau, f, g=Constant(0)):
+def pvs_flow_system(radius_f, tau, radius_ratio, f=Constant(0), g=Constant(0)):
     '''The bilinear form corresponding to Darcy on the graph'''
     mesh = radius_f.function_space().mesh()
     assert mesh.topology().dim() == 1
@@ -17,7 +17,10 @@ def pvs_flow_system(radius_f, tau, f, g=Constant(0)):
     u, p = TrialFunctions(W)
     v, q = TestFunctions(W)
 
-    K = radius_f  # FIXME: correct dependence
+    r1 = radius_f
+    r2 = r1*radius_ratio
+    # https://www.frontiersin.org/articles/10.3389/fphy.2022.882260/full, eq. 23
+    K = 0.125 * (r2*r2 + r1*r1 - (r2*r2 - r1*r1)/ ln(r2/r1))  
 
     # This is stationary for simplicity, we would get evolution in time
     # by solving this with time dep boundary conditions. Later we might
@@ -40,6 +43,7 @@ def pvs_flow_system(radius_f, tau, f, g=Constant(0)):
 if __name__ == '__main__':
     from xii import TangentCurve
 
+    radius_ratio = 1.2
     mesh ,artery_radii, artery_roots = read_vtk_network("../mesh/networks/arteries_smooth.vtk")
     radius_f = as_P0_function(artery_radii)
     
@@ -48,7 +52,7 @@ if __name__ == '__main__':
     # is arbitrary as long same tau is used throught the code
     tau = TangentCurve(mesh)
 
-    a, L, W = pvs_flow_system(radius_f, tau, f=Constant(0))
+    a, L, W = pvs_flow_system(radius_f, tau, radius_ratio)
 
 
     # For the bcs just make something z dependent here for illustration
