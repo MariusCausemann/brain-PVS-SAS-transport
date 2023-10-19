@@ -127,9 +127,9 @@ const = 1
 os.makedirs("../mesh/networks", exist_ok=True)
 os.makedirs("../plots", exist_ok=True)
 
-files = ["../data/pcbi.1007073.s007.nii.gz"]# "../data/pcbi.1007073.s008.nii.gz"]
-names = ["arteries",]# "venes"]
-nroots = [3,]# 50]
+files = ["../data/pcbi.1007073.s007.nii.gz", "../data/pcbi.1007073.s008.nii.gz"]
+names = ["arteries", "venes"]
+nroots = [3, 50]
 
 for file, name, nr in zip(files, names, nroots):
     data = nibabel.load(file)
