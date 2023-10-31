@@ -20,10 +20,14 @@ if __name__ == '__main__':
         f.read(sas_subdomains, 'label')
 
     assert np.allclose(np.unique(sas_subdomains.array()), [1,2])
-    [m.scale(1e-3) for m in [sas, vein, artery]] # scale from mm to m
+    
+    # scale from mm to m
+    [m.scale(1e-3) for m in [sas, vein, artery]]
+    vein_radii.vector()[:] *= 1e-3
+    artery_radii.vector()[:] *= 1e-3
 
-    dt = 60
-    T = 60*60*1 # 4h
+    dt = 1
+    T = 60*60*1 # 1h
     num_timesteps = int(T / dt)
 
     m = (0.17, 0.21, 0.1)
@@ -75,7 +79,7 @@ if __name__ == '__main__':
     pv_i = interpolate(pv_o, Qv)
     # Things for restriction
     dx_a = Measure('dx', domain=artery)
-    artery_shape = xii.Circle(radius=artery_radii, degree=20)
+    artery_shape = xii.Circle(radius=artery_radii, degree=20,)
     ua, va = (xii.Average(x, artery, artery_shape) for x in (u, v))
 
     dx_v = Measure('dx', domain=vein)
