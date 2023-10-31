@@ -20,14 +20,14 @@ if __name__ == '__main__':
         f.read(sas_subdomains, 'label')
 
     assert np.allclose(np.unique(sas_subdomains.array()), [1,2])
-    
+
     # scale from mm to m
     [m.scale(1e-3) for m in [sas, vein, artery]]
     vein_radii.vector()[:] *= 1e-3
     artery_radii.vector()[:] *= 1e-3
 
-    dt = 1
-    T = 60*60*1 # 1h
+    dt = 120
+    T = 60*60*4 
     num_timesteps = int(T / dt)
 
     m = (0.17, 0.21, 0.1)
@@ -46,13 +46,14 @@ if __name__ == '__main__':
 
     mm2m = 1e-3
     ecs_vol = 0.2
-    Ds = pcws_constant(sas_subdomains, {1: Constant(3.8*1e-4 * mm2m),  # csf
+    D_f = 3.8*1e-4 * mm2m
+    Ds = pcws_constant(sas_subdomains, {1: Constant(D_f),  # csf
                                         2: Constant(1.2*1e-4 * mm2m*ecs_vol) # parenchyma
                                         })
         
-    Da = Constant(3.8*1e-4 * mm2m) 
-    Dv = Constant(3.8*1e-4 * mm2m)
-    xi = Constant(1e-3)
+    Da = Constant(D_f) 
+    Dv = Constant(D_f)
+    xi = Constant(D_f*1e3)
 
     velocity_a = Constant(0.0)
     velocity_v = Constant(0.0)
@@ -88,7 +89,6 @@ if __name__ == '__main__':
 
     a = xii.block_form(W, 2)
 
-
     hF, nF, gamma_Nitsche = CellDiameter(sas), FacetNormal(sas), Constant(100)
 
     a[0][0] = (1/dt)*inner(u,v)*dx + Ds*inner(grad(u), grad(v))*dx + xi*inner(ua, va)*dx_a + xi*inner(uv, vv)*dx_v
@@ -111,9 +111,9 @@ if __name__ == '__main__':
     AA, bb = map(xii.ii_assemble, (a, L))
 
     
-    V_bcs  =  [DirichletBC(V, boundary_concentration, inlet)]
+    V_bcs  =  []#DirichletBC(V, boundary_concentration, inlet)]
     Qa_bcs = [DirichletBC(Qa, boundary_concentration, inlet)]
-    Qv_bcs = [DirichletBC(Qv, boundary_concentration, inlet)]
+    Qv_bcs = []#DirichletBC(Qv, boundary_concentration, inlet)]
     W_bcs = [V_bcs, Qa_bcs, Qv_bcs]
 
     AA, _, bc_apply_b = xii.apply_bc(AA, bb, bcs=W_bcs, return_apply_b=True)
