@@ -9,15 +9,16 @@ if __name__ == '__main__':
    
     vein, vein_radii, vein_roots = read_vtk_network("../mesh/networks/venes_smooth.vtk")
     vein_radii = as_P0_function(vein_radii)
-    perm_vein  = 2*np.pi*vein_radii 
-    area_vein  = np.pi *(vein_radii**2) 
+    pvs_ratio  = 2.0 
+    perm_vein  = 2*np.pi*pvs_ratio*vein_radii 
+    area_vein  = np.pi*((pvs_ratio*vein_radii)**2- vein_radii**2 ) 
     
     artery, artery_radii, artery_roots = read_vtk_network("../mesh/networks/arteries_smooth.vtk")
     artery_radii = as_P0_function(artery_radii)
-    perm_artery  = 2*np.pi*artery_radii 
-    area_artery  = np.pi *(artery_radii**2)
+    perm_artery  = 2*np.pi*pvs_ratio*artery_radii
+    area_artery  = np.pi*((pvs_ratio*artery_radii)**2 -artery_radii**2)
 
-    sas = Mesh()
+    sas = Mesh()   
     with XDMFFile('../mesh/volmesh/mesh.xdmf') as f:
         f.read(sas)
         sas_subdomains = MeshFunction('size_t', sas, 3, 0)
@@ -30,10 +31,8 @@ if __name__ == '__main__':
     vein_radii.vector()[:] *= 1e-3
     artery_radii.vector()[:] *= 1e-3
 
-    
-
     dt = 30
-    T = 60*60*4 
+    T = 60*60*12 
     num_timesteps = int(T / dt)
 
     m = (0.17, 0.21, 0.1)
@@ -56,10 +55,17 @@ if __name__ == '__main__':
     Ds = pcws_constant(sas_subdomains, {1: Constant(D_f),  # csf
                                         2: Constant(1.2*1e-4 * mm2m*ecs_vol) # parenchyma
                                         })
-        
+    
+    xi = pcws_constant(sas_subdomains, {1:  Constant(D_f*1e6),  # csf
+                                        2:  Constant(D_f*1e3)   # parenchyma
+                                        })
+    
+    
+    xi.set_allow_extrapolation(True)
+    
     Da = Constant(D_f) 
     Dv = Constant(D_f)
-    xi = Constant(D_f*1e3)
+    # xi = Constant(D_f*1e3)
 
     velocity_a = Constant(0.0)
     velocity_v = Constant(0.0)
@@ -86,13 +92,13 @@ if __name__ == '__main__':
     pv_i = interpolate(pv_o, Qv)
     # Things for restriction
     dx_a = Measure('dx', domain=artery)
-    artery_shape = xii.Circle(radius=artery_radii, degree=20,)
+    artery_shape = xii.Circle(radius=pvs_ratio*artery_radii, degree=20,)
     ua, va = (xii.Average(x, artery, artery_shape) for x in (u, v))
-
 
     ##
     S3d = FunctionSpace(sas, "DG", 0)
     S1d = FunctionSpace(artery, "DG", 0)
+
     foo = interpolate(Constant(1), S3d)
     bar = TestFunction(S1d)
     
@@ -101,15 +107,18 @@ if __name__ == '__main__':
     coefs = vec.get_local(); coefs[coefs < 0.99] = 0.0; vec.set_local(coefs)
     arterial_mask.vector()[:] = vec 
     File("mask_artery.pvd") << arterial_mask
-                                                                        
+    xi_artery = interpolate(xi , S1d )
 
+                                                                        
     dx_v = Measure('dx', domain=vein)
-    vein_shape = xii.Circle(radius=vein_radii, degree=20)
+    vein_shape = xii.Circle(radius=pvs_ratio*vein_radii, degree=20)
     uv, vv = (xii.Average(x, vein, vein_shape) for x in (u, v)) 
     ##
     S3d = FunctionSpace(sas, "DG", 0)
     S1d = FunctionSpace(vein, "DG", 0)
-    foo = interpolate(Constant(1), S3d)
+    foo  = interpolate(Constant(1), S3d)
+    xi_veins = interpolate(xi, S1d)
+
     bar = TestFunction(S1d)
     
     vec = xii.ii_assemble((1/CellVolume(vein))*inner(xii.Average(foo, vein, vein_shape), bar)*dx_v)
@@ -146,16 +155,16 @@ if __name__ == '__main__':
 
     hF, nF = CellDiameter(sas), FacetNormal(sas)
 
-    a[0][0] = (1/dt)*inner(u,v)*dx + Ds*inner(grad(u), grad(v))*dx + (2*pi*perm_artery)*xi*arterial_mask*inner(ua, va)*dx_a + xi*venous_mask*(2*pi*perm_vein)*inner(uv, vv)*dx_v
+    a[0][0] = (1/dt)*inner(u,v)*dx + Ds*inner(grad(u), grad(v))*dx + (2*pi*perm_artery)*xi_artery*arterial_mask*inner(ua, va)*dx_a + xi_veins*venous_mask*(2*pi*perm_vein)*inner(uv, vv)*dx_v
 
-    a[0][1] = -xi*arterial_mask*(2*pi*perm_artery)*inner(pa, va)*dx_a
-    a[0][2] =  -xi*venous_mask*(2*pi*perm_vein)*inner(pv, vv)*dx_v
+    a[0][1] = -xi_artery*arterial_mask*(2*pi*perm_artery)*inner(pa, va)*dx_a
+    a[0][2] =  -xi_veins*venous_mask*(2*pi*perm_vein)*inner(pv, vv)*dx_v
 
-    a[1][0] =-xi*arterial_mask*(2*pi*perm_artery)*inner(qa, ua)*dx_a
-    a[1][1] = (1/dt)*area_artery*inner(pa,qa)*dx + Da*area_artery*inner(grad(pa), grad(qa))*dx - area_artery*inner(pa, dot(velocity_a,grad(qa)[0]))*dx + xi*arterial_mask*(2*pi*perm_artery)*inner(pa, qa)*dx
+    a[1][0] =-xi_artery*arterial_mask*(2*pi*perm_artery)*inner(qa, ua)*dx_a
+    a[1][1] = (1/dt)*area_artery*inner(pa,qa)*dx + Da*area_artery*inner(grad(pa), grad(qa))*dx - area_artery*inner(pa, dot(velocity_a,grad(qa)[0]))*dx + xi_artery*arterial_mask*(2*pi*perm_artery)*inner(pa, qa)*dx
 
-    a[2][0] = -xi*venous_mask*(2*pi*perm_vein)*inner(qv, uv)*dx_v
-    a[2][2] = (1/dt)*area_vein*inner(pv,qv)*dx + Dv*area_vein*inner(grad(pv), grad(qv))*dx - area_vein*inner(pv, dot(velocity_v,grad(qv)[0]))*dx + xi*venous_mask*(2*pi*perm_vein)*inner(pv, qv)*dx 
+    a[2][0] = -xi_veins*venous_mask*(2*pi*perm_vein)*inner(qv, uv)*dx_v
+    a[2][2] = (1/dt)*area_vein*inner(pv,qv)*dx + Dv*area_vein*inner(grad(pv), grad(qv))*dx - area_vein*inner(pv, dot(velocity_v,grad(qv)[0]))*dx + xi_veins*venous_mask*(2*pi*perm_vein)*inner(pv, qv)*dx 
 
     L = xii.block_form(W, 1)
     L[0]  = (1/dt)*inner(u_i,v)*dx 
