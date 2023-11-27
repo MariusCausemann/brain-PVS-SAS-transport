@@ -12,6 +12,8 @@ dependencies:
   - seaborn
   - nibabel
   - pip
+  - typer
+  - bioconda::snakemake
   - pip:
     - pyacvd
     - dufte
