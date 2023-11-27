@@ -1,0 +1,11 @@
+dt : 300
+T : 86400 # 1 day in seconds
+inlet_midpoint : [0.17, 0.21, 0.1]
+inlet_radius : 0.040
+ecs_share : 0.2
+sas_diffusion : 3.8e-7 # Valnes 2020, https://www.nature.com/articles/s41598-020-66042-5
+arterial_pvs_diffusion : 3.8e-7
+venous_pvs_diffusion : 3.8e-7
+parenchyma_diffusion : 1.2e-7
+pvs_parenchyma_permability : 3.8e-4 # = C_M * D_f wit C_M = 1e3 as in https://fluidsbarrierscns.biomedcentral.com/articles/10.1186/s12987-023-00421-8
+pvs_csf_permability: 1.0e+3 # ?
