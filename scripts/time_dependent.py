@@ -5,16 +5,8 @@ from solver import *
 import os
 import numpy as np
 import typer
-import yaml
 from pathlib import Path
-
-mm2m = 1e-3
-
-def read_config(configfile):
-    with open(configfile) as conf_file:
-        config = yaml.load(conf_file, Loader=yaml.FullLoader)
-    return config
-
+from plotting_utils import read_config
 
 def run_simulation(configfile: str):
 
@@ -23,7 +15,6 @@ def run_simulation(configfile: str):
 
     dt = config["dt"]
     T = config["T"]
-    num_timesteps = int(T / dt)
 
     inlet_midpoint = config["inlet_midpoint"]
     inlet_radius = config["inlet_radius"]
@@ -72,13 +63,18 @@ def run_simulation(configfile: str):
     
     boundary_concentration = Constant(1)
 
+    phi = pcws_constant(vol_subdomains, {1: Constant(1),  # csf
+                                         2: Constant(ecs_share) # parenchyma
+                                        })
     Ds = pcws_constant(vol_subdomains, {1: Constant(sas_diffusion),  # csf
                                         2: Constant(parenchyma_diffusion) # parenchyma
                                         })
-        
+    xi = pcws_constant(vol_subdomains, {1: Constant(pvs_csf_permability),  # csf
+                                        2: Constant(pvs_parenchyma_permability) # parenchyma
+                                        })
+    xi.set_allow_extrapolation(True)
     Da = Constant(arterial_pvs_diffusion) 
     Dv = Constant(venous_pvs_diffusion)
-    xi = Constant(pvs_parenchyma_permability)
 
     velocity_a = Constant(0.0)
     velocity_v = Constant(0.0)
@@ -131,28 +127,38 @@ def run_simulation(configfile: str):
     
     vec = xii.ii_assemble((1/CellVolume(vein))*inner(xii.Average(foo, vein, vein_shape), bar)*dx_v)
     coefs = vec.get_local(); coefs[coefs < 0.99] = 0.0; vec.set_local(coefs)
-    #from IPython import embed 
-    # embed()
+
     venous_mask = Function(S1d)
     venous_mask.vector()[:] = vec
 
+    phia = xii.Average(phi, artery, artery_shape)
+    phiv = xii.Average(phi, vein,vein_shape)
+    xia = xii.Average(xi, artery, artery_shape)
+    xiv = xii.Average(xi, vein, vein_shape)
+
     a = xii.block_form(W, 2)
+    xia_int = interpolate(xi, Qa)
+    xiv_int = interpolate(xi, Qv)
 
-    hF, nF = CellDiameter(sas), FacetNormal(sas)
+    a[0][0] = phi*(1/dt)*inner(u,v)*dx + phi*Ds*inner(grad(u), grad(v))*dx \
+            + phia*xia*arterial_mask*(2*pi*perm_artery)*inner(ua, va)*dx_a \
+            + phiv*xiv*venous_mask*(2*pi*perm_vein)*inner(uv, vv)*dx_v
 
-    a[0][0] = (1/dt)*inner(u,v)*dx + Ds*inner(grad(u), grad(v))*dx + (2*pi*perm_artery)*xi*arterial_mask*inner(ua, va)*dx_a + xi*venous_mask*(2*pi*perm_vein)*inner(uv, vv)*dx_v
+    a[0][1] = -phia*xia*arterial_mask*(2*pi*perm_artery)*inner(pa, va)*dx_a
+    a[0][2] = -phiv*xiv*venous_mask*(2*pi*perm_vein)*inner(pv, vv)*dx_v
 
-    a[0][1] = -xi*arterial_mask*(2*pi*perm_artery)*inner(pa, va)*dx_a
-    a[0][2] =  -xi*venous_mask*(2*pi*perm_vein)*inner(pv, vv)*dx_v
+    a[1][0] =-phia*xia*arterial_mask*(2*pi*perm_artery)*inner(qa, ua)*dx_a
+    a[1][1] = (1/dt)*area_artery*inner(pa,qa)*dx + Da*area_artery*inner(grad(pa), grad(qa))*dx \
+            - area_artery*inner(pa, dot(velocity_a,grad(qa)[0]))*dx  \
+            + xia_int*arterial_mask*(2*pi*perm_artery)*inner(pa, qa)*dx
 
-    a[1][0] =-xi*arterial_mask*(2*pi*perm_artery)*inner(qa, ua)*dx_a
-    a[1][1] = (1/dt)*area_artery*inner(pa,qa)*dx + Da*area_artery*inner(grad(pa), grad(qa))*dx - area_artery*inner(pa, dot(velocity_a,grad(qa)[0]))*dx + xi*arterial_mask*(2*pi*perm_artery)*inner(pa, qa)*dx
-
-    a[2][0] = -xi*venous_mask*(2*pi*perm_vein)*inner(qv, uv)*dx_v
-    a[2][2] = (1/dt)*area_vein*inner(pv,qv)*dx + Dv*area_vein*inner(grad(pv), grad(qv))*dx - area_vein*inner(pv, dot(velocity_v,grad(qv)[0]))*dx + xi*venous_mask*(2*pi*perm_vein)*inner(pv, qv)*dx 
+    a[2][0] = -phiv*xiv*venous_mask*(2*pi*perm_vein)*inner(qv, uv)*dx_v
+    a[2][2] = (1/dt)*area_vein*inner(pv,qv)*dx + Dv*area_vein*inner(grad(pv), grad(qv))*dx \
+            - area_vein*inner(pv, dot(velocity_v,grad(qv)[0]))*dx \
+            + xiv_int*venous_mask*(2*pi*perm_vein)*inner(pv, qv)*dx 
 
     L = xii.block_form(W, 1)
-    L[0]  = (1/dt)*inner(u_i,v)*dx 
+    L[0]  = phi*(1/dt)*inner(u_i,v)*dx 
     
     L[1]  = (1/dt)*area_artery*inner(pa_i, qa)*dx + area_artery*inner(fa,qa)*dx
     L[2]  = (1/dt)*area_vein*inner(pv_i, qv)*dx + area_vein*inner(fv,qv)*dx
@@ -161,9 +167,9 @@ def run_simulation(configfile: str):
     AA, bb = map(xii.ii_assemble, (a, L))
 
     
-    V_bcs  = [DirichletBC(V, boundary_concentration, inlet)]
-    Qa_bcs = [DirichletBC(Qa, boundary_concentration, inlet)]
-    Qv_bcs = [DirichletBC(Qv, boundary_concentration, inlet)]
+    V_bcs  = [DirichletBC(V, config["bc_sas"], inlet)]
+    Qa_bcs = [DirichletBC(Qa, config["bc_arteries"], inlet)]
+    Qv_bcs = [DirichletBC(Qv, config["bc_venes"], inlet)]
     W_bcs = [V_bcs, Qa_bcs, Qv_bcs]
 
     AA, _, bc_apply_b = xii.apply_bc(AA, bb, bcs=W_bcs, return_apply_b=True)
@@ -203,6 +209,8 @@ def run_simulation(configfile: str):
             f.write(s, t)
 
     write((u_i, pa_i, pv_i), files, 0.0)
+    write((xia_int, xiv_int), (pvdarteries, pvdvenes), 0.0)
+
 
     wh = xii.ii_Function(W)
     x_ = A_.createVecLeft()
