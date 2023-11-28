@@ -61,8 +61,6 @@ def run_simulation(configfile: str):
     bm = MeshFunction("size_t", sas, 2, 0)
     inlet.mark(bm, 1)
     
-    boundary_concentration = Constant(1)
-
     phi = pcws_constant(vol_subdomains, {1: Constant(1),  # csf
                                          2: Constant(ecs_share) # parenchyma
                                         })
@@ -166,10 +164,18 @@ def run_simulation(configfile: str):
 
     AA, bb = map(xii.ii_assemble, (a, L))
 
-    
-    V_bcs  = [DirichletBC(V, config["bc_sas"], inlet)]
-    Qa_bcs = [DirichletBC(Qa, config["bc_arteries"], inlet)]
-    Qv_bcs = [DirichletBC(Qv, config["bc_venes"], inlet)]
+    if config["bc_sas"] != "None":
+        V_bcs  = [DirichletBC(V, config["bc_sas"], inlet)]
+    else:
+        V_bcs = []
+    if config["bc_arteries"] != "None":
+        Qa_bcs = [DirichletBC(Qa, config["bc_arteries"], inlet)]
+    else:
+        Qa_bcs = []
+    if config["bc_venes"] != "None":
+        Qv_bcs = [DirichletBC(Qa, config["bc_venes"], inlet)]
+    else:
+        Qv_bcs = []
     W_bcs = [V_bcs, Qa_bcs, Qv_bcs]
 
     AA, _, bc_apply_b = xii.apply_bc(AA, bb, bcs=W_bcs, return_apply_b=True)
