@@ -20,4 +20,3 @@ def compare_models(modela:str, modelb:str, times:List[int]):
 
 if __name__ == "__main__":
     typer.run(compare_models)
-a
