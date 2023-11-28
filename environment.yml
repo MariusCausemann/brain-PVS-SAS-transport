@@ -13,6 +13,7 @@ dependencies:
   - nibabel
   - pip
   - typer
+  - pykdtree
   - bioconda::snakemake
   - pip:
     - pyacvd
