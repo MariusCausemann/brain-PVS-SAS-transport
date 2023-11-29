@@ -12,4 +12,4 @@ pvs_parenchyma_permability : 0 # = C_M * D_f wit C_M = 1e3 as in https://fluidsb
 pvs_csf_permability: 0 # ?
 bc_arteries : 1
 bc_venes : 1
-bc_sas : None
+bc_sas : 1
