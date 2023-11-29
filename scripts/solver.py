@@ -2,6 +2,8 @@ from petsc4py import PETSc
 from dolfin import *
 import xii  
 import pyvista as pv
+import numpy as np
+import ufl
 
 
 def read_vtk_network(filename):
@@ -30,6 +32,28 @@ def read_vtk_network(filename):
 
     return mesh, radii, roots
 
+def volmarker_to_networkmarker(volm, netw, netw_shape, threshold=0.99):
+    V1 = FunctionSpace(netw, "DG", 0)
+    dx = Measure('dx', domain=netw)
+    test = TestFunction(V1)
+    hK = CellVolume(netw)
+    tags = list(np.unique(volm.array()))
+    tagavgs = {}
+    for tag in tags:
+        marker = pcws_constant(volm, {t:(1 if t==tag else 0) for t in tags})
+        form = 1/hK*inner(xii.Average(marker, netw, netw_shape), test)*dx
+        taga = Function(V1)
+        taga.vector().set_local(xii.ii_assemble(form))
+        tagavgs[tag] = taga
+
+    arr = np.vstack([tagavgs[t].vector()[:] for t in tags]).T
+    maxtag = arr.argmax(axis=1)
+    zerotag = arr.sum(axis=1) < threshold
+    marker_arr = np.array(tags)[maxtag]
+    marker_arr[zerotag] = 0
+    netwmarker = MeshFunction("size_t", netw, 1, 0)
+    netwmarker.array()[:] = marker_arr
+    return netwmarker
 
 def pcws_constant(subdomains, values):
     mesh = subdomains.mesh()
