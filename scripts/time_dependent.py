@@ -30,16 +30,20 @@ def run_simulation(configfile: str):
     parenchyma_diffusion = config["parenchyma_diffusion"]
     pvs_parenchyma_permability = config["pvs_parenchyma_permability"]
     pvs_csf_permability = config["pvs_csf_permability"]
+    pvs_ratio_venes = config["pvs_ratio_venes"]
+    pvs_ratio_artery = config["pvs_ratio_artery"]
 
     vein, vein_radii, vein_roots = read_vtk_network("mesh/networks/venes_smooth.vtk")
     vein_radii = as_P0_function(vein_radii)
-    perm_vein  = 2*np.pi*vein_radii 
-    area_vein  = np.pi *(vein_radii**2) 
+    vein_radii.vector()[:] *= pvs_ratio_venes
+    perm_vein  = 2*np.pi*vein_radii
+    area_vein  = np.pi*(vein_radii**2- (vein_radii/pvs_ratio_venes)**2)
     
     artery, artery_radii, artery_roots = read_vtk_network("mesh/networks/arteries_smooth.vtk")
     artery_radii = as_P0_function(artery_radii)
+    artery_radii.vector()[:] *= pvs_ratio_artery
     perm_artery  = 2*np.pi*artery_radii 
-    area_artery  = np.pi *(artery_radii**2)
+    area_artery  = np.pi*(artery_radii**2 - (artery_radii/pvs_ratio_artery)**2)
 
     sas = Mesh()
     with XDMFFile('mesh/volmesh/mesh.xdmf') as f:
@@ -108,9 +112,7 @@ def run_simulation(configfile: str):
     pv_i = interpolate(pv_o, Qv)
     # Things for restriction
     dx_a = Measure('dx', domain=artery)
-    artery_shape = xii.Circle(radius=artery_radii, degree=20,)
     ua, va = (xii.Average(x, artery, artery_shape) for x in (u, v))
-
                                                
     dx_v = Measure('dx', domain=vein)
     uv, vv = (xii.Average(x, vein, vein_shape) for x in (u, v)) 
@@ -118,21 +120,21 @@ def run_simulation(configfile: str):
     a = xii.block_form(W, 2)
 
     a[0][0] = phi*(1/dt)*inner(u,v)*dx + phi*Ds*inner(grad(u), grad(v))*dx \
-            + xi_a*(2*pi*perm_artery)*inner(ua, va)*dx_a \
-            + xi_v*(2*pi*perm_vein)*inner(uv, vv)*dx_v
+            + xi_a*(perm_artery)*inner(ua, va)*dx_a \
+            + xi_v*(perm_vein)*inner(uv, vv)*dx_v
 
-    a[0][1] = -xi_a*(2*pi*perm_artery)*inner(pa, va)*dx_a
-    a[0][2] = -xi_v*(2*pi*perm_vein)*inner(pv, vv)*dx_v
+    a[0][1] = -xi_a*(perm_artery)*inner(pa, va)*dx_a
+    a[0][2] = -xi_v*(perm_vein)*inner(pv, vv)*dx_v
 
-    a[1][0] =-xi_a*(2*pi*perm_artery)*inner(qa, ua)*dx_a
+    a[1][0] =-xi_a*(perm_artery)*inner(qa, ua)*dx_a
     a[1][1] = (1/dt)*area_artery*inner(pa,qa)*dx + Da*area_artery*inner(grad(pa), grad(qa))*dx \
             - area_artery*inner(pa, dot(velocity_a,grad(qa)[0]))*dx  \
-            + xi_a*(2*pi*perm_artery)*inner(pa, qa)*dx
+            + xi_a*(perm_artery)*inner(pa, qa)*dx
 
-    a[2][0] = -xi_v*(2*pi*perm_vein)*inner(qv, uv)*dx_v
+    a[2][0] = -xi_v*(perm_vein)*inner(qv, uv)*dx_v
     a[2][2] = (1/dt)*area_vein*inner(pv,qv)*dx + Dv*area_vein*inner(grad(pv), grad(qv))*dx \
             - area_vein*inner(pv, dot(velocity_v,grad(qv)[0]))*dx \
-            + xi_v*(2*pi*perm_vein)*inner(pv, qv)*dx 
+            + xi_v*(perm_vein)*inner(pv, qv)*dx 
 
     L = xii.block_form(W, 1)
     L[0]  = phi*(1/dt)*inner(u_i,v)*dx 
