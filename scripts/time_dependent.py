@@ -78,8 +78,6 @@ def run_simulation(configfile: str):
     Ds = pcws_constant(vol_subdomains, {1: Constant(sas_diffusion),  # csf
                                         2: Constant(parenchyma_diffusion) # parenchyma
                                         })
-    phi_a = pcws_constant(artmarker, phi_dict)
-    phi_v = pcws_constant(veinmarker, phi_dict)
     xi_a = pcws_constant(artmarker, xi_dict)
     xi_v = pcws_constant(veinmarker, xi_dict)
 
@@ -120,18 +118,18 @@ def run_simulation(configfile: str):
     a = xii.block_form(W, 2)
 
     a[0][0] = phi*(1/dt)*inner(u,v)*dx + phi*Ds*inner(grad(u), grad(v))*dx \
-            + phi_a*xi_a*(2*pi*perm_artery)*inner(ua, va)*dx_a \
-            + phi_v*xi_v*(2*pi*perm_vein)*inner(uv, vv)*dx_v
+            + xi_a*(2*pi*perm_artery)*inner(ua, va)*dx_a \
+            + xi_v*(2*pi*perm_vein)*inner(uv, vv)*dx_v
 
-    a[0][1] = -phi_a*xi_a*(2*pi*perm_artery)*inner(pa, va)*dx_a
-    a[0][2] = -phi_v*xi_v*(2*pi*perm_vein)*inner(pv, vv)*dx_v
+    a[0][1] = -xi_a*(2*pi*perm_artery)*inner(pa, va)*dx_a
+    a[0][2] = -xi_v*(2*pi*perm_vein)*inner(pv, vv)*dx_v
 
-    a[1][0] =-phi_a*xi_a*(2*pi*perm_artery)*inner(qa, ua)*dx_a
+    a[1][0] =-xi_a*(2*pi*perm_artery)*inner(qa, ua)*dx_a
     a[1][1] = (1/dt)*area_artery*inner(pa,qa)*dx + Da*area_artery*inner(grad(pa), grad(qa))*dx \
             - area_artery*inner(pa, dot(velocity_a,grad(qa)[0]))*dx  \
             + xi_a*(2*pi*perm_artery)*inner(pa, qa)*dx
 
-    a[2][0] = -phi_v*xi_v*(2*pi*perm_vein)*inner(qv, uv)*dx_v
+    a[2][0] = -xi_v*(2*pi*perm_vein)*inner(qv, uv)*dx_v
     a[2][2] = (1/dt)*area_vein*inner(pv,qv)*dx + Dv*area_vein*inner(grad(pv), grad(qv))*dx \
             - area_vein*inner(pv, dot(velocity_v,grad(qv)[0]))*dx \
             + xi_v*(2*pi*perm_vein)*inner(pv, qv)*dx 
@@ -154,7 +152,7 @@ def run_simulation(configfile: str):
     else:
         Qa_bcs = []
     if config["bc_venes"] != "None":
-        Qv_bcs = [DirichletBC(Qa, config["bc_venes"], inlet)]
+        Qv_bcs = [DirichletBC(Qv, config["bc_venes"], inlet)]
     else:
         Qv_bcs = []
     W_bcs = [V_bcs, Qa_bcs, Qv_bcs]
@@ -183,6 +181,9 @@ def run_simulation(configfile: str):
     u_i.rename("c_sas", "time")
     pa_i.rename("c_artery", "time")
     pv_i.rename("c_vein", "time")
+    xi_a.rename("xi", "time")
+    xi_v.rename("xi", "time")
+
 
     results_dir = f"results/{modelname}/"
     os.makedirs(results_dir, exist_ok=True)
@@ -193,13 +194,14 @@ def run_simulation(configfile: str):
 
     write((u_i, pa_i, pv_i), files, 0.0)
     write((vol_subdomains, artmarker, veinmarker), files, 0.0)
+    write((xi_a, xi_v), (pvdarteries, pvdvenes), 0.0)
+
     wh = xii.ii_Function(W)
     x_ = A_.createVecLeft()
     while t < T: 
         print("time", t)
         bb = xii.ii_assemble(L)
         b = bc_apply_b(bb)
-
         b_ = ksp_vec(xii.ii_convert(b))
         ksp.solve(b_, x_)
         # NOTE: solve(b_, ksp_vec(wh.vector())) segfault most likely because
