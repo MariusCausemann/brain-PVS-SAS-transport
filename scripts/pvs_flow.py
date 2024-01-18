@@ -43,8 +43,8 @@ def pvs_flow_system(radius_f, tau, radius_ratio, f=Constant(0), g=Constant(0)):
 if __name__ == '__main__':
     from xii import TangentCurve
 
-    radius_ratio = 1.2
-    mesh ,artery_radii, artery_roots = read_vtk_network("../mesh/networks/arteries_smooth.vtk")
+    radius_ratio = 2
+    mesh ,artery_radii, artery_roots = read_vtk_network("mesh/networks/arteries_smooth.vtk")
     radius_f = as_P0_function(artery_radii)
     
     # Grab the tangent of xii; bottom line is that this is vector valued
@@ -54,7 +54,6 @@ if __name__ == '__main__':
 
     a, L, W = pvs_flow_system(radius_f, tau, radius_ratio, f=Constant(1e-3))
 
-    # For the bcs just make something z dependent here for illustration
     bc_in = DirichletBC(W.sub(1), 0, artery_roots, 2)
 
     A, b = assemble_system(a, L, [bc_in])
@@ -73,5 +72,5 @@ if __name__ == '__main__':
     ph.rename("p","")
     uh.rename("u", "")
     os.makedirs("../results/pvs_flow", exist_ok=True)
-    File('../results/pvs_flow/flux.pvd') << uh
-    File('../results/pvs_flow/pressure.pvd') << ph
+    File('results/pvs_flow/flux.pvd') << uh
+    File('results/pvs_flow/pressure.pvd') << ph

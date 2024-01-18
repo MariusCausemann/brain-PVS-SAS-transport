@@ -6,9 +6,16 @@ import numpy as np
 import ufl
 
 
+def remove_duplicate_cells(netw):
+    cells = np.array(netw.cells.reshape(-1, 3))[:,1:]
+    cells.sort(axis=1)
+    unique_cells = np.unique(cells, axis=0)
+    netw.cells = np.pad(unique_cells, pad_width=((0,0), (1,0)), constant_values=2)
+
 def read_vtk_network(filename):
 
     netw = pv.read(filename)
+    remove_duplicate_cells(netw)
     mesh = Mesh()
     ed = MeshEditor()
     ed.open(mesh, 'interval', 1, 3)
