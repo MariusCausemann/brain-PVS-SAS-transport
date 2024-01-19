@@ -1,10 +1,11 @@
-models = ["modelA", "modelB", "modelC", "modelD"]
+models = ["modelA", "modelB"]#, "modelC", "modelD"]
 times = [60*60*1, 60*60*6, 60*60*12, 60*60*18, 60*60*24] # secs
 
 rule all:
     input:
         "plots/comparisons/modelA_modelB/modelA_modelB.png",
-        "plots/comparisons/modelA_modelD/modelA_modelD.png",
+        "plots/comparisons/modelA_modelC/modelA_modelC.png",
+        #"plots/comparisons/modelA_modelD/modelA_modelD.png",
         expand("plots/{modelname}/{modelname}_tracer_vessel_dist.png", modelname=models)
 
 rule runSimuation:
@@ -13,6 +14,7 @@ rule runSimuation:
         volmesh="mesh/volmesh/mesh.xdmf",
         artmesh="mesh/networks/arteries_smooth.vtk",
         venmesh="mesh/networks/venes_smooth.vtk",
+        flowfield="results/pvs_flow/pvs_flow.xdmf",
         config="configfiles/{modelname}.yml"
     output:
         sas="results/{modelname}/{modelname}_sas.pvd",
@@ -20,6 +22,15 @@ rule runSimuation:
         ven="results/{modelname}/{modelname}_venes.pvd",
     shell:
         "python scripts/time_dependent.py {input.config}"
+
+rule computeFlowField:
+    conda:"environment.yml"
+    input:
+        artmesh="mesh/networks/arteries_smooth.vtk",
+    output:
+        flowfield="results/pvs_flow/pvs_flow.xdmf",
+    shell:
+        "python scripts/pvs_flow.py"
 
 rule generatePlot:
     conda:"environment.yml"
