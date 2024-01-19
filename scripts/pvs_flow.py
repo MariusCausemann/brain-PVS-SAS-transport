@@ -52,7 +52,7 @@ if __name__ == '__main__':
     # is arbitrary as long same tau is used throught the code
     tau = TangentCurve(mesh)
 
-    a, L, W = pvs_flow_system(radius_f, tau, radius_ratio, f=Constant(1e-3))
+    a, L, W = pvs_flow_system(radius_f, tau, radius_ratio, f=Constant(-1e-6))
 
     bc_in = DirichletBC(W.sub(1), 0, artery_roots, 2)
 
@@ -69,8 +69,9 @@ if __name__ == '__main__':
     hK = CellDiameter(mesh)
     assemble((1/hK)*inner(uh_mag*tau, qq)*dx, uh.vector())
     
-    ph.rename("p","")
-    uh.rename("u", "")
+    ph.rename("p","p")
+    uh.rename("u", "u")
     os.makedirs("../results/pvs_flow", exist_ok=True)
-    File('results/pvs_flow/flux.pvd') << uh
-    File('results/pvs_flow/pressure.pvd') << ph
+    with XDMFFile('results/pvs_flow/pvs_flow.xdmf') as xdmf:
+        xdmf.write_checkpoint(uh, "velocity")
+    File("results/pvs_flow/pvs_flow.pvd") << uh
