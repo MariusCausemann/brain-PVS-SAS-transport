@@ -13,7 +13,7 @@ def plot_model(modelname: str, t:int):
     ven = get_result(modelname, "venes", t)
     filename = f"{plotdir}/{modelname}_{t}.png"
     title = f"time: {time_str(t)} h"
-    clip_plot(sas, [art, ven], filename, title, clim=(0, 1), cmap="matter",
+    clip_plot(sas, [art, ven], filename, title, clim=(0, 6), cmap="matter",
               cbar_title="concentration")
 
 if __name__ == "__main__":

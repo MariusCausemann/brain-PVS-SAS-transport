@@ -17,6 +17,9 @@ def run_simulation(configfile: str):
     config = read_config(configfile)
     modelname = Path(configfile).stem
 
+    results_dir = f"results/{modelname}/"
+    os.makedirs(results_dir, exist_ok=True)
+
     dt = config["dt"]
     T = config["T"]
 
@@ -48,7 +51,8 @@ def run_simulation(configfile: str):
     sas = Mesh()
     with XDMFFile('mesh/volmesh/mesh.xdmf') as f:
         f.read(sas)
-        vol_subdomains = MeshFunction('size_t', sas, 3, 0)
+        gdim = sas.geometric_dimension()
+        vol_subdomains = MeshFunction('size_t', sas, gdim, 0)
         f.read(vol_subdomains, 'label')
 
     assert np.allclose(np.unique(vol_subdomains.array()), [1,2])
@@ -66,6 +70,7 @@ def run_simulation(configfile: str):
     artmarker.rename("marker", "time")
     veinmarker.rename("marker", "time")
     vol_subdomains.rename("marker", "time")
+    inlet_id = 2
     inlet = CompiledSubDomain("on_boundary && " + 
                             "+ (x[0] - m0)*(x[0] - m0) " + 
                             "+ (x[1] - m1)*(x[1] - m1) " + 
@@ -74,7 +79,8 @@ def run_simulation(configfile: str):
                             m2=inlet_midpoint[2], r=inlet_radius)
     
     bm = MeshFunction("size_t", sas, 2, 0)
-    inlet.mark(bm, 1)
+    inlet.mark(bm, inlet_id)
+
     xi_dict = {0:Constant(0), 1: Constant(pvs_csf_permability), 
                2: Constant(pvs_parenchyma_permability)}
     phi_dict = {1: Constant(1),  2: Constant(ecs_share)}
@@ -88,8 +94,17 @@ def run_simulation(configfile: str):
     Da = Constant(arterial_pvs_diffusion) 
     Dv = Constant(venous_pvs_diffusion)
 
-    velocity_a = Constant(0.0)
-    velocity_v = Constant(0.0)
+    if "arterial_velocity_file" in config.keys():
+        vel_file = config["arterial_velocity_file"]
+
+        with XDMFFile(vel_file) as file:
+            DG = VectorFunctionSpace(artery, "DG", 0)
+            velocity_a = Function(DG)
+            file.read_checkpoint(velocity_a, "velocity")
+        File(results_dir + f'{modelname}_flux.pvd') << velocity_a
+    else:
+        velocity_a = Constant([0]*gdim)
+    velocity_v = Constant([0]*gdim)
 
     fa = Constant(0.0) 
     fv = Constant(0.0)
@@ -128,12 +143,12 @@ def run_simulation(configfile: str):
 
     a[1][0] =-xi_a*(perm_artery)*inner(qa, ua)*dx_a
     a[1][1] = (1/dt)*area_artery*inner(pa,qa)*dx + Da*area_artery*inner(grad(pa), grad(qa))*dx \
-            - area_artery*inner(pa, dot(velocity_a,grad(qa)[0]))*dx  \
+            - area_artery*inner(pa, dot(velocity_a,grad(qa)))*dx  \
             + xi_a*(perm_artery)*inner(pa, qa)*dx
 
     a[2][0] = -xi_v*(perm_vein)*inner(qv, uv)*dx_v
     a[2][2] = (1/dt)*area_vein*inner(pv,qv)*dx + Dv*area_vein*inner(grad(pv), grad(qv))*dx \
-            - area_vein*inner(pv, dot(velocity_v,grad(qv)[0]))*dx \
+            - area_vein*inner(pv, dot(velocity_v,grad(qv)))*dx \
             + xi_v*(perm_vein)*inner(pv, qv)*dx 
 
     L = xii.block_form(W, 1)
@@ -142,38 +157,51 @@ def run_simulation(configfile: str):
     L[1]  = (1/dt)*area_artery*inner(pa_i, qa)*dx + area_artery*inner(fa,qa)*dx
     L[2]  = (1/dt)*area_vein*inner(pv_i, qv)*dx + area_vein*inner(fv,qv)*dx
 
+    #from IPython import embed; embed()
+    W_bcs = [[], [], []]
+    expressions = []
+    ds = Measure("ds", sas, subdomain_data=bm)
+    ds_a = Measure("ds", artery, subdomain_data=artery_roots)
+    ds_v = Measure("ds", vein, subdomain_data=vein_roots)
+    ds_i = [ds, ds_a, ds_v]
+    dbcflag = False
+    for i, dom in enumerate(["sas", "arteries", "venes"]):
+        try:
+            bc_conf = config["boundary_conditions"][dom]
+        except KeyError:
+            print(f"{dom} inlet boundary not configured, continuing...")
+            continue
+        expr_params = bc_conf.get("params", {})
+        area = assemble(1*ds_i[i](inlet_id))
+        expr = Expression(bc_conf["expr"], t=0, A=area, **expr_params, degree=1)
+        expressions.append(expr)
+        if bc_conf["type"] == "Dirichlet":
+            W_bcs[i].append(DirichletBC(W[i], expr, inlet))
+            dbcflag = True
+        if bc_conf["type"] == "Neumann":
+            v = TestFunction(W[i])
+            L[i] += expr*v*ds_i[i](inlet_id)
 
     AA, bb = map(xii.ii_assemble, (a, L))
-
-    if config["bc_sas"] != "None":
-        V_bcs  = [DirichletBC(V, config["bc_sas"], inlet)]
-    else:
-        V_bcs = []
-    if config["bc_arteries"] != "None":
-        Qa_bcs = [DirichletBC(Qa, config["bc_arteries"], inlet)]
-    else:
-        Qa_bcs = []
-    if config["bc_venes"] != "None":
-        Qv_bcs = [DirichletBC(Qv, config["bc_venes"], inlet)]
-    else:
-        Qv_bcs = []
-    W_bcs = [V_bcs, Qa_bcs, Qv_bcs]
-
-    AA, _, bc_apply_b = xii.apply_bc(AA, bb, bcs=W_bcs, return_apply_b=True)
+    if dbcflag:
+        AA, _, bc_apply_b = xii.apply_bc(AA, bb, bcs=W_bcs, return_apply_b=True)
 
     A_ = ksp_mat(xii.ii_convert(AA))
 
     opts = PETSc.Options() 
-    opts.setValue('ksp_type', 'cg')    
+    opts.setValue('ksp_type', 'preonly')    
     #opts.setValue('ksp_view', None)
     #opts.setValue('ksp_view_eigenvalues', None)
     #opts.setValue('ksp_converged_reason', None)
     #opts.setValue('ksp_norm_type', 'unpreconditioned')
     #opts.setValue('ksp_monitor_true_residual', None)
     #opts.setValue('ksp_rtol', 1E-40)
-    opts.setValue('ksp_atol', 1E-12)   # |AX-b| < 1E-
-    opts.setValue('pc_type', 'hypre')
-    opts.setValue('ksp_initial_guess_nonzero', 1)
+    #opts.setValue('ksp_atol', 1E-12)   # |AX-b| < 1E-
+    opts.setValue('pc_type', 'lu')
+    opts.setValue("pc_factor_mat_solver_type", "mumps")
+    opts.setValue("mat_mumps_icntl_4", "3")
+
+    #opts.setValue('ksp_initial_guess_nonzero', 1)
 
     ksp = PETSc.KSP().create()
     ksp.setOperators(A_, A_)
@@ -186,9 +214,6 @@ def run_simulation(configfile: str):
     xi_a.rename("xi", "time")
     xi_v.rename("xi", "time")
 
-
-    results_dir = f"results/{modelname}/"
-    os.makedirs(results_dir, exist_ok=True)
     pvdsas = File(results_dir + f'{modelname}_sas.pvd') 
     pvdarteries = File(results_dir + f'{modelname}_arteries.pvd') 
     pvdvenes = File(results_dir + f'{modelname}_venes.pvd') 
@@ -200,11 +225,17 @@ def run_simulation(configfile: str):
 
     wh = xii.ii_Function(W)
     x_ = A_.createVecLeft()
+    i = 0
     while t < T: 
+        i += 1
+        t += dt 
+        for expr in expressions:
+            expr.t = t
         print("time", t)
         bb = xii.ii_assemble(L)
-        b = bc_apply_b(bb)
-        b_ = ksp_vec(xii.ii_convert(b))
+        if dbcflag:
+            bb = bc_apply_b(bb)
+        b_ = ksp_vec(xii.ii_convert(bb))
         ksp.solve(b_, x_)
         # NOTE: solve(b_, ksp_vec(wh.vector())) segfault most likely because
         # of type incompatibility seq is expected and we have nest
@@ -213,11 +244,19 @@ def run_simulation(configfile: str):
         pa_i.assign(wh[1]) 
         pv_i.assign(wh[2])
 
-        t += dt 
+        csas_total = assemble(u_i*dx)
+        cart_total = assemble(pa_i*area_artery*dx_a)
+        cven_total = assemble(pv_i*area_vein*dx_v)
+        print(f"total sas: {csas_total}")
+        print(f"total art: {cart_total}")
+        print(f"total ven: {cven_total}")
+        print(f"total: {csas_total + cart_total + cven_total}")
+
         wh[0].rename("c_sas", "time")
         wh[1].rename("c_artery", "time")
         wh[2].rename("c_vein", "time")
-        write(wh, files, float(t))
+        if i%20 == 0:
+            write(wh, files, float(t))
 
 
 if __name__ == "__main__":
