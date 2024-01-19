@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from plotting_utils import time_str, set_plotting_defaults
 import typer
+import seaborn as sns
 
 
 def plot_concentration_distance(c_time_series, isodists, filename):
@@ -15,6 +16,21 @@ def plot_concentration_distance(c_time_series, isodists, filename):
         plt.plot(isodists, c, label=f"{time_str(t)} h", marker="o")
     plt.legend()
     plt.xlabel("vessel distance (m)")
+    plt.ylabel("concentration")
+    plt.legend(loc="upper right")
+    plt.tight_layout()
+    plt.savefig(filename)
+
+def plot_mean_concentrations(mean_sas, mean_art, mean_ven, times, filename):
+    set_plotting_defaults()
+    sns.set_palette("Set2")
+    plt.figure()
+    plt.plot(times, mean_sas, label=f"c sas", marker="o")
+    plt.plot(times, mean_art, label=f"c arteries", marker="o")
+    plt.plot(times, mean_ven, label=f"c venes", marker="o")
+
+    plt.legend()
+    plt.xlabel("time (s)")
     plt.ylabel("concentration")
     plt.legend(loc="upper right")
     plt.tight_layout()
@@ -36,9 +52,16 @@ def analyze_tracer_dist(modelname: str):
     c_time_series = {}
     for t in times:
         c_time_series[t] = [isos[f"c_sas_{t}"].mean() for isos in isosurfs]
-    
     filename = f"plots/{modelname}/{modelname}_tracer_vessel_dist.png"
     plot_concentration_distance(c_time_series, isodists, filename)
+
+    mean_sas = [sas[f"c_sas_{t}"].mean() for t in times]
+    art = get_result(modelname, "arteries", times)
+    ven = get_result(modelname, "venes", times)
+    mean_art = [art[f"c_artery_{t}"].mean() for t in times]
+    mean_ven = [ven[f"c_vein_{t}"].mean() for t in times]
+    filename = f"plots/{modelname}/{modelname}_mean_tracer_conc.png"
+    plot_mean_concentrations(mean_sas, mean_art, mean_ven, times, filename)
 
 if __name__ == "__main__":
     typer.run(analyze_tracer_dist)
