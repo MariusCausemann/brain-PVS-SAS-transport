@@ -102,6 +102,7 @@ def run_simulation(configfile: str):
             velocity_a = Function(DG)
             file.read_checkpoint(velocity_a, "velocity")
         File(results_dir + f'{modelname}_flux.pvd') << velocity_a
+        #velocity_a /= sqrt(inner(velocity_a, velocity_a)) 
     else:
         velocity_a = Constant([0]*gdim)
     velocity_v = Constant([0]*gdim)
@@ -157,7 +158,6 @@ def run_simulation(configfile: str):
     L[1]  = (1/dt)*area_artery*inner(pa_i, qa)*dx + area_artery*inner(fa,qa)*dx
     L[2]  = (1/dt)*area_vein*inner(pv_i, qv)*dx + area_vein*inner(fv,qv)*dx
 
-    #from IPython import embed; embed()
     W_bcs = [[], [], []]
     expressions = []
     ds = Measure("ds", sas, subdomain_data=bm)
@@ -176,7 +176,7 @@ def run_simulation(configfile: str):
         expr = Expression(bc_conf["expr"], t=0, A=area, **expr_params, degree=1)
         expressions.append(expr)
         if bc_conf["type"] == "Dirichlet":
-            W_bcs[i].append(DirichletBC(W[i], expr, inlet))
+            W_bcs[i].append(DirichletBC(W[i], expr, ds_i[i].subdomain_data(), inlet_id))
             dbcflag = True
         if bc_conf["type"] == "Neumann":
             v = TestFunction(W[i])
@@ -255,7 +255,7 @@ def run_simulation(configfile: str):
         wh[0].rename("c_sas", "time")
         wh[1].rename("c_artery", "time")
         wh[2].rename("c_vein", "time")
-        if i%20 == 0:
+        if i%config["output_frequency"] == 0:
             write(wh, files, float(t))
 
 
