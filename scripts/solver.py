@@ -15,6 +15,7 @@ def remove_duplicate_cells(netw):
 def read_vtk_network(filename):
 
     netw = pv.read(filename)
+    netw.points *= 1e-3 # scale to m
     remove_duplicate_cells(netw)
     mesh = Mesh()
     ed = MeshEditor()
@@ -35,7 +36,7 @@ def read_vtk_network(filename):
 
     roots.array()[:] = netw["root"]
     netw = netw.point_data_to_cell_data()
-    radii.array()[:] = netw["radius"]
+    radii.array()[:] = netw["radius"] * 1e-3 # scale to m
 
     return mesh, radii, roots
 
