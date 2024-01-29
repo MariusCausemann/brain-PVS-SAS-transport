@@ -30,6 +30,9 @@ share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+*.pvd
+*.vtu
+
 MANIFEST
 
 # PyInstaller
