@@ -43,7 +43,7 @@ def pvs_flow_system(radius_f, tau, radius_ratio, f=Constant(0), g=Constant(0)):
 if __name__ == '__main__':
     from xii import TangentCurve
 
-    radius_ratio = 2
+    radius_ratio = 1.4
     mesh ,artery_radii, artery_roots = read_vtk_network("mesh/networks/arteries_smooth.vtk")
     radius_f = as_P0_function(artery_radii)
     
@@ -69,6 +69,8 @@ if __name__ == '__main__':
     hK = CellDiameter(mesh)
     assemble((1/hK)*inner(uh_mag*tau, qq)*dx, uh.vector())
     
+
+
     ph.rename("p","p")
     uh.rename("u", "u")
     os.makedirs("../results/pvs_flow", exist_ok=True)
