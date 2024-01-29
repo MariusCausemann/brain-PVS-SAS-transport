@@ -1,6 +1,7 @@
 from dolfin import *
 from solver import read_vtk_network, as_P0_function
 import os
+import numpy as np
 
 def pvs_flow_system(radius_f, tau, radius_ratio, f=Constant(0), g=Constant(0)):
     '''The bilinear form corresponding to Darcy on the graph'''
@@ -19,8 +20,13 @@ def pvs_flow_system(radius_f, tau, radius_ratio, f=Constant(0), g=Constant(0)):
 
     r1 = radius_f
     r2 = r1*radius_ratio
+    mu = Constant(0.697e-3) # dynamic visosity of water
+    A_PVS = np.pi * (r2**2 - r1**2)
     # https://www.frontiersin.org/articles/10.3389/fphy.2022.882260/full, eq. 23
-    K = 0.125 * (r2*r2 + r1*r1 - (r2*r2 - r1*r1)/ ln(r2/r1))  
+    # https://www.biorxiv.org/content/10.1101/2021.09.23.461519v2.full.pdf, e.q 8- 10
+    kappa = 0.125 * (r2*r2 + r1*r1 - (r2*r2 - r1*r1)/ ln(r2/r1))  
+
+    K = kappa*A_PVS / mu
 
     # This is stationary for simplicity, we would get evolution in time
     # by solving this with time dep boundary conditions. Later we might
@@ -37,8 +43,6 @@ def pvs_flow_system(radius_f, tau, radius_ratio, f=Constant(0), g=Constant(0)):
     L = -inner(f, q)*dx  + inner(g, q)*ds
 
     return a, L, W
-    
-
 
 def pvs_flow_system_t(radius_f, tau, radius_ratio, pprev, dt, f=Constant(0), g=Constant(0)):
     '''The bilinear form corresponding to Darcy on the graph'''
@@ -58,12 +62,13 @@ def pvs_flow_system_t(radius_f, tau, radius_ratio, pprev, dt, f=Constant(0), g=C
     r1 = radius_f
     r2 = r1*radius_ratio
     # https://www.frontiersin.org/articles/10.3389/fphy.2022.882260/full, eq. 23
-    #K = 0.0125 * (r2*r2 + r1*r1 - (r2*r2 - r1*r1)/ ln(r2/r1))  
-    K = 1 
-    # This is stationary for simplicity, we would get evolution in time
-    # by solving this with time dep boundary conditions. Later we might
-    # want to add modifications based on time dependent momentum eq
-    # and include viscuss term on the rhs?
+    mu = Constant(0.697e-3) # dynamic visosity of water
+    A_PVS = np.pi * (r2**2 - r1**2)
+    # https://www.frontiersin.org/articles/10.3389/fphy.2022.882260/full, eq. 23
+    # https://www.biorxiv.org/content/10.1101/2021.09.23.461519v2.full.pdf, e.q 8- 10
+    kappa = 0.125 * (r2*r2 + r1*r1 - (r2*r2 - r1*r1)/ ln(r2/r1))  
+
+    K = kappa*A_PVS / mu
     
     # u = -K*grad(p)
     # -div(u) = -f
@@ -89,7 +94,7 @@ if __name__ == '__main__':
     # is arbitrary as long same tau is used throught the code
     tau = TangentCurve(mesh)
 
-    a, L, W = pvs_flow_system(radius_f, tau, radius_ratio, f=Constant(-1e-6))
+    a, L, W = pvs_flow_system(radius_f, tau, radius_ratio, f=Constant(-1e-3))
 
     bc_in = DirichletBC(W.sub(1), 0, artery_roots, 2)
 
