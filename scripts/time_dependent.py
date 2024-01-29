@@ -54,13 +54,10 @@ def run_simulation(configfile: str):
         gdim = sas.geometric_dimension()
         vol_subdomains = MeshFunction('size_t', sas, gdim, 0)
         f.read(vol_subdomains, 'label')
+        sas.scale(1e-3)  # scale from mm to m
+
 
     assert np.allclose(np.unique(vol_subdomains.array()), [1,2])
-
-    # scale from mm to m
-    [m.scale(1e-3) for m in [sas, vein, artery]]
-    vein_radii.vector()[:] *= 1e-3
-    artery_radii.vector()[:] *= 1e-3
 
 
     artery_shape = xii.Circle(radius=artery_radii, degree=20,)
