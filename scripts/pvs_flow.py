@@ -82,4 +82,27 @@ if __name__ == '__main__':
     os.makedirs("../results/pvs_flow", exist_ok=True)
     with XDMFFile('results/pvs_flow/pvs_flow.xdmf') as xdmf:
         xdmf.write_checkpoint(uh, "velocity")
-    File("results/pvs_flow/pvs_flow.pvd") << uh
+    with XDMFFile('results/pvs_flow/pvs_flow_vis.xdmf') as xdmf:
+        xdmf.write(uh)
+
+    import pyvista as pv
+    import matplotlib.pyplot as plt
+    from plotting_utils import set_plotting_defaults
+    from IPython import embed; embed()
+    grid = pv.read("results/pvs_flow/pvs_flow_vis.xdmf").compute_cell_sizes()
+    grid = grid.point_data_to_cell_data()
+    grid["umag"] = np.linalg.norm(grid["u"], axis=1) * 1e3
+    uavg = np.average(grid["umag"], weights=grid["Length"])
+    umax = grid['umag'].max()
+    
+    plt.figure()
+    set_plotting_defaults()
+    plt.hist(grid["umag"], weights=grid["Length"], density=True, bins=50,
+             range=(0, 1))
+    plt.axvline(uavg, color="red")
+    plt.xlabel("PVS flow velocity (mm/s)")
+    plt.ylabel("relative frequency")
+    plt.tight_layout()
+    plt.text(0.5, 10, f"max: {umax:.2f} mm/s")
+    plt.text(0.5, 8, f"avg: {uavg:.2f} mm/s")
+    plt.savefig("results/pvs_flow/velocity_histo.png")
