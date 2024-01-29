@@ -1,6 +1,7 @@
-description : "artery inflow with flow"
+description : "artery inflow with PVS flow"
 dt : 30
 T : 86400 # 1 day in seconds
+output_frequency : 20
 inlet_midpoint : [0.17, 0.21, 0.1]
 inlet_radius : 0.040
 ecs_share : 0.2
