@@ -58,7 +58,7 @@ if __name__ == '__main__':
     # is arbitrary as long same tau is used throught the code
     tau = TangentCurve(mesh)
 
-    a, L, W = pvs_flow_system(radius_f, tau, radius_ratio, f=Constant(-1e-3))
+    a, L, W = pvs_flow_system(radius_f, tau, radius_ratio, f=Constant(-1e-3 * 0.19 / 0.7))
 
     bc_in = DirichletBC(W.sub(1), 0, artery_roots, 2)
 
@@ -95,16 +95,18 @@ if __name__ == '__main__':
     uavg = np.average(grid["umag"], weights=grid["Length"])
     umax = grid['umag'].max()
     umed = np.median(grid["umag"])
-    plt.figure()
     set_plotting_defaults()
+
+    fig, ax = plt.subplots()
     plt.hist(grid["umag"], weights=grid["Length"], density=True, bins=50,
-             range=(0, 1))
+             range=(0, 0.1)
+             )
     plt.axvline(uavg, color="red")
     plt.axvline(umed, color="cyan")
     plt.xlabel("PVS flow velocity (mm/s)")
     plt.ylabel("relative frequency")
     plt.tight_layout()
-    plt.text(0.5, 6, f"max: {umax:.2f} mm/s")
-    plt.text(0.5, 8, f"avg: {uavg:.2f} mm/s")
-    plt.text(0.5, 10, f"median: {umed:.2f} mm/s")
+    plt.text(0.5, 0.5, f"max: {umax:.3f} mm/s", transform=ax.transAxes)
+    plt.text(0.5, 0.6, f"avg: {uavg:.3f} mm/s", transform=ax.transAxes)
+    plt.text(0.5, 0.7, f"median: {umed:.3f} mm/s",transform=ax.transAxes )
     plt.savefig("results/pvs_flow/velocity_histo.png")
