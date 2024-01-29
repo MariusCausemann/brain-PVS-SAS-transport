@@ -104,6 +104,7 @@ if __name__ == '__main__':
     plt.xlabel("PVS flow velocity (mm/s)")
     plt.ylabel("relative frequency")
     plt.tight_layout()
-    plt.text(0.5, 10, f"max: {umax:.2f} mm/s")
+    plt.text(0.5, 6, f"max: {umax:.2f} mm/s")
     plt.text(0.5, 8, f"avg: {uavg:.2f} mm/s")
+    plt.text(0.5, 10, f"median: {umed:.2f} mm/s")
     plt.savefig("results/pvs_flow/velocity_histo.png")
