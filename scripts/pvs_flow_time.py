@@ -33,10 +33,10 @@ def pvs_flow_system(radius_f, tau, radius_ratio, f=Constant(0), g=Constant(0)):
     # want to add modifications based on time dependent momentum eq
     # and include viscuss term on the rhs?
     
-    # u = -K*grad(p)
-    # -div(u) = -f
-    a = (inner((1/K)*u, v)*dx + inner(v, dot(grad(p), tau))*dx
-         + inner(u, dot(grad(q), tau))*dx)
+    # A_pvs*u = -K*grad(p) where u is the cross-sectional averaged velocity
+    # -div(A_pvs*u) = -f
+    a = (inner((1/K)*A_PVS*u, v)*dx + inner(v, dot(grad(p), tau))*dx
+         + inner(A_PVS*u, dot(grad(q), tau))*dx)
 
     # NOTE: Flux bcs are part of weak form (g here represent -u.tau), pressure
     # bcs are set strongly
