@@ -35,12 +35,14 @@ def pvs_flow_system(radius_f, tau, radius_ratio, f=Constant(0), g=Constant(0)):
     
     # u = -K*grad(p)
     # -div(u) = -f
-    a = (inner((1/K)*u, v)*dx + inner(v, dot(grad(p), tau))*dx
-         + inner(u, dot(grad(q), tau))*dx)
+    # -div(A_pvs*u) = -f
+    a = (inner((1/K)*A_PVS*u, v)*dx + inner(v, dot(grad(p), tau))*dx
+         + inner(A_PVS*u, dot(grad(q), tau))*dx)
 
     # NOTE: Flux bcs are part of weak form (g here represent -u.tau), pressure
     # bcs are set strongly
     L = -inner(f, q)*dx  + inner(g, q)*ds
+
 
     return a, L, W
     
@@ -85,28 +87,28 @@ if __name__ == '__main__':
     with XDMFFile('results/pvs_flow/pvs_flow_vis.xdmf') as xdmf:
         xdmf.write(uh)
 
-    import pyvista as pv
-    import matplotlib.pyplot as plt
-    from plotting_utils import set_plotting_defaults
+   #import pyvista as pv
+    #import matplotlib.pyplot as plt
+    #from plotting_utils import set_plotting_defaults
 
-    grid = pv.read("results/pvs_flow/pvs_flow_vis.xdmf").compute_cell_sizes()
-    grid = grid.point_data_to_cell_data()
-    grid["umag"] = np.linalg.norm(grid["u"], axis=1) * 1e3
-    uavg = np.average(grid["umag"], weights=grid["Length"])
-    umax = grid['umag'].max()
-    umed = np.median(grid["umag"])
-    set_plotting_defaults()
+    #grid = pv.read("results/pvs_flow/pvs_flow_vis.xdmf").compute_cell_sizes()
+    #grid = grid.point_data_to_cell_data()
+    #grid["umag"] = np.linalg.norm(grid["u"], axis=1) * 1e3
+    #uavg = np.average(grid["umag"], weights=grid["Length"])
+    #umax = grid['umag'].max()
+    #umed = np.median(grid["umag"])
+    #set_plotting_defaults()
 
-    fig, ax = plt.subplots()
-    plt.hist(grid["umag"], weights=grid["Length"], density=True, bins=50,
-             range=(0, 0.1)
-             )
-    plt.axvline(uavg, color="red")
-    plt.axvline(umed, color="cyan")
-    plt.xlabel("PVS flow velocity (mm/s)")
-    plt.ylabel("relative frequency")
-    plt.tight_layout()
-    plt.text(0.5, 0.5, f"max: {umax:.3f} mm/s", transform=ax.transAxes)
-    plt.text(0.5, 0.6, f"avg: {uavg:.3f} mm/s", transform=ax.transAxes)
-    plt.text(0.5, 0.7, f"median: {umed:.3f} mm/s",transform=ax.transAxes )
-    plt.savefig("results/pvs_flow/velocity_histo.png")
+    #fig, ax = plt.subplots()
+    #plt.hist(grid["umag"], weights=grid["Length"], density=True, bins=50,
+    #         range=(0, 0.1)
+    #         )
+    #plt.axvline(uavg, color="red")
+    #plt.axvline(umed, color="cyan")
+    #plt.xlabel("PVS flow velocity (mm/s)")
+    #plt.ylabel("relative frequency")
+    #plt.tight_layout()
+    #plt.text(0.5, 0.5, f"max: {umax:.3f} mm/s", transform=ax.transAxes)
+    #plt.text(0.5, 0.6, f"avg: {uavg:.3f} mm/s", transform=ax.transAxes)
+    #plt.text(0.5, 0.7, f"median: {umed:.3f} mm/s",transform=ax.transAxes )
+    #plt.savefig("results/pvs_flow/velocity_histo.png")
