@@ -209,7 +209,8 @@ if __name__ == '__main__':
     
     # Getting the network out in different formats
     mesh = marking_branch.mesh()
-    # NOTE: mesh.coordinates() are the info about geometry
+    # NOTE:
+    x = mesh.coordinates()
 
     _, c2v = mesh.init(1, 0), mesh.topology()(1, 0)
     _, v2c = mesh.init(0, 1), mesh.topology()(0, 1)
@@ -242,3 +243,29 @@ if __name__ == '__main__':
         branch_paths[color] = tuple(zip(path[:-1], path[1:]))
         # and for each edge we grab the radius
         branch_radii[color] = tuple(radii[first(set(v2c(v0)) & set(v2c(v1)))] for (v0, v1) in branch_paths[color])
+
+    # Reduced graph is one where we discregard the interior geometry of the branch
+    reduced_edges = defaultdict(list)
+    for vertex, colors in color_connectivity.items():
+        [reduced_edges[color].append(vertex) for color in colors]
+
+    reduced_mesh = df.Mesh()
+    editor = df.MeshEditor()
+    editor.open(reduced_mesh, 'interval', 1, 3)
+    editor.init_vertices(len(color_connectivity))
+    editor.init_cells(len(reduced_edges))
+
+    reorder = {}
+    for new, old in enumerate(color_connectivity):
+        editor.add_vertex(new, x[old])
+        reorder[old] = new
+
+    for idx, color in enumerate(reduced_edges):
+        cell = tuple(reorder[v] for v in reduced_edges[color])
+        editor.add_cell(idx, cell)
+    editor.close()
+
+    reduced_color_f = df.MeshFunction('size_t', reduced_mesh, 1, 0)
+    reduced_color_f.array()[:] = np.fromiter(reduced_edges, dtype='uintp')
+
+    df.File('reduced_branch.pvd') << reduced_color_f
