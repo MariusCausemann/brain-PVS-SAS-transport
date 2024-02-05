@@ -13,7 +13,7 @@ if __name__ == '__main__':
     from xii import TangentCurve
 
     radius_ratio = 1.4
-    mesh ,artery_radii, artery_roots = read_vtk_network("mesh/networks/arteries_smooth.vtk")
+    mesh ,artery_radii, artery_roots = read_vtk_network("../mesh/networks/arteries_smooth.vtk")
     radius_f = as_P0_function(artery_radii)
    
     assert mesh.topology().dim() == 1
@@ -57,20 +57,26 @@ if __name__ == '__main__':
     # div(A_pvs u ) = f 
     # robin boundary condition: - K*A_PVS*\partial_s(p) = alpha*(p - p_o): 
     # ds(1) picks up the outlet nodes
+
     alpha = Constant(1.0) 
-    p_o   = Constant(-1e-1 * 0.19 / 0.7) #Constant(0.1) 
-    f= Constant(0.0) # 
+    p_o   = Constant(-1.0) 
+    f     = Constant(0.0) # Constant(-1e-3 * 0.19 / 0.7) 
+    ## read branch length
+    with XDMFFile("branch_length_read.xdmf") as file:
+        DG = FunctionSpace(mesh, "DG", 0)
+        branch_length = Function(DG)
+        file.read_checkpoint(branch_length, "branch_length")
+    #File('branch_length_test.pvd') << branch_length
+
     a = (inner(A_PVS*u, v)*dx + inner(v, K*A_PVS*dot(grad(p), tau))*dx
-         + inner(A_PVS*u, dot(grad(q), tau))*dx) + inner(alpha*p, q)*ds(1)
+         + inner(A_PVS*u, dot(grad(q), tau))*dx) + inner((branch_length)*A_PVS*alpha*p, q)*ds(1)
 
     # NOTE: Flux bcs are part of weak form (g here represent -u.tau), pressure
     # bcs are set strongly
-    L = -inner(A_PVS*f, q)*dx  + inner(g, q)*ds + inner(p_o, q)*ds(1)
-
+    L = -inner(A_PVS*f, q)*dx  + inner(g, q)*ds + inner((branch_length)*A_PVS*p_o, q)*ds(1)
 
     # NOTE: Flux bcs are part of weak form (g here represent -u.tau), pressure
     # bcs are set strongly
-
 
     bc_in = DirichletBC(W.sub(1), 0, artery_roots, 2)
 
