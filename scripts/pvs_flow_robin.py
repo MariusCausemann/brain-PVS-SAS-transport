@@ -58,8 +58,8 @@ if __name__ == '__main__':
     # robin boundary condition: - K*A_PVS*\partial_s(p) = alpha*(p - p_o): 
     # ds(1) picks up the outlet nodes
     alpha = Constant(1.0) 
-    p_o   = Constant(0.001) 
-    f=Constant(-1e-3 * 0.19 / 0.7)
+    p_o   = Constant(-1e-1 * 0.19 / 0.7) #Constant(0.1) 
+    f= Constant(0.0) # 
     a = (inner(A_PVS*u, v)*dx + inner(v, K*A_PVS*dot(grad(p), tau))*dx
          + inner(A_PVS*u, dot(grad(q), tau))*dx) + inner(alpha*p, q)*ds(1)
 
