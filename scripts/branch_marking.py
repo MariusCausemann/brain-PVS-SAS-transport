@@ -185,11 +185,18 @@ def minimal_color(cell_f):
     for old, new in new_coloring.items():
         new_cell_f_values[cell_f_values == old] = new
     return new_cell_f
-        
+
+
+def first(iterable):
+    '''The[0]'''
+    return next(iter(iterable))
+
 # --------------------------------------------------------------------
 
 if __name__ == '__main__':
     from solver import read_vtk_network
+    from collections import defaultdict
+    from itertools import repeat
 
     artery, artery_radii, artery_roots = read_vtk_network("../mesh/networks/arteries_smooth.vtk")
     # Find branch and mark the cells that make it up by unique color
@@ -197,7 +204,68 @@ if __name__ == '__main__':
     # This may be too many colors. An alternative is to minimally color the graph
     df.File('unique_branch.pvd') << marking_branch
 
-    marking_branch = minimal_color(marking_branch)
-    df.File('minimal_branch.pvd') << marking_branch
-
+    minimal_marking_branch = minimal_color(marking_branch)
+    df.File('minimal_branch.pvd') << minimal_marking_branch
     
+    # Getting the network out in different formats
+    mesh = marking_branch.mesh()
+    # NOTE:
+    x = mesh.coordinates()
+
+    _, c2v = mesh.init(1, 0), mesh.topology()(1, 0)
+    _, v2c = mesh.init(0, 1), mesh.topology()(0, 1)
+    
+    g = nx.Graph()
+    g.add_edges_from(mesh.cells())
+    # Topology of branches; vertex -> colors
+    color_connectivity = defaultdict(list)   # C
+    branch_paths, branch_radii = {}, {}
+        
+    radii = artery_radii.array()
+    edge_colors = marking_branch.array()
+    # Since each branch is colored we can visit it as part from source to destination
+    for color in branch_colors:
+        marked_edges, = np.where(edge_colors == color)
+        # Encode vertex to edge of the branch to find terminals
+        branch_connectivity = defaultdict(list)
+        # Start and stop
+        for edge in marked_edges:
+            v0, v1 = c2v(edge)
+            branch_connectivity[v0].append(edge)
+            branch_connectivity[v1].append(edge)            
+        source, dest = [node for (node, cells) in branch_connectivity.items() if len(cells) == 1]
+
+        color_connectivity[source].append(color)
+        color_connectivity[dest].append(color)
+        
+        path = nx.algorithms.shortest_path(g, source, dest)
+        # Here the path is in terms of nodes. We represent it as edges ...
+        branch_paths[color] = tuple(zip(path[:-1], path[1:]))
+        # and for each edge we grab the radius
+        branch_radii[color] = tuple(radii[first(set(v2c(v0)) & set(v2c(v1)))] for (v0, v1) in branch_paths[color])
+
+    # Reduced graph is one where we discregard the interior geometry of the branch
+    reduced_edges = defaultdict(list)
+    for vertex, colors in color_connectivity.items():
+        [reduced_edges[color].append(vertex) for color in colors]
+
+    reduced_mesh = df.Mesh()
+    editor = df.MeshEditor()
+    editor.open(reduced_mesh, 'interval', 1, 3)
+    editor.init_vertices(len(color_connectivity))
+    editor.init_cells(len(reduced_edges))
+
+    reorder = {}
+    for new, old in enumerate(color_connectivity):
+        editor.add_vertex(new, x[old])
+        reorder[old] = new
+
+    for idx, color in enumerate(reduced_edges):
+        cell = tuple(reorder[v] for v in reduced_edges[color])
+        editor.add_cell(idx, cell)
+    editor.close()
+
+    reduced_color_f = df.MeshFunction('size_t', reduced_mesh, 1, 0)
+    reduced_color_f.array()[:] = np.fromiter(reduced_edges, dtype='uintp')
+
+    df.File('reduced_branch.pvd') << reduced_color_f
