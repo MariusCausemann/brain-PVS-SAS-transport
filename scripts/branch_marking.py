@@ -204,12 +204,38 @@ if __name__ == '__main__':
     # This may be too many colors. An alternative is to minimally color the graph
     df.File('unique_branch.pvd') << marking_branch
 
+    mesh = marking_branch.mesh()
+    Q = df.FunctionSpace(mesh, 'DG', 0)
+    q = df.TestFunction(Q)
+    hK = df.CellVolume(mesh)
+
+    foo = df.Function(Q)   # Holds in edges of branch the lenght of the branch
+    foo_values = foo.vector().get_local()
+    
+    active_cell_f = df.MeshFunction('size_t', mesh, 1, 0)
+    dx_active = df.Measure('dx', domain=mesh, subdomain_data=active_cell_f)
+
+    length_form = q*dx_active(1)
+    
+    active_cell_f_array = active_cell_f.array()
+    cell_colors = marking_branch.array()
+    for color in branch_colors:
+        active_cell_f_array[cell_colors == color] = 1
+
+        branch_lengths = df.assemble(length_form)
+        branch_length = branch_lengths.sum()
+        foo_values[branch_lengths.get_local() > 0] = branch_length
+        
+        active_cell_f_array *= 0
+    foo.vector().set_local(foo_values)
+
+    df.File('branch_length.pvd') << foo
+    
     minimal_marking_branch = minimal_color(marking_branch)
     df.File('minimal_branch.pvd') << minimal_marking_branch
     
     # Getting the network out in different formats
     mesh = marking_branch.mesh()
-    # NOTE:
     x = mesh.coordinates()
 
     _, c2v = mesh.init(1, 0), mesh.topology()(1, 0)
