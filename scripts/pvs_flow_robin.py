@@ -2,12 +2,8 @@ from dolfin import *
 from solver import read_vtk_network, as_P0_function
 import numpy as np
 import os
-
-def pvs_flow_system(radius_f, tau, radius_ratio,):
-    '''The bilinear form corresponding to Darcy on the graph'''
-    
-pass    
-# --------------------------------------------------------------------
+from branch_marking import color_branches
+ # ------------------------------------------------------------------
 
 if __name__ == '__main__':
     from xii import TangentCurve
@@ -58,9 +54,9 @@ if __name__ == '__main__':
     # robin boundary condition: - K*A_PVS*\partial_s(p) = alpha*(p - p_o): 
     # ds(1) picks up the outlet nodes
 
-    alpha = Constant(1.0) 
-    p_o   = Constant(-1.0) 
-    f     = Constant(0.0) # Constant(-1e-3 * 0.19 / 0.7) 
+    alpha = Constant(0.0) 
+    p_o   = Constant(0.0) 
+    f     = Constant(-1e-3 * 0.19 / 0.7) 
     ## read branch length
     with XDMFFile("branch_length_read.xdmf") as file:
         DG = FunctionSpace(mesh, "DG", 0)
@@ -68,6 +64,8 @@ if __name__ == '__main__':
         file.read_checkpoint(branch_length, "branch_length")
     #File('branch_length_test.pvd') << branch_length
 
+
+   
     a = (inner(A_PVS*u, v)*dx + inner(v, K*A_PVS*dot(grad(p), tau))*dx
          + inner(A_PVS*u, dot(grad(q), tau))*dx) + inner((branch_length)*A_PVS*alpha*p, q)*ds(1)
 
@@ -87,6 +85,11 @@ if __name__ == '__main__':
 
     uh_mag, ph = wh.split()
 
+   
+    from IPython import embed
+    active_cell_f = MeshFunction('size_t', mesh, 1, 0)
+    dx_active = Measure('dx', domain=mesh, subdomain_data=active_cell_f)
+
     QQ = tau.function_space()
     # L2 projection to get the flux
     uh, qq = Function(QQ), TestFunction(QQ)
@@ -94,19 +97,39 @@ if __name__ == '__main__':
     assemble((1/hK)*inner(uh_mag*tau, qq)*dx, uh.vector())
     
 
+     # Find branch and mark the cells that make it up by unique color
+    marking_branch, branch_colors, loop_colors = color_branches(mesh)
+    
+    Q    = FunctionSpace(mesh, 'DG', 0)
+    q    = TestFunction(Q)
+    foo  = Function(Q)   
+    foo_values = foo.vector().get_local()
 
-    ph.rename("p","p")
+  
+    mean_vel = (1/hK)*(1/branch_length)*inner(uh_mag*tau,uh_mag*tau)*dx_active(1)
+    active_cell_f_array = active_cell_f.array()
+    active = q*dx_active(1)
+    cell_colors = marking_branch.array()
+    for color in branch_colors:
+        active_cell_f_array[cell_colors == color] = 1
+        mean_velocities = assemble(mean_vel)
+        foo_values[assemble(active).get_local() > 0] = mean_velocities 
+        active_cell_f_array *= 0
+    foo.vector().set_local(foo_values)
+
+    print(np.size(np.unique(foo.vector().get_local()))) 
+    print(np.size(np.unique(branch_length.vector().get_local()))) 
+
+    File('averaged_vel.pvd') << foo
+
+    ph.rename("p", "p")
     uh.rename("u", "u")
     os.makedirs("../results/pvs_flow", exist_ok=True)
-   
+    
     with XDMFFile('results/pvs_flow/pvs_flow_robin_vis.xdmf') as xdmf:
         xdmf.write(uh)
 
-
-
-    
-
-   #import pyvista as pv
+    #import pyvista as pv
     #import matplotlib.pyplot as plt
     #from plotting_utils import set_plotting_defaults
 
