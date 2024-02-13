@@ -226,7 +226,7 @@ if __name__ == '__main__':
         active_cell_f_array[cell_colors == color] = 1
 
         branch_lengths = df.assemble(length_form)
-        branch_length = branch_lengths.sum()
+        branch_length = branch_lengths.sum() 
         foo_values[branch_lengths.get_local() > 0] = branch_length
         # NOTE: this will trigget the compiler a lot, that's why we do
         # logic above. But I keep it here for reference anyways
@@ -236,7 +236,8 @@ if __name__ == '__main__':
         
         active_cell_f_array *= 0
     foo.vector().set_local(foo_values)
-
+    with df.XDMFFile('branch_length_read.xdmf') as xdmf:
+        xdmf.write_checkpoint(foo, "branch_length")
     df.File('branch_length.pvd') << foo
     
     minimal_marking_branch = minimal_color(marking_branch)
