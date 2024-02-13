@@ -214,8 +214,11 @@ if __name__ == '__main__':
     
     active_cell_f = df.MeshFunction('size_t', mesh, 1, 0)
     dx_active = df.Measure('dx', domain=mesh, subdomain_data=active_cell_f)
-
+    dx_marked = df.Measure('dx', domain=mesh, subdomain_data=marking_branch)
+    
     length_form = q*dx_active(1)
+
+    sanity_check = False  # Compare manual on/off marking with the original coloring
     
     active_cell_f_array = active_cell_f.array()
     cell_colors = marking_branch.array()
@@ -225,6 +228,11 @@ if __name__ == '__main__':
         branch_lengths = df.assemble(length_form)
         branch_length = branch_lengths.sum()
         foo_values[branch_lengths.get_local() > 0] = branch_length
+        # NOTE: this will trigget the compiler a lot, that's why we do
+        # logic above. But I keep it here for reference anyways
+        if sanity_check:
+            target = df.assemble(df.Constant(1)*dx_marked(color))
+            assert target > 0 and abs(branch_length - target) < 1E-13, ((color, target, branch_length))
         
         active_cell_f_array *= 0
     foo.vector().set_local(foo_values)
