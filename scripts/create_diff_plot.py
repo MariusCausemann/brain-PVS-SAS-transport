@@ -2,9 +2,10 @@ import pyvista as pv
 import numpy as np
 import os
 import typer
-from plotting_utils import get_result, time_str, clip_plot
+from typing import Tuple
+from plotting_utils import get_result, time_str, clip_plot, detail_plot
 
-def plot_model_diff(modela: str, modelb: str, t:int):
+def plot_model_diff(modela: str, modelb: str, t:int, type,  cmax:float=None, filename:str=None):
     plotdir = f"plots/comparisons/{modela}_{modelb}/"
     os.makedirs(plotdir, exist_ok=True)
 
@@ -20,11 +21,19 @@ def plot_model_diff(modela: str, modelb: str, t:int):
     sasa.set_active_scalars("diff")
     arta.set_active_scalars("diff")
     vena.set_active_scalars("diff")
+    clim = (-cmax, cmax) if cmax is not None else None
 
-    filename = f"{plotdir}/{modela}_{modelb}_diff_{t}.png"
-    title = f"time: {time_str(t)} h"
-    clip_plot(sasa, [arta, vena], filename, title, clim=(-0.5, 0.5), 
-              cmap="curl", cbar_title="concentration diff")
+    if type=="overview":
+        filename = f"{plotdir}/{modela}_{modelb}_diff_{t}.png"
+        title = f"time: {time_str(t)} h"
+        return clip_plot(sasa, [arta, vena], filename, title, clim=clim, 
+                  cmap="curl", cbar_title="concentration diff")
+    
+    elif type=="detail":
+        center = (0.2877, 0.17, 0.23)
+        filename = f"{plotdir}/{modela}_{modelb}_diff_detail_{t}.png"
+        return detail_plot(sasa, [arta, vena], filename, center, clim=clim, 
+                cmap="curl", cbar_title="concentration diff")
 
 if __name__ == "__main__":
     typer.run(plot_model_diff)
