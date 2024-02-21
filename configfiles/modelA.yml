@@ -1,5 +1,5 @@
 description : "artery inflow"
-dt : 30
+dt : 60
 T : 86400 # 1 day in seconds
 output_frequency : 20
 inlet_midpoint : [0.17, 0.21, 0.1]

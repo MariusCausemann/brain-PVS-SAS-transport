@@ -8,7 +8,7 @@ from typing import List
 def set_plotting_defaults():
     import seaborn as sns
     plt.rc("axes.spines", top=False, right=False)
-    sns.set_context("talk")
+    sns.set_context("notebook")
     sns.set_palette("blend:#7AB,#EDA")
 
 def minmax(arr_list, percentile=95):
@@ -37,6 +37,33 @@ def get_result(modelname, domain, times):
         for ar in d.array_names:
             data[f"{ar}_{t}"] = d[ar]
     return data
+
+def get_result_fenics(modelname, domain, times):
+    from fenics import HDF5File, FunctionSpace, Function
+    from plotting_utils import read_config
+    from solver  import get_sas, read_vtk_network, as_P0_function
+    filename = f"results/{modelname}/{modelname}.hdf"
+    config = read_config(f"configfiles/{modelname}.yml")
+    dt , T= config["dt"], config["T"]
+    alltimes = np.arange(0, T + dt, dt*config["output_frequency"])
+    if domain=="sas":
+        mesh, vol_subdomains = get_sas()
+    if domain == "artery":
+        mesh, radii, _ = read_vtk_network("mesh/networks/arteries_smooth.vtk")
+    if domain == "vein":
+        mesh, radii, _ = read_vtk_network("mesh/networks/venes_smooth.vtk")
+    V = FunctionSpace(mesh, "CG", 1)
+    results = []
+    with HDF5File(mesh.mpi_comm(), filename, "r") as f:
+        for t in times:
+            i = np.where(alltimes==t)[0][0]
+            c = Function(V)
+            f.read(c, f"c_{domain}/vector_{i}")
+            results.append(c)
+    if domain in ["artery", "vein"]:
+        return results, as_P0_function(radii)
+    elif domain=="sas":
+        return results, vol_subdomains
 
 def get_range(modelname, domain, times, var, percentile=95):
     grid = get_result(modelname, domain, times)

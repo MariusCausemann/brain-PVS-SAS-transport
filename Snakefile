@@ -1,5 +1,7 @@
-models = ["modelA", "modelB"]#, "modelC", "modelD"]
-times = [60*60*1, 60*60*6, 60*60*12, 60*60*18, 60*60*24] # secs
+import numpy as np
+models = ["modelA", "modelB", "modelC"] #, "modelD"]
+times = list(np.array([1, 6, 12, 18, 24])*60*60)
+conctimes =  list(np.array([0, 0.5, 1,2,3, 4, 5, 6, 9, 12, 15, 18, 21, 24])*60*60)
 
 cmax = {"detail":{"modelA_modelB":5, "modelB_modelC":5},
         "overview":{"modelA_modelB":10, "modelB_modelC":10},          
@@ -18,6 +20,7 @@ rule all:
         "plots/comparisons/modelB_modelC/modelB_modelC_detail.png",
         #"plots/comparisons/modelA_modelD/modelA_modelD.png",
         expand("plots/{modelname}/{modelname}_tracer_vessel_dist.png", modelname=models),
+        expand("plots/{modelname}/{modelname}_total_conc.png", modelname=models),
         expand("plots/{modelname}/{modelname}_{tp}_{t}.png", modelname=models, t=times, tp=types)
 
 
@@ -110,3 +113,14 @@ rule analyzeTracerDist:
         plot="plots/{modelname}/{modelname}_tracer_vessel_dist.png"
     shell:
         "python scripts/analyze_tracer_dist.py {wildcards.modelname}"
+
+rule totalTracer:
+    conda:"environment.yml"
+    input:
+        sas="results/{modelname}/{modelname}_sas.pvd",
+        art="results/{modelname}/{modelname}_arteries.pvd",
+        ven="results/{modelname}/{modelname}_venes.pvd",
+    output:
+        plot="plots/{modelname}/{modelname}_total_conc.png"
+    shell:
+        "python scripts/mean_concentrations.py {wildcards.modelname} {conctimes}"

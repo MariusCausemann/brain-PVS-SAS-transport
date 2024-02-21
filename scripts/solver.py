@@ -40,6 +40,17 @@ def read_vtk_network(filename):
 
     return mesh, radii, roots
 
+def get_sas():
+    sas = Mesh()
+    with XDMFFile('mesh/volmesh/mesh.xdmf') as f:
+        f.read(sas)
+        gdim = sas.geometric_dimension()
+        vol_subdomains = MeshFunction('size_t', sas, gdim, 0)
+        f.read(vol_subdomains, 'label')
+        sas.scale(1e-3)  # scale from mm to m
+    return sas, vol_subdomains
+
+
 def volmarker_to_networkmarker(volm, netw, netw_shape, threshold=0.99):
     V1 = FunctionSpace(netw, "DG", 0)
     dx = Measure('dx', domain=netw)
