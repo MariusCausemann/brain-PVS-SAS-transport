@@ -51,6 +51,20 @@ Molecular transport in perivascular spaces (PVSs) is established as a key pathwa
 
 \section*{Methods}
 
+\subsection*{Meshing}
+
+\citet{hodneland2019new} developed a method to image the brains' microvasculature based on time-of-flight (ToF) and quantitative susceptibility mapping (QSM) to identify arterial and venous networks.
+We derive a detailed tetrahedral mesh of both the parenchyma and the surrounding CSF-filled spaces alongside a network representation of the vasculature from the anatomical data provided therein. 
+
+\paragraph{3D domain}
+
+We merge the white and grey matter masks provided by \cite{hodneland2019new} to extract the pial surface. As no data on the CSF-filled spaces is available, we smooth and extend the pial surface by about 5\,mm to obtain an approximation of the SAS and include the inner fluid-filled cavities such as the ventricular system. 
+Finally, we generate a tetrahedral mesh of both compartments using the fTetWild meshing algorithm \cite{hu2020fast}.
+
+\paragraph{Vessel networks}
+
+We skeletonize the binary masks of both the arterial and venous network using Kiminaro \cite{william_silversmith_2021_5539913} and obtain networks consisting of centerline and radius information of all detected vessels. The resulting networks are further smoothened using a spline interpolation technique and the nodes with lowest z-coordinate are identified as the networks' root nodes.
+
 \subsection*{Geometries and domains}
 
 The computational domain $\Omega$ is defined by the union of the SAS $\Omega_{\rm sas}$ and brain parenchyma $\Omega_{\rm brain}$. The thin pia membrane encloses the brain, and thus the pial surface (of the brain) defines the SAS-brain interface $\Gamma_{\rm pia}$. A network of blood vessels are embedded in the SAS, potentially very near to or on the pial surface. We assume that a network of idealized (annular or semi-annular) perivascular spaces surround the vasculature. We represent the vasculature and associated perivasculature by a network of one-dimensional curves $\Gamma$ representing the network centerlines equipped with inner $R_1$ and outer $R_2$ radius information. 
