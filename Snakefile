@@ -4,7 +4,7 @@ times = list(np.array([1, 6, 12, 18, 24])*60*60)
 conctimes =  list(np.array([0, 0.5, 1,2,3, 4, 5, 6, 9, 12, 15, 18, 21, 24])*60*60)
 
 cmax = {"detail":{"modelA_modelB":5, "modelB_modelC":5},
-        "overview":{"modelA_modelB":10, "modelB_modelC":10},          
+        "overview":{"modelA_modelB":10, "modelB_modelC":8},          
 }
 
 diffmax = {"detail":{"modelA_modelB":1, "modelB_modelC":1},
@@ -99,9 +99,10 @@ rule compareModels:
     output:
         plot="plots/comparisons/{model1}_{model2}/{model1}_{model2}_{type}.png"
     params:
-        cmax= lambda wildcards: cmax[wildcards.type][f"{wildcards.model1}_{wildcards.model2}"]
+        cmax= lambda wildcards: cmax[wildcards.type][f"{wildcards.model1}_{wildcards.model2}"],
+        diffmax= lambda wildcards: diffmax[wildcards.type][f"{wildcards.model1}_{wildcards.model2}"]
     shell:
-        "python scripts/compare_models.py {wildcards.model1} {wildcards.model2} {wildcards.type} {params.cmax} 0.3 {times}"
+        "python scripts/compare_models.py {wildcards.model1} {wildcards.model2} {wildcards.type} {params.cmax} {params.diffmax} {times}"
 
 rule analyzeTracerDist:
     conda:"environment.yml"
