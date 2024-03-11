@@ -4,6 +4,7 @@
 \usepackage{bm}
 \usepackage{caption}
 \usepackage{subcaption}
+%\usepackage{natbib}
 \graphicspath{{figures/}}
 
 
@@ -53,7 +54,7 @@ Molecular transport in perivascular spaces (PVSs) is established as a key pathwa
 
 \subsection*{Meshing}
 
-\citet{hodneland2019new} developed a method to image the brains' microvasculature based on time-of-flight (ToF) and quantitative susceptibility mapping (QSM) to identify arterial and venous networks.
+\cite{hodneland2019new} developed a method to image the brains' microvasculature based on time-of-flight (ToF) and quantitative susceptibility mapping (QSM) to identify arterial and venous networks.
 We derive a detailed tetrahedral mesh of both the parenchyma and the surrounding CSF-filled spaces alongside a network representation of the vasculature from the anatomical data provided therein. 
 
 \paragraph{3D domain}
@@ -185,21 +186,21 @@ We set no flux on all boundaries unless otherwise specified. We start with an in
      \centering
      \begin{subfigure}[b]{0.33\textwidth}
          \centering
-         \includegraphics[width=\textwidth]{paper/figures/modelA_total_conc.png}
+         \includegraphics[width=\textwidth]{modelA_total_conc.png}
          \caption{arterial inflow, pure diffusion}
          \label{fig:y equals x}
      \end{subfigure}
      \hfill
      \begin{subfigure}[b]{0.33\textwidth}
          \centering
-         \includegraphics[width=\textwidth]{paper/figures/modelB_total_conc.png}
+         \includegraphics[width=\textwidth]{modelB_total_conc.png}
          \caption{SAS inflow, pure diffusion}
          \label{fig:three sin x}
      \end{subfigure}
      \hfill
      \begin{subfigure}[b]{0.33\textwidth}
          \centering
-         \includegraphics[width=\textwidth]{paper/figures/modelC_total_conc.png}
+         \includegraphics[width=\textwidth]{modelC_total_conc.png}
          \caption{arterial inflow, diffusion + PVS convection}
          \label{fig:five over x}
      \end{subfigure}
