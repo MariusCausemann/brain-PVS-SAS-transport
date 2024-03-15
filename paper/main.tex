@@ -1,10 +1,13 @@
- \documentclass[fleqn,10pt]{wlscirep}
+\documentclass[fleqn,10pt]{wlscirep}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{bm}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{newtxmath} % MER: Prettier math
 %\usepackage{natbib}
+\usepackage{cleveref} % MER: Allows \Cref (but use Section X.Y not Subsection X.Y)
+\usepackage{booktabs} % MER: Prettier tables
 \graphicspath{{figures/}}
 
 
@@ -19,6 +22,7 @@
 \affil[*]{meg@simula.no}
 
 \newcommand{\rami}[1]{\textcolor{blue}{#1}}
+\newcommand{\mer}[1]{\textcolor{magenta}{#1}}
 
 
 %\affil[+]{these authors contributed equally to this work}
@@ -59,10 +63,16 @@ Molecular transport in perivascular spaces (PVSs) is established as a key pathwa
 
 \section*{Methods}
 
-\subsection*{Meshing}
+\mer{MER: I recommend writing each (sub)section of Methods as a nearly stand-alone paragraph. Let's see if we can avoid subsubsections/paragraphs. If you need to add more detail than you think is appropriate, put it in a Supplementary Methods section in the Appendix. } 
+
+\subsection*{Geometries and domains}
+
+\mer{MER: Suggestion @Rami: Let's merge these sections on ``Meshing'' and ``Geometries and domains'' here. Would you have a go at it? Keep it brief. Mention number of cells and max/min mesh size for both 3D and (peri)vasculature. I like including references to tools used as you have done. Refer to \Cref{fig:concept}. Include units when describing the geometry. Describe the radii provided. Describe the default assumption on the PVS size (probably we vary this in a model variation). Clearly illustrate the boundaries in the Figure, and refer to these in the text. Description should be such that it is easily to intuitively understand, but perhaps not reproduce immediately (that is why we will also share the code). }  
+
+\subsubsection*{Meshing}
 
 Hodneland et al~\cite{hodneland2019new} developed a method to image the brains' microvasculature based on time-of-flight (ToF) and quantitative susceptibility mapping (QSM) to identify arterial and venous networks.
-We derive a detailed tetrahedral mesh of the parenchyma and the surrounding CSF-filled spaces alongside a network representation of the vasculature from the anatomical data provided therein. 
+We derive a detailed tetrahedral mesh of the parenchyma and the surrounding CSF-filled spaces alongside a network representation of the vasculature from the anatomical data provided therein.  
 
 \paragraph{3D domain}
 
@@ -73,53 +83,60 @@ Finally, we generate a tetrahedral mesh of both compartments using the fTetWild 
 
 We skeletonize the binary masks of both the arterial and venous network using Kiminaro \cite{william_silversmith_2021_5539913} and obtain networks consisting of centerline and radius information of all detected vessels. The resulting networks are further smoothened using a spline interpolation technique and the nodes with lowest z-coordinate are identified as the networks' root nodes.
 
-\subsection*{Geometries and domains}
-
 The computational domain $\Omega$ is defined by the union of the SAS $\Omega_{\rm sas}$ and brain parenchyma $\Omega_{\rm brain}$. The thin pia membrane encloses the brain, and thus the pial surface (of the brain) defines the SAS-brain interface $\Gamma_{\rm pia}$. A network of blood vessels are embedded in the SAS, potentially very near to or on the pial surface. We assume that a network of idealized (annular or semi-annular) perivascular spaces surround the vasculature. We represent the vasculature and associated perivasculature by a network of one-dimensional curves $\Gamma$ representing the network centerlines equipped with inner $R_1$ and outer $R_2$ radius information. 
 
 Surface representations of the outer SAS boundary, pial membrane, and delimiters of other CSF-filled spaces such as the lateral ventricles, third and fourth ventricle, and aqueduct are extracted from MR-images of human subject(s), see e.g. the pipeline described by Hornkjøl et al.~\cite{hornkjol2022csf}. From these surface representations, we create volumetric meshes of the SAS and brain using SVMTK~\cite{mardal2022mathematical}. 
 
-\begin{itemize}
-    \item To discuss: How to generate subject-specific representations of the pial/SAS vasculature? Can we use contrast MRI? Can we use time-of-flight images? What are the right tools? Do any data sets already exist? 
-    \item How to add radius information to vasculature representation? Do we need more information as well?
-\end{itemize}
+We mark the different regions of the boundary of $\Omega$, with
+$\Gamma_{\mathrm{skull}}$ facing the dura and skull and
+$\Gamma_{\mathrm{spine}}$ representing the lower interface towards the
+spinal compartment (\Cref{fig:concepts}). \mer{MER: I put this here, keep
+  it here. How about the ventricles?}
 
 
 \begin{figure}
-\caption{(A) Illustration of the location of pial vasculature and subarachnoid space. (B) Conceptual illustration of the vascular, perivascular, SAS and cortex domains (cross-section and lateral view).}
+\caption{\mer{MER: Concept figure illustrating the geometr-y/ies in some detail. Several panels}. Illustration of the location of pial vasculature and subarachnoid space. (B) Conceptual illustration of the vascular, perivascular, SAS and cortex domains (cross-section and lateral view).}
 \label{fig:concept}
 \end{figure}
 
-\subsection*{Multi-dimensional transport model}
+\subsection*{Multi-dimensional intracranial transport equations}
 
-We consider a time-dependent convection-diffusion model~\cite{masri2023modelling} of a solute concentration $c$ in the network representing the pial vasculature and surrounding perivascular spaces $\Lambda$ and the surrounding three-dimensional SAS-brain domain $\Omega$ (Fig.~\ref{fig:concept}). 
-
-\subsection*{Diffusion}
-We use the diffusion coefficient $D_{\rm gad}$ of Gadubutrol in free water in the SAS and PVS, and effective diffusion coefficient of Gadubutrol $D_{\rm brain}$ -- accounting for the extracellular space (ECS) porosity $\phi$ and the ECS tortuousity $\lambda$ but ignoring anisotropy  -- in the brain parenchyma~\cite{hornkjol2022csf}. 
-
-We solve for two concentration fields $c, \hat c$ in the domain $\Omega$ and in the network $\Lambda$. The 
-network $\Lambda$ consists of 1D centerlines of vessels with their radii information and nodes. We consider the following model. 
+We consider a comprehensive time-dependent convection-diffusion model~\cite{masri2023modelling} of a solute concentration $c$ in a network representing the pial vasculature and surrounding perivascular spaces $\Lambda$ and in the surrounding three-dimensional SAS-brain domain $\Omega$ (Fig.~\ref{fig:concept}). More specifically, we solve for the concentrations $c$ (of the solute in the fluid space~\cite{sykova2008diffusion}) defined over the SAS-brain domain $\Omega$ and $\hat c$ in the perivascular network $\Lambda$ such that the following equations hold
+\begin{subequations}
 \begin{alignat}{2}
-\partial_t c - \nabla \cdot (D \nabla c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma & = f, && \quad \mathrm{in } \,\, \Omega \\ 
-\partial_t (A\hat c) - \partial_s(\hat D A  \partial_s \hat c) + \xi P (\hat c - \overline{c})   & = A \hat f, && \quad \mathrm{in } \,\,  \Lambda 
+  \partial_t (\phi c) - \nabla \cdot (D \nabla (\phi c) ) + \xi (\overline{c} - \hat c ) \delta_\Gamma & = f && \quad \quad \mathrm{in} \quad \Omega, \\ 
+  \partial_t (A \phi \hat c) - \partial_s(\hat D A \partial_s (\phi \hat c) + \xi P (\hat c - \overline{c})  &= A \hat f && \quad \quad \mathrm{in} \quad  \Lambda .
  \end{alignat}
-We split the boundary of $\Omega$ into $\Gamma_{\mathrm{skull}}$ and $\Gamma_{\mathrm{spine}}$,  and we enforce the following boundary conditions. 
-\begin{alignat}{2}
-D \nabla c \cdot \bm{n} &= 0, && \quad \mathrm{on} \,\, \Gamma_{\mathrm{skull}}, \\ 
-D \nabla c \cdot \bm{n} &= g(t),  && \quad \mathrm{on} \,\, \Gamma_{\mathrm{spine}}.
-\end{alignat}
-The function $g$ is given in 
-\begin{equation*}
-    g(t) = \max(0, a(T_0 - t))
-\end{equation*}
-For the network, the boundary nodes are split into $\partial \Lambda^{\mathrm{in}}$  and $\partial \Lambda^{\mathrm{out}}$ based on the specified orientation of the network (\color{blue} to be specified more precisely (with a figure?)\color{black}). We impose the following conditions. 
-\begin{alignat}{2}
-D A \partial_s \hat c &= 0, && \quad \mathrm{on} \,\, \partial \Lambda^ {\mathrm{in}}, \\ 
-D A \partial_s  \hat c &= \hat g(t),  && \quad \mathrm{on} \,\, \partial \Lambda^{\mathrm{out}} .
-\end{alignat}
-\color{blue} Running different models depending on the choices of $g$ and $\hat g$ \color{black}
- \subsection*{Convection}
-We ignore the deformation of the domains (in this study), and thus set the domain velocity $w = 0$. We assume no significant convection in the brain $\Omega_{\rm brain}$, and set $u = u_{\rm brain} = 0$ there as a first approximation. We may consider non-zero convection in the SAS $u_{\rm sas} \not = 0$ e.g.~resulting from steady state CSF production as predicted by~\cite{hornkjol2022csf} in model variations, but may start with $u_{\rm sas} = 0$ as a baseline. In the perivascular network, we set an average axial velocity $u_{\rm pvs} = \langle u_{v, s} \rangle$ of $18.7$ $\mu$m/s as reported by Mestre et al.~\cite{mestre2018flow} in mouse perivascular spaces under normal physiological conditions. We may also consider a reduced perivascular velocity corresponding to hypertension in model variations.
+\end{subequations}
+Here $\phi$ is the fluid volume fraction or porosity of the brain (where $\phi \ll 1$), of the SAS (where $\phi = 1$) and of the perivascular space (where $0 \ll \phi \leq 1$), $D$ is the effective diffusion coefficient of the relevant solute in the respective media~\cite{sykova2008diffusion}, $\xi$ is a transfer coefficient across the outer perivascular boundary, $P$ and $A$ are the perimeter and area of the perivascular spaces, respectively, and $f$ and $\hat{f}$ represents given sources of solute in $\Omega$ and $\Lambda$, respectively. Both $\Omega$ and $\Lambda$ are here fixed in time.
+
+\noindent \mer{MER: @Rami: I've added the $\phi$'s in this subsection. Please review and add convective terms in $\Omega$ and $\Lambda$.}
+
+\subsection*{Initial conditions}
+
+We set the initial concentrations $c_0, \hat{c}_0$ in the three-dimensional domain $\Omega$ and network $\Lambda$ to be zero.% unless otherwise indicated.
+
+\subsection*{Boundary conditions: extracranial efflux and perivascular parenchymal influx}
+
+On the interface towards the dura and skull $\Gamma_{\mathrm{skull}}$, we consider a constant uptake (or efflux) rate, represented by the boundary condition $- D \nabla c \cdot \bm{n} = g_{\mathrm{efflux}} \geq 0$ (\Cref{fig:concept}). On the interface towards the spinal compartment $\Gamma_{\mathrm{spine}}$, we prescribe a time-dependent solute influx rate by the condition $D \nabla c \cdot \bm{n} = g_{\mathrm{influx}}(t) \geq 0$ representing the distribution of solute injected in the spinal compartment. Similarly, on the associated perivascular network inlet nodes $\partial \Lambda_{\mathrm{in}}$ (\Cref{fig:concept}), we prescribe a compatible solute influx rate $D A \partial_s (\phi \hat c) = \hat g(t)$ \mer{such that $\hat g$ and $g$ are related}. For the "leaf" nodes of the perivascular network (representing the end of the surface perivascular network and start of perivascular spaces within the parenchyma), we also set a fixed transfer rate by setting $\mer{\pm} D A \partial_s (\phi \hat c) = g_{\mathrm{pvs-par}}$.
+
+\noindent \mer{MER: @Rami: I've edited this subsection. Maybe I've swapped the labelling of the network inlet and outlet nodes. Please review. We will probably discuss this a bit. A figure showing overview and details of the perivascular network will help in any case.}
+
+%% For the network, the boundary nodes are split into $\partial \Lambda^{\mathrm{in}}$  and $\partial \Lambda^{\mathrm{out}}$ based on the specified orientation of the network (\color{blue} to be specified more precisely (with a figure?)\color{black}). We impose the following conditions. 
+%% \begin{alignat}{2}
+%% D A \partial_s \hat c &= 0, && \quad \mathrm{on} \,\, \partial \Lambda^ {\mathrm{in}}, \\ 
+%% D A \partial_s  \hat c &= \hat g(t),  && \quad \mathrm{on} \,\, \partial \Lambda^{\mathrm{out}} .
+%% \end{alignat}
+
+\subsection*{Numerical approximation, implementation and verification}
+
+\mer{MER: Who would like to draft a paragraph on our numerical approximation? @Miro? I recommend ``describing with words'' to reach relevant audiences. We need to demonstrate that our ``quantities are converged'', meaning we have a feel for how accurate our results are in practice (e.g.$\pm$ 1\%, 10\%, 100\%, 1000\%). Refer to the Supplementary table for a numerical verification table (quantities of interest versus mesh and time refinement for pure diffusion and one case with convection). Not on top of list of priorities, but not on bottom either.} 
+
+\subsection*{Perivascular fluid flow}
+
+\mer{MER: This we will probably have to condense. Move the detailed explanation to Supplemetary Methods?}
+
+We may consider non-zero convection in the SAS $u_{\rm sas} \not = 0$ e.g.~resulting from steady state CSF production as predicted by~\cite{hornkjol2022csf} in model variations, but may start with $u_{\rm sas} = 0$ as a baseline. In the perivascular network, we set an average axial velocity $u_{\rm pvs} = \langle u_{v, s} \rangle$ of $18.7$ $\mu$m/s as reported by Mestre et al.~\cite{mestre2018flow} in mouse perivascular spaces under normal physiological conditions. We may also consider a reduced perivascular velocity corresponding to hypertension in model variations.
 \subsubsection*{Steady state PVS flow model} We solve 1D Darcy equations in the vessel network. The unknowns are the averaged PVS velocity, $u_{\rm pvs} = \langle u_{v,s} \rangle$, and the cross-section pressure $p_{\rm pvs} $ (assumed to be constant in each cross-section). The system is given by  \cite{daversin2022geometrically} 
 \begin{alignat}{2}
 A \,  u_{\rm pvs}   + \frac{\kappa}{\mu} \, A \, \partial_{s} p_{\rm pvs} & = 0, &&  \quad \rm in  \,\, \Lambda  \\ 
@@ -140,31 +157,42 @@ A  u_{\rm pvs} =  - \frac{\kappa}{ \mu} A\, \partial_s p_{\rm pvs} = \alpha (p_{
 \end{equation}
 On $\partial \Lambda^{\rm in}$, we prescribe homogenous Dirichlet data for the pressure (\rami{does this make sense?}). 
 \rami{to be completed }
-\subsection*{PVS permeability}
-We will consider different values for the SAS-PVS permeability $\xi$, including $\xi = 0$ (sealed PVS), $\xi \approx \infty$ (PVS continuous with SAS), as well as reasonable intermediate values. We will ignore PVS-blood exchange, and thus only model the perivascular concentration at the network level (in addition to the SAS/brain concentration in the surroundings).  
 
-\subsection*{Boundary and initial conditions}
-We set no flux on all boundaries unless otherwise specified. We start with an initial non-zero concentration in the first branch of the perivascular network and surrounding SAS (and zero concentration elsewhere).
+\subsection*{Cerebrospinal fluid flow in the subarachnoid space}
+
+\mer{\lipsum[1]}
+
+\subsection*{Fluid flow within the parenchyma}
+
+We assume no significant convection in the brain $\Omega_{\rm brain}$, and set $u = u_{\rm brain} = 0$ there as a first approximation. 
 
 
-\subsection*{Parameter values}
 
-
+\subsection*{Parameter values and model scenarios}
+We use the diffusion coefficient $D_{\rm gad}$ of Gadubutrol in free water in the SAS and PVS, and effective diffusion coefficient of Gadubutrol $D_{\rm brain}$ -- accounting for the extracellular space (ECS) porosity $\phi$ and the ECS tortuousity $\lambda$ but ignoring anisotropy  -- in the brain parenchyma~\cite{hornkjol2022csf}. 
 \begin{table}
-    \centering
-    \begin{tabular}{|c|c|c|c|c|} \hline 
- Parameter& Symbol& Value& Unit&Reference\\ \hline 
-         parenchyma app. diffusion&  $d_p$&  $1.2 \times 10^{-4}$& $\text{mm}^2/\text{s}$  & \cite{valnes2020apparent}\\\hline 
-         CSF app. diffusion&  $d_{CSF}$&  $3.8 \times 10^{-4}$& $\text{mm}^2/\text{s}$ & \cite{valnes2020apparent}\\\hline 
-         PVS diffusion&  $d_{PVS}$&  $3.8 \times 10^{-4}$& $\text{mm}^2/\text{s}$ & \cite{valnes2020apparent}\\\hline 
-         extracellular space volume fraction& $\phi$& 0.2& - &\cite{nicholson1981ion} \\\hline 
-         PVS-parenchyma permeability&  $\xi_{PVS,P}$& $5 \times 10^{2} - 6 \times 10^{3} $  & $\text{m}^{-1}$ & \cite{koch2023estimates} \\\hline 
-         PVS-CSF permeability&  $\xi_{PVS,CSF}$& $\{0, \text{inf}\}$ & $\text{m}^{-1}$ & \\ \hline 
- boundary concentration& $\hat{c}_D$& & &\\ \hline
+  \begin{center}
+    \begin{tabular}{ll|ccc}
+      \toprule
+      Parameter& Symbol & Value & Unit& Reference\\
+      \midrule
+         parenchyma app. diffusion&  $d_p$&  $1.2 \times 10^{-4}$& $\text{mm}^2/\text{s}$  & \cite{valnes2020apparent}\\
+         CSF app. diffusion&  $d_{CSF}$&  $3.8 \times 10^{-4}$& $\text{mm}^2/\text{s}$ & \cite{valnes2020apparent}\\
+         PVS diffusion&  $d_{PVS}$&  $3.8 \times 10^{-4}$& $\text{mm}^2/\text{s}$ & \cite{valnes2020apparent}\\
+         extracellular space volume fraction& $\phi$& 0.2& - &\cite{nicholson1981ion} \\
+         PVS-parenchyma permeability&  $\xi_{PVS,P}$& $5 \times 10^{2} - 6 \times 10^{3} $  & $\text{m}^{-1}$ & \cite{koch2023estimates} \\
+         PVS-CSF permeability&  $\xi_{PVS,CSF}$& $\{0, \text{inf}\}$ & $\text{m}^{-1}$ & \\ 
+         boundary concentration& $\hat{c}_D$& & &\\ \hline
+         Extracranial efflux rate & $g_{\mathrm{efflux}}$  & 0 & mm$^2$/s \\
+         Spinal solute influx rate & $g_{\mathrm{influx}}$ & $\max(0, a(T_0 - t))$  & mm$^2$/s
     \end{tabular}
-    \caption{Caption}
-    \label{tab:parameters}
+  \end{center}
+  \caption{Overview of physiological parameters and model variations. \mer{MER: This clearly needs some more work and probably would benefit from joint review. Should we look at it together, or does someone want to take the lead on collecting these?}}
+  \label{tab:overview}
 \end{table}
+
+\mer{To be edited, just moved here:} We will consider different values for the SAS-PVS permeability $\xi$, including $\xi = 0$ (sealed PVS), $\xi \approx \infty$ (PVS continuous with SAS), as well as reasonable intermediate values. We will ignore PVS-blood exchange, and thus only model the perivascular concentration at the network level (in addition to the SAS/brain concentration in the surroundings).  
+
 
 \subsection*{Quantities of interest}
 
@@ -300,6 +328,14 @@ The corresponding author is responsible for submitting a \href{http://www.nature
 \newpage
 \appendix
 
+\section{Supplementary methods}
+
+\subsection{Numerical verification}
+
+\mer{MER: Good place for numerical verification text and table. And more description of numerics if you would like.}
+
+
+\newpage
 \section{Notes}
 
 Various notes associated with \cite{eide2024functional}:
