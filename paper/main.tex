@@ -101,24 +101,24 @@ spinal compartment (\Cref{fig:concepts}). \mer{MER: I put this here, keep
 
 \subsection*{Multi-dimensional intracranial transport equations}
 
-We consider a comprehensive time-dependent convection-diffusion model~\cite{masri2023modelling} of a solute concentration $c$ in a network representing the pial vasculature and surrounding perivascular spaces $\Lambda$ and in the surrounding three-dimensional SAS-brain domain $\Omega$ (Fig.~\ref{fig:concept}). More specifically, we solve for the concentrations $c$ (of the solute in the fluid space~\cite{sykova2008diffusion}) defined over the SAS-brain domain $\Omega$ and $\hat c$ in the perivascular network $\Lambda$ such that the following equations hold
+We consider a comprehensive time-dependent convection-diffusion model~\cite{masri2023modelling} of a solute concentration in a network representing the surrounding perivascular spaces of the pial vasculature and in the surrounding three-dimensional SAS-brain domain (Fig.~\ref{fig:concept}). More specifically, we solve for the concentrations $c$  (of the solute in the fluid space~\cite{sykova2008diffusion}) defined over the SAS-brain domain $\Omega$ and $\hat c$ in a 1D network of centerlines $\Lambda$ capturing in an averaged sense the solute transport in the perivascular spaces such that the following equations hold
 \begin{subequations}
 \begin{alignat}{2}
-  \partial_t (\phi c) - \nabla \cdot (D \nabla (\phi c) ) + \xi (\overline{c} - \hat c ) \delta_\Gamma & = f && \quad \quad \mathrm{in} \quad \Omega, \\ 
-  \partial_t (A \phi \hat c) - \partial_s(\hat D A \partial_s (\phi \hat c) + \xi P (\hat c - \overline{c})  &= A \hat f && \quad \quad \mathrm{in} \quad  \Lambda .
+  \partial_t (\phi c) - \nabla \cdot (D \nabla (\phi c) ) + \nabla \cdot (\bm u c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma & = f && \quad \quad \mathrm{in} \quad \Omega, \\ 
+  \partial_t (A \phi \hat c) - \partial_s(\hat D A \partial_s (\phi \hat c)) +\partial_s(A \hat u \hat c )  +  \xi P (\hat c - \overline{c})  &= A \hat f && \quad \quad \mathrm{in} \quad  \Lambda .
  \end{alignat}
 \end{subequations}
-Here $\phi$ is the fluid volume fraction or porosity of the brain (where $\phi \ll 1$), of the SAS (where $\phi = 1$) and of the perivascular space (where $0 \ll \phi \leq 1$), $D$ is the effective diffusion coefficient of the relevant solute in the respective media~\cite{sykova2008diffusion}, $\xi$ is a transfer coefficient across the outer perivascular boundary, $P$ and $A$ are the perimeter and area of the perivascular spaces, respectively, and $f$ and $\hat{f}$ represents given sources of solute in $\Omega$ and $\Lambda$, respectively. Both $\Omega$ and $\Lambda$ are here fixed in time.
+Here $\phi$ is the fluid volume fraction or porosity of the brain (where $\phi \ll 1$), of the SAS (where $\phi = 1$) and of the perivascular space (where $0 \ll \phi \leq 1$), $D$ is the effective diffusion coefficient of the relevant solute in the respective media~\cite{sykova2008diffusion} which takes different values over the SAS and over the tisssue, $\bm u$ and $\hat u$ are velocity fields in $\Omega$ and in $\Lambda$ respectively, $\xi$ is a transfer coefficient across the outer perivascular boundary, $P$ and $A$ are the perimeter and area of the perivascular spaces which vary along the centerline network, respectively, and $f$ and $\hat{f}$ represents given sources of solute in $\Omega$ and $\Lambda$, respectively.  The term involving $\delta_\Gamma$ is a source term concentrated on the outer perivascular boundary and models the interaction between the 3D--domain and the perivascular spaces. Finally, the notation $\overline{c}$ denotes the lateral average of the concentration over the outer perivascular boundary. 
+Both $\Omega$ and $\Lambda$ are here fixed in time. We remark that this model assumes that there is no interaction between the inner perivascular boundary and the blood vessel. 
 
-\noindent \mer{MER: @Rami: I've added the $\phi$'s in this subsection. Please review and add convective terms in $\Omega$ and $\Lambda$.}
-
+\noindent \mer{MER: @Rami: I've added the $\phi$'s in this subsection. Please review and add convective terms in $\Omega$ and $\Lambda$.} \rami{done, maybe I include a more precise variational formulation in the appendix ? }
 \subsection*{Initial conditions}
 
 We set the initial concentrations $c_0, \hat{c}_0$ in the three-dimensional domain $\Omega$ and network $\Lambda$ to be zero.% unless otherwise indicated.
 
 \subsection*{Boundary conditions: extracranial efflux and perivascular parenchymal influx}
 
-On the interface towards the dura and skull $\Gamma_{\mathrm{skull}}$, we consider a constant uptake (or efflux) rate, represented by the boundary condition $- D \nabla c \cdot \bm{n} = g_{\mathrm{efflux}} \geq 0$ (\Cref{fig:concept}). On the interface towards the spinal compartment $\Gamma_{\mathrm{spine}}$, we prescribe a time-dependent solute influx rate by the condition $D \nabla c \cdot \bm{n} = g_{\mathrm{influx}}(t) \geq 0$ representing the distribution of solute injected in the spinal compartment. Similarly, on the associated perivascular network inlet nodes $\partial \Lambda_{\mathrm{in}}$ (\Cref{fig:concept}), we prescribe a compatible solute influx rate $D A \partial_s (\phi \hat c) = \hat g(t)$ \mer{such that $\hat g$ and $g$ are related}. For the "leaf" nodes of the perivascular network (representing the end of the surface perivascular network and start of perivascular spaces within the parenchyma), we also set a fixed transfer rate by setting $\mer{\pm} D A \partial_s (\phi \hat c) = g_{\mathrm{pvs-par}}$.
+On the interface towards the dura and skull $\Gamma_{\mathrm{skull}}$, we consider a constant uptake (or efflux) rate, represented by the boundary condition $- D \nabla c \cdot \bm{n} = g_{\mathrm{efflux}} \geq 0$ (\Cref{fig:concept}). On the interface towards the spinal compartment $\Gamma_{\mathrm{spine}}$, we prescribe a time-dependent solute influx rate by the condition $D \nabla c \cdot \bm{n} = g_{\mathrm{influx}}(t) \geq 0$ representing the distribution of solute injected in the spinal compartment. Similarly, on the associated perivascular network inlet nodes $\partial \Lambda_{\mathrm{in}}$ (\Cref{fig:concept}), we prescribe a compatible solute influx rate $\hat D A \partial_s (\phi \hat c) = \hat g(t)$  \mer{such that $\hat g$ and $g$ are related}. \rami{The approach of setting $\hat g = 0$ and of setting the permeabitliy to be high (follows the arguments \cite{eide2024functional}) for the perivascular spaces that are near the spine, @Marius can you please add more details ? }For the "leaf" nodes of the perivascular network (representing the end of the surface perivascular network and start of perivascular spaces within the parenchyma), we also set a fixed transfer rate by setting $\mer{\pm} D A \partial_s (\phi \hat c) = g_{\mathrm{pvs-par}}$. \rami{I don't think we can have anything different than $g_{\mathrm{pvs-par}} = 0$ since we would also have to modify the 3D equation. The interaction b/w the pvs and the parancheyma is along the entire perivascular boundary as accounted for in the coupling terms}. 
 
 \noindent \mer{MER: @Rami: I've edited this subsection. Maybe I've swapped the labelling of the network inlet and outlet nodes. Please review. We will probably discuss this a bit. A figure showing overview and details of the perivascular network will help in any case.}
 
@@ -187,7 +187,8 @@ We use the diffusion coefficient $D_{\rm gad}$ of Gadubutrol in free water in th
          Spinal solute influx rate & $g_{\mathrm{influx}}$ & $\max(0, a(T_0 - t))$  & mm$^2$/s
     \end{tabular}
   \end{center}
-  \caption{Overview of physiological parameters and model variations. \mer{MER: This clearly needs some more work and probably would benefit from joint review. Should we look at it together, or does someone want to take the lead on collecting these?}}
+  \caption{Overview of physiological parameters and model variations. \mer{MER: This clearly needs some more work and probably would benefit from joint review. Should we look at it together, or does someone want to take the lead on collecting these?} \rami{apparent vs effective ? same thing ? need to use consistent names 
+  }}
   \label{tab:overview}
 \end{table}
 
