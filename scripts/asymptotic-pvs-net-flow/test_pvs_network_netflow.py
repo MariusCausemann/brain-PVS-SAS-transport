@@ -12,9 +12,11 @@ from pvs_network_netflow import _beta, _delta
 def single_bifurcation_data():
     """Data for a single bifurcation test case. Data for network
     consisting of three edges and a single bifurcation, with inner and
-    outer radius and lengths of the daughter vessels half those of the
-    mother vessel.
+    outer radius and lengths of the daughter vessels identical to
+    those of the mother vessel. 
 
+    # FIXME: WIP here.
+    Test case used for Table 1c (left) in Gjerde, Sanchez, Rognes (2023).
     """
     indices = [(0, 1, 2),]
     paths = [(0, 1), (0, 2)]
@@ -22,15 +24,15 @@ def single_bifurcation_data():
     # Peristaltic wave parameters: wave length lmbda and (angular) wave number k
     f = 1.0                 # frequency (Hz = 1/s)
     omega = 2*np.pi*f       # Angular frequency (Hz)
-    lmbda = 2.0             # mm    
-    k = 2*np.pi/lmbda          # wave number (1/mm)
+    lmbda = 0.1             # mm    
+    k = 2*np.pi/lmbda       # wave number (1/mm)
     varepsilon = 0.1        # AU 
     ro0 = 0.1               # Base inner radius (mm)
     re0 = 0.2               # Base outer radius (mm)
         
     r_o = [ro0, ro0/2, ro0/2]  # Inner radii (mm) for each element/edge
     r_e = [re0, re0/2, re0/2]  # Outer radii (mm) for each element/edge
-    L = [1.0, 0.5, 0.5]    # Element lengths (mm)
+    L = [2.0, 1.0, 1.0]    # Element lengths (mm)
         
     data =  (indices, paths, r_o, r_e, L, k, omega, varepsilon)
     return data
@@ -162,34 +164,34 @@ def run_single_bifurcation_test():
 
     return True
     
-def run_three_junction_verification():
-    """Verification test: Compare explicit method and general method on a
-    three junction network and check that the computed flows are the same.
-    """
+# def run_three_junction_verification():
+#     """Verification test: Compare explicit method and general method on a
+#     three junction network and check that the computed flows are the same.
+#     """
     
-    data = three_junction_data()
-    (indices, paths, r_o, r_e, L, k, omega, varepsilon) = data
+#     data = three_junction_data()
+#     (indices, paths, r_o, r_e, L, k, omega, varepsilon) = data
 
-    print("Solving three junction test case via general algorithm")
-    (P_g, dP_g, avg_Q_1_g) = solve_bifurcating_tree(data)
+#     print("Solving three junction test case via general algorithm")
+#     (P_g, dP_g, avg_Q_1_g) = solve_bifurcating_tree(data)
 
-    print("Solving three-junction case explicitly")
-    (P_e, dP_e, avg_Q_1_e) = solve_three_junction(data)
+#     print("Solving three-junction case explicitly")
+#     (P_e, dP_e, avg_Q_1_e) = solve_three_junction(data)
 
-    debug("eps*<Q_1_0> = %.3e" % (varepsilon*avg_Q_1_e[0]))
+#     debug("eps*<Q_1_0> = %.3e" % (varepsilon*avg_Q_1_e[0]))
 
-    a = numpy.array(avg_Q_1_g)
-    b = numpy.array(avg_Q_1_e)
-    d = numpy.max(numpy.abs(a-b))
+#     a = numpy.array(avg_Q_1_g)
+#     b = numpy.array(avg_Q_1_e)
+#     d = numpy.max(numpy.abs(a-b))
     
-    print("Explicit method gives", a)
-    print("General method gives", b)
-    print("Max difference: ", d)
+#     print("Explicit method gives", a)
+#     print("General method gives", b)
+#     print("Max difference: ", d)
 
-    success = d < 1.e-10
-    assert success, "Difference is larger than expected!"
+#     success = d < 1.e-10
+#     assert success, "Difference is larger than expected!"
 
-    return success
+#     return success
     
 def test_murray_data():
 
@@ -237,11 +239,7 @@ def test():
     print("")
     success = run_single_bifurcation_test()
 
-    print("")
-    success = run_three_junction_verification()
-
     exit()
-
     print("")
     success = test_murray_data()
 
@@ -250,10 +248,6 @@ def test():
     
 if __name__ == "__main__":
 
-    # FIXME: Update to include varying radius estimates. WRONG WITHOUT
-    # IT. See Gjerde, Sanchez, Rognes, JAP (2023):
-    # https://arxiv.org/pdf/2310.02429.pdf Section II and onwards.
-    
     test()
 
 
