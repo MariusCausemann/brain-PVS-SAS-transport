@@ -24,7 +24,7 @@ def single_bifurcation_data():
     # Peristaltic wave parameters: wave length lmbda and (angular) wave number k
     f = 1.0                 # frequency (Hz = 1/s)
     omega = 2*np.pi*f       # Angular frequency (Hz)
-    lmbda = 2.0             # mm    
+    lmbda = 10.0             # mm    
     k = 2*np.pi/lmbda       # wave number (1/mm)
     varepsilon = 0.1        # AU 
         
