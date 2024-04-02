@@ -38,7 +38,9 @@ def single_bifurcation_data():
 def three_junction_data():
     """Data for a three bifurcation test case. Data for network consisting
     of seven edges and three bifurcation. Inner and outer radius of
-    the daughter vessels are half that of the mother vessel.
+    the daughter vessels are identical to that of the mother vessel in
+    order to compare with analytical expression.
+
     """
     
     indices = [(0, 1, 2), (1, 3, 4), (2, 5, 6)]
@@ -51,11 +53,9 @@ def three_junction_data():
     varepsilon = 0.1        # AU 
     ro0 = 0.1               # Base inner radius (mm)
     re0 = 0.2               # Base outer radius (mm)
-    ro1 = ro0/2; ro2 = ro1/2
-    re1 = re0/2; re2 = re1/2
         
-    r_o = [ro0, ro1, ro1, ro2, ro2, ro2, ro2]  # Inner radii (mm) for each element/edge
-    r_e = [re0, re1, re1, re2, re2, re2, re2]  # Outer radii (mm) for each element/edge
+    r_o = [ro0, ro0, ro0, ro0, ro0, ro0, ro0]  # Inner radii (mm) for each element/edge
+    r_e = [re0, re0, re0, re0, re0, re0, re0]  # Outer radii (mm) for each element/edge
     L = [1.0, 0.5, 0.5, 0.25, 0.25, 0.25, 0.25]    # Element lengths (mm)
         
     data = (indices, paths, r_o, r_e, L, k, omega, varepsilon)
