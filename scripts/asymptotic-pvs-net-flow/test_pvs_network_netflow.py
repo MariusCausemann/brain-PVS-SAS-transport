@@ -254,7 +254,6 @@ if __name__ == "__main__":
     # IT. See Gjerde, Sanchez, Rognes, JAP (2023):
     # https://arxiv.org/pdf/2310.02429.pdf Section II and onwards.
     
-    __DEBUG_MODE=True
     test()
 
 
