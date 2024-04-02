@@ -24,15 +24,13 @@ def single_bifurcation_data():
     # Peristaltic wave parameters: wave length lmbda and (angular) wave number k
     f = 1.0                 # frequency (Hz = 1/s)
     omega = 2*np.pi*f       # Angular frequency (Hz)
-    lmbda = 0.1             # mm    
+    lmbda = 2.0             # mm    
     k = 2*np.pi/lmbda       # wave number (1/mm)
     varepsilon = 0.1        # AU 
-    ro0 = 0.1               # Base inner radius (mm)
-    re0 = 0.2               # Base outer radius (mm)
         
-    r_o = [ro0, ro0/2, ro0/2]  # Inner radii (mm) for each element/edge
-    r_e = [re0, re0/2, re0/2]  # Outer radii (mm) for each element/edge
-    L = [2.0, 1.0, 1.0]    # Element lengths (mm)
+    r_o = [0.1, 0.1, 0.1]  # Inner radii (mm) for each element/edge
+    r_e = [0.3, 0.2, 0.2]  # Outer radii (mm) for each element/edge
+    L = [2.0, 1.0, 1.0]        # Element lengths (mm)
         
     data =  (indices, paths, r_o, r_e, L, k, omega, varepsilon)
     return data
