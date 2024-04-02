@@ -1,6 +1,5 @@
 import numpy as np
 import numpy.linalg
-from numpy import pi
 
 """
 Data structures for the network and parameters:
@@ -249,7 +248,7 @@ def single_bifurcation_data():
     f = 1.0                 # frequency (Hz = 1/s)
     omega = 2*np.pi*f       # Angular frequency (Hz)
     lmbda = 2.0             # mm    
-    k = 2*pi/lmbda          # wave number (1/mm)
+    k = 2*np.pi/lmbda          # wave number (1/mm)
     varepsilon = 0.1        # AU 
     ro0 = 0.1               # Base inner radius (mm)
     re0 = 0.2               # Base outer radius (mm)
@@ -359,9 +358,9 @@ def murray_tree_data(m=1, r=0.1, gamma=1.0, beta=2.0, L0=10):
     
     # Peristaltic wave parameters: wave length lmbda and (angular) wave number k
     f = 1.0                 # frequency (Hz = 1/s)
-    omega = 2*pi*f          # Angular frequency (Hz)
+    omega = 2*np.pi*f          # Angular frequency (Hz)
     lmbda = 2.0             # mm    
-    k = 2*pi/lmbda          # wave number (1/mm)
+    k = 2*np.pi/lmbda          # wave number (1/mm)
     varepsilon = 0.1        # AU 
     
     data = (indices, paths, r_o, r_e, L, k, omega, varepsilon)
@@ -391,6 +390,8 @@ def run_single_bifurcation_test():
     Qp = Qprime(Q10, varepsilon, omega, L[0], k, delta0, r_o[0])
     print("eps*<Q_1_0>' (mm^3/s) = %.3e" % Qp)
 
+    return True
+    
 def run_three_junction_verification():
     """Verification test: Compare explicit method and general method on a
     three junction network and check that the computed flows are the same.
@@ -415,8 +416,11 @@ def run_three_junction_verification():
     print("General method gives", b)
     print("Max difference: ", d)
 
-    assert d < 1.e-10, "Difference is larger than expected!"
+    success = d < 1.e-10
+    assert success, "Difference is larger than expected!"
 
+    return success
+    
 def test_murray_data():
 
     debug("Murray tree data (m=1)")
@@ -435,6 +439,8 @@ def test_murray_data():
     data = three_junction_data()
     debug(data)
 
+    return True
+    
 def run_murray_tree():
     print("Solving Murray tree.")
 
@@ -454,27 +460,4 @@ def run_murray_tree():
     Qp = Qprime(Q10, varepsilon, omega, L[0], k, delta0, r_o[0])
     print("eps*<Q_1_0>' (mm^3/s) = %.3e" % Qp)
 
-def test():
-
-    print("")
-    run_single_bifurcation_test()
-
-    print("")
-    run_three_junction_verification()
-
-    print("")
-    test_murray_data()
-
-    print("")
-    run_murray_tree()
-
-if __name__ == "__main__":
-
-    # FIXME: Update to include varying radius estimates. WRONG WITHOUT
-    # IT. See Gjerde, Sanchez, Rognes, JAP (2023):
-    # https://arxiv.org/pdf/2310.02429.pdf Section II and onwards.
-    
-    __DEBUG_MODE=False
-    test()
-
-
+    return True
