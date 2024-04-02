@@ -173,59 +173,6 @@ def solve_bifurcating_tree(network):
 
     return (P, dP, Q1)
 
-def solve_three_junction(network):
-    # Extract individual parameters from argument list (for readability)
-    (indices, paths, r_o, r_e, L, k, omega, varepsilon) = network
-
-    # Compute scaled parameters for solver functions
-    beta = [_beta(re, ro) for (re, ro) in zip(r_e, r_o)]
-    ell = [k*l for l in L]
-    gamma = [(r_o_n/r_o[0])**2 for r_o_n in r_o]
-    msg = "Explicit single bifurcation solution only for uniform radii (not %s)" % r_o
-    assert all([abs(g - 1.0) < 1.0e-12 for g in gamma]), msg
-    
-    # Computation of dimension-less parameters
-    R = [_R(b) for b in beta]
-    Delta = [_delta(b) for b in beta]
-    
-    n = 3
-    A = np.zeros((n, n), dtype=complex)
-    b = np.zeros(n, dtype=complex)
-    
-    # The complex number i
-    z = 1j
-
-    # Define the complex linear system A P = b in terms of the real
-    # and imaginary part: Ar Pr = Br and Ai Pi = Bi:
-
-    # Set right matrix columns for this junction constraint
-    # [P0, P1, P3]
-    A[0, :] = [np.exp(z*ell[0])/(R[0]*ell[0]), - 2*1./(R[1]*ell[1]), 0]
-    A[1, :] = [0, np.exp(z*ell[1])/(R[1]*ell[1]), - 2*1./(R[3]*ell[3])]
-    A[2, :] = [1, np.exp(-z*ell[0]), np.exp(-z*ell[0] - z*ell[1])]
-
-    # Set right vector row for this junction constraint
-    b[0] = _xi(ell[0]) + z - 2*_xi(-ell[1])  
-    b[1] = _xi(ell[1]) + z - 2*_xi(-ell[3])  
-    b[2] = 0
-
-    # Solve the linear systems for real and imaginary parts of P:
-    debug("Solving A P = b")
-    P = np.linalg.solve(A, b)
-    (P0, P1, P3) = P
-
-    P = (P0, P1, P1, P3, P3, P3, P3)
-
-    debug("Solving for dP")
-    dP = solve_for_dP(R, ell, Delta, gamma, indices, paths, P)
-
-    debug("Evaluating the flow rates Q1[i]: ...")
-    Q1 = np.zeros(len(dP))
-    for (i, _) in enumerate(dP):
-        Q1[i] = avg_Q_1_n(P[i], dP[i], ell[i], R[i], Delta[i])
-    
-    return (P, dP, Q1)
-
 def Qprime(Q, varepsilon, omega, L, k, Delta, r_o):
     scale = 2*np.pi*varepsilon*omega*r_o**2/k
     val = scale*Q
