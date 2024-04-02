@@ -81,7 +81,8 @@ def solve_for_P(indices, paths, R, ell, gamma):
     # edges. The number of junctions N plus number of downstream ends
     # (N+1) is also 2N + 1.
 
-    # Form the n x n system of linear equations for determining P: A P = b (complex):
+    # Form the n x n system of linear equations for determining P: A P
+    # = b (complex):
     n = len(R)
     A = np.zeros((n, n), dtype=complex)
     b = np.zeros(n, dtype=complex)
@@ -98,16 +99,16 @@ def solve_for_P(indices, paths, R, ell, gamma):
         A[I, k] = - gamma[k]/(R[k]*ell[k])
 
         # Set the correct vector row for this junction constraint
-        b[I] = gamma[i]*_xi(ell[i]) - gamma[j]*_xi(-ell[j]) - gamma[k]*_xi(-ell[k]) \
-            + z*(- gamma[i] + gamma[j] + gamma[k])
+        b[I] = gamma[i]*_xi(ell[i]) - gamma[j]*_xi(-ell[j]) \
+            - gamma[k]*_xi(-ell[k]) + z*(- gamma[i] + gamma[j] + gamma[k])
 
-    # Apply the additional constraints given in terms of the root-to-leaf paths
+    # Apply the additional constraints given in terms of the
+    # root-to-leaf paths
     I = len(indices)
     for (k, path) in enumerate(paths):
         x_n = 0.0
         for n in path:
-            A[I+k, n] = np.exp(-z*x_n)/gamma[n] # FIXME: Which is the right sign here!?
-            # FIXME: This sign is the old one, but in the new text it is a new one.
+            A[I+k, n] = np.exp(-z*x_n)/gamma[n] # - compared to eq. (40)
             x_n += ell[n]
 
     # Solve the linear systems for real and imaginary parts of P:

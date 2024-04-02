@@ -1,22 +1,25 @@
 from pvs_network_netflow import *
 from pvs_network_netflow import _beta, _delta
 
-# =================================================================================
-# Helper functions for setting up idealized networks included:
+# ==============================================================================
+# Helper functions for setting up idealized networks including:
 # 
 # * single_bifurcation_data
 # * three_junction_data
 # * murray_tree_data
 #
-# =================================================================================
-def single_bifurcation_data():
+# ==============================================================================
+
+def single_bifurcation_data(lmbda=1.0):
     """Data for a single bifurcation test case. Data for network
     consisting of three edges and a single bifurcation, with inner and
     outer radius and lengths of the daughter vessels identical to
     those of the mother vessel. 
 
-    # FIXME: WIP here.
-    Test case used for Table 1c (left) in Gjerde, Sanchez, Rognes (2023).
+    Test case used for Table 1c (left) in Gjerde, Sanchez, Rognes
+    (2023), parametrized by peristaltic wavelength lmbda (given in
+    mm).
+
     """
     indices = [(0, 1, 2),]
     paths = [(0, 1), (0, 2)]
@@ -24,7 +27,6 @@ def single_bifurcation_data():
     # Peristaltic wave parameters: wave length lmbda and (angular) wave number k
     f = 1.0                 # frequency (Hz = 1/s)
     omega = 2*np.pi*f       # Angular frequency (Hz)
-    lmbda = 10.0             # mm    
     k = 2*np.pi/lmbda       # wave number (1/mm)
     varepsilon = 0.1        # AU 
         
@@ -162,35 +164,6 @@ def run_single_bifurcation_test():
 
     return True
     
-# def run_three_junction_verification():
-#     """Verification test: Compare explicit method and general method on a
-#     three junction network and check that the computed flows are the same.
-#     """
-    
-#     data = three_junction_data()
-#     (indices, paths, r_o, r_e, L, k, omega, varepsilon) = data
-
-#     print("Solving three junction test case via general algorithm")
-#     (P_g, dP_g, avg_Q_1_g) = solve_bifurcating_tree(data)
-
-#     print("Solving three-junction case explicitly")
-#     (P_e, dP_e, avg_Q_1_e) = solve_three_junction(data)
-
-#     debug("eps*<Q_1_0> = %.3e" % (varepsilon*avg_Q_1_e[0]))
-
-#     a = numpy.array(avg_Q_1_g)
-#     b = numpy.array(avg_Q_1_e)
-#     d = numpy.max(numpy.abs(a-b))
-    
-#     print("Explicit method gives", a)
-#     print("General method gives", b)
-#     print("Max difference: ", d)
-
-#     success = d < 1.e-10
-#     assert success, "Difference is larger than expected!"
-
-#     return success
-    
 def test_murray_data():
 
     debug("Murray tree data (m=1)")
@@ -237,7 +210,6 @@ def test():
     print("")
     success = run_single_bifurcation_test()
 
-    exit()
     print("")
     success = test_murray_data()
 
