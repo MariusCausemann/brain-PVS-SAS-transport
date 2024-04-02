@@ -106,7 +106,8 @@ def solve_for_P(indices, paths, R, ell, gamma):
     for (k, path) in enumerate(paths):
         x_n = 0.0
         for n in path:
-            A[I+k, n] = np.exp(z*x_n)/gamma[n]
+            A[I+k, n] = np.exp(-z*x_n)/gamma[n] # FIXME: Which is the right sign here!?
+            # FIXME: This sign is the old one, but in the new text it is a new one.
             x_n += ell[n]
 
     # Solve the linear systems for real and imaginary parts of P:
