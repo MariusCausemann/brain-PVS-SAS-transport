@@ -29,10 +29,8 @@ units are given here for illustration purposes:
 Idealized networks are included in the accompanying test script.
 """
 
-__DEBUG_MODE=False
 def debug(x):
-    if __DEBUG_MODE:
-        print(x)
+    print(x)
 
 # Bunch of helper functions for ensuring close match between code and
 # paper presentation.
@@ -56,18 +54,18 @@ def _beta(r_e, r_o):
     "beta is the ratio of outer-to-inner radius (r_e/r_o) for an annular PVS cross-section."
     return r_e/r_o
 
+def _xi(l):
+    "Helper function for expressions in eq. (38)."
+    z = 1j
+    xi1 = (np.exp(z*l) - 1)/l
+    return xi1
+
 def _alpha(l, P, R):
-    "Helper function for matrix/vector expression."
+    "Helper function for expressions in eq. (39)."
     z = 1j
     A1 = (0.5 - (1 - np.cos(l))/(l**2))
     A2 = P*(1 - np.exp(z*l))/(2*l**2*R)
     return (A1 + A2.real)
-
-def _xi(l):
-    "Helper function for matrix/vector expression."
-    z = 1j
-    xi1 = (np.exp(z*l) - 1)/l
-    return xi1
 
 def avg_Q_1_n(P, dP, ell, R, Delta):  
     "Evaluate <Q_1_n>."
@@ -76,8 +74,7 @@ def avg_Q_1_n(P, dP, ell, R, Delta):
            + Delta/(2*ell**2*R)*(P*(1 - np.exp(z*ell))).real)
     return val
 
-
-def solve_for_P(indices, paths, R, ell):
+def solve_for_P(indices, paths, R, ell, gamma):
     """Main function #1: Solving for the P_i, eq. (38)."""
     
     # Recall: A bifurcating tree has N junctions with n = 2N + 1
@@ -95,28 +92,28 @@ def solve_for_P(indices, paths, R, ell):
     for (i, j, k) in indices:
         I = i # This junction (the index of the mother edge by convention)
 
-        # Set the correct matrix columns for this junction constraint
-        #gamma_i = # gamma_n = (r'_o_n/r'_o_1)
-        A[I, i] = np.exp(z*ell[i])/(R[i]*ell[i])
-        A[I, j] = - 1.0/(R[j]*ell[j])
-        A[I, k] = - 1.0/(R[k]*ell[k])
+        # Set the correct matrix columns for this junction constraint, eq. (38)
+        A[I, i] = np.exp(z*ell[i])*gamma[i]/(R[i]*ell[i])
+        A[I, j] = - gamma[j]/(R[j]*ell[j])
+        A[I, k] = - gamma[k]/(R[k]*ell[k])
 
         # Set the correct vector row for this junction constraint
-        b[I] = _xi(ell[i]) + z - _xi(-ell[j]) - _xi(-ell[k])
+        b[I] = gamma[i]*_xi(ell[i]) - gamma[j]*_xi(-ell[j]) - gamma[k]*_xi(-ell[k]) \
+            + z*(- gamma[i] + gamma[j] + gamma[k])
 
     # Apply the additional constraints given in terms of the root-to-leaf paths
     I = len(indices)
     for (k, path) in enumerate(paths):
         x_n = 0.0
         for n in path:
-            A[I+k, n] = np.exp(-z*x_n)
+            A[I+k, n] = np.exp(z*x_n)/gamma[n]
             x_n += ell[n]
 
     # Solve the linear systems for real and imaginary parts of P:
     P = np.linalg.solve(A, b)
     return P
 
-def solve_for_dP(R, ell, Delta, indices, paths, P):
+def solve_for_dP(R, ell, Delta, gamma, indices, paths, P):
     "Main function #2: Solving for the dP_i."
 
     # n x n system of linear (real) equations for determining dP: A dP = b 
@@ -129,20 +126,20 @@ def solve_for_dP(R, ell, Delta, indices, paths, P):
         I = i # This junction (the index of the mother edge by convention)
         
         # Set right matrix columns for this junction constraint
-        A[I, i] = 1.0/(R[i]*ell[i])
-        A[I, j] = - 1.0/(R[j]*ell[j])
-        A[I, k] = - 1.0/(R[k]*ell[k])
+        A[I, i] = gamma[i]/(R[i]*ell[i])
+        A[I, j] = - gamma[j]/(R[j]*ell[j])
+        A[I, k] = - gamma[k]/(R[k]*ell[k])
 
         # Set right vector row for this junction constraint
-        b[I] = (Delta[i]*_alpha(ell[i], P[i], R[i]) 
-                - Delta[j]*_alpha(ell[j], P[j], R[j])
-                - Delta[k]*_alpha(ell[k], P[k], R[k]))
+        b[I] = (gamma[i]*Delta[i]*_alpha(ell[i], P[i], R[i]) 
+                - gamma[j]*Delta[j]*_alpha(ell[j], P[j], R[j])
+                - gamma[k]*Delta[k]*_alpha(ell[k], P[k], R[k]))
 
     # Apply additional constraints given in terms of the root-to-leaf paths
     I = len(indices)
     for (k, path) in enumerate(paths):
         for n in path:
-            A[I+k, n] = 1.0
+            A[I+k, n] = 1.0/gamma[n]
             
     # Solve the linear systems for dP:
     dP = np.linalg.solve(A, b)
@@ -161,12 +158,13 @@ def solve_bifurcating_tree(network):
     # Computation of dimension-less parameters
     R = [_R(b) for b in beta]
     Delta = [_delta(b) for b in beta]
+    gamma = [(r_o_n/r_o[0])**2 for r_o_n in r_o]
     
     debug("Solving for P")
-    P = solve_for_P(indices, paths, R, ell)
+    P = solve_for_P(indices, paths, R, ell, gamma)
     
     debug("Solving for dP")
-    dP = solve_for_dP(R, ell, Delta, indices, paths, P)
+    dP = solve_for_dP(R, ell, Delta, gamma, indices, paths, P)
 
     debug("Evaluating the flow rates Q1[i]: ...")
     Q1 = np.zeros(len(dP))
@@ -176,14 +174,16 @@ def solve_bifurcating_tree(network):
     return (P, dP, Q1)
 
 def solve_three_junction(network):
-
     # Extract individual parameters from argument list (for readability)
     (indices, paths, r_o, r_e, L, k, omega, varepsilon) = network
 
     # Compute scaled parameters for solver functions
     beta = [_beta(re, ro) for (re, ro) in zip(r_e, r_o)]
     ell = [k*l for l in L]
-
+    gamma = [(r_o_n/r_o[0])**2 for r_o_n in r_o]
+    msg = "Explicit single bifurcation solution only for uniform radii (not %s)" % r_o
+    assert all([abs(g - 1.0) < 1.0e-12 for g in gamma]), msg
+    
     # Computation of dimension-less parameters
     R = [_R(b) for b in beta]
     Delta = [_delta(b) for b in beta]
@@ -217,7 +217,7 @@ def solve_three_junction(network):
     P = (P0, P1, P1, P3, P3, P3, P3)
 
     debug("Solving for dP")
-    dP = solve_for_dP(R, ell, Delta, indices, paths, P)
+    dP = solve_for_dP(R, ell, Delta, gamma, indices, paths, P)
 
     debug("Evaluating the flow rates Q1[i]: ...")
     Q1 = np.zeros(len(dP))
