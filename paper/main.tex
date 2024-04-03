@@ -265,11 +265,8 @@ and include the inner fluid-filled cavities such as the ventricular
 system.  Finally, we generate a tetrahedral mesh of both compartments
 using the fTetWild meshing algorithm \cite{hu2020fast}.
 
-\subsection*{Vascular and perivascular network geometries}
+The computational domain $\Omega$ is defined by the union of the SAS $\Omega_{\rm sas}$ and brain parenchyma $\Omega_{\rm brain}$. The thin pia membrane encloses the brain, and thus the pial surface (of the brain) defines the SAS-brain interface $\Gamma_{\rm pia}$.
 
-We skeletonize the binary masks of both the arterial and venous network using Kiminaro \cite{william_silversmith_2021_5539913} and obtain networks consisting of centerline and radius information of all detected vessels. The resulting networks are further smoothened using a spline interpolation technique and the nodes with lowest z-coordinate are identified as the networks' root nodes.
-
-The computational domain $\Omega$ is defined by the union of the SAS $\Omega_{\rm sas}$ and brain parenchyma $\Omega_{\rm brain}$. The thin pia membrane encloses the brain, and thus the pial surface (of the brain) defines the SAS-brain interface $\Gamma_{\rm pia}$. A network of blood vessels are embedded in the SAS, potentially very near to or on the pial surface. We assume that a network of idealized (annular or semi-annular) perivascular spaces surround the vasculature. We represent the vasculature and associated perivasculature by a network of one-dimensional curves $\Gamma$ representing the network centerlines equipped with inner $R_1$ and outer $R_2$ radius information. 
 
 Surface representations of the outer SAS boundary, pial membrane, and delimiters of other CSF-filled spaces such as the lateral ventricles, third and fourth ventricle, and aqueduct are extracted from MR-images of human subject(s), see e.g. the pipeline described by Hornkjøl et al.~\cite{hornkjol2022csf}. From these surface representations, we create volumetric meshes of the SAS and brain using SVMTK~\cite{mardal2022mathematical}. 
 
@@ -278,6 +275,15 @@ $\Gamma_{\mathrm{skull}}$ facing the dura and skull and
 $\Gamma_{\mathrm{spine}}$ representing the lower interface towards the
 spinal compartment (\Cref{fig:concept}). \mer{MER: I put this here, keep
   it here. How about the ventricles?}
+
+\subsection*{Vascular and perivascular network geometries}
+
+We also extract binary masks of arterial and venous networks from the Hodneland et al~\cite{hodneland2019new} data set. 
+
+We skeletonize the binary masks of both the arterial and venous networks using Kiminaro~\cite{william_silversmith_2021_5539913} to obtain networks consisting of the centerline and radius information of all detected vessels. The resulting networks are smoothened using a spline interpolation technique. Finally, the nodes with lowest z-coordinate are identified as the networks' root nodes.
+
+A network of blood vessels are embedded in the SAS, potentially very near to or on the pial surface. We assume that a network of idealized (annular or semi-annular) perivascular spaces surround the vasculature. We represent the vasculature and associated perivasculature by a network of one-dimensional curves $\Gamma$ representing the network centerlines equipped with inner $R_1$ and outer $R_2$ radius information. 
+
 
 \begin{figure}
   \caption{\mer{MER: Concept figure illustrating the compartments and story line. (A) Concept sketch of the SAS, PVS and the brain; (B) Visualization of geometry domains (brain, sas and vasculature; think about colors and associations; please don't make blood blue and water red e.g.) ; (C) Zoom-in/detail on vasculature, which are which arteries (ACA, MCA, PCA, CoW)  and veins (XXX); (D) Zoom-in 2 on vascular position versus SAS and brain; (E) Zoom-in 3 on where PVS ends; (F) Illustration of boundaries? (G) Concept illustration of the mathematical model (diffusion, convection, exchange, boundaries).}}
