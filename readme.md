@@ -9,10 +9,10 @@ To install dependencies with mamba (or conda):
 
 Image data were downloaded from Hodneland et al, PLOS Comp. Bio, 2023 (https://doi.org/10.1371/journal.pcbi.1007073) and placed under data/. These data include: 
 
-White matter representation (mask): data/pcbi.1007073.s005.nii.gz
-Gray matter representation (mask): data/pcbi.1007073.s006.nii.gz  
-Arteries: data/pcbi.1007073.s007.nii.gz
-Veins: data/pcbi.1007073.s008.nii.gz
+* White matter representation (mask): data/pcbi.1007073.s005.nii.gz
+* Gray matter representation (mask): data/pcbi.1007073.s006.nii.gz  
+* Arteries: data/pcbi.1007073.s007.nii.gz
+* Veins: data/pcbi.1007073.s008.nii.gz
 
 To have a quick look at the data, do e.g. the following (in Python) to plot a slice of the white matter data.
 ```
