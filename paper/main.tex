@@ -276,14 +276,24 @@ $\Gamma_{\mathrm{spine}}$ representing the lower interface towards the
 spinal compartment (\Cref{fig:concept}). \mer{MER: I put this here, keep
   it here. How about the ventricles?}
 
-\subsection*{Vascular and perivascular network geometries}
+\subsection*{Vascular and perivascular domains and network}
 
-We also extract binary masks of arterial and venous networks from the Hodneland et al~\cite{hodneland2019new} data set. 
-
-We skeletonize the binary masks of both the arterial and venous networks using Kiminaro~\cite{william_silversmith_2021_5539913} to obtain networks consisting of the centerline and radius information of all detected vessels. The resulting networks are smoothened using a spline interpolation technique. Finally, the nodes with lowest z-coordinate are identified as the networks' root nodes.
-
-A network of blood vessels are embedded in the SAS, potentially very near to or on the pial surface. We assume that a network of idealized (annular or semi-annular) perivascular spaces surround the vasculature. We represent the vasculature and associated perivasculature by a network of one-dimensional curves $\Gamma$ representing the network centerlines equipped with inner $R_1$ and outer $R_2$ radius information. 
-
+We skeletonize the binary masks of the arteries and veins of the
+Hodneland~\cite{hodneland2019new} data set, using
+Kiminaro~\cite{william_silversmith_2021_5539913}, to obtain the
+centerline $\Gamma^i$ and radius $R_1^i$ of each detected vessel $i$,
+and the vessel connections. The resulting vascular networks are
+further smoothened using a spline interpolation technique, and
+represented as a graph with nodes connected by edges. The nodes with
+lowest z-coordinate are identified as the networks' root nodes. We
+denote the domain defined by the connected centerlines by
+$\Gamma$. The vascular domain is then represented as the union of
+cylindrical vessels of radius $R_1^i$ surrounding the centerlines
+$\Gamma^i$. Moreover, we consider the surrounding perivascular spaces
+as the union of annular cylinders of inner radius $R_1^i$ and outer
+radius $R_2^i = (1 + \alpha) R_1^i$ of width $R_2^i - R_1^i = \alpha
+R_1^i$. Both the vasculature and perivasculature are thus defined
+relative to a common network of vessel segments.
 
 \begin{figure}
   \caption{\mer{MER: Concept figure illustrating the compartments and story line. (A) Concept sketch of the SAS, PVS and the brain; (B) Visualization of geometry domains (brain, sas and vasculature; think about colors and associations; please don't make blood blue and water red e.g.) ; (C) Zoom-in/detail on vasculature, which are which arteries (ACA, MCA, PCA, CoW)  and veins (XXX); (D) Zoom-in 2 on vascular position versus SAS and brain; (E) Zoom-in 3 on where PVS ends; (F) Illustration of boundaries? (G) Concept illustration of the mathematical model (diffusion, convection, exchange, boundaries).}}
