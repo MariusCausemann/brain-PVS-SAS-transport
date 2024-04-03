@@ -243,21 +243,29 @@ Effect of pia permeability (Model N-1)
 
 %\mer{MER: I recommend writing each (sub)section of Methods as a nearly stand-alone paragraph. Let's see if we can avoid subsubsections/paragraphs. If you need to add more detail than you think is appropriate, put it in a Supplementary Methods section in the Appendix.} 
 
-\subsection*{Geometries and domains}
+\subsection*{Brain parenchyma, SAS, and interface geometries}
 
-\mer{MER: Suggestion @Rami: Let's merge these sections on ``Meshing'' and ``Geometries and domains'' here. Would you have a go at it? Keep it brief. Mention number of cells and max/min mesh size for both 3D and (peri)vasculature. I like including references to tools used as you have done. Refer to \Cref{fig:concept}. Include units when describing the geometry. Describe the radii provided. Describe the default assumption on the PVS size (probably we vary this in a model variation). Clearly illustrate the boundaries in the Figure, and refer to these in the text. Description should be such that it is easily to intuitively understand, but perhaps not reproduce immediately (that is why we will also share the code). }  
+\mer{MER: Suggestion @Rami: Would you have a go a refining these sections? Keep it brief. Mention number of cells and max/min mesh size for both 3D and (peri)vasculature. I like including references to tools used as you have done. Refer to \Cref{fig:concept}. Include units when describing the geometry. Describe the radii provided. Describe the default assumption on the PVS size (probably we vary this in a model variation). Clearly illustrate the boundaries in the Figure, and refer to these in the text. Description should be such that it is easily to intuitively understand, but perhaps not reproduce immediately (that is why we will also share the code). }  
 
-\subsubsection*{Meshing}
 
-Hodneland et al~\cite{hodneland2019new} developed a method to image the brains' microvasculature based on time-of-flight (ToF) and quantitative susceptibility mapping (QSM) to identify arterial and venous networks.
-We derive a detailed tetrahedral mesh of the parenchyma and the surrounding CSF-filled spaces alongside a network representation of the vasculature from the anatomical data provided therein.  
+Hodneland et al~\cite{hodneland2019new} developed a method to image
+the brains' microvasculature based on time-of-flight (ToF) and
+quantitative susceptibility mapping (QSM) to identify arterial and
+venous networks.  We derive a detailed tetrahedral mesh of the
+parenchyma and the surrounding CSF-filled spaces alongside a network
+representation of the vasculature from the anatomical data provided
+therein. We merge the white and grey matter masks provided by
+\cite{hodneland2019new} to extract the pial surface.
+ 
 
-\paragraph{3D domain}
 
-We merge the white and grey matter masks provided by \cite{hodneland2019new} to extract the pial surface. As no data on the CSF-filled spaces is available, we smooth and extend the pial surface by about 5\,mm to obtain an approximation of the SAS and include the inner fluid-filled cavities such as the ventricular system. 
-Finally, we generate a tetrahedral mesh of both compartments using the fTetWild meshing algorithm \cite{hu2020fast}.
+As no data on the CSF-filled spaces is available, we smooth and extend
+the pial surface by about 5\,mm to obtain an approximation of the SAS
+and include the inner fluid-filled cavities such as the ventricular
+system.  Finally, we generate a tetrahedral mesh of both compartments
+using the fTetWild meshing algorithm \cite{hu2020fast}.
 
-\paragraph{Vessel networks}
+\subsection*{Vascular and perivascular network geometries}
 
 We skeletonize the binary masks of both the arterial and venous network using Kiminaro \cite{william_silversmith_2021_5539913} and obtain networks consisting of centerline and radius information of all detected vessels. The resulting networks are further smoothened using a spline interpolation technique and the nodes with lowest z-coordinate are identified as the networks' root nodes.
 
