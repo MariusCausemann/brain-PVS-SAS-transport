@@ -146,7 +146,7 @@ def murray_tree_data(m=1, r=0.1, gamma=1.0, beta=2.0, L0=10):
 def run_single_bifurcation_test():
 
     print("Running single bifurcation test case via general solution algorithm")
-    data = single_bifurcation_data()
+    data = single_bifurcation_data(lmbda=0.1)
     (indices, paths, r_o, r_e, L, k, omega, varepsilon) = data
     
     (P, dP, avg_Q_1) = solve_bifurcating_tree(data)
@@ -206,7 +206,6 @@ def run_murray_tree():
     return True
 
 def test():
-
     print("")
     success = run_single_bifurcation_test()
 
@@ -217,7 +216,6 @@ def test():
     success = run_murray_tree()
     
 if __name__ == "__main__":
-
     test()
 
 

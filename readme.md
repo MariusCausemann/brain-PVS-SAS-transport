@@ -1,11 +1,17 @@
 
 #### Installation and dependencies
 
-To install dependencies with mamba (or conda):
+To install all dependencies with mamba:
 
-`mamba env  create -f environment.yml`
+`mamba env create -f environment.yml`
 
-#### Image data 
+This will create the environment 'pvs_transport_env'. Activate with:
+
+`mamba activate pvs_transport_env`
+
+To use conda instead of mamba, replace mamba with conda in the above.
+
+#### Brain and vasculature imaging data 
 
 Image data were downloaded from Hodneland et al, PLOS Comp. Bio, 2023 (https://doi.org/10.1371/journal.pcbi.1007073) and placed under data/. These data include: 
 
@@ -41,7 +47,7 @@ These scripts will generate objects placed under mesh/ including
 * surfaces/
 * volmesh/
 
-For networks/, there is the original, a smoothened and a tube representation of the arterial and venous network separately in .vtk format. The ones we use further are arteries_smooth.vtk and veins_smooth.vtk.
+For networks/, there is the original, a smoothened and a tube representation of the arterial and venous network separately in .vtk format. The ones we use further are arteries_smooth.vtk and veins_smooth.vtk. 
 
 For surfaces/, there is the white matter (pial) surface (wm.ply), the white-gray matter interface (gm.ply) and parenchyma.ply, all in .ply format. 
 

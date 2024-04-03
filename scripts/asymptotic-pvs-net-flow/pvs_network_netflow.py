@@ -4,7 +4,8 @@ import numpy.linalg
 """
 Data structures for the network and parameters:
 
-*Convention*: Node n is numbered equal to its mother edge/element e.
+*Convention*: All nodes n (except orphan nodes) is numbered equal to
+ its mother edge/element e.
 
 * indices (list): list of three-tuples representing the network via
   its bifurcations. For each bifurcation/junction, give the mother
