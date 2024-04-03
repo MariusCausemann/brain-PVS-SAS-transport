@@ -41,7 +41,7 @@ These scripts will generate objects placed under mesh/ including
 * surfaces/
 * volmesh/
 
-For networks/, there is the original, a smoothened and a tube representation of the arterial and venous network separately in .vtk format.
+For networks/, there is the original, a smoothened and a tube representation of the arterial and venous network separately in .vtk format. The ones we use further are arteries_smooth.vtk and veins_smooth.vtk.
 
 For surfaces/, there is the white matter (pial) surface (wm.ply), the white-gray matter interface (gm.ply) and parenchyma.ply, all in .ply format. 
 
