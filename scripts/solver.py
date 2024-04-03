@@ -1,4 +1,4 @@
-from petsc4py import PETSc
+#from petsc4py import PETSc
 from dolfin import *
 import xii  
 import pyvista as pv
@@ -11,11 +11,15 @@ def remove_duplicate_cells(netw):
     cells.sort(axis=1)
     unique_cells = np.unique(cells, axis=0)
     netw.cells = np.pad(unique_cells, pad_width=((0,0), (1,0)), constant_values=2)
+    
+def read_vtk_network(filename, rescale_mm2m=True):
+    """Read the VTK file given by filename, return a FEniCS 1D Mesh representing the network, a FEniCS MeshFunction (double) representing the radius of each vessel segment (defined over the mesh cells), and a FEniCS MeshFunction (size_t) defining the roots of the network (defined over the mesh vertices, roots are labelled by 2 or 1.) 
 
-def read_vtk_network(filename):
-
+    rescale_mm2m is set to True by default, in which case the information on file is rescaled by a factor 1.e-3. 
+"""
     netw = pv.read(filename)
-    netw.points *= 1e-3 # scale to m
+    if rescale_mm2m:
+        netw.points *= 1e-3 # scale to m
     remove_duplicate_cells(netw)
     mesh = Mesh()
     ed = MeshEditor()
@@ -36,7 +40,9 @@ def read_vtk_network(filename):
 
     roots.array()[:] = netw["root"]
     netw = netw.point_data_to_cell_data()
-    radii.array()[:] = netw["radius"] * 1e-3 # scale to m
+
+    if rescale_mm2m:
+        radii.array()[:] = netw["radius"] * 1e-3 # scale to m
 
     return mesh, radii, roots
 
