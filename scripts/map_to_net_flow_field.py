@@ -22,6 +22,11 @@ def map_vasculature(fname):
     # Reduce the vascular network to a bifurcating tree and keep a map
     # from tree element index to vessel segment indices.
 
+    print(mesh.num_vertices())
+    print(mesh.num_cells())
+    exit()
+          
+    
     # Start with the root node with lowest vertex index.
     first_roots = np.where(roots.array() == 2)[0]
     print("Vertices where root == 2: ", first_roots)
@@ -46,6 +51,7 @@ def map_vasculature(fname):
     
 if __name__ == '__main__':
 
-    map_vasculature("../mesh/networks/arteries_smooth.vtk")
+    #map_vasculature("../mesh/networks/arteries_smooth.vtk")
+    map_vasculature("../mesh/networks/venes_smooth.vtk")
 
     exit()
