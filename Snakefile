@@ -1,12 +1,28 @@
-models = ["modelA", "modelB"]#, "modelC", "modelD"]
-times = [60*60*1, 60*60*6, 60*60*12, 60*60*18, 60*60*24] # secs
+import numpy as np
+models = ["modelA", "modelB", "modelC"] #, "modelD"]
+times = list(np.array([1, 6, 12, 18, 24])*60*60)
+conctimes =  list(np.array([0, 0.5, 1,2,3, 4, 5, 6, 9, 12, 15, 18, 21, 24])*60*60)
+
+cmax = {"detail":{"modelA_modelB":5, "modelB_modelC":5},
+        "overview":{"modelA_modelB":10, "modelB_modelC":8},          
+}
+
+diffmax = {"detail":{"modelA_modelB":1, "modelB_modelC":1},
+           "overview":{"modelA_modelB":1, "modelB_modelC":5},          
+}
+types = ["overview","detail"]
 
 rule all:
     input:
-        "plots/comparisons/modelA_modelB/modelA_modelB.png",
-        "plots/comparisons/modelA_modelC/modelA_modelC.png",
+        "plots/comparisons/modelA_modelB/modelA_modelB_overview.png",
+        "plots/comparisons/modelA_modelB/modelA_modelB_detail.png",
+        "plots/comparisons/modelB_modelC/modelB_modelC_overview.png",
+        "plots/comparisons/modelB_modelC/modelB_modelC_detail.png",
         #"plots/comparisons/modelA_modelD/modelA_modelD.png",
-        expand("plots/{modelname}/{modelname}_tracer_vessel_dist.png", modelname=models)
+        expand("plots/{modelname}/{modelname}_tracer_vessel_dist.png", modelname=models),
+        expand("plots/{modelname}/{modelname}_total_conc.png", modelname=models),
+        expand("plots/{modelname}/{modelname}_{tp}_{t}.png", modelname=models, t=times, tp=types)
+
 
 rule runSimuation:
     conda:"environment.yml"
@@ -39,9 +55,9 @@ rule generatePlot:
         art="results/{modelname}/{modelname}_arteries.pvd",
         ven="results/{modelname}/{modelname}_venes.pvd",
     output:
-        plot="plots/{modelname}/{modelname}_{time,[0-9]*}.png"
+        plot="plots/{modelname}/{modelname}_{type}_{time,[0-9]*}.png"
     shell:
-        "python scripts/generate_plot.py {wildcards.modelname} {wildcards.time}"
+        "python scripts/generate_plot.py {wildcards.modelname} {wildcards.time} {wildcards.type} --filename {output.plot}"
 
 rule generateDiffPlot:
     conda:"environment.yml"
@@ -53,21 +69,40 @@ rule generateDiffPlot:
         art2="results/{model2}/{model2}_arteries.pvd",
         ven2="results/{model2}/{model2}_venes.pvd",
     output:
-        plot="plots/comparisons/{model1}_{model2}/{model1}_{model2}_diff_{time}.png"
+        plot="plots/comparisons/{model1}_{model2}/{model1}_{model2}_diff_{type}_{time}.png"
     shell:
-        "python scripts/create_diff_plot.py {wildcards.model1} {wildcards.model2} {wildcards.time}"
+        "python scripts/create_diff_plot.py {wildcards.model1} {wildcards.model2} {wildcards.time} {wildcards.type} --filename {output.plot}"
+
+rule getConcentrationRange:
+    conda:"environment.yml"
+    input:
+        sas="results/{modelname}/{modelname}_sas.pvd",
+        art="results/{modelname}/{modelname}_arteries.pvd",
+        ven="results/{modelname}/{modelname}_venes.pvd",
+    output:
+        ranges="plots/{modelname}/{modelname}_ranges.yml"
+    params:
+        times=times
+    shell:
+        "python scripts/compute_ranges.py {wildcards.modelname} {params.times}"
+
 
 rule compareModels:
     conda:"environment.yml"
     input:
-        plots1=expand("plots/{{model1}}/{{model1}}_{time}.png", time=times),
-        plots2=expand("plots/{{model2}}/{{model2}}_{time}.png", time=times),
-        plotsdiff=expand("plots/comparisons/{{model1}}_{{model2}}/{{model1}}_{{model2}}_diff_{time}.png", time=times),
-
+        sas1="results/{model1}/{model1}_sas.pvd",
+        art1="results/{model1}/{model1}_arteries.pvd",
+        ven1="results/{model1}/{model1}_venes.pvd",
+        sas2="results/{model2}/{model2}_sas.pvd",
+        art2="results/{model2}/{model2}_arteries.pvd",
+        ven2="results/{model2}/{model2}_venes.pvd"
     output:
-        plot="plots/comparisons/{model1}_{model2}/{model1}_{model2}.png"
+        plot="plots/comparisons/{model1}_{model2}/{model1}_{model2}_{type}.png"
+    params:
+        cmax= lambda wildcards: cmax[wildcards.type][f"{wildcards.model1}_{wildcards.model2}"],
+        diffmax= lambda wildcards: diffmax[wildcards.type][f"{wildcards.model1}_{wildcards.model2}"]
     shell:
-        "python scripts/compare_models.py {wildcards.model1} {wildcards.model2} {times}"
+        "python scripts/compare_models.py {wildcards.model1} {wildcards.model2} {wildcards.type} {params.cmax} {params.diffmax} {times}"
 
 rule analyzeTracerDist:
     conda:"environment.yml"
@@ -79,3 +114,14 @@ rule analyzeTracerDist:
         plot="plots/{modelname}/{modelname}_tracer_vessel_dist.png"
     shell:
         "python scripts/analyze_tracer_dist.py {wildcards.modelname}"
+
+rule totalTracer:
+    conda:"environment.yml"
+    input:
+        sas="results/{modelname}/{modelname}_sas.pvd",
+        art="results/{modelname}/{modelname}_arteries.pvd",
+        ven="results/{modelname}/{modelname}_venes.pvd",
+    output:
+        plot="plots/{modelname}/{modelname}_total_conc.png"
+    shell:
+        "python scripts/mean_concentrations.py {wildcards.modelname} {conctimes}"

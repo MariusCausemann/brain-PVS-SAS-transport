@@ -8,9 +8,12 @@ import typer
 from pathlib import Path
 from plotting_utils import read_config
 
-def write(sols, files, t):
-    for s,f in zip(sols, files):
+def write(sols, pvdfiles, t, hdffile=None):
+    for s,f in zip(sols, pvdfiles):
         f.write(s, t)
+    if hdffile is not None:
+        for s in sols:
+            hdffile.write(s, s.name(), t)
 
 def run_simulation(configfile: str):
 
@@ -48,15 +51,9 @@ def run_simulation(configfile: str):
     perm_artery  = 2*np.pi*artery_radii 
     area_artery  = np.pi*(artery_radii**2 - (artery_radii/pvs_ratio_artery)**2)
 
-    sas = Mesh()
-    with XDMFFile('mesh/volmesh/mesh.xdmf') as f:
-        f.read(sas)
-        gdim = sas.geometric_dimension()
-        vol_subdomains = MeshFunction('size_t', sas, gdim, 0)
-        f.read(vol_subdomains, 'label')
-        sas.scale(1e-3)  # scale from mm to m
-
-
+    sas, vol_subdomains = get_sas() 
+    gdim = sas.geometric_dimension()
+    
     assert np.allclose(np.unique(vol_subdomains.array()), [1,2])
 
 
@@ -214,11 +211,13 @@ def run_simulation(configfile: str):
     pvdsas = File(results_dir + f'{modelname}_sas.pvd') 
     pvdarteries = File(results_dir + f'{modelname}_arteries.pvd') 
     pvdvenes = File(results_dir + f'{modelname}_venes.pvd') 
-    files = (pvdsas, pvdarteries, pvdvenes)
+    pvdfiles = (pvdsas, pvdarteries, pvdvenes)
+    hdffile = HDF5File(sas.mpi_comm(), results_dir + f"{modelname}.hdf", "w")
 
-    write((u_i, pa_i, pv_i), files, 0.0)
-    write((vol_subdomains, artmarker, veinmarker), files, 0.0)
+    write((u_i, pa_i, pv_i), pvdfiles, 0.0, hdffile=hdffile)
+    write((vol_subdomains, artmarker, veinmarker), pvdfiles, 0.0)
     write((xi_a, xi_v), (pvdarteries, pvdvenes), 0.0)
+
 
     wh = xii.ii_Function(W)
     x_ = A_.createVecLeft()
@@ -253,7 +252,7 @@ def run_simulation(configfile: str):
         wh[1].rename("c_artery", "time")
         wh[2].rename("c_vein", "time")
         if i%config["output_frequency"] == 0:
-            write(wh, files, float(t))
+            write(wh, pvdfiles, float(t), hdffile)
 
 
 if __name__ == "__main__":
