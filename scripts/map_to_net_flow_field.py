@@ -32,22 +32,23 @@ def map_vasculature(fname, output):
     p02 = nx.dijkstra_path(H, r0, r2)
     p12 = nx.dijkstra_path(H, r1, r2)
 
+    # Find common node n0 that is in all three sets:
+    n0 = set(p01).intersection(set(p02)).intersection(set(p12)).pop()
+    
+    p0 = nx.dijkstra_path(H, r0, n0)
+    p1 = nx.dijkstra_path(H, r1, n0) 
+    p2 = nx.dijkstra_path(H, r2, n0)
+   
     # Store paths
     print("Storing shortest paths to %s/..." % output)
     mf = df.MeshFunction("size_t", mesh, 0, 0)
-    mf.array()[p01] = 1
-    df.File(os.path.join(output, "path_r0r1.pvd")) << mf
-
-    mf = df.MeshFunction("size_t", mesh, 0, 0)
-    mf.array()[p02] = 2
-    df.File(os.path.join(output, "path_r0r2.pvd")) << mf
-
-    mf = df.MeshFunction("size_t", mesh, 0, 0)
-    mf.array()[p12] = 3
-    df.File(os.path.join(output, "path_r1r2.pvd")) << mf
+    mf.array()[p0] = r0
+    mf.array()[p1] = r1
+    mf.array()[p2] = r2
+    df.File(os.path.join(output, "shortest_path_between_supply_nodes.pvd")) << mf
 
 if __name__ == '__main__':
 
-    map_vasculature("../mesh/networks/arteries_smooth.vtk", "paths")
+    map_vasculature("../mesh/networks/arteries_smooth.vtk", "../mesh/networks/common_paths")
     #map_vasculature("../mesh/networks/venes_smooth.vtk")
 
