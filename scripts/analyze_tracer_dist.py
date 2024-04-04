@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from plotting_utils import time_str, set_plotting_defaults
 import typer
 import seaborn as sns
+from typing import List
 
 
 def plot_concentration_distance(c_time_series, isodists, filename):
@@ -17,7 +18,7 @@ def plot_concentration_distance(c_time_series, isodists, filename):
     plt.legend()
     plt.xlabel("vessel distance (m)")
     plt.ylabel("concentration")
-    plt.legend(loc="upper right")
+    plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.1), ncol=6, columnspacing=0.7)
     plt.tight_layout()
     plt.savefig(filename)
 
@@ -37,7 +38,7 @@ def plot_mean_concentrations(mean_sas, mean_art, mean_ven, times, filename):
     plt.savefig(filename)
 
 
-def analyze_tracer_dist(modelname: str):
+def analyze_tracer_dist(modelname: str, times:List[int]):
     domain = "sas"
     times = 3600*np.array([1, 6, 12, 18, 24])
     sas = get_result(modelname, domain, times)
@@ -47,21 +48,13 @@ def analyze_tracer_dist(modelname: str):
     d, idx = tree.query(sas.points)
     sas["distances"] = d
     isodists = np.linspace(0, 0.1, 10)
-    isosurfs = [sas.contour(isosurfaces=[d], scalars="distances") for d in isodists]
-
+    #isosurfs = [sas.contour(isosurfaces=[d], scalars="distances") for d in isodists]
+    isosurfs = [sas.threshold(d, scalars="distances") for d in isodists]
     c_time_series = {}
     for t in times:
         c_time_series[t] = [isos[f"c_sas_{t}"].mean() for isos in isosurfs]
     filename = f"plots/{modelname}/{modelname}_tracer_vessel_dist.png"
     plot_concentration_distance(c_time_series, isodists, filename)
-
-    mean_sas = [sas[f"c_sas_{t}"].mean() for t in times]
-    art = get_result(modelname, "arteries", times)
-    ven = get_result(modelname, "venes", times)
-    mean_art = [art[f"c_artery_{t}"].mean() for t in times]
-    mean_ven = [ven[f"c_vein_{t}"].mean() for t in times]
-    filename = f"plots/{modelname}/{modelname}_mean_tracer_conc.png"
-    plot_mean_concentrations(mean_sas, mean_art, mean_ven, times, filename)
 
 if __name__ == "__main__":
     typer.run(analyze_tracer_dist)

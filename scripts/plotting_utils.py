@@ -1,13 +1,23 @@
 import pyvista as pv
+import numpy as np
 import yaml
 import collections
 import matplotlib.pyplot as plt
+from typing import List
 
 def set_plotting_defaults():
     import seaborn as sns
     plt.rc("axes.spines", top=False, right=False)
-    sns.set_context("talk")
+    sns.set_context("notebook")
     sns.set_palette("blend:#7AB,#EDA")
+
+def minmax(arr_list, percentile=95):
+    if percentile is None:
+        return float(np.min(arr_list)), float(np.max(arr_list))
+    else:
+        percentiles = [np.percentile(arr, [100 - percentile, percentile])
+                       for arr in arr_list]
+        return float(np.min(percentiles)), float(np.max(percentiles))
 
 def get_result(modelname, domain, times):
     filename = f"results/{modelname}/{modelname}_{domain}.pvd"
@@ -27,6 +37,60 @@ def get_result(modelname, domain, times):
         for ar in d.array_names:
             data[f"{ar}_{t}"] = d[ar]
     return data
+
+def get_result_fenics(modelname, domain, times):
+    from fenics import HDF5File, FunctionSpace, Function
+    from plotting_utils import read_config
+    from solver  import get_sas, read_vtk_network, as_P0_function
+    filename = f"results/{modelname}/{modelname}.hdf"
+    config = read_config(f"configfiles/{modelname}.yml")
+    dt , T= config["dt"], config["T"]
+    alltimes = np.arange(0, T + dt, dt*config["output_frequency"])
+    if domain=="sas":
+        mesh, vol_subdomains = get_sas()
+    if domain == "artery":
+        mesh, radii, _ = read_vtk_network("mesh/networks/arteries_smooth.vtk")
+    if domain == "vein":
+        mesh, radii, _ = read_vtk_network("mesh/networks/venes_smooth.vtk")
+    V = FunctionSpace(mesh, "CG", 1)
+    results = []
+    with HDF5File(mesh.mpi_comm(), filename, "r") as f:
+        for t in times:
+            i = np.where(alltimes==t)[0][0]
+            c = Function(V)
+            f.read(c, f"c_{domain}/vector_{i}")
+            results.append(c)
+    if domain in ["artery", "vein"]:
+        return results, as_P0_function(radii)
+    elif domain=="sas":
+        return results, vol_subdomains
+
+def get_range(modelname, domain, times, var, percentile=95):
+    grid = get_result(modelname, domain, times)
+    return minmax([grid[f"{var}_{t}"] for t in times], percentile=percentile)
+
+def get_diff_range(modela, modelb, domain, times, var, percentile=95):
+    grida = get_result(modela, domain, times)
+    gridb = get_result(modelb, domain, times)
+    return minmax([grida[f"{var}_{t}"] - gridb[f"{var}_{t}"] for t in times], percentile=percentile)
+    
+def compute_ranges(modelname: str, times: List[int], percentile=95):
+    ranges = dict()
+    ranges["sas"] = get_range(modelname, "sas", times, "c_sas", percentile=percentile)
+    ranges["arteries"] = get_range(modelname, "arteries", times, "c_artery", percentile=percentile)
+    ranges["veines"] = get_range(modelname, "venes", times, "c_vein", percentile=percentile)
+
+    return ranges
+
+def compute_diff_ranges(modela:str, modelb:str, times: List[int],percentile=95):
+    ranges = dict()
+    ranges["sas"] = get_diff_range(modela, modelb, "sas", times, "c_sas", percentile=percentile)
+    ranges["arteries"] = get_diff_range(modela, modelb, "arteries", times, "c_artery", percentile=percentile)
+    ranges["veines"] = get_diff_range(modela, modelb, "venes", times, "c_vein", percentile=percentile)
+
+    return ranges
+
+
 
 def time_str(sec):
     m, s = divmod(sec, 60)
@@ -55,4 +119,25 @@ def clip_plot(sas, networks, filename, title, clim, cmap, cbar_title):
     pl.camera.roll += 90
     pl.camera.zoom(1.6)
     pl.add_title(title, font_size=12)
-    pl.screenshot(filename, transparent_background=True)
+    return pl.screenshot(filename, transparent_background=True, return_img=True)
+
+def detail_plot(sas, networks, filename, center, clim, cmap, cbar_title):
+    slice = sas.slice_orthogonal(x=center[0], y=center[1], z=center[2],
+                                  contour=False)
+    pl = pv.Plotter(off_screen=True)
+    pl.add_mesh(slice, cmap=cmap, clim=clim,
+                scalar_bar_args=dict(title=cbar_title, vertical=False,
+                                    height=0.1, width=0.6, position_x=0.2,
+                                    position_y=0.0, title_font_size=36,
+                                    label_font_size=32))
+    for netw in networks:
+        pl.add_mesh(netw, cmap=cmap, clim=clim, show_scalar_bar=False,
+                    render_lines_as_tubes=True,line_width=5)
+
+    pl.camera_position = 'zx'
+    pl.camera.roll += 90
+    pl.camera.azimuth -= 40
+    pl.camera.elevation += 20
+    pl.set_focus(center)
+    pl.camera.zoom(8)
+    return pl.screenshot(filename, transparent_background=True, return_img=True)
