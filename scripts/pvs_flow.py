@@ -2,6 +2,8 @@ from dolfin import *
 from solver import read_vtk_network, as_P0_function
 import numpy as np
 import os
+from branch_marking import color_branches
+
 
 def pvs_flow_system(radius_f, tau, radius_ratio, f=Constant(0), g=Constant(0)):
     '''The bilinear form corresponding to Darcy on the graph'''
@@ -86,16 +88,61 @@ if __name__ == '__main__':
     with XDMFFile('results/pvs_flow/pvs_flow_vis.xdmf') as xdmf:
         xdmf.write(uh)
 
+
+      # Find branch and mark the cells that make it up by unique color
+    marking_branch, branch_colors, loop_colors = color_branches(mesh)
+    active_cell_f = MeshFunction('size_t', mesh, 1, 0)
+    dx_active = Measure('dx', domain=mesh, subdomain_data=active_cell_f)
+    Q    = FunctionSpace(mesh, 'DG', 0)
+    q    = TestFunction(Q)
+    foo  = Function(Q)   
+    foo_values = foo.vector().get_local()
+
+    with XDMFFile("scripts/branch_length_read.xdmf") as file:
+        DG = FunctionSpace(mesh, "DG", 0)
+        branch_length = Function(DG)
+        file.read_checkpoint(branch_length, "branch_length")
+
+    mean_vel = (1/hK)*(1/branch_length)*inner(uh_mag*tau,uh_mag*tau)*dx_active(1)
+    active_cell_f_array = active_cell_f.array()
+    active = q*dx_active(1)
+    cell_colors = marking_branch.array()
+    for color in branch_colors:
+        active_cell_f_array[cell_colors == color] = 1
+        mean_velocities = assemble(mean_vel)
+        foo_values[assemble(active).get_local() > 0] = mean_velocities 
+        active_cell_f_array *= 0
+    foo.vector().set_local(foo_values)
+
+
+    import pyvista as pv
+    import matplotlib.pyplot as plt
+    from plotting_utils import set_plotting_defaults
+
+
+    fig1, ax1= plt.subplots()
+    unique_avg = np.unique(foo.vector().get_local())
+    from IPython import embed 
+    embed()
+    plt.hist(unique_avg[:-1],unique_avg)
+
+    plt.show()
+    plt.savefig("results/pvs_flow/avg_velocity_histo.png")
+
     import pyvista as pv
     import matplotlib.pyplot as plt
     from plotting_utils import set_plotting_defaults
 
     grid = pv.read("results/pvs_flow/pvs_flow_vis.xdmf").compute_cell_sizes()
     grid = grid.point_data_to_cell_data()
+   
     grid["umag"] = np.linalg.norm(grid["u"], axis=1) * 1e3
     uavg = np.average(grid["umag"], weights=grid["Length"])
     umax = grid['umag'].max()
     umed = np.median(grid["umag"])
+
+
+
     set_plotting_defaults()
 
     fig, ax = plt.subplots()
