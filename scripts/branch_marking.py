@@ -199,9 +199,11 @@ if __name__ == '__main__':
     from collections import defaultdict
     from itertools import repeat
 
+    # Place output in separate subdirectory:
     subdir = "branches"
     
-    artery, artery_radii, artery_roots = read_vtk_network("../mesh/networks/arteries_smooth.vtk")
+    artery, artery_radii, artery_roots = read_vtk_network("../mesh/networks/arteries_smooth.vtk", rescale_mm2m=False)
+
     # Find branch and mark the cells that make it up by unique color
     marking_branch, branch_colors, loop_colors = color_branches(artery)
     # This may be too many colors. An alternative is to minimally color the graph
