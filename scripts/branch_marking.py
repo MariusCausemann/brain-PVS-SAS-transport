@@ -309,3 +309,25 @@ if __name__ == '__main__':
     reduced_color_f.array()[:] = np.fromiter(reduced_edges, dtype='uintp')
 
     df.File(os.path.join(subdir, 'reduced_branch.pvd')) << reduced_color_f
+
+    import graph_partitioning as gp
+
+    nparts = 2
+    max_parts = 20
+    while nparts < max_parts:
+        print(nparts)
+        cell_f = gp.partition(reduced_mesh, nparts, weighted=False)
+        cell_f = cell_f.array()
+        tags = np.unique(cell_f)
+
+        is_trees = True
+        for tag in tags:
+            g = nx.Graph()
+            g.add_edges_from(reduced_mesh.cells()[cell_f == tag])
+            is_trees = is_trees and nx.is_tree(g)
+            print('\t', is_trees)
+        if is_trees:
+            break
+        nparts += 1
+    nparts < max_parts and print('Graph can be partitioned intro trees if split into {nparts} parts')
+    
