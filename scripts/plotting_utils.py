@@ -4,6 +4,7 @@ import yaml
 import collections
 import matplotlib.pyplot as plt
 from typing import List
+from IPython import embed
 
 def set_plotting_defaults():
     import seaborn as sns
@@ -36,6 +37,9 @@ def get_result(modelname, domain, times):
         d =  pv.read(f"results/{modelname}/{ds.path}")
         for ar in d.array_names:
             data[f"{ar}_{t}"] = d[ar]
+    if domain=="sas":
+        marker = pv.read("mesh/volmesh/mesh.xdmf")
+        data["label"] = marker["label"]
     return data
 
 def get_result_fenics(modelname, domain, times):
@@ -103,10 +107,36 @@ def read_config(configfile):
     return config
 
 
-def clip_plot(sas, networks, filename, title, clim, cmap, cbar_title):
-    clipped = sas.clip(normal="y")
+def clip_plot(csf, par, networks, filename, title, clim, cmap, cbar_title):
+    csf_clipped = csf.clip(normal="y")
+    par_clipped = par.clip(normal="y")
     pl = pv.Plotter(off_screen=True)
-    pl.add_mesh(clipped, cmap=cmap, clim=clim,
+    pl.add_mesh(csf_clipped, cmap=cmap, clim=clim,
+                scalar_bar_args=dict(title=cbar_title, vertical=False,
+                                    height=0.1, width=0.6, position_x=0.2,
+                                    position_y=0.0, title_font_size=36,
+                                    label_font_size=32))
+    pl.add_mesh(par_clipped, cmap=cmap, clim=clim, show_scalar_bar=False)
+    for netw in networks:
+        pl.add_mesh(netw, cmap=cmap, clim=clim, show_scalar_bar=False,
+                    render_lines_as_tubes=True,line_width=5)
+
+    pl.camera_position = 'zx'
+    pl.camera.roll += 90
+    pl.camera.zoom(1.6)
+    pl.add_title(title, font_size=12)
+    return pl.screenshot(filename, transparent_background=True, return_img=True)
+
+def isosurf_plot(sas, networks, filename, title, clim, cmap, cbar_title):
+    n = 3
+    if clim is not None:
+        contours = sas.contour(np.linspace(clim[0] + clim[1]/n, clim[1], 3))
+    else:
+        contours = sas.contour(n)
+    #embed()
+    pl = pv.Plotter(off_screen=True)
+    pl.add_mesh(contours, opacity=0.75, clim=clim, cmap=cmap, show_scalar_bar=False)
+    pl.add_mesh(sas.extract_surface(), opacity=0.3, clim=clim, cmap=cmap,
                 scalar_bar_args=dict(title=cbar_title, vertical=False,
                                     height=0.1, width=0.6, position_x=0.2,
                                     position_y=0.0, title_font_size=36,
@@ -119,7 +149,7 @@ def clip_plot(sas, networks, filename, title, clim, cmap, cbar_title):
     pl.camera.roll += 90
     pl.camera.zoom(1.6)
     pl.add_title(title, font_size=12)
-    return pl.screenshot(filename, transparent_background=True, return_img=True)
+    return pl.screenshot(filename, transparent_background=False, return_img=True)
 
 def detail_plot(sas, networks, filename, center, clim, cmap, cbar_title):
     slice = sas.slice_orthogonal(x=center[0], y=center[1], z=center[2],

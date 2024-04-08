@@ -36,8 +36,10 @@ def run_simulation(configfile: str):
     parenchyma_diffusion = config["parenchyma_diffusion"]
     pvs_parenchyma_permability = config["pvs_parenchyma_permability"]
     pvs_csf_permability = config["pvs_csf_permability"]
+    pvs_basal_cistern_permability = config.get("pvs_basal_cistern_permability", pvs_csf_permability)
     pvs_ratio_venes = config["pvs_ratio_venes"]
     pvs_ratio_artery = config["pvs_ratio_artery"]
+
 
     vein, vein_radii, vein_roots = read_vtk_network("mesh/networks/venes_smooth.vtk")
     vein_radii = as_P0_function(vein_radii)
@@ -71,12 +73,23 @@ def run_simulation(configfile: str):
                             "+ (x[2] - m2)*(x[2] - m2) < r*r",
                             m0=inlet_midpoint[0], m1=inlet_midpoint[1],
                             m2=inlet_midpoint[2], r=inlet_radius)
-    
+
     bm = MeshFunction("size_t", sas, 2, 0)
     inlet.mark(bm, inlet_id)
 
+    basal_cistern = CompiledSubDomain("(x[0] - m0)*(x[0] - m0) " + 
+                            "+ (x[1] - m1)*(x[1] - m1) " + 
+                            "+ (x[2] - m2)*(x[2] - m2) < r*r",
+                            m0=inlet_midpoint[0], m1=inlet_midpoint[1],
+                            m2=inlet_midpoint[2], r=inlet_radius*1.5)
+    cisternmarker = MeshFunction("size_t", artery, 1, 0)
+    basal_cistern.mark(cisternmarker, 1)
+    artmarker.array()[:] =  np.where(cisternmarker.array() * (artmarker.array()>0), 
+                                     3, artmarker.array()[:])
+
     xi_dict = {0:Constant(0), 1: Constant(pvs_csf_permability), 
-               2: Constant(pvs_parenchyma_permability)}
+               2: Constant(pvs_parenchyma_permability),
+               3: Constant(pvs_basal_cistern_permability)}
     phi_dict = {1: Constant(1),  2: Constant(ecs_share)}
     phi = pcws_constant(vol_subdomains, phi_dict)
     Ds = pcws_constant(vol_subdomains, {1: Constant(sas_diffusion),  # csf
@@ -217,7 +230,7 @@ def run_simulation(configfile: str):
     write((u_i, pa_i, pv_i), pvdfiles, 0.0, hdffile=hdffile)
     write((vol_subdomains, artmarker, veinmarker), pvdfiles, 0.0)
     write((xi_a, xi_v), (pvdarteries, pvdvenes), 0.0)
-
+    write([phi], [pvdsas], 0.0)
 
     wh = xii.ii_Function(W)
     x_ = A_.createVecLeft()
@@ -239,14 +252,6 @@ def run_simulation(configfile: str):
         u_i.assign(wh[0]) 
         pa_i.assign(wh[1]) 
         pv_i.assign(wh[2])
-
-        csas_total = assemble(u_i*dx)
-        cart_total = assemble(pa_i*area_artery*dx_a)
-        cven_total = assemble(pv_i*area_vein*dx_v)
-        print(f"total sas: {csas_total}")
-        print(f"total art: {cart_total}")
-        print(f"total ven: {cven_total}")
-        print(f"total: {csas_total + cart_total + cven_total}")
 
         wh[0].rename("c_sas", "time")
         wh[1].rename("c_artery", "time")
