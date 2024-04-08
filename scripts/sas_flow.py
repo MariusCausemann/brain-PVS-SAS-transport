@@ -44,6 +44,7 @@ ds = Measure("ds", domain=sas_outer, subdomain_data=boundary_markers_outer)
 cell = sas_outer.ufl_cell()  
 Velm = VectorElement('Lagrange', cell, 2)
 Qelm = FiniteElement('Lagrange', cell, 1) 
+Q = FunctionSpace(sas_outer, Qelm)
 Welm = MixedElement([Velm, Qelm]) 
 W = FunctionSpace(sas_outer, Welm)
 
@@ -51,15 +52,31 @@ u , p = TrialFunctions(W)
 v , q = TestFunctions(W)
 n = FacetNormal(sas_outer)
 
-mu = Constant(1e-3) # units need to be checked 
+mu = Constant(0.7e-3) # units need to be checked 
 R = Constant(-1e-5)
-f = Constant((1,1,1)) # right hand side, ofcourse needs to modified to obtain the right thing 
+f = Constant((0,0,0)) # right hand side, ofcourse needs to modified to obtain the right thing 
+cp1_midpoint = [0.128, 0.229, 0.192] # found in paraview
+cp2_midpoint = [0.2, 0.229, 0.192] # found in paraview
 
+A = 0.0007475317873778963 # normalize to reach 0.5 L / day
+g1 =  Expression("A*exp( - ((x[0] - m0)*(x[0] - m0) + (x[1] - m1)*(x[1] - m1) + (x[2] - m2)*(x[2] - m2)) / (sigma*sigma))",
+                    m0=cp1_midpoint[0], m1=cp1_midpoint[1],
+                    m2=cp1_midpoint[2], sigma=0.01, A=A, degree=2)
+g2 =  Expression("A*exp( - ((x[0] - m0)*(x[0] - m0) + (x[1] - m1)*(x[1] - m1) + (x[2] - m2)*(x[2] - m2)) / (sigma*sigma))",
+                    m0=cp2_midpoint[0], m1=cp2_midpoint[1],
+                    m2=cp2_midpoint[2], sigma=0.01, A=A, degree=2)
+g = g1 + g2
+gtot = assemble(g*dx(domain=sas_outer))
+g_L_per_day = gtot * 1e3 *(60*60*24)
+print(f"production rate: {g_L_per_day} L/day")
+assert np.isclose(g_L_per_day, 0.5)
+gfunc = project(g, Q)
+File("g.pvd") << gfunc
 a = (inner(2*mu*sym(grad(u)), sym(grad(v)))*dx - inner(p, div(v))*dx
          -inner(q, div(u))*dx  + inner(R*dot(u,n), dot(v,n))*ds(1)) 
 bcs = [DirichletBC(W.sub(0), Constant((0.0,0.0,0.0)), ds.subdomain_data(), 2)] 
 
-L = inner(f, v)*dx 
+L = inner(f, v)*dx + g*q*dx
 
 A, b = assemble_system(a, L, bcs)
 
