@@ -116,7 +116,7 @@ opts.setValue('fieldsplit_0_pc_hypre_boomeramg_max_iter', 2)  # : Maximum iterat
 #   -pc_hypre_boomeramg_P_max <0>: Max elements per row for interpolation operator (0=unlimited) (None)
 #   -pc_hypre_boomeramg_agg_nl <0>: Number of levels of aggressive coarsening (None)
 #   -pc_hypre_boomeramg_agg_num_paths <1>: Number of paths for aggressive coarsening (None)
-opts.setValue('fieldsplit_0_pc_hypre_boomeramg_strong_threshold', 0.99)  # : Threshold for being strongly connected (None)
+opts.setValue('fieldsplit_0_pc_hypre_boomeramg_strong_threshold', 0.7)  # : Threshold for being strongly connected (None)
 #   -pc_hypre_boomeramg_max_row_sum <0.9>: Maximum row sum (None)
 #   -pc_hypre_boomeramg_grid_sweeps_all <1>: Number of sweeps for the up and down grid levels (None)
 opts.setValue('fieldsplit_0_pc_hypre_boomeramg_nodal_coarsen', 1) #  Use a nodal based coarsening 1-6 (HYPRE_BoomerAMGSetNodal)
@@ -161,6 +161,15 @@ pc.setFieldSplitIS(('0', is_V), ('1', is_Q))
 pc.setFieldSplitType(PETSc.PC.CompositeType.MULTIPLICATIVE) 
 
 ksp.setUp()
+
+subksps = pc.getFieldSplitSubKSP()
+
+A0, B0 = subksps[0].getOperators()
+
+gdim = W.mesh().geometry().dim()
+A0.setBlockSize(gdim)
+B0.setBlockSize(gdim)
+
 pc.setFromOptions()
 ksp.setFromOptions()
 niters = solver.solve(wh.vector(), b)
