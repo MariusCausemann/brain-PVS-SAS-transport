@@ -1,3 +1,4 @@
+import os.path
 from collections import defaultdict
 from itertools import chain, combinations
 import networkx as nx
@@ -198,11 +199,15 @@ if __name__ == '__main__':
     from collections import defaultdict
     from itertools import repeat
 
-    artery, artery_radii, artery_roots = read_vtk_network("../mesh/networks/arteries_smooth.vtk")
+    # Place output in separate subdirectory:
+    subdir = "branches"
+    
+    artery, artery_radii, artery_roots = read_vtk_network("../mesh/networks/arteries_smooth.vtk", rescale_mm2m=False)
+
     # Find branch and mark the cells that make it up by unique color
     marking_branch, branch_colors, loop_colors = color_branches(artery)
     # This may be too many colors. An alternative is to minimally color the graph
-    df.File('unique_branch.pvd') << marking_branch
+    df.File(os.path.join(subdir, 'unique_branch.pvd')) << marking_branch
 
     mesh = marking_branch.mesh()
     Q = df.FunctionSpace(mesh, 'DG', 0)
@@ -236,12 +241,12 @@ if __name__ == '__main__':
         
         active_cell_f_array *= 0
     foo.vector().set_local(foo_values)
-    with df.XDMFFile('branch_length_read.xdmf') as xdmf:
+    with df.XDMFFile(os.path.join(subdir, 'branch_length_read.xdmf')) as xdmf:
         xdmf.write_checkpoint(foo, "branch_length")
-    df.File('branch_length.pvd') << foo
+    df.File(os.path.join(subdir, 'branch_length.pvd')) << foo
     
     minimal_marking_branch = minimal_color(marking_branch)
-    df.File('minimal_branch.pvd') << minimal_marking_branch
+    df.File(os.path.join(subdir, 'minimal_branch.pvd')) << minimal_marking_branch
     
     # Getting the network out in different formats
     mesh = marking_branch.mesh()
@@ -303,4 +308,26 @@ if __name__ == '__main__':
     reduced_color_f = df.MeshFunction('size_t', reduced_mesh, 1, 0)
     reduced_color_f.array()[:] = np.fromiter(reduced_edges, dtype='uintp')
 
-    df.File('reduced_branch.pvd') << reduced_color_f
+    df.File(os.path.join(subdir, 'reduced_branch.pvd')) << reduced_color_f
+
+    import graph_partitioning as gp
+
+    nparts = 2
+    max_parts = 20
+    while nparts < max_parts:
+        print(nparts)
+        cell_f = gp.partition(reduced_mesh, nparts, weighted=False)
+        cell_f = cell_f.array()
+        tags = np.unique(cell_f)
+
+        is_trees = True
+        for tag in tags:
+            g = nx.Graph()
+            g.add_edges_from(reduced_mesh.cells()[cell_f == tag])
+            is_trees = is_trees and nx.is_tree(g)
+            print('\t', is_trees)
+        if is_trees:
+            break
+        nparts += 1
+    nparts < max_parts and print('Graph can be partitioned intro trees if split into {nparts} parts')
+    

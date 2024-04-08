@@ -66,20 +66,31 @@ def as_networkx(skel, nroots):
     nx.set_node_attributes(G, {i:pos for i, pos in enumerate(skel.vertices)}, "pos")
     nx.set_node_attributes(G, {i:r for i, r in enumerate(skel.radius)}, "radius")
     degrees = np.array([G.degree(i) for i in range(G.number_of_nodes())])
+
+    # roots are all nodes that only have one connection/edge (degree = 1)
     roots = np.where(degrees==1)[0]
     vec_dict = {}
     zcoords = skel.vertices[:,2]
+
+    # rs are the nroots roots with the nroots lowest z-coordinate (so actual roots)
     rs = roots[np.argsort(zcoords[roots])][:nroots]
     for e in nx.edge_bfs(G, source=rs, orientation="ignore"):
         vec = G.nodes[e[1]]["pos"] - G.nodes[e[0]]["pos"]
         orientation = 1 if e[2] == "forward" else -1
         vec_dict[e[:2]] = vec * orientation / np.linalg.norm(vec)
     nx.set_edge_attributes(G, vec_dict, "vector")
+
+    # MER: I tried to make sense of the above and below, please edit at will.
+    ROOT = 2
+    EXITS = 1
+    NOTROOT = 0
     def root_mark(i):
-        if i in rs: return 2
-        if i in roots: return 1
-        return 0
-    nx.set_node_attributes(G, {i:root_mark(i) for i in range(G.number_of_nodes())}, "root")
+        if i in rs: return ROOT
+        if i in roots: return EXITS
+        return NOTROOT
+
+    nx.set_node_attributes(G, {i:root_mark(i)
+                               for i in range(G.number_of_nodes())}, "root")
     return G
 
 def nx_to_pv(G):
