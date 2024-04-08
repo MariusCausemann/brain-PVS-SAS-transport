@@ -16,6 +16,7 @@ def binary_smoothing(img, footprint=None):
     openend = skim.binary_opening(img, footprint=footprint)
     return skim.binary_closing(openend, footprint=footprint)
 
+print("Loading data")
 os.makedirs("../mesh/surfaces", exist_ok=True)
 #load white matter data 
 wmdata = nibabel.load("../data/pcbi.1007073.s005.nii.gz")
