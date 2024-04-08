@@ -3,7 +3,7 @@ import numpy as np
 import os
 import typer
 from typing import Tuple
-from plotting_utils import get_result, time_str, clip_plot, detail_plot
+from plotting_utils import get_result, time_str, clip_plot, detail_plot, isosurf_plot
 
 def plot_model_diff(modela: str, modelb: str, t:int, type,  cmax:float=None, filename:str=None):
     plotdir = f"plots/comparisons/{modela}_{modelb}/"
@@ -26,14 +26,25 @@ def plot_model_diff(modela: str, modelb: str, t:int, type,  cmax:float=None, fil
     if type=="overview":
         filename = f"{plotdir}/{modela}_{modelb}_diff_{t}.png"
         title = f"time: {time_str(t)} h"
-        return clip_plot(sasa, [arta, vena], filename, title, clim=clim, 
+        csf = sasa.extract_cells(sasa["label"]==1)
+        par = sasa.extract_cells(sasa["label"]==2)
+        par["c_sas"] *= 0.2
+        return clip_plot(csf, par, [arta, vena], filename, title, clim=clim, 
                   cmap="curl", cbar_title="concentration diff")
     
-    elif type=="detail":
+    if type=="detail":
         center = (0.2877, 0.17, 0.23)
         filename = f"{plotdir}/{modela}_{modelb}_diff_detail_{t}.png"
         return detail_plot(sasa, [arta, vena], filename, center, clim=clim, 
                 cmap="curl", cbar_title="concentration diff")
+    
+    elif type=="isosurf":
+        pv.global_theme.allow_empty_mesh = True
+        filename = f"{plotdir}/{modela}_{modelb}_diff_isosurf_{t}.png"
+        title = f"time: {time_str(t)} h"
+        return isosurf_plot(sasa, [arta, vena], filename,  title, clim=clim,
+                            cbar_title="concentration diff",
+                            cmap="curl")
 
 if __name__ == "__main__":
     typer.run(plot_model_diff)

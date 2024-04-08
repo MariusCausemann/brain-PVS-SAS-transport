@@ -1,20 +1,25 @@
 import numpy as np
-models = ["modelA", "modelB", "modelC"] #, "modelD"]
+models = ["modelA", "modelB", "modelC", "modelE"] #, "modelD"]
 times = list(np.array([1, 6, 12, 18, 24])*60*60)
-conctimes =  list(np.array([0, 0.5, 1,2,3, 4, 5, 6, 9, 12, 15, 18, 21, 24])*60*60)
+conctimes =  list(np.array([0, 1,2,3, 4, 5, 6, 9, 12, 15, 18, 21, 24])*60*60)
 
 cmax = {"detail":{"modelA_modelB":5, "modelB_modelC":5},
-        "overview":{"modelA_modelB":10, "modelB_modelC":8},          
+        "overview":{"modelA_modelB":10, "modelB_modelC":8, "modelB_modelE":10},  
+        "isosurf":{"modelA_modelB":10, "modelB_modelC":8, "modelB_modelE":8,},          
+        
 }
 
 diffmax = {"detail":{"modelA_modelB":1, "modelB_modelC":1},
-           "overview":{"modelA_modelB":1, "modelB_modelC":5},          
+           "overview":{"modelA_modelB":1, "modelB_modelC":5, "modelB_modelE":1},     
+            "isosurf":{"modelA_modelB":1, "modelB_modelC":5, "modelB_modelE":1},               
 }
-types = ["overview","detail"]
+types = ["overview","detail", "isosurf"]
 
 rule all:
     input:
         "plots/comparisons/modelA_modelB/modelA_modelB_overview.png",
+        "plots/comparisons/modelB_modelE/modelB_modelE_overview.png",
+        "plots/comparisons/modelB_modelE/modelB_modelE_isosurf.png",
         "plots/comparisons/modelA_modelB/modelA_modelB_detail.png",
         "plots/comparisons/modelB_modelC/modelB_modelC_overview.png",
         "plots/comparisons/modelB_modelC/modelB_modelC_detail.png",
@@ -113,7 +118,7 @@ rule analyzeTracerDist:
     output:
         plot="plots/{modelname}/{modelname}_tracer_vessel_dist.png"
     shell:
-        "python scripts/analyze_tracer_dist.py {wildcards.modelname}"
+        "python scripts/analyze_tracer_dist.py {wildcards.modelname} {times}"
 
 rule totalTracer:
     conda:"environment.yml"
