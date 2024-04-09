@@ -152,17 +152,15 @@ def map_vasculature(fname, output):
         subnodes = np.where(mf.array() == r)[0]
         tree = H.subgraph(subnodes)
 
-        # Start reduced graph by adding bifurcations and terminals as nodes
+        # Create reduced graph by adding bifurcations and terminals as nodes
         Gr = nx.DiGraph()
         bifurcations = [b for b in tree if tree.degree(b) >= 3]
         terminals = [t for t in tree if tree.degree(t) == 1]
         Gr.add_nodes_from(bifurcations)
         Gr.add_nodes_from(terminals)
-
-        print("Gr (init) = ", Gr)
         add_branches(tree, r, r, r, Gr)
-        print("Gr (final) = ", Gr)
-
+        print("G (r = %d has %d nodes and %d edges", r, Gr.num_nodes(), Gr.num_edges())
+        
 if __name__ == '__main__':
 
     map_vasculature("../mesh/networks/arteries_smooth.vtk",
