@@ -78,7 +78,7 @@ def add_branches(tree, a0, a, a_, Gr):
         (e0, e1) = list(tree.edges(a))
         # Continue down the new edge (not including a_)
         _, b = e0 if a_ in e1 else e1
-        assert (a == _), "Error in path traversal"
+        assert (a == _), "Assumption error in path traversal"
         add_branches(tree, a0, b, a, Gr)
         
     # Ok, at a bifurcation
@@ -86,7 +86,7 @@ def add_branches(tree, a0, a, a_, Gr):
         Gr.add_edge(a0, a) 
         # Get the other edges
         (e1, e2) = [e for e in tree.edges(a) if not a_ in e]
-        assert (a == e1[0] and a == e2[0]), "Error in tree traversal"
+        assert (a == e1[0] and a == e2[0]), "Assumption error in tree traversal"
         add_branches(tree, a, e1[1], a, Gr)
         add_branches(tree, a, e2[1], a, Gr)
 
@@ -96,7 +96,8 @@ def add_branches(tree, a0, a, a_, Gr):
         # Get the other edges
         print(tree.edges(a))
         (e1, e2, e3) = [e for e in tree.edges(a) if not a_ in e]
-        assert (a == e1[0] and a == e2[0] and a == e3[0]), "Error in tree traversal"
+        assert (a == e1[0] and a == e2[0] and a == e3[0]), \
+            "Assumption error in tree traversal"
         add_branches(tree, a, e1[1], a, Gr)
         add_branches(tree, a, e2[1], a, Gr)
         add_branches(tree, a, e3[1], a, Gr)
@@ -152,6 +153,10 @@ def map_vasculature(fname, output):
         subnodes = np.where(mf.array() == r)[0]
         tree = H.subgraph(subnodes)
 
+        #for (u, v, data) in tree.edges(data=True):
+        #    print(u, v, data)
+        #exit()
+        
         # Create reduced graph by adding bifurcations and terminals as nodes
         Gr = nx.DiGraph()
         bifurcations = [b for b in tree if tree.degree(b) >= 3]
@@ -159,7 +164,7 @@ def map_vasculature(fname, output):
         Gr.add_nodes_from(bifurcations)
         Gr.add_nodes_from(terminals)
         add_branches(tree, r, r, r, Gr)
-        print("G (r = %d has %d nodes and %d edges", r, Gr.num_nodes(), Gr.num_edges())
+        print("G_r (r = %d) has %d nodes and %d edges" % (r, Gr.number_of_nodes(), Gr.number_of_edges()))
         
 if __name__ == '__main__':
 
