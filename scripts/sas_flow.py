@@ -97,9 +97,11 @@ solver.set_operators(A, B)
 ksp = solver.ksp()
 
 opts = PETSc.Options()
-opts.setValue('ksp_type', 'minres')
-opts.setValue('ksp_rtol', 1E-5)                
+opts.setValue('ksp_type', 'fgmres')
+opts.setValue('ksp_atol', 1E-10)       
+opts.setValue('ksp_rtol', 1E-40)            
 opts.setValue('ksp_view_pre', None)
+opts.setValue('ksp_norm_type', 'unpreconditioned')
 opts.setValue('ksp_monitor_true_residual', None)                
 opts.setValue('ksp_converged_reason', None)
 # Specify that the preconditioner is block diagonal and customize
@@ -110,20 +112,20 @@ opts.setValue('fieldsplit_0_pc_type', 'hypre')        # Exact inverse for veloci
 
 #   -pc_hypre_boomeramg_cycle_type <V> (choose one of) V W (None)
 #   -pc_hypre_boomeramg_max_levels <25>: Number of levels (of grids) allowed (None)
-opts.setValue('fieldsplit_0_pc_hypre_boomeramg_max_iter', 2)  # : Maximum iterations used PER hypre call (None)
+#opts.setValue('fieldsplit_0_pc_hypre_boomeramg_max_iter', 2)  # : Maximum iterations used PER hypre call (None)
 #   -pc_hypre_boomeramg_tol <0.>: Convergence tolerance PER hypre call (0.0 = use a fixed number of iterations) (None)
 #   -pc_hypre_boomeramg_truncfactor <0.>: Truncation factor for interpolation (0=no truncation) (None)
 #   -pc_hypre_boomeramg_P_max <0>: Max elements per row for interpolation operator (0=unlimited) (None)
 #   -pc_hypre_boomeramg_agg_nl <0>: Number of levels of aggressive coarsening (None)
 #   -pc_hypre_boomeramg_agg_num_paths <1>: Number of paths for aggressive coarsening (None)
-opts.setValue('fieldsplit_0_pc_hypre_boomeramg_strong_threshold', 0.7)  # : Threshold for being strongly connected (None)
+#opts.setValue('fieldsplit_0_pc_hypre_boomeramg_strong_threshold', 0.7)  # : Threshold for being strongly connected (None)
 #   -pc_hypre_boomeramg_max_row_sum <0.9>: Maximum row sum (None)
 #   -pc_hypre_boomeramg_grid_sweeps_all <1>: Number of sweeps for the up and down grid levels (None)
-opts.setValue('fieldsplit_0_pc_hypre_boomeramg_nodal_coarsen', 1) #  Use a nodal based coarsening 1-6 (HYPRE_BoomerAMGSetNodal)
+#opts.setValue('fieldsplit_0_pc_hypre_boomeramg_nodal_coarsen', 1) #  Use a nodal based coarsening 1-6 (HYPRE_BoomerAMGSetNodal)
 #   -pc_hypre_boomeramg_vec_interp_variant <0>: Variant of algorithm 1-3 (HYPRE_BoomerAMGSetInterpVecVariant)
 #   -pc_hypre_boomeramg_grid_sweeps_down <1>: Number of sweeps for the down cycles (None)\
-opts.setValue('fieldsplit_0_pc_hypre_boomeramg_grid_sweeps_down', 3)
-opts.setValue('fieldsplit_0_pc_hypre_boomeramg_grid_sweeps_up', 3) # Number of sweeps for the up cycles (None)
+#opts.setValue('fieldsplit_0_pc_hypre_boomeramg_grid_sweeps_down', 3)
+#opts.setValue('fieldsplit_0_pc_hypre_boomeramg_grid_sweeps_up', 3) # Number of sweeps for the up cycles (None)
 #   -pc_hypre_boomeramg_grid_sweeps_coarse <1>: Number of sweeps for the coarse level (None)
 #   -pc_hypre_boomeramg_smooth_type <Schwarz-smoothers> (choose one of) Schwarz-smoothers Pilut ParaSails Euclid (None)
 #   -pc_hypre_boomeramg_smooth_num_levels <25>: Number of levels on which more complex smoothers are used (None)
@@ -180,3 +182,15 @@ ufile_pvd = File("velocity_sas.pvd")
 ufile_pvd << uh
 pfile_pvd = File("pressure.pvd")
 pfile_pvd << ph
+
+
+with XDMFFile('results/sas_flow.xdmf') as xdmf:
+    xdmf.write_checkpoint(uh, "velocity")
+with XDMFFile('results/sas_flow_vis.xdmf') as xdmf:
+    xdmf.write(uh)
+
+
+with XDMFFile('results/sas_p.xdmf') as xdmf:
+    xdmf.write_checkpoint(ph, "pressure")
+with XDMFFile('results/sas_p_vis.xdmf') as xdmf:
+    xdmf.write(ph)
