@@ -343,10 +343,20 @@ Similarly, on the associated perivascular network inlet nodes $\partial \Lambda_
 
 \subsection*{Perivascular fluid flow}
 
+In the perivascular network, we set an average axial velocity $u_{\rm
+  pvs} = \langle u_{v, s} \rangle$ of $18.7$ $\mu$m/s as reported by
+Mestre et al.~\cite{mestre2018flow} in mouse perivascular spaces under
+normal physiological conditions. We may also consider a reduced
+perivascular velocity corresponding to hypertension in model
+variations.
+
 \mer{MER: This we will probably have to condense. Move the detailed explanation to Supplementary Methods?}
 
-We may consider non-zero convection in the SAS $u_{\rm sas} \not = 0$ e.g.~resulting from steady state CSF production as predicted by~\cite{hornkjol2022csf} in model variations, but may start with $u_{\rm sas} = 0$ as a baseline. In the perivascular network, we set an average axial velocity $u_{\rm pvs} = \langle u_{v, s} \rangle$ of $18.7$ $\mu$m/s as reported by Mestre et al.~\cite{mestre2018flow} in mouse perivascular spaces under normal physiological conditions. We may also consider a reduced perivascular velocity corresponding to hypertension in model variations.
-\subsubsection*{Steady state PVS flow model} We solve 1D Darcy equations in the vessel network. The unknowns are the averaged PVS velocity, $u_{\rm pvs} = \langle u_{v,s} \rangle$, and the cross-section pressure $p_{\rm pvs} $ (assumed to be constant in each cross-section). The system is given by  \cite{daversin2022geometrically} 
+\subsubsection*{Perivascular fluid flow induced by peristalsis}
+
+\draft{\lipsum[1]}, see~Section~\ref{sec:sup:peristalsis} for further details.
+
+\subsubsection*{PVS flow I: Net flow driven by pressure differences and fluid influx. Steady state PVS flow model} We solve 1D Darcy equations in the vessel network. The unknowns are the averaged PVS velocity, $u_{\rm pvs} = \langle u_{v,s} \rangle$, and the cross-section pressure $p_{\rm pvs} $ (assumed to be constant in each cross-section). The system is given by  \cite{daversin2022geometrically} 
 \begin{alignat}{2}
 A \,  u_{\rm pvs}   + \frac{\kappa}{\mu} \, A \, \partial_{s} p_{\rm pvs} & = 0, &&  \quad \rm in  \,\, \Lambda  \\ 
 -\partial_s (A \, u_{\rm pvs}) & = f, && \quad \rm in  \,\, \Lambda .  
@@ -368,6 +378,8 @@ On $\partial \Lambda^{\rm in}$, we prescribe homogeneous Dirichlet data for the 
 \rami{to be completed }
 
 \subsection*{Cerebrospinal fluid flow in the subarachnoid space}
+
+We may consider non-zero convection in the SAS $u_{\rm sas} \not = 0$ e.g.~resulting from steady state CSF production as predicted by~\cite{hornkjol2022csf}
 
 \draft{\lipsum[1]}
 
@@ -478,6 +490,39 @@ The corresponding author is responsible for submitting a \href{http://www.nature
 \appendix
 
 \section{Supplementary methods}
+
+\subsection{Estimating the perivascular flow rate induced by peristaltic pumping}
+\label{sec:sup:peristalsis}
+
+We use the theoretical framework previously introduced by Gjerde et
+al.~\cite{gjerde2023directional} to estimate the mean flow rates
+$Q'_i$ (mm$^3$/s) induced by peristaltic pumping in a perivascular
+network $\Lambda = \cup_i \Lambda_i$. The motion of the inner
+(arterial) wall is described by a periodic travelling wave of relative
+amplitude $\varepsilon$, wave length $\lambda$ (mm) and angular
+frequency $\omega$ acting normal to the vessel wall. The wave number
+$k = 2 \pi / \lambda$ by definition. Each PVS segment $\Lambda_i$ has
+length $L_i$ with wave-relative length $\ell_i = k L$, inner baseline
+radius $r_{o_i}'$, outer baseline radius $r_{a_i}'$, and
+outer-to-inner ratio $\beta_i = r_{e_i}'/r_{o_i}'$. These geometric
+parameters and the assumption of annular cylindrical PVS segments
+yield a hydraulic resistance $\mathcal{R}_{o, i}$, and the additional
+parameter $\Delta_i$, see \cite{gjerde2023directional} for the
+complete definitions. The network has weights $\gamma_i =
+r_{o_i}'^2/r_{o_0}'^2$ where $r_{o_1}'$ is the radius of the root
+branch (see below)..
+\begin{itemize}
+\item
+  Definition of subnetworks
+\item
+  Definition of reduced bifurcating trees
+\item
+  Computation of $Q'$ in each branch. Map onto each subnetwork and
+  onto full network.
+\item
+  Definition of velocity as flux/area.
+\end{itemize}
+  
 
 \subsection{Numerical verification}
 
