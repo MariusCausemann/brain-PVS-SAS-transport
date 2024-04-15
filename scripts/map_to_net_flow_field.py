@@ -41,7 +41,7 @@ def compute_shortest_paths(mesh, H, roots, output="_tmp"):
     nodes = set(nodes)
 
     # Iterate over these nodes in an attempt to cover whole network
-    print("Computing nearest (weighted) supply node for %d nodes " % len(nodes))
+    print("Computing nearest (weighted) supply node for %d nodes, this may take some time..." % len(nodes))
     for node in nodes:
         paths = [nx.dijkstra_path(H, node, r, weight="length")
                  for r in roots]
@@ -164,7 +164,7 @@ def add_branches(tree, a0, a, a_, Gr, indices, radii, index_map):
     if degree > 4:
         raise Exception("degree > 4")
 
-def map_vasculature(fname, output):
+def map_vasculature(fname, output, supply_nodes, compute_paths=True):
 
     # Read network information from 'fname' -- argh, don't rescale
     # it. Never rescale stuff behind the scenes.
@@ -188,11 +188,11 @@ def map_vasculature(fname, output):
     
     # Identify the network supply nodes (Currently identified by a
     # semi-visual inspection.)
-    (r0, r1, r2) = [4094, 7220, 7974]
+    (r0, r1, r2) = supply_nodes
 
     # Compute or read pre-computed paths to supply nodes
     filename = os.path.join(output, "nearest_supply_nodes.xdmf")
-    if False:
+    if compute_paths:
         mf = compute_shortest_paths(mesh, G, (r0, r1, r2), output=output)
         print("Storing to %s" % filename)
         with df.XDMFFile(mesh.mpi_comm(), filename) as xdmf:
@@ -235,32 +235,33 @@ def map_vasculature(fname, output):
         filename = os.path.join(output, "reduced_graph_%d.graphml" % r)
         print("Storing reduced graph Gr to %s" % filename)
         nx.write_graphml(Gr, filename)
-        #Gr = nx.read_graphml("path.to.file")
                                 
         # Store the cell index to reduced cell index map
         filename = os.path.join(output, "reduced_index_map_%d.xdmf" % r)
         with df.XDMFFile(mesh.mpi_comm(), filename) as xdmf:
             print("Storing index map (tree -> Gr) to %s" % filename)
             xdmf.write(cell_index_map)
+
+def main(compute_paths=False, compute_tree=False):
+
+    # Compute reduced representation of arterial tree
+    network = "../mesh/networks/arteries_smooth.vtk"
+    output = "../mesh/networks/reduced_arterial_tree"
+    supply_nodes = [4094, 7220, 7974]
+    if compute_tree:
+        map_vasculature(network, output, supply_nodes, compute_paths)
+    
+    # Map graph into bifurcation data structure
+    for r in supply_nodes:
+        filename = os.path.join(output, "reduced_graph_%d.graphml" % r)
+        Gr = nx.read_graphml(filename)
+        print("Reading in", Gr, "from", filename)
         
+    
 if __name__ == '__main__':
 
-    map_vasculature("../mesh/networks/arteries_smooth.vtk",
-                    "../mesh/networks/common_paths")
+    # Set these to True when running the first time.
+    main(compute_paths=False, compute_tree=False)
     #map_vasculature("../mesh/networks/venes_smooth.vtk")
 
         
-    # # Iterate over edges in subtree (depth-first)
-    # a0 = r
-    # for e in nx.edge_dfs(tree, source=r):
-    #     (a, b) = e
-    #     print("e = ", e)
-    #     print("a.degree() = ", tree.degree(a))
-    #     print("b.degree() = ", tree.degree(b))
-    #     if tree.degree(b) == 3:
-    #         b0 = b
-    #         Gr.add_edge(a0, b0)
-    #         a0 = b0
-    #         exit()   
-            
-                
