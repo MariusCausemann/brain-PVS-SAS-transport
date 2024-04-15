@@ -43,6 +43,8 @@ def read_vtk_network(filename, rescale_mm2m=True):
 
     if rescale_mm2m:
         radii.array()[:] = netw["radius"] * 1e-3 # scale to m
+    else:
+        radii.array()[:] = netw["radius"]
 
     return mesh, radii, roots
 

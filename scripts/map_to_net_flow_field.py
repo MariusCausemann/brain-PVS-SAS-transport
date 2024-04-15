@@ -13,11 +13,11 @@ def compute_shortest_paths(mesh, H, roots, output="_tmp"):
     # Find and mark shortest path from each of the nodes in G to the
     # 'roots'.
 
-    # Helper function to compute path length/weight based on edge data
+    # Helper function to compute path length based on edge data
     def path_length(G, path):
         length = 0.0
         for (i, _) in enumerate(path[:-1]):
-            length += G.get_edge_data(path[i], path[i+1])["weight"]
+            length += G.get_edge_data(path[i], path[i+1])["length"]
         return length
 
     # Create a vertex function that represents whether r0, r1 or r2 is
@@ -42,7 +42,7 @@ def compute_shortest_paths(mesh, H, roots, output="_tmp"):
     # Iterate over these nodes in an attempt to cover whole network
     print("Computing nearest (weighted) supply node for %d nodes " % len(nodes))
     for node in nodes:
-        paths = [nx.dijkstra_path(H, node, r, weight="weight")
+        paths = [nx.dijkstra_path(H, node, r, weight="length")
                  for r in roots]
         path_lengths = np.array([path_length(H, p) for p in paths])
         shortest = np.argmin(path_lengths)
@@ -59,19 +59,35 @@ def compute_shortest_paths(mesh, H, roots, output="_tmp"):
         
     return mf
 
-
 # Recursive function used to reduce full network to minimal set of
 # nodes and edges
-def add_branches(tree, a0, a, a_, Gr):
+def add_branches(tree, a0, a, a_, Gr, indices, radii, index_map, counter):
     degree = tree.degree(a)
 
     # Handle roots and leafs:
     if degree == 1:
+        # At a root node:
         if a0 == a:
             (_, b) = list(tree.edges(a))[0]
-            add_branches(tree, a0, b, a, Gr)
+            indices += [tree.get_edge_data(a, b)["index"]]
+            radii += [tree.get_edge_data(a, b)["radius"]]
+            add_branches(tree, a0, b, a, Gr, indices, radii, index_map, counter)
+        # At a leaf node:
         else:
-            Gr.add_edge(a0, a)
+            # End of branch, add new edge to minimal tree
+            counter += 1
+            Gr.add_edge(a0, a, index=counter)
+
+            # Update maps, and reset path information
+            indices += [tree.get_edge_data(a_, a)["index"]]
+            radii += [tree.get_edge_data(a_, a)["radius"]]
+            print("indices = ", indices)
+            print("radii = ", radii)
+            for i in indices:
+                print("counter = ", counter)
+                index_map[i] = counter
+            indices = []
+            radii = []
             
     # If we are on a path (degree == 2)
     if degree == 2:
@@ -79,7 +95,7 @@ def add_branches(tree, a0, a, a_, Gr):
         # Continue down the new edge (not including a_)
         _, b = e0 if a_ in e1 else e1
         assert (a == _), "Assumption error in path traversal"
-        add_branches(tree, a0, b, a, Gr)
+        add_branches(tree, a0, b, a, Gr, indices, radii, index_map, counter)
         
     # Ok, at a bifurcation
     if degree == 3:
@@ -87,8 +103,8 @@ def add_branches(tree, a0, a, a_, Gr):
         # Get the other edges
         (e1, e2) = [e for e in tree.edges(a) if not a_ in e]
         assert (a == e1[0] and a == e2[0]), "Assumption error in tree traversal"
-        add_branches(tree, a, e1[1], a, Gr)
-        add_branches(tree, a, e2[1], a, Gr)
+        add_branches(tree, a, e1[1], a, Gr, indices, radii, index_map, counter)
+        add_branches(tree, a, e2[1], a, Gr, indices, radii, index_map, counter)
 
     # Ok, at a bifurcation with more than 4
     if degree == 4:
@@ -98,9 +114,9 @@ def add_branches(tree, a0, a, a_, Gr):
         (e1, e2, e3) = [e for e in tree.edges(a) if not a_ in e]
         assert (a == e1[0] and a == e2[0] and a == e3[0]), \
             "Assumption error in tree traversal"
-        add_branches(tree, a, e1[1], a, Gr)
-        add_branches(tree, a, e2[1], a, Gr)
-        add_branches(tree, a, e3[1], a, Gr)
+        add_branches(tree, a, e1[1], a, Gr, indices, radii, index_map, counter)
+        add_branches(tree, a, e2[1], a, Gr, indices, radii, index_map, counter)
+        add_branches(tree, a, e3[1], a, Gr, indices, radii, index_map, counter)
 
     if degree > 4:
         raise Exception("degree > 4")
@@ -120,11 +136,12 @@ def map_vasculature(fname, output):
     cell_lengths = df.assemble(1*v*df.dx(domain=mesh)).get_local()
     
     # Use networkx directed graph representation of mesh for
-    # convenience. Add the size of each cell as edge weights.
+    # convenience. Add the size of each cell as edge length, and add cell
+    # index and inner radius as auxiliary edge data.
     G = nx.DiGraph()
     for i, (n0, n1) in enumerate(mesh.cells()):
-        G.add_edge(n0, n1, weight=cell_lengths[i])
-
+        G.add_edge(n0, n1, length=cell_lengths[i], index=i, radius=radii[i])
+    
     # Identify the network supply nodes (Currently identified by a
     # semi-visual inspection.)
     (r0, r1, r2) = [4094, 7220, 7974]
@@ -139,23 +156,14 @@ def map_vasculature(fname, output):
     with df.XDMFFile(mesh.mpi_comm(), filename) as xdmf:
         xdmf.read(mf)
 
-    #mf = df.MeshFunction("size_t", mesh, 0, 0)
-    #mf.array()[3712] = 3712
-    #mf.array()[9697] = 9697
-    #file = df.File(os.path.join(output, "nodes_with_degree4.pvd"))
-    #file << mf
-    
     # Extract subgraphs by taking all nodes marked by r0, r1 and r2
     # separately
     for r in (r0, r1, r2):
-        print("r = ", r)
-        # Extract subgraph tree defined by marking
-        subnodes = np.where(mf.array() == r)[0]
-        tree = H.subgraph(subnodes)
+        print("Extracting reduced graphs with supply node r = ", r)
 
-        #for (u, v, data) in tree.edges(data=True):
-        #    print(u, v, data)
-        #exit()
+        # Extract subgraph tree defined by markers
+        subnodes = np.where(mf.array() == r)[0]
+        tree = H.subgraph(subnodes).copy()
         
         # Create reduced graph by adding bifurcations and terminals as nodes
         Gr = nx.DiGraph()
@@ -163,8 +171,16 @@ def map_vasculature(fname, output):
         terminals = [t for t in tree if tree.degree(t) == 1]
         Gr.add_nodes_from(bifurcations)
         Gr.add_nodes_from(terminals)
-        add_branches(tree, r, r, r, Gr)
-        print("G_r (r = %d) has %d nodes and %d edges" % (r, Gr.number_of_nodes(), Gr.number_of_edges()))
+
+        # ... and then adding edges to the reduced graph
+
+        # ... making sure to also make a map from cell indices in the
+        # original tree to an index in the new graph
+        cell_index_map= df.MeshFunction("size_t", mesh, 1, 0)
+        counter = 0
+        add_branches(tree, r, r, r, Gr, [], [], cell_index_map, counter)
+        print("G_r (r = %d) has %d nodes and %d edges" % 
+              (r, Gr.number_of_nodes(), Gr.number_of_edges()))
         
 if __name__ == '__main__':
 

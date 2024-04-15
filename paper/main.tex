@@ -494,26 +494,40 @@ The corresponding author is responsible for submitting a \href{http://www.nature
 \subsection{Estimating the perivascular flow rate induced by peristaltic pumping}
 \label{sec:sup:peristalsis}
 
-We use the theoretical framework previously introduced by Gjerde et
+We use the theoretical framework introduced by Gjerde et
 al.~\cite{gjerde2023directional} to estimate the mean flow rates
 $Q'_i$ (mm$^3$/s) induced by peristaltic pumping in a perivascular
 network $\Lambda = \cup_i \Lambda_i$. The motion of the inner
 (arterial) wall is described by a periodic travelling wave of relative
 amplitude $\varepsilon$, wave length $\lambda$ (mm) and angular
-frequency $\omega$ acting normal to the vessel wall. The wave number
-$k = 2 \pi / \lambda$ by definition. Each PVS segment $\Lambda_i$ has
+frequency $\omega$, acting normal to the wall. The wave number is $k =
+2 \pi / \lambda$ by definition. Each PVS segment $\Lambda_i$ has
 length $L_i$ with wave-relative length $\ell_i = k L$, inner baseline
-radius $r_{o_i}'$, outer baseline radius $r_{a_i}'$, and
-outer-to-inner ratio $\beta_i = r_{e_i}'/r_{o_i}'$. These geometric
-parameters and the assumption of annular cylindrical PVS segments
-yield a hydraulic resistance $\mathcal{R}_{o, i}$, and the additional
-parameter $\Delta_i$, see \cite{gjerde2023directional} for the
-complete definitions. The network has weights $\gamma_i =
-r_{o_i}'^2/r_{o_0}'^2$ where $r_{o_1}'$ is the radius of the root
-branch (see below)..
+radius $r_{o_i}'$, fixed outer radius $r_{e_i}'$, and outer-to-inner
+ratio $\beta_i = r_{e_i}'/r_{o_i}'$. These geometric parameters and
+the assumption of annular cylindrical PVS segments yield a hydraulic
+resistance $\mathcal{R}_{o, i}$, and the additional parameter
+$\Delta_i$, see \cite{gjerde2023directional} for the complete
+definitions. The framework assumes that the network takes the form of
+a directed, bifurcating tree with a single supply/root branch and
+defines weights $\gamma_i = r_{o_i}'^2/r_{o_1}'^2$ where $r_{o_1}'$ is
+the radius of this root branch.
+
+To apply this theoretical framework to a network of cerebral arteries
+with multiple supply branches (in our case, corresponding to the
+basilar and two internal carotid arteries), we separate the network
+$\Lambda$ into 3 edge-disjoint subnetworks $\Lambda^1, \Lambda^2,
+\Lambda^3$, one for each of the supply branches. Each node is assigned
+to the subnetwork associated with the nearest supply node, and edges
+between nodes preserved. Next, we compute a minimal bifurcating tree
+$\mathcal{T}^1, \mathcal{T}^2, \mathcal{T}^3$ representation of each
+subnetwork. Each tree $\mathcal{T}^j$ consists of the subset of the
+nodes from $\Lambda^j$ ($j = 1, 2, 3$) that have degree 1 (are leaf or
+root nodes) or degree $\geq 3$ (are true bifurcation points), and each
+path between points with degree $\not = 2$ in $\Lambda^j$ represented
+by a single edge in $\mathcal{T}^j$. 
+
 \begin{itemize}
-\item
-  Definition of subnetworks
 \item
   Definition of reduced bifurcating trees
 \item
