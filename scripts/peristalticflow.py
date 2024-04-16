@@ -373,9 +373,9 @@ def compute_pvs_flow(meshfile, output):
         network_data = (indices, paths, r_o, r_e, L, k, omega, varepsilon)
         avg_Q, avg_u = pnf.estimate_net_flow(network_data)
         
-        print("<Q'>_n (mm^3/s) = ", avg_Q)
-        print("<u'>_n (mm/s) = ", avg_u)
-        print("<u'>_n (mum/s) = ", avg_u*1e3)
+        print("<Q'>_n range: (", min(avg_Q), max(avg_Q), ") (mm^3/s)")
+        print("<u'>_n range (", min(avg_u), max(avg_u), ") (mm/s)")
+        print("<u'>_n range (", min(avg_u)*1e3, max(avg_u)*1e3, ") (mum/s)")
 
         # Read cell_index_map from file for mapping back to original mesh 
         mapfile = os.path.join(output, "original_to_minimal_map_%d.xdmf" % i0)
@@ -413,7 +413,7 @@ def main():
     output = "../mesh/networks/arterial_trees"
 
     # Only need to compute subtree information once for each mesh
-    if False:
+    if True:
         compute_subtrees(filename, output)
 
     compute_pvs_flow(filename, output)
