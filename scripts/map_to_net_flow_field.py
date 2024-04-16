@@ -9,8 +9,7 @@ import numpy as np
 
 from solver import read_vtk_network
 
-
-def compute_shortest_paths(mesh, H, roots, output="_tmp"):
+def compute_shortest_paths(mesh, G, roots, output="_tmp"):
     # Find and mark shortest path from each of the nodes in G to the
     # 'roots'.
 
@@ -29,23 +28,22 @@ def compute_shortest_paths(mesh, H, roots, output="_tmp"):
     labels = dict(zip(range(len(roots)), roots))
 
     # Get all terminal nodes to begin with
-    nodes = [t for t in H if H.degree(t) == 1]
+    nodes = [t for t in G if G.degree(t) == 1]
 
     # ... and in addition all nodes in shortests paths betweeen
     # pairs of roots
-    (r0, r1, r2) = roots
     pairs = combinations(roots, 2) 
     for (r0, r1) in pairs: 
-        path = nx.dijkstra_path(H, r0, r1)
+        path = nx.dijkstra_path(G, r0, r1)
         nodes.extend(path)
     nodes = set(nodes)
 
     # Iterate over these nodes in an attempt to cover whole network
-    print("Computing nearest (weighted) supply node for %d nodes, this may take some time..." % len(nodes))
+    print("Computing nearest supply node for %d nodes, this may take some time..." % len(nodes))
     for node in nodes:
-        paths = [nx.dijkstra_path(H, node, r, weight="length")
+        paths = [nx.dijkstra_path(G, node, r, weight="length")
                  for r in roots]
-        path_lengths = np.array([path_length(H, p) for p in paths])
+        path_lengths = np.array([path_length(G, p) for p in paths])
         shortest = np.argmin(path_lengths)
         mf.array()[paths[shortest]] = labels[shortest]
 
@@ -186,14 +184,10 @@ def map_vasculature(fname, output, supply_nodes, compute_paths=True):
     for i, (n0, n1) in enumerate(mesh.cells()):
         G.add_edge(n0, n1, length=cell_lengths[i], index=i, radius=radii[i])
     
-    # Identify the network supply nodes (Currently identified by a
-    # semi-visual inspection.)
-    (r0, r1, r2) = supply_nodes
-
     # Compute or read pre-computed paths to supply nodes
     filename = os.path.join(output, "nearest_supply_nodes.xdmf")
     if compute_paths:
-        mf = compute_shortest_paths(mesh, G, (r0, r1, r2), output=output)
+        mf = compute_shortest_paths(mesh, G, supply_nodes, output=output)
         print("Storing to %s" % filename)
         with df.XDMFFile(mesh.mpi_comm(), filename) as xdmf:
             xdmf.write(mf)
@@ -203,9 +197,9 @@ def map_vasculature(fname, output, supply_nodes, compute_paths=True):
         with df.XDMFFile(mesh.mpi_comm(), filename) as xdmf:
             xdmf.read(mf)
 
-    # Extract subgraphs by taking all nodes marked by r0, r1 and r2
+    # Extract subgraphs by taking all nodes marked by each supply node
     # separately
-    for r in (r0, r1, r2):
+    for r in supply_nodes:
         print("Extracting reduced graphs with supply node r = ", r)
 
         # Extract subgraph tree defined by current marker r
@@ -242,24 +236,38 @@ def map_vasculature(fname, output, supply_nodes, compute_paths=True):
             print("Storing index map (tree -> Gr) to %s" % filename)
             xdmf.write(cell_index_map)
 
+def map_tree_into_bifurcations():
+    pass
+            
 def main(compute_paths=False, compute_tree=False):
 
     # Compute reduced representation of arterial tree
     network = "../mesh/networks/arteries_smooth.vtk"
-    output = "../mesh/networks/reduced_arterial_tree"
+    output = "../mesh/networks/arterial_trees"
+
+    # Identify the network supply nodes (Currently identified by a
+    # semi-visual inspection.)
     supply_nodes = [4094, 7220, 7974]
+
+    # Map arterial network into a set of bifurcating trees, and store
     if compute_tree:
         map_vasculature(network, output, supply_nodes, compute_paths)
     
-    # Map graph into bifurcation data structure
     for r in supply_nodes:
         filename = os.path.join(output, "reduced_graph_%d.graphml" % r)
         Gr = nx.read_graphml(filename)
         print("Reading in", Gr, "from", filename)
+
+    # Map reduced graph Gr into PVS net flow data representation
+
+    
         
     
 if __name__ == '__main__':
 
+    # TODO: Make a few tests that checks these functions on a simple
+    # graphs/meshes/networks
+    
     # Set these to True when running the first time.
     main(compute_paths=False, compute_tree=False)
     #map_vasculature("../mesh/networks/venes_smooth.vtk")
