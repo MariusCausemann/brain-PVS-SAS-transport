@@ -103,7 +103,7 @@ def _alpha(l, P, R):
     return (A1 + A2.real)
 
 def avg_Q_1_n(P, dP, ell, R, Delta):  
-    "Evaluate <Q_1_n>."
+    "Evaluate <Q_1_n> as per eq. (34)"
     z = 1j
     val = (- dP/(R*ell) + Delta*(1./2 - (1 - np.cos(ell))/(ell**2)) 
            + Delta/(2*ell**2*R)*(P*(1 - np.exp(z*ell))).real)
@@ -143,7 +143,6 @@ def solve_for_P(indices, paths, R, ell, gamma):
         x_n = 0.0
         for n in path:
             A[I+k, n] = np.exp(-z*x_n)/gamma[n] # - compared to eq. (40)
-            #print("I + k = ", I+k, "n = ", n, "A[I+k, n] = ", A[I+k, n])
             x_n += ell[n]
 
     # Solve the linear systems for real and imaginary parts of P:
@@ -202,17 +201,41 @@ def solve_bifurcating_tree(network):
     debug("Solving for dP")
     dP = solve_for_dP(R, ell, Delta, gamma, indices, paths, P)
 
-    debug("Evaluating the flow rates Q1[i]: ...")
-    Q1 = np.zeros(len(dP))
-    for (i, _) in enumerate(dP):
-        Q1[i] = avg_Q_1_n(P[i], dP[i], ell[i], R[i], Delta[i])
+    debug("Evaluating the average, non-dimensional flow rates <Q_1_n> ...")
+    avg_Q_1 = np.zeros(len(dP))
+    for (n, _) in enumerate(dP):
+        avg_Q_1[n] = avg_Q_1_n(P[n], dP[n], ell[n], R[n], Delta[n])
 
-    return (P, dP, Q1)
+    return (P, dP, avg_Q_1)
 
-def Qprime(Q, varepsilon, omega, L, k, r_o):
-    scale = 2*np.pi*varepsilon*omega*r_o**2/k
-    val = scale*Q
+def Qprime(Q, varepsilon, omega, k, r_o):
+    """Dimensionalize Q to yield Q', see eq. (5)."""
+    alpha = 2*np.pi*varepsilon*omega*np.power(r_o, 2)/k
+    val = alpha*Q
     return val
+
+def estimate_net_flow(network):
+    """Estimate the net directional flow in a given bifurcating tree. Input parameters should be such that
+
+      (indices, paths, r_o, r_e, L, k, omega, varepsilon) = network
+
+    """
+    
+    # Compute tthe 
+    (P, dP, avg_Q_1) = solve_bifurcating_tree(network)
+
+    # Extract individual parameters from argument list (for readability)
+    (indices, paths, r_o, r_e, L, k, omega, varepsilon) = network
+
+    # Mean flow rates in each branch n (see text after eq. (34))
+    avg_Q = varepsilon*avg_Q_1
+
+    # Dimensionalize <Q>_n to yield <Q'>_n for each branch n
+    avg_Q_prime = Qprime(avg_Q, varepsilon, omega, k, r_o)
+
+    return avg_Q_prime
+
+
 
 # ==============================================================================
 # Helper functions for setting up idealized networks including:
@@ -244,7 +267,7 @@ def single_bifurcation_data(lmbda=1.0):
     varepsilon = 0.1        # AU 
         
     r_o = [0.1, 0.1, 0.1]  # Inner radii (mm) for each element/edge
-    r_e = [0.2, 0.2, 0.2]  # Outer radii (mm) for each element/edge
+    r_e = [0.3, 0.2, 0.2]  # Outer radii (mm) for each element/edge
     L = [2.0, 1.0, 1.0]        # Element lengths (mm)
         
     data = (indices, paths, r_o, r_e, L, k, omega, varepsilon)
@@ -356,10 +379,10 @@ def murray_tree_data(m=1, r=0.1, gamma=1.0, beta=2.0, L0=10):
     data = (indices, paths, r_o, r_e, L, k, omega, varepsilon)
     return data
 
-def run_single_bifurcation_test():
+def run_single_bifurcation_test(lmbda):
 
     print("Running single bifurcation test case via general solution algorithm")
-    data = single_bifurcation_data(lmbda=0.1)
+    data = single_bifurcation_data(lmbda=lmbda)
     (indices, paths, r_o, r_e, L, k, omega, varepsilon) = data
     
     (P, dP, avg_Q_1) = solve_bifurcating_tree(data)
@@ -369,13 +392,11 @@ def run_single_bifurcation_test():
     print("<Q_1> = ", avg_Q_1)
     print("eps*<Q_1_0> = %.3e" % (varepsilon*avg_Q_1[0]))
     
-    beta0 = _beta(r_e[0], r_o[0])
-    delta0 = _delta(beta0)
     Q10 = varepsilon*avg_Q_1[0]
-    Qp = Qprime(Q10, varepsilon, omega, L[0], k, delta0, r_o[0])
+    Qp = Qprime(Q10, varepsilon, omega, k, r_o[0])
     print("eps*<Q_1_0>' (mm^3/s) = %.3e" % Qp)
 
-    return True
+    return Qp
 
 def simple_asymmetric_data(lmbda=1.0):
     """Data for a simple asymetric test case. Data for network consisting
@@ -411,10 +432,8 @@ def run_simple_asymmetric_test():
     print("<Q_1> = ", avg_Q_1)
     print("eps*<Q_1_0> = %.3e" % (varepsilon*avg_Q_1[0]))
     
-    beta0 = _beta(r_e[0], r_o[0])
-    delta0 = _delta(beta0)
     Q10 = varepsilon*avg_Q_1[0]
-    Qp = Qprime(Q10, varepsilon, omega, L[0], k, delta0, r_o[0])
+    Qp = Qprime(Q10, varepsilon, omega, k, r_o[0])
     print("eps*<Q_1_0>' (mm^3/s) = %.3e" % Qp)
 
     return True
@@ -423,23 +442,23 @@ def test_murray_data():
 
     debug("Murray tree data (m=1)")
     data = murray_tree_data(m=1, r=0.1, gamma=1.0, beta=2.0, L0=10)
-    debug(data)
+    #debug(data)
 
     debug("Single bifurcation data")
     data = single_bifurcation_data()
-    debug(data)
+    #debug(data)
 
     debug("Murray tree data (m=2)")
     data = murray_tree_data(m=2, r=0.1, gamma=1.0, beta=2.0, L0=10)
-    debug(data)
+    #debug(data)
 
     debug("Three junction data")
     data = three_junction_data()
-    debug(data)
+    #debug(data)
 
     debug("Murray tree data (m=3)")
     data = murray_tree_data(m=3, r=0.1, gamma=1.0, beta=2.0, L0=10)
-    debug(data)
+    #debug(data)
 
     return True
     
@@ -456,26 +475,42 @@ def run_murray_tree():
     print("<Q_1> = ", avg_Q_1)
     print("eps*<Q_1_0> = %.3e" % (varepsilon*avg_Q_1[0]))
     
-    beta0 = _beta(r_e[0], r_o[0])
-    delta0 = _delta(beta0)
     Q10 = varepsilon*avg_Q_1[0]
-    Qp = Qprime(Q10, varepsilon, omega, L[0], k, delta0, r_o[0])
+    Qp = Qprime(Q10, varepsilon, omega, k, r_o[0])
     print("eps*<Q_1_0>' (mm^3/s) = %.3e" % Qp)
 
     return True
+
+def test_estimate_net_flow():
+
+    print("Running single bifurcation test case via estimate_net_flow")
+    data = single_bifurcation_data(0.1)
+    
+    avg_Q_prime = estimate_net_flow(data)
+    print(avg_Q_prime)
+    
 
 def test():
     print("")
     success = run_simple_asymmetric_test()
 
+    # Compare against published reference including  numerical tests
     print("")
-    success = run_single_bifurcation_test()
+    Qp = run_single_bifurcation_test(0.1)
+    diff = (Qp - 1.341e-04)/1.341e-04
+    assert(diff < 0.001), "WARNING: Check correctness of results! (%r)" % diff
+    Qp = run_single_bifurcation_test(1.0)
+    diff = (Qp - 1.341e-03)/1.341e-03
+    assert(diff < 0.001), "WARNING: Check correctness of results! (%r)" % diff
 
     print("")
     success = test_murray_data()
 
     print("")
     success = run_murray_tree()
-    
+
+    print("")
+    success = test_estimate_net_flow()
+
 if __name__ == "__main__":
     test()
