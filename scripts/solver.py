@@ -15,8 +15,9 @@ def remove_duplicate_cells(netw):
 def read_vtk_network(filename, rescale_mm2m=True):
     """Read the VTK file given by filename, return a FEniCS 1D Mesh representing the network, a FEniCS MeshFunction (double) representing the radius of each vessel segment (defined over the mesh cells), and a FEniCS MeshFunction (size_t) defining the roots of the network (defined over the mesh vertices, roots are labelled by 2 or 1.) 
 
-    rescale_mm2m is set to True by default, in which case the information on file is rescaled by a factor 1.e-3. 
+    rescale_mm2m is set to True by default, in which case the information on file is rescaled by a factor 1.e-3. MER: This is error-prone, I suggest no rescaling behind the scenes.
 """
+    print("Reading network mesh from %s" % filename)
     netw = pv.read(filename)
     if rescale_mm2m:
         netw.points *= 1e-3 # scale to m
@@ -46,6 +47,7 @@ def read_vtk_network(filename, rescale_mm2m=True):
     else:
         radii.array()[:] = netw["radius"]
 
+    print("... with %d nodes, %d edges" % (mesh.num_vertices(), mesh.num_cells()))
     return mesh, radii, roots
 
 def get_sas():

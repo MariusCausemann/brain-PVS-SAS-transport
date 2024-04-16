@@ -245,10 +245,10 @@ def single_bifurcation_data(lmbda=1.0):
     varepsilon = 0.1        # AU 
         
     r_o = [0.1, 0.1, 0.1]  # Inner radii (mm) for each element/edge
-    r_e = [0.3, 0.2, 0.2]  # Outer radii (mm) for each element/edge
+    r_e = [0.2, 0.2, 0.2]  # Outer radii (mm) for each element/edge
     L = [2.0, 1.0, 1.0]        # Element lengths (mm)
         
-    data =  (indices, paths, r_o, r_e, L, k, omega, varepsilon)
+    data = (indices, paths, r_o, r_e, L, k, omega, varepsilon)
     return data
     
 def three_junction_data():
