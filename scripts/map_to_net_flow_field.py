@@ -2,14 +2,16 @@
 
 from itertools import combinations
 import os.path
+import pylab
 
 import networkx as nx
 import dolfin as df
 import numpy as np
 
+
 from solver import read_vtk_network
 
-import pvs_network_netflow
+import pvs_network_netflow as pnf
 
 def mark_shortest_paths(mesh, G, roots, output, use_precomputed=False):
     """Identify the shortest path (weighted by "length") from each node in
@@ -73,18 +75,18 @@ def average_radius(radii):
     "How to compute radius of collapsed branch? Here, we take the average."
     return np.average(np.array(radii))
 
-def add_branches(tree, a0, a, a_, Gr, indices, radii, lengths, index_map):
-    """For a given graph tree with current root node a0, current node a
+def add_branches(G, a0, a, a_, T, indices, radii, lengths, index_map):
+    """For a given graph G with current root node a0, current node a
     and previous node a_, compute (by recursion) 
-    - Gr: a reduced graph including 'radius' edge data , 
-    - index_map: a MeshFunction map from tree's cell index to Gr's cell index
+    - T: a reduced graph including 'radius' edge data , 
+    - index_map: a MeshFunction map from G's cell index to T's edge index
 
     The given indices (list), radii (list), lengths (list) are helper
     variables to keep track of the data associated with the paths
     traversed between bifurcation points or root nodes.
     """
 
-    # counter counts the cells in Gr (tracks the cell indices in Gr).
+    # counter counts the cells in T (tracks the cell indices in T).
     global counter
 
     # We are now visiting node a
@@ -94,28 +96,29 @@ def add_branches(tree, a0, a, a_, Gr, indices, radii, lengths, index_map):
     # edge info to indices and radii.
     
     # Handle node a based on its graph degree
-    degree = tree.degree(a)
+    degree = G.degree(a)
 
-    # At the (single) root node, we just get started down the tree
+    # At the (single) root node, we just get started down the G
     if degree == 1 and a0 == a:
-        (_, b) = list(tree.edges(a))[0]
-        add_branches(tree, a0, b, a, Gr, [], [], [], index_map)
+        (_, b) = list(G.edges(a))[0]
+        add_branches(G, a0, b, a, T, [], [], [], index_map)
         return
         
     # Update indices and radii with info about the edge (a_, a) we
     # just traversed
-    indices += [tree.get_edge_data(a_, a)["index"]]
-    radii += [tree.get_edge_data(a_, a)["radius"]]
-    lengths += [tree.get_edge_data(a_, a)["length"]]
+    indices += [G.get_edge_data(a_, a)["index"]]
+    radii += [G.get_edge_data(a_, a)["radius"]]
+    lengths += [G.get_edge_data(a_, a)["length"]]
     
     # Leaf node at end of branch, add new edge to minimal tree
     if degree == 1 and not (a0 == a):
 
         # Add new edge to minimal tree
         counter += 1
+        print("counter = ", counter)
         path_radius = average_radius(radii)
         path_length = sum(lengths)
-        Gr.add_edge(a0, a,
+        T.add_edge(a0, a,
                     index=counter, radius=path_radius, length=path_length)
         
         # Update index map
@@ -125,55 +128,56 @@ def add_branches(tree, a0, a, a_, Gr, indices, radii, lengths, index_map):
     if degree == 2:
 
         # Find which is the new edge (the edge not including a_)
-        (e0, e1) = list(tree.edges(a))
+        (e0, e1) = list(G.edges(a))
         _, b = e0 if a_ in e1 else e1
         assert (a == _), "Assumption error in path traversal"
 
         # Continue down the new edge 
-        add_branches(tree, a0, b, a, Gr, indices, radii, lengths, index_map)
+        add_branches(G, a0, b, a, T, indices, radii, lengths, index_map)
         
     # Ok, at a bifurcation
     if degree == 3:
 
-        # Add new edge to minimal tree Gr
+        # Add new edge to minimal tree T
         counter += 1
+        print("counter = ", counter)
         path_radius = average_radius(radii)
         path_length = sum(lengths)
-        Gr.add_edge(a0, a,
+        T.add_edge(a0, a,
                     index=counter, radius=path_radius, length=path_length)
 
         # Update index map
         index_map.array()[indices] = counter
             
         # Get the other edges 
-        (e1, e2) = [e for e in tree.edges(a) if not a_ in e]
+        (e1, e2) = [e for e in G.edges(a) if not a_ in e]
         assert (a == e1[0] and a == e2[0]), "Assumption error in tree traversal"
 
-        add_branches(tree, a, e1[1], a, Gr, [], [], [], index_map)
-        add_branches(tree, a, e2[1], a, Gr, [], [], [], index_map)
+        add_branches(G, a, e1[1], a, T, [], [], [], index_map)
+        add_branches(G, a, e2[1], a, T, [], [], [], index_map)
 
-    # Ok, at a bifurcation with more than 4
+    # Ok, at a bifurcation with more than 4. This shouldn't happen really
     if degree == 4:
 
-        # Add this edge to Gr, 
+        # Add this edge to T 
         counter += 1
         path_radius = average_radius(radii)
         path_length = sum(lengths)
-        Gr.add_edge(a0, a,
+        T.add_edge(a0, a,
                     index=counter, radius=path_radius, length=path_length)
 
         # Update index map
         index_map.array()[indices] = counter
 
         # Get the other edges
-        print("Degree 4 edges: ", tree.edges(a))
-        (e1, e2, e3) = [e for e in tree.edges(a) if not a_ in e]
+        print("Degree 4 edges: ", G.edges(a))
+        (e1, e2, e3) = [e for e in G.edges(a) if not a_ in e]
         assert (a == e1[0] and a == e2[0] and a == e3[0]), \
-            "Assumption error in tree traversal"
+            "Assumption error in G traversal"
 
-        add_branches(tree, a, e1[1], a, Gr, [], [], [], index_map)
-        add_branches(tree, a, e2[1], a, Gr, [], [], [], index_map)
-        add_branches(tree, a, e3[1], a, Gr, [], [], [], index_map)
+        add_branches(G, a, e1[1], a, T, [], [], [], index_map)
+        add_branches(G, a, e2[1], a, T, [], [], [], index_map)
+        #add_branches(G, a, e3[1], a, T, [], [], [], index_map)
 
     if degree > 4:
         raise Exception("degree > 4")
@@ -210,9 +214,6 @@ def graph_to_bifurcations(G, i0, relative_pvs_width):
     # indices of the mother and two daughter edges at the bifurcation.
     indices = [tuple(G[i][j]["index"] for j in G.neighbors(i))
                for i in bifurcations]
-
-    print(indices)
-    exit()
     
     # Extract paths (lists of edge indices) from the root node to each
     # leaf node
@@ -283,11 +284,11 @@ def extract_minimal_tree(G, mesh, i0):
     # original tree to an index in the new graph
     cell_index_map = df.MeshFunction("size_t", mesh, 1, 0)
     global counter
-    counter = 0
+    counter = -1
+
     add_branches(G, i0, i0, i0, T, [], [], [], cell_index_map)
-    nv = T.number_of_nodes()
-    ne = T.number_of_edges()
-    print("... extracted minimal tree T with %d nodes and %d edges" % (nv, ne))
+    print("... extracted minimal tree T with %d nodes and %d edges" %
+          (T.number_of_nodes(), T.number_of_edges()))
 
     return T, cell_index_map
 
@@ -339,16 +340,30 @@ def compute_pvs_flow(meshfile, output):
 
     # Specify the relative PVS width
     beta = 2
-    
+
+    # Specify other parameters
+    f = 1.0
+    omega = 2*np.pi*f
+    lmbda = 1.0
+    k = 2*np.pi/lmbda
+    varepsilon = 0.1
+
     for i0 in roots:
         # Read minimal subtree from file. Note that graphml converts
         # ints to strings ...
         graphfile = os.path.join(output, "minimal_tree_%d.graphml" % i0)
         T = nx.read_graphml(graphfile)
-            
-        # Map reduced graph Gr into PVS net flow data representation
+        print("T = ", T)
+        
+        # Map minimal subtree T into PVS net flow data representation
         (indices, paths, r_o, r_e, L) = graph_to_bifurcations(T, i0, beta)
-
+        print("indices = ", indices)
+        print("paths = ", paths)
+        
+        # Compute the PVS netflow in T
+        network_data = (indices, paths, r_o, r_e, L, k, omega, varepsilon)
+        (P, dP, Q1) = pnf.solve_bifurcating_tree(network_data)
+        
 def run_all_tests():
     test_graph_to_bifurcations()
 
