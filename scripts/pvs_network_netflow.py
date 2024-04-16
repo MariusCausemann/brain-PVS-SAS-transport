@@ -22,12 +22,18 @@ Dependencies
 How to run
 ==========
 
-$ python3 pvs_network_netflow.py
+$ python3 pvs_network_netflow.py # Runs tests
+
+or in a Python script:
+
+  from . import estimate_net_flow
+  network = ... # Define input data, as per below
+  mean_flow_rates, mean_velocities = estimate_net_flow(network)
 
 Sharing and copyright
 =====================
 
-This collection is licensed under the MIT License (see LICENSE).
+This script is licensed under the MIT License (see LICENSE).
 
 More information
 ================
@@ -214,14 +220,26 @@ def Qprime(Q, varepsilon, omega, k, r_o):
     val = alpha*Q
     return val
 
+def avg_u(Q, r_e, r_o):
+    """Compute the average cross-section velocity for a given flux Q,
+under the assumption of an annular cross-section defined by inner radius r_o and outer radius r_e."""
+
+    # Definition of annular cross-section area
+    A = np.pi*(np.power(r_e, 2) - np.power(r_o, 2))
+
+    # Mean velocity is flux divided by area
+    return Q/A
+    
 def estimate_net_flow(network):
+
     """Estimate the net directional flow in a given bifurcating tree. Input parameters should be such that
 
       (indices, paths, r_o, r_e, L, k, omega, varepsilon) = network
 
     """
     
-    # Compute tthe 
+    # Compute the non-dimensional, first-order contribution to the
+    # average mean flow avg_Q_1 (P, dP are auxiliary byproducts)
     (P, dP, avg_Q_1) = solve_bifurcating_tree(network)
 
     # Extract individual parameters from argument list (for readability)
@@ -230,12 +248,12 @@ def estimate_net_flow(network):
     # Mean flow rates in each branch n (see text after eq. (34))
     avg_Q = varepsilon*avg_Q_1
 
-    # Dimensionalize <Q>_n to yield <Q'>_n for each branch n
+    # Dimensionalize <Q>_n to yield <Q'>_n for each branch n, see eq. (5)
     avg_Q_prime = Qprime(avg_Q, varepsilon, omega, k, r_o)
 
-    return avg_Q_prime
-
-
+    avg_u_prime = avg_u(avg_Q_prime, r_e, r_o)
+    
+    return avg_Q_prime, avg_u_prime
 
 # ==============================================================================
 # Helper functions for setting up idealized networks including:
@@ -486,9 +504,10 @@ def test_estimate_net_flow():
     print("Running single bifurcation test case via estimate_net_flow")
     data = single_bifurcation_data(0.1)
     
-    avg_Q_prime = estimate_net_flow(data)
-    print(avg_Q_prime)
-    
+    avg_Q_prime, avg_u_prime = estimate_net_flow(data)
+
+    print("<Q'>_n (mm^3/s) = ", avg_Q_prime)
+    print("<u'>_n (mm/s) = ", avg_u_prime)
 
 def test():
     print("")

@@ -8,7 +8,6 @@ import networkx as nx
 import dolfin as df
 import numpy as np
 
-
 from solver import read_vtk_network
 
 import pvs_network_netflow as pnf
@@ -332,6 +331,8 @@ def compute_subtrees(filename, output):
             print("... storing index map (mesh -> T) to %s" % filename)
             xdmf.write(cell_index_map)
 
+
+            
 def compute_pvs_flow(meshfile, output):
 
     # Label the network supply nodes (FIXME: automate)
@@ -341,10 +342,8 @@ def compute_pvs_flow(meshfile, output):
     #mesh, radii, _ = read_vtk_network(meshfile, rescale_mm2m=False)
     #mesh.init()
 
-    # Specify the relative PVS width
+    # Specify the relative PVS width and other parameters
     beta = 2
-
-    # Specify other parameters
     f = 1.0                # frequency (Hz = 1/s)
     omega = 2*np.pi*f      # Angular frequency (Hz)
     lmbda = 1.0            # Wave length (mm)
@@ -363,13 +362,11 @@ def compute_pvs_flow(meshfile, output):
         
         # Compute the PVS netflow in T
         network_data = (indices, paths, r_o, r_e, L, k, omega, varepsilon)
-        (P, dP, Q1) = pnf.solve_bifurcating_tree(network_data)
-        print("Q1 = ", Q1)
-        print("eps*<Q_1_0> = %.3e" % (varepsilon*Q1[0]))
-    
-        Q1_0 = varepsilon*Q1[0]
-        Qp = pnf.Qprime(Q1_0, varepsilon, omega, L[0], k, r_o[0])
-        print("eps*<Q_1_0>' (mm^3/s) = %.3e" % Qp)
+        avg_Q, avg_u = pnf.estimate_net_flow(network_data)
+        
+        print("<Q'>_n (mm^3/s) = ", avg_Q)
+        print("<u'>_n (mm/s) = ", avg_u)
+        print("<u'>_n (mum/s) = ", avg_u*1e3)
         
 def run_all_tests():
     test_graph_to_bifurcations()
