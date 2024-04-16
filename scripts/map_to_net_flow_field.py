@@ -360,17 +360,17 @@ def compute_pvs_flow(meshfile, output):
         
         # Map minimal subtree T into PVS net flow data representation
         (indices, paths, r_o, r_e, L) = graph_to_bifurcations(T, i0, beta)
-        print("indices = ", indices)
-        print("len(paths) = ", len(paths))
-        print("paths = ", paths)
-        print("r_o = ", r_o)
-        print("r_e = ", r_e)
-        print("L = ", L)
         
         # Compute the PVS netflow in T
         network_data = (indices, paths, r_o, r_e, L, k, omega, varepsilon)
         (P, dP, Q1) = pnf.solve_bifurcating_tree(network_data)
-
+        print("Q1 = ", Q1)
+        print("eps*<Q_1_0> = %.3e" % (varepsilon*Q1[0]))
+    
+        Q1_0 = varepsilon*Q1[0]
+        Qp = pnf.Qprime(Q1_0, varepsilon, omega, L[0], k, r_o[0])
+        print("eps*<Q_1_0>' (mm^3/s) = %.3e" % Qp)
+        
 def run_all_tests():
     test_graph_to_bifurcations()
 
@@ -381,7 +381,7 @@ def main():
     output = "../mesh/networks/arterial_trees"
 
     # Only need to compute subtree information once for each mesh
-    if True:
+    if False:
         compute_subtrees(filename, output)
 
     compute_pvs_flow(filename, output)
