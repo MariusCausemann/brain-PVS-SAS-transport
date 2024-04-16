@@ -280,7 +280,9 @@ def extract_minimal_tree(G, mesh, i0):
     # ... and then adding edges to the reduced graph
     # ... making sure to also make a map from cell indices in the
     # original tree to an index in the new graph
-    cell_index_map = df.MeshFunction("size_t", mesh, 1, 0)
+
+    UNDEFINED = mesh.num_cells()
+    cell_index_map = df.MeshFunction("size_t", mesh, 1, UNDEFINED)
     global counter
     counter = -1
 
@@ -320,18 +322,22 @@ def compute_subtrees(filename, output):
         G0 = G.subgraph(subnodes).copy()
         T, cell_index_map = extract_minimal_tree(G0, mesh, i0)
         
-        # Store the new graph and cell_index_map
+        # Store the new graph 
         filename = os.path.join(output, "minimal_tree_%d.graphml" % i0)
         print("... storing minimal tree T representation to %s" % filename)
         nx.write_graphml(T, filename, infer_numeric_types=True)
                                 
-        # Store the cell index to reduced cell index map
+        # ... and the G-to-T cell index map
         filename = os.path.join(output, "original_to_minimal_map_%d.xdmf" % i0)
         with df.XDMFFile(mesh.mpi_comm(), filename) as xdmf:
             print("... storing index map (mesh -> T) to %s" % filename)
             xdmf.write(cell_index_map)
 
-
+def dg0_to_mf(u):
+    mesh = u.function_space().mesh()
+    mf = df.MeshFunction("double", mesh, mesh.topology().dim(), 0)
+    mf.array()[:] = u.vector().get_local()
+    return mf
             
 def compute_pvs_flow(meshfile, output):
 
@@ -339,9 +345,10 @@ def compute_pvs_flow(meshfile, output):
     roots = [4094, 7220, 7974]
 
     # Read mesh from file. Never rescale stuff behind the scenes.
-    #mesh, radii, _ = read_vtk_network(meshfile, rescale_mm2m=False)
-    #mesh.init()
-
+    mesh, radii, _ = read_vtk_network(meshfile, rescale_mm2m=False)
+    mesh.init()
+    DG0 = df.FunctionSpace(mesh, "DG", 0)
+    
     # Specify the relative PVS width and other parameters
     beta = 2
     f = 1.0                # frequency (Hz = 1/s)
@@ -350,6 +357,8 @@ def compute_pvs_flow(meshfile, output):
     k = 2*np.pi/lmbda      # Wave number (1/mm)
     varepsilon = 0.1       # Relative wave amplitude
     
+    Q = df.Function(DG0)
+    u = df.Function(DG0)
     for i0 in roots:
         # Read minimal subtree from file. Note that graphml converts
         # ints to strings ...
@@ -367,7 +376,33 @@ def compute_pvs_flow(meshfile, output):
         print("<Q'>_n (mm^3/s) = ", avg_Q)
         print("<u'>_n (mm/s) = ", avg_u)
         print("<u'>_n (mum/s) = ", avg_u*1e3)
+
+        # Read cell_index_map from file for mapping back to original mesh 
+        mapfile = os.path.join(output, "original_to_minimal_map_%d.xdmf" % i0)
+        index_map = df.MeshFunction("size_t", mesh, 1, 0)
+        with df.XDMFFile(mesh.mpi_comm(), mapfile) as xdmf:
+            print("... reading index map (mesh -> T) from %s" % mapfile)
+            xdmf.read(index_map)
+
+        UNDEFINED = mesh.num_cells()
+        for i, _ in enumerate(mesh.cells()):
+            T_i = index_map[i]
+            if (T_i < UNDEFINED):
+                Q.vector()[i] = avg_Q[index_map[i]]
+                u.vector()[i] = avg_u[index_map[i]]
         
+    fluxfile = os.path.join(output, "pvs_Q.xdmf")
+    with df.XDMFFile(mesh.mpi_comm(), fluxfile) as xdmf:
+        print("Saving net flux to %s" % fluxfile)
+        #xdmf.write_checkpoint(Q, "Q", 0.0)
+        xdmf.write(dg0_to_mf(Q))
+        
+    ufile = os.path.join(output, "pvs_u.xdmf")
+    with df.XDMFFile(mesh.mpi_comm(), ufile) as xdmf:
+        print("Saving net velocity to %s" % ufile)
+        #xdmf.write_checkpoint(u, "u", 0.0)
+        xdmf.write(dg0_to_mf(u))
+                
 def run_all_tests():
     test_graph_to_bifurcations()
 
@@ -389,7 +424,7 @@ if __name__ == '__main__':
     # functions on a simple graphs/meshes/networks and on our favorite
     # image-based network
 
-    if True:
+    if False:
         run_all_tests()
 
     if True:
