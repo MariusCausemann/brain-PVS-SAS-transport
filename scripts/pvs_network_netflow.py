@@ -140,10 +140,12 @@ def solve_for_P(indices, paths, R, ell, gamma):
     # Apply the additional constraints given in terms of the
     # root-to-leaf paths
     I = len(indices)
+    print("I = ", I)
     for (k, path) in enumerate(paths):
         x_n = 0.0
         for n in path:
             A[I+k, n] = np.exp(-z*x_n)/gamma[n] # - compared to eq. (40)
+            #print("I + k = ", I+k, "n = ", n, "A[I+k, n] = ", A[I+k, n])
             x_n += ell[n]
 
     # Solve the linear systems for real and imaginary parts of P:
@@ -377,7 +379,50 @@ def run_single_bifurcation_test():
     print("eps*<Q_1_0>' (mm^3/s) = %.3e" % Qp)
 
     return True
+
+def simple_asymmetric_data(lmbda=1.0):
+    """Data for a simple asymetric test case. Data for network consisting
+    of 5 edges and two bifurcation, with inner and outer radius and
+    lengths of the daughter vessels identical to those of the mother
+    vessel.
+    """
+    indices = [(0, 1, 2), (2, 3, 4)]
+    paths = [(0, 1), (0, 2, 3), (0, 2, 4)]
+    r_o = [0.1, 0.1, 0.1, 0.1, 0.1]
+    r_e =  [0.2, 0.2, 0.2, 0.2, 0.2]
+    L = [1.0, 1.0, 1.0, 1.0, 1.0]
+    paths = [(0, 1), (0, 2)]
     
+    # Peristaltic wave parameters: wave length lmbda and (angular) wave number k
+    f = 1.0                 # frequency (Hz = 1/s)
+    omega = 2*np.pi*f       # Angular frequency (Hz)
+    k = 2*np.pi/lmbda       # wave number (1/mm)
+    varepsilon = 0.1        # AU 
+        
+    data = (indices, paths, r_o, r_e, L, k, omega, varepsilon)
+    return data
+
+def run_simple_asymmetric_test():
+
+    print("Running simple asymmetric test case via general solution algorithm")
+    data = simple_asymmetric_data(lmbda=0.1)
+    (indices, paths, r_o, r_e, L, k, omega, varepsilon) = data
+    
+    (P, dP, avg_Q_1) = solve_bifurcating_tree(data)
+
+    print("P = ", P)
+    print("dP = ", dP)
+    print("<Q_1> = ", avg_Q_1)
+    print("eps*<Q_1_0> = %.3e" % (varepsilon*avg_Q_1[0]))
+    
+    beta0 = _beta(r_e[0], r_o[0])
+    delta0 = _delta(beta0)
+    Q10 = varepsilon*avg_Q_1[0]
+    Qp = Qprime(Q10, varepsilon, omega, L[0], k, delta0, r_o[0])
+    print("eps*<Q_1_0>' (mm^3/s) = %.3e" % Qp)
+
+    return True
+
 def test_murray_data():
 
     debug("Murray tree data (m=1)")
@@ -394,6 +439,10 @@ def test_murray_data():
 
     debug("Three junction data")
     data = three_junction_data()
+    debug(data)
+
+    debug("Murray tree data (m=3)")
+    data = murray_tree_data(m=3, r=0.1, gamma=1.0, beta=2.0, L0=10)
     debug(data)
 
     return True
@@ -420,6 +469,10 @@ def run_murray_tree():
     return True
 
 def test():
+    print("")
+    success = run_simple_asymmetric_test()
+
+    exit()
     print("")
     success = run_single_bifurcation_test()
 

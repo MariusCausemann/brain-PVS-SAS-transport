@@ -115,7 +115,6 @@ def add_branches(G, a0, a, a_, T, indices, radii, lengths, index_map):
 
         # Add new edge to minimal tree
         counter += 1
-        print("counter = ", counter)
         path_radius = average_radius(radii)
         path_length = sum(lengths)
         T.add_edge(a0, a,
@@ -140,7 +139,6 @@ def add_branches(G, a0, a, a_, T, indices, radii, lengths, index_map):
 
         # Add new edge to minimal tree T
         counter += 1
-        print("counter = ", counter)
         path_radius = average_radius(radii)
         path_length = sum(lengths)
         T.add_edge(a0, a,
@@ -148,7 +146,7 @@ def add_branches(G, a0, a, a_, T, indices, radii, lengths, index_map):
 
         # Update index map
         index_map.array()[indices] = counter
-            
+
         # Get the other edges 
         (e1, e2) = [e for e in G.edges(a) if not a_ in e]
         assert (a == e1[0] and a == e2[0]), "Assumption error in tree traversal"
@@ -156,6 +154,7 @@ def add_branches(G, a0, a, a_, T, indices, radii, lengths, index_map):
         add_branches(G, a, e1[1], a, T, [], [], [], index_map)
         add_branches(G, a, e2[1], a, T, [], [], [], index_map)
 
+        
     # Ok, at a bifurcation with more than 4. This shouldn't happen really
     if degree == 4:
 
@@ -170,13 +169,13 @@ def add_branches(G, a0, a, a_, T, indices, radii, lengths, index_map):
         index_map.array()[indices] = counter
 
         # Get the other edges
-        print("Degree 4 edges: ", G.edges(a))
         (e1, e2, e3) = [e for e in G.edges(a) if not a_ in e]
         assert (a == e1[0] and a == e2[0] and a == e3[0]), \
             "Assumption error in G traversal"
 
         add_branches(G, a, e1[1], a, T, [], [], [], index_map)
         add_branches(G, a, e2[1], a, T, [], [], [], index_map)
+        print("WARNING: Ignoring edge: ", e3)
         #add_branches(G, a, e3[1], a, T, [], [], [], index_map)
 
     if degree > 4:
@@ -274,10 +273,10 @@ def extract_minimal_tree(G, mesh, i0):
     # terminals as nodes. FIXME: Wouldn't it be a good idea to also
     # add spatial coordinates here?
     T = nx.Graph()
-    bifurcations = [i for i in G if G.degree(i) >= 3]
-    terminals = [i for i in G if G.degree(i) == 1]
-    T.add_nodes_from(bifurcations)
-    T.add_nodes_from(terminals)
+    #bifurcations = [i for i in G if G.degree(i) >= 3]
+    #terminals = [i for i in G if G.degree(i) == 1]
+    #T.add_nodes_from(bifurcations)
+    #T.add_nodes_from(terminals)
 
     # ... and then adding edges to the reduced graph
     # ... making sure to also make a map from cell indices in the
@@ -287,9 +286,13 @@ def extract_minimal_tree(G, mesh, i0):
     counter = -1
 
     add_branches(G, i0, i0, i0, T, [], [], [], cell_index_map)
+    nv = T.number_of_nodes()
+    ne = T.number_of_edges()
     print("... extracted minimal tree T with %d nodes and %d edges" %
           (T.number_of_nodes(), T.number_of_edges()))
 
+    assert (nv == (ne + 1)), "Number of nodes and edges do not match!"
+    
     return T, cell_index_map
 
 def compute_subtrees(filename, output):
@@ -335,19 +338,19 @@ def compute_pvs_flow(meshfile, output):
     roots = [4094, 7220, 7974]
 
     # Read mesh from file. Never rescale stuff behind the scenes.
-    mesh, radii, _ = read_vtk_network(meshfile, rescale_mm2m=False)
-    mesh.init()
+    #mesh, radii, _ = read_vtk_network(meshfile, rescale_mm2m=False)
+    #mesh.init()
 
     # Specify the relative PVS width
     beta = 2
 
     # Specify other parameters
-    f = 1.0
-    omega = 2*np.pi*f
-    lmbda = 1.0
-    k = 2*np.pi/lmbda
-    varepsilon = 0.1
-
+    f = 1.0                # frequency (Hz = 1/s)
+    omega = 2*np.pi*f      # Angular frequency (Hz)
+    lmbda = 1.0            # Wave length (mm)
+    k = 2*np.pi/lmbda      # Wave number (1/mm)
+    varepsilon = 0.1       # Relative wave amplitude
+    
     for i0 in roots:
         # Read minimal subtree from file. Note that graphml converts
         # ints to strings ...
@@ -358,12 +361,16 @@ def compute_pvs_flow(meshfile, output):
         # Map minimal subtree T into PVS net flow data representation
         (indices, paths, r_o, r_e, L) = graph_to_bifurcations(T, i0, beta)
         print("indices = ", indices)
+        print("len(paths) = ", len(paths))
         print("paths = ", paths)
+        print("r_o = ", r_o)
+        print("r_e = ", r_e)
+        print("L = ", L)
         
         # Compute the PVS netflow in T
         network_data = (indices, paths, r_o, r_e, L, k, omega, varepsilon)
         (P, dP, Q1) = pnf.solve_bifurcating_tree(network_data)
-        
+
 def run_all_tests():
     test_graph_to_bifurcations()
 
@@ -374,7 +381,7 @@ def main():
     output = "../mesh/networks/arterial_trees"
 
     # Only need to compute subtree information once for each mesh
-    if False:
+    if True:
         compute_subtrees(filename, output)
 
     compute_pvs_flow(filename, output)
@@ -385,7 +392,7 @@ if __name__ == '__main__':
     # functions on a simple graphs/meshes/networks and on our favorite
     # image-based network
 
-    if False:
+    if True:
         run_all_tests()
 
     if True:
