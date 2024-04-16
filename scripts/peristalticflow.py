@@ -3,6 +3,7 @@
 from itertools import combinations
 import os.path
 import pylab
+import sys
 
 import networkx as nx
 import dolfin as df
@@ -53,11 +54,14 @@ def mark_shortest_paths(mesh, G, roots, output, use_precomputed=False):
     # computing the shortest shortest path, and label all nodes in
     # path by that root
     print("Finding nearest root for %d nodes, this may take some time..." % len(nodes))
+    longest_shortest_path = 0.0
     for i in nodes:
         paths = [nx.dijkstra_path(G, i, i0, weight="length") for i0 in roots]
         path_lengths = np.array([path_length(G, p) for p in paths])
         shortest = np.argmin(path_lengths)
+        longest_shortest_path = max(min(path_lengths), longest_shortest_path)
         mf.array()[paths[shortest]] = labels[shortest]
+    print("Longest shortest path is %g (mm)" % longest_shortest_path)
 
     # Check that all nodes have been marked
     if not np.all(mf.array()):
@@ -233,7 +237,8 @@ def graph_to_bifurcations(G, i0, relative_pvs_width):
         r_o[e0] = d["radius"]
         r_e[e0] = relative_pvs_width*d["radius"]
         L[e0] = d["length"]
-    
+
+    print("... shortest and longest branch in T (mm):", min(L), max(L))
     return (indices, paths, r_o, r_e, L)
 
 def test_graph_to_bifurcations():
@@ -338,7 +343,7 @@ def dg0_to_mf(u):
     mf = df.MeshFunction("double", mesh, mesh.topology().dim(), 0)
     mf.array()[:] = u.vector().get_local()
     return mf
-            
+
 def compute_pvs_flow(meshfile, output):
 
     # Label the network supply nodes (FIXME: automate)
@@ -348,14 +353,27 @@ def compute_pvs_flow(meshfile, output):
     mesh, radii, _ = read_vtk_network(meshfile, rescale_mm2m=False)
     mesh.init()
     DG0 = df.FunctionSpace(mesh, "DG", 0)
-    
+
+    # Note that the asymptotic estimate is is derived under the
+    # assumption that when k L = 2 pi/lmbda L = O(1) i.e. when lmbda ~
+    # 2 pi L.
+
+    # FIXME: Add some config file for specifying parameters.
     # Specify the relative PVS width and other parameters
-    beta = 2
-    f = 1.0                # frequency (Hz = 1/s)
+    beta = 3                # outer radius = beta*(inner radius)
+
+    # Cardiac pulse wave parameters
+    #f = 1.0                # human cardiac frequency (Hz = 1/s),
+    #lmbda = 2000.0         # human cardiac wave length (mm) 
+    #varepsilon = 0.01      # human cardiac wave amplitude
+
+    # Slow vasomotion parameters
+    f = 0.1                 # VLF
+    lmbda = 80.0            # VLF wave length (mm), 4% of cardiac in mice?
+    varepsilon = 0.1        # Relative wave amplitude of VLF wave?
+
     omega = 2*np.pi*f      # Angular frequency (Hz)
-    lmbda = 1.0            # Wave length (mm)
     k = 2*np.pi/lmbda      # Wave number (1/mm)
-    varepsilon = 0.1       # Relative wave amplitude
     
     Q = df.Function(DG0)
     u = df.Function(DG0)
@@ -364,7 +382,7 @@ def compute_pvs_flow(meshfile, output):
         # ints to strings ...
         graphfile = os.path.join(output, "minimal_tree_%d.graphml" % i0)
         T = nx.read_graphml(graphfile)
-        print("T = ", T)
+        print("T (%d)" % i0, T)
         
         # Map minimal subtree T into PVS net flow data representation
         (indices, paths, r_o, r_e, L) = graph_to_bifurcations(T, i0, beta)
@@ -406,14 +424,14 @@ def compute_pvs_flow(meshfile, output):
 def run_all_tests():
     test_graph_to_bifurcations()
 
-def main():
+def main(args):
 
     # Define input network (.vtk) and output directory
     filename = "../mesh/networks/arteries_smooth.vtk"
     output = "../mesh/networks/arterial_trees"
 
     # Only need to compute subtree information once for each mesh
-    if True:
+    if args.recompute:
         compute_subtrees(filename, output)
 
     compute_pvs_flow(filename, output)
@@ -424,9 +442,15 @@ if __name__ == '__main__':
     # functions on a simple graphs/meshes/networks and on our favorite
     # image-based network
 
-    if False:
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Compute estimate of net flow in a perivascular network", epilog="Run with --recompute on first go.")
+    parser.add_argument('--recompute', action="store_true")
+    parser.add_argument('--run-tests', action="store_true")
+
+    args = parser.parse_args()
+    if args.run_tests:
         run_all_tests()
 
-    if True:
-        main()
+    main(args)
 

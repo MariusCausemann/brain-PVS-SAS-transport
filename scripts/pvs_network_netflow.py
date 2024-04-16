@@ -70,9 +70,11 @@ Idealized networks are included for testing
 import numpy as np
 import numpy.linalg
 
+DEBUG_MODE = False
 def debug(x):
-    print(x)
-
+    if DEBUG_MODE:
+        print(x)
+    
 # Bunch of helper functions for ensuring close match between code and
 # paper presentation.
 def _invR(beta):
@@ -207,7 +209,7 @@ def solve_bifurcating_tree(network):
     debug("Solving for dP")
     dP = solve_for_dP(R, ell, Delta, gamma, indices, paths, P)
 
-    debug("Evaluating the average, non-dimensional flow rates <Q_1_n> ...")
+    debug("Evaluating non-dimensional average flow rates <Q_1_n>")
     avg_Q_1 = np.zeros(len(dP))
     for (n, _) in enumerate(dP):
         avg_Q_1[n] = avg_Q_1_n(P[n], dP[n], ell[n], R[n], Delta[n])
