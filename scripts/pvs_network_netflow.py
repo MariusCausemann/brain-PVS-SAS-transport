@@ -125,8 +125,7 @@ def solve_for_P(indices, paths, R, ell, gamma):
     # The complex number i
     z = 1j
 
-    for (i, j, k) in indices:
-        I = i # This junction (the index of the mother edge by convention)
+    for (I, (i, j, k)) in enumerate(indices):
 
         # Set the correct matrix columns for this junction constraint, eq. (38)
         A[I, i] = np.exp(z*ell[i])*gamma[i]/(R[i]*ell[i])
@@ -140,7 +139,6 @@ def solve_for_P(indices, paths, R, ell, gamma):
     # Apply the additional constraints given in terms of the
     # root-to-leaf paths
     I = len(indices)
-    print("I = ", I)
     for (k, path) in enumerate(paths):
         x_n = 0.0
         for n in path:
@@ -161,8 +159,7 @@ def solve_for_dP(R, ell, Delta, gamma, indices, paths, P):
     b = np.zeros(n)
     
     # Define the real linear system A P = b 
-    for (i, j, k) in indices:
-        I = i # This junction (the index of the mother edge by convention)
+    for (I, (i, j, k)) in enumerate(indices):
         
         # Set right matrix columns for this junction constraint
         A[I, i] = gamma[i]/(R[i]*ell[i])
@@ -201,7 +198,7 @@ def solve_bifurcating_tree(network):
     
     debug("Solving for P")
     P = solve_for_P(indices, paths, R, ell, gamma)
-    
+
     debug("Solving for dP")
     dP = solve_for_dP(R, ell, Delta, gamma, indices, paths, P)
 
@@ -212,7 +209,7 @@ def solve_bifurcating_tree(network):
 
     return (P, dP, Q1)
 
-def Qprime(Q, varepsilon, omega, L, k, Delta, r_o):
+def Qprime(Q, varepsilon, omega, L, k, r_o):
     scale = 2*np.pi*varepsilon*omega*r_o**2/k
     val = scale*Q
     return val
@@ -391,7 +388,6 @@ def simple_asymmetric_data(lmbda=1.0):
     r_o = [0.1, 0.1, 0.1, 0.1, 0.1]
     r_e =  [0.2, 0.2, 0.2, 0.2, 0.2]
     L = [1.0, 1.0, 1.0, 1.0, 1.0]
-    paths = [(0, 1), (0, 2)]
     
     # Peristaltic wave parameters: wave length lmbda and (angular) wave number k
     f = 1.0                 # frequency (Hz = 1/s)
@@ -472,7 +468,6 @@ def test():
     print("")
     success = run_simple_asymmetric_test()
 
-    exit()
     print("")
     success = run_single_bifurcation_test()
 
