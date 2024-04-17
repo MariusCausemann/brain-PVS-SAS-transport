@@ -1,5 +1,3 @@
-# mamba activate pvs_transport_env
-
 from itertools import combinations
 import os.path
 import pylab
@@ -454,6 +452,12 @@ if __name__ == '__main__':
     # functions on a simple graphs/meshes/networks and on our favorite
     # image-based network
 
+    # To run:
+    # mamba activate pvs_transport_env
+    # python3 peristalticflow.py --frequency 0.1 --wavelength 80.0 --amplitude 0.1 --beta 3.0 --recompute
+    #
+    # (--recompute is only needed upon first run)
+    
     import argparse
 
     parser = argparse.ArgumentParser(description="Compute estimate of net flow in a perivascular network", epilog="Run with --recompute on first go.")
