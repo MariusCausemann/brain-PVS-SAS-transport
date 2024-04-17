@@ -421,13 +421,21 @@ def compute_pvs_flow(meshfile, output, args):
     fluxfile = os.path.join(output, "pvs_Q.xdmf")
     with df.XDMFFile(mesh.mpi_comm(), fluxfile) as xdmf:
         print("Saving net flux to %s" % fluxfile)
-        #xdmf.write_checkpoint(Q, "Q", 0.0)
+        xdmf.write_checkpoint(Q, "Q", 0.0)
+
+    fluxfile = os.path.join(output, "pvs_Q_mf.xdmf")
+    with df.XDMFFile(mesh.mpi_comm(), fluxfile) as xdmf:
+        print("Saving net flux (as mf) to %s" % fluxfile)
         xdmf.write(dg0_to_mf(Q))
         
     ufile = os.path.join(output, "pvs_u.xdmf")
     with df.XDMFFile(mesh.mpi_comm(), ufile) as xdmf:
         print("Saving net velocity to %s" % ufile)
-        #xdmf.write_checkpoint(u, "u", 0.0)
+        xdmf.write_checkpoint(u, "u", 0.0)
+
+    ufile = os.path.join(output, "pvs_u_mf.xdmf")
+    with df.XDMFFile(mesh.mpi_comm(), ufile) as xdmf:
+        print("Saving net velocity (as mf) to %s" % ufile)
         xdmf.write(dg0_to_mf(u))
                 
 def run_all_tests():
@@ -453,8 +461,8 @@ if __name__ == '__main__':
     # image-based network
 
     # To run:
-    # mamba activate pvs_transport_env
-    # python3 peristalticflow.py --frequency 0.1 --wavelength 80.0 --amplitude 0.1 --beta 3.0 --recompute
+    # $ mamba activate pvs_transport_env
+    # $ python3 peristalticflow.py --frequency 0.1 --wavelength 80.0 --amplitude 0.1 --beta 3.0 --recompute
     #
     # (--recompute is only needed upon first run)
     
