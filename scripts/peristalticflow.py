@@ -238,7 +238,7 @@ def graph_to_bifurcations(G, i0, relative_pvs_width):
         r_e[e0] = relative_pvs_width*d["radius"]
         L[e0] = d["length"]
 
-    print("... shortest and longest branch in T (mm):", min(L), max(L))
+        
     return (indices, paths, r_o, r_e, L)
 
 def test_graph_to_bifurcations():
@@ -354,6 +354,9 @@ def compute_pvs_flow(meshfile, output):
     mesh.init()
     DG0 = df.FunctionSpace(mesh, "DG", 0)
 
+    print("Vascular radii r_o (min, max, avg, std) (mm): ", radii.array().max(),
+          radii.array().min(), np.average(radii.array()), np.std(radii.array()))
+    
     # Note that the asymptotic estimate is is derived under the
     # assumption that when k L = 2 pi/lmbda L = O(1) i.e. when lmbda ~
     # 2 pi L.
@@ -369,14 +372,15 @@ def compute_pvs_flow(meshfile, output):
 
     # Slow vasomotion parameters
     f = 0.1                 # VLF
-    lmbda = 80.0            # VLF wave length (mm), 4% of cardiac in mice?
-    varepsilon = 0.1        # Relative wave amplitude of VLF wave?
+    lmbda = 2000.0            # VLF wave length (mm), 4% of cardiac in mice?
+    varepsilon = 0.01        # Relative wave amplitude of VLF wave?
 
     omega = 2*np.pi*f      # Angular frequency (Hz)
     k = 2*np.pi/lmbda      # Wave number (1/mm)
     
     Q = df.Function(DG0)
     u = df.Function(DG0)
+    Ls = []
     for i0 in roots:
         # Read minimal subtree from file. Note that graphml converts
         # ints to strings ...
@@ -386,6 +390,7 @@ def compute_pvs_flow(meshfile, output):
         
         # Map minimal subtree T into PVS net flow data representation
         (indices, paths, r_o, r_e, L) = graph_to_bifurcations(T, i0, beta)
+        Ls += L
         
         # Compute the PVS netflow in T
         network_data = (indices, paths, r_o, r_e, L, k, omega, varepsilon)
@@ -408,7 +413,12 @@ def compute_pvs_flow(meshfile, output):
             if (T_i < UNDEFINED):
                 Q.vector()[i] = avg_Q[index_map[i]]
                 u.vector()[i] = avg_u[index_map[i]]
-        
+
+    print("Vascular branch lengths L (avg, std, min, max) (mm):",
+          np.average(Ls), np.std(Ls), min(Ls), max(Ls))
+    print("... k L: (avg, std, min, max)",
+          k*np.average(Ls), k*np.std(Ls), k*min(Ls), k*max(Ls), "(k =", k, ")")
+
     fluxfile = os.path.join(output, "pvs_Q.xdmf")
     with df.XDMFFile(mesh.mpi_comm(), fluxfile) as xdmf:
         print("Saving net flux to %s" % fluxfile)

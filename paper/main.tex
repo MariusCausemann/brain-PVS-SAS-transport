@@ -491,41 +491,79 @@ The corresponding author is responsible for submitting a \href{http://www.nature
 
 \section{Supplementary methods}
 
-\subsection{Estimating the perivascular flow rate induced by peristaltic pumping}
+\subsection{Estimating mean perivascular flow induced by peristaltic pumping}
+
 \label{sec:sup:peristalsis}
 
 We use the theoretical framework introduced by Gjerde et
-al.~\cite{gjerde2023directional} to estimate the mean flow rates
-$Q'_i$ (mm$^3$/s) induced by peristaltic pumping in a perivascular
-network $\Lambda = \cup_i \Lambda_i$. The motion of the inner
-(arterial) wall is described by a periodic travelling wave of relative
-amplitude $\varepsilon$, wave length $\lambda$ (mm) and angular
-frequency $\omega$, acting normal to the wall. The wave number is $k =
-2 \pi / \lambda$ by definition. Each PVS segment $\Lambda_i$ has
-length $L_i$ with wave-relative length $\ell_i = k L$, inner baseline
-radius $r_{o_i}'$, fixed outer radius $r_{e_i}'$, and outer-to-inner
-ratio $\beta_i = r_{e_i}'/r_{o_i}'$. These geometric parameters and
-the assumption of annular cylindrical PVS segments yield a hydraulic
-resistance $\mathcal{R}_{o, i}$, and the additional parameter
-$\Delta_i$, see \cite{gjerde2023directional} for the complete
-definitions. The framework assumes that the network takes the form of
-a directed, bifurcating tree with a single supply/root branch and
-defines weights $\gamma_i = r_{o_i}'^2/r_{o_1}'^2$ where $r_{o_1}'$ is
-the radius of this root branch.
+al.~\cite{gjerde2023directional} to compute an analytic estimate of
+the mean-over-time flow rates $\langle Q'_i \rangle$ (mm$^3$/s)
+induced by peristaltic pumping in a perivascular network $\Lambda =
+\cup_i \Lambda_i$. The motion of the inner (arterial) wall is
+described by a periodic travelling wave of relative amplitude
+$\varepsilon$, wave length $\lambda$ (mm) and frequency $f$, acting
+normal to the wall. The wave number is $k = 2 \pi / \lambda$ and the
+angular frequency is $\omega = 2 \pi f$ by definition. Each PVS
+segment $\Lambda_i$ has length $L_i$ with wave-relative length $\ell_i
+= k L$, baseline inner radius $r_{o_i}'$, fixed outer radius
+$r_{e_i}'$, and outer-to-inner ratio $\beta_i = r_{e_i}'/r_{o_i}'$
+(\Cref{tab:pvs:parameters}). These geometric parameters and the
+assumption of annular cylindrical PVS segments yield hydraulic
+resistances $\mathcal{R}_{o, i}$ and additional characteristic
+parameters, see \cite{gjerde2023directional} for the complete
+definitions and schematics. Since the analytical estimate is derived
+under the assumption that $k L \approx
+\mathcal{O}(1)$~\cite{gjerde2023directional} and has been verified
+against numerical simulations for $k L$ on the order
+$10^{-1}-10^2$~\cite[Table I]{gjerde2023directional}, we consider it
+applicable for the wave lengths and vascular network data considered
+here in which $k L$ ranges from $0.003$ to $15.7$.
 
-To apply this theoretical framework to a network of cerebral arteries
-with multiple supply branches (in our case, corresponding to the
-basilar and two internal carotid arteries), we separate the network
-$\Lambda$ into 3 edge-disjoint subnetworks $\Lambda^1, \Lambda^2,
-\Lambda^3$, one for each of the supply branches. Each node is assigned
-to the subnetwork associated with the nearest supply node, and edges
-between nodes preserved. Next, we compute a minimal bifurcating tree
-$\mathcal{T}^1, \mathcal{T}^2, \mathcal{T}^3$ representation of each
-subnetwork. Each tree $\mathcal{T}^j$ consists of the subset of the
-nodes from $\Lambda^j$ that have degree 1 (are leaf or root nodes) or
-degree $\geq 3$ (are true bifurcation points), and each path between
-points with degree $\not = 2$ in $\Lambda^j$ is represented by a single
-edge in $\mathcal{T}^j$. \mer{What to do with degree 4 nodes? How to map radii. Map as radii or as resistances?}
+
+%Vascular branch lengths L (avg, std, min, max) (mm): 26.91093675823157 30.884149011946235 1.0 200.32862451491792
+%... k L: (avg, std, min, max) 2.113580030521996 2.4256353912075688 0.07853981633974483 15.733773376995357 (k = 0.07853981633974483 ) # lmbda = 80 mm
+%... k L: (avg, std, min, max) 0.08454320122087983 0.09702541564830276 0.0031415926535897933 0.6293509350798143 (k = 0.0031415926535897933 ) # lmbda = 2000 mm
+% 
+\begin{table}
+  \small
+  \begin{tabular}{llrc}
+    \toprule
+    Parameter & Description & Value(s)  & Ref.\\ 
+    \midrule
+    Relative PVS size $\beta$ & $\beta = \beta_i = r_{e_i} / r_{o_i}$ & 3 & \cite{mestre2018flow} \\
+    Wave frequency $f$ & Travelling wave frequency of vascular motion & $0.1-1.0$ Hz & \discuss{\cite{gjerde2023directional}} \\
+    Wave length $\lambda$ & Travelling wave length of vascular motion & $80-2000$ mm & \discuss{\cite{gjerde2023directional}} \\
+    Wave amplitude & Relative amplitude of inner wall motion & $1-10\%$ & \discuss{\cite{gjerde2023directional}} \\
+    Vascular radii $\{r_{o_i}\}$ & Vascular network radii data (avg $\pm$ std, $\min$, $\max$) & $1.22 \pm 0.35$, $1.0$, $3.0$  mm & \cite{hodneland2019new} \\
+    Vascular branch lengths $\{L_{i}\}$ & Path length between vasc. junctions (avg $\pm$ std, $\min$, $\max$) & $26.91 \pm 30.89$, $1.0$, $200.33$  mm & \discuss{--} \\
+    \bottomrule
+  \end{tabular}
+  \caption{Perivascular flow induced by vascular wall motion: parameters and key data characteristics.}
+  \label{tab:pvs:parameters}
+\end{table}
+% Vascular radii r_o (min, max, avg, std) (mm):  3.0 1.0 1.2189823238697475 0.3460254324721098
+% Vascular branch lengths L (avg, std, min, max) (mm): 26.91093675823157 30.884149011946235 1.0 200.32862451491792
+
+This formalism applies when the network takes the form of a directed,
+bifurcating tree with a single supply node/root $i_0$. To extend to a
+network of cerebral arteries with multiple supply nodes (in the data
+considered, the basilar and two internal carotid arteries), we
+separate the network $\Lambda$ into edge-disjoint subnetworks
+$\Lambda^1, \Lambda^2, \Lambda^3$, one for each of the supply
+nodes. Each node is assigned to the subnetwork associated with the
+nearest supply node, and edges between nodes are preserved. Next, we
+compute a minimal, bifurcating and directed tree representation of
+each subnetwork: $\mathcal{T}^1, \mathcal{T}^2, \mathcal{T}^3$. Each
+tree $\mathcal{T}^j$ consists of the subset of the nodes from
+$\Lambda^j$ that have degree 1 (are leaf or root nodes) or degree $3$
+(are true bifurcation points), and each path between nodes with degree
+$\not = 2$ in $\Lambda^j$ is represented by a single edge in
+$\mathcal{T}^j$ with edge length $L$ corresponding to the total length
+of the original path and edge radius $r_o$ as the average of the path
+radii.  For the few (2) nodes in $\Lambda$ with degree $>3$;
+i.e.~junctions where a ``parent'' branch splits into more than 2
+``child'' branches, only the two \discuss{longest} child branches are
+included in $\mathcal{T}^j$.
 
 \begin{itemize}
 \item
@@ -534,7 +572,6 @@ edge in $\mathcal{T}^j$. \mer{What to do with degree 4 nodes? How to map radii. 
 \item
   Definition of velocity as flux/area.
 \end{itemize}
-  
 
 \subsection{Numerical verification}
 
