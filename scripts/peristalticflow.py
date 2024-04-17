@@ -348,7 +348,7 @@ def print_stats(name, L, unit):
     print("%s (avg, std, min, max): %.4g, %.4g, %.4g, %.4g (%s)" %
           (name, np.average(L), np.std(L), L.min(), L.max(), unit))
 
-def compute_pvs_flow(meshfile, output):
+def compute_pvs_flow(meshfile, output, args):
 
     # Label the network supply nodes (FIXME: automate)
     roots = [4094, 7220, 7974]
@@ -364,19 +364,11 @@ def compute_pvs_flow(meshfile, output):
     # assumption that when k L = 2 pi/lmbda L = O(1) i.e. when lmbda ~
     # 2 pi L.
 
-    # FIXME: Add some config file for specifying parameters.
     # Specify the relative PVS width and other parameters
-    beta = 3                # outer radius = beta*(inner radius)
-
-    # Cardiac pulse wave parameters
-    #f = 1.0                # human cardiac frequency (Hz = 1/s),
-    #lmbda = 2000.0         # human cardiac wave length (mm) 
-    #varepsilon = 0.01      # human cardiac wave amplitude
-
-    # Slow vasomotion parameters
-    f = 0.1                 # VLF
-    lmbda = 2000.0            # VLF wave length (mm), 4% of cardiac in mice?
-    varepsilon = 0.01        # Relative wave amplitude of VLF wave?
+    beta = args.beta             # outer radius = beta*(inner radius)
+    f = args.frequency           # Frequency
+    lmbda = args.wavelength      # Wave length (mm)
+    varepsilon = args.amplitude  # Relative wave amplitude
 
     omega = 2*np.pi*f      # Angular frequency (Hz)
     k = 2*np.pi/lmbda      # Wave number (1/mm)
@@ -454,7 +446,7 @@ def main(args):
         compute_subtrees(filename, output)
         print("")
         
-    compute_pvs_flow(filename, output)
+    compute_pvs_flow(filename, output, args)
     
 if __name__ == '__main__':
 
@@ -466,11 +458,16 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description="Compute estimate of net flow in a perivascular network", epilog="Run with --recompute on first go.")
     parser.add_argument('--recompute', action="store_true")
-    parser.add_argument('--run-tests', action="store_true")
+    parser.add_argument('--run-tests', action="store_true", help="Just run basic test.")
+    parser.add_argument('--frequency', action="store", default=1.0, help="Vascular wave frequency (Hz)", type=float)
+    parser.add_argument('--wavelength', action="store", default=2000.0, help="Vascular wave wavelength (mm)", type=float)
+    parser.add_argument('--amplitude', action="store", default=0.01, help="Vascular wave relative amplitude (relative to (inner) vascular radius)", type=float)
+    parser.add_argument('--beta', action="store", default=3.0, help="Ratio outer-to-inner vessel radio (PVS width + 1)", type=float)
+    parser.add_argument('--tag', action="store", default="tmp", help="Tag")
 
     args = parser.parse_args()
     if args.run_tests:
         run_all_tests()
-
+        exit()
     main(args)
 
