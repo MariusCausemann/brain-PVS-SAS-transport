@@ -121,7 +121,7 @@ def add_branches(G, a0, a, a_, T, indices, radii, lengths, index_map):
         path_radius = average_radius(radii)
         path_length = sum(lengths)
         T.add_edge(a0, a,
-                    index=counter, radius=path_radius, length=path_length)
+                   index=counter, radius=path_radius, length=path_length)
         
         # Update index map
         index_map.array()[indices] = counter
@@ -145,7 +145,7 @@ def add_branches(G, a0, a, a_, T, indices, radii, lengths, index_map):
         path_radius = average_radius(radii)
         path_length = sum(lengths)
         T.add_edge(a0, a,
-                    index=counter, radius=path_radius, length=path_length)
+                   index=counter, radius=path_radius, length=path_length)
 
         # Update index map
         index_map.array()[indices] = counter
@@ -166,7 +166,7 @@ def add_branches(G, a0, a, a_, T, indices, radii, lengths, index_map):
         path_radius = average_radius(radii)
         path_length = sum(lengths)
         T.add_edge(a0, a,
-                    index=counter, radius=path_radius, length=path_length)
+                   index=counter, radius=path_radius, length=path_length)
 
         # Update index map
         index_map.array()[indices] = counter
@@ -178,7 +178,7 @@ def add_branches(G, a0, a, a_, T, indices, radii, lengths, index_map):
 
         add_branches(G, a, e1[1], a, T, [], [], [], index_map)
         add_branches(G, a, e2[1], a, T, [], [], [], index_map)
-        print("WARNING: Ignoring edge: ", e3)
+        print("WARNING: Ignoring edge: (degree > 3) ", e3)
         #add_branches(G, a, e3[1], a, T, [], [], [], index_map)
 
     if degree > 4:
@@ -344,6 +344,10 @@ def dg0_to_mf(u):
     mf.array()[:] = u.vector().get_local()
     return mf
 
+def print_stats(name, L, unit):
+    print("%s (avg, std, min, max): %.4g, %.4g, %.4g, %.4g (%s)" %
+          (name, np.average(L), np.std(L), L.min(), L.max(), unit))
+
 def compute_pvs_flow(meshfile, output):
 
     # Label the network supply nodes (FIXME: automate)
@@ -354,8 +358,7 @@ def compute_pvs_flow(meshfile, output):
     mesh.init()
     DG0 = df.FunctionSpace(mesh, "DG", 0)
 
-    print("Vascular radii r_o (min, max, avg, std) (mm): ", radii.array().max(),
-          radii.array().min(), np.average(radii.array()), np.std(radii.array()))
+    print_stats("Vascular radii r_o", radii.array(), "mm")
     
     # Note that the asymptotic estimate is is derived under the
     # assumption that when k L = 2 pi/lmbda L = O(1) i.e. when lmbda ~
@@ -381,43 +384,49 @@ def compute_pvs_flow(meshfile, output):
     Q = df.Function(DG0)
     u = df.Function(DG0)
     Ls = []
+
+    # Short-hand to compute annular cross-section area for cell i
+    area = lambda i: np.pi*(beta**2-1.0)*radii[i]**2 
+
+    print("Computing time-average perivascular flow rates...")
     for i0 in roots:
         # Read minimal subtree from file. Note that graphml converts
         # ints to strings ...
         graphfile = os.path.join(output, "minimal_tree_%d.graphml" % i0)
         T = nx.read_graphml(graphfile)
-        print("T (%d)" % i0, T)
+        print("\tT (%d)" % i0, T)
         
         # Map minimal subtree T into PVS net flow data representation
         (indices, paths, r_o, r_e, L) = graph_to_bifurcations(T, i0, beta)
         Ls += L
         
-        # Compute the PVS netflow in T
+        # Compute the PVS net flow rates in T
         network_data = (indices, paths, r_o, r_e, L, k, omega, varepsilon)
         avg_Q, avg_u = pnf.estimate_net_flow(network_data)
         
-        print("<Q'>_n range: (", min(avg_Q), max(avg_Q), ") (mm^3/s)")
-        print("<u'>_n range (", min(avg_u), max(avg_u), ") (mm/s)")
-        print("<u'>_n range (", min(avg_u)*1e3, max(avg_u)*1e3, ") (mum/s)")
-
-        # Read cell_index_map from file for mapping back to original mesh 
+        # Read cell_index_map from file for mapping back to the original mesh 
         mapfile = os.path.join(output, "original_to_minimal_map_%d.xdmf" % i0)
         index_map = df.MeshFunction("size_t", mesh, 1, 0)
         with df.XDMFFile(mesh.mpi_comm(), mapfile) as xdmf:
-            print("... reading index map (mesh -> T) from %s" % mapfile)
+            print("\t... reading index map (mesh -> T) from %s" % mapfile)
             xdmf.read(index_map)
 
+        # Transfer the computed flow rates back to the mesh. Compute
+        # velocities by dividing by flux by cross-section area
+        # cell-wise.
         UNDEFINED = mesh.num_cells()
         for i, _ in enumerate(mesh.cells()):
             T_i = index_map[i]
             if (T_i < UNDEFINED):
-                Q.vector()[i] = avg_Q[index_map[i]]
-                u.vector()[i] = avg_u[index_map[i]]
-
-    print("Vascular branch lengths L (avg, std, min, max) (mm):",
-          np.average(Ls), np.std(Ls), min(Ls), max(Ls))
-    print("... k L: (avg, std, min, max)",
-          k*np.average(Ls), k*np.std(Ls), k*min(Ls), k*max(Ls), "(k =", k, ")")
+                avg_Q_i = avg_Q[index_map[i]]
+                Q.vector()[i] = avg_Q_i
+                u.vector()[i] = avg_Q_i/area(i)
+                
+    print_stats("Vascular branch lengths L", np.array(Ls), "mm")            
+    print_stats("... k L", k*np.array(Ls), "AU, (k = %3.4g)" % k )
+    print_stats("<Q'_i>", Q.vector(), "mm^3/s")
+    print_stats("<u'_i>", u.vector(), "mm/s")
+    print_stats("<u'_i>", u.vector()*1.e3, "mum/s")
 
     fluxfile = os.path.join(output, "pvs_Q.xdmf")
     with df.XDMFFile(mesh.mpi_comm(), fluxfile) as xdmf:
@@ -443,7 +452,8 @@ def main(args):
     # Only need to compute subtree information once for each mesh
     if args.recompute:
         compute_subtrees(filename, output)
-
+        print("")
+        
     compute_pvs_flow(filename, output)
     
 if __name__ == '__main__':
