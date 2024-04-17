@@ -130,3 +130,21 @@ rule totalTracer:
         plot="plots/{modelname}/{modelname}_total_conc.png"
     shell:
         "python scripts/mean_concentrations.py {wildcards.modelname} {conctimes}"
+
+rule generateMesh:
+    conda:"environment.yml"
+    input:
+        "data/pcbi.1007073.s005.nii.gz",
+        "data/pcbi.1007073.s006.nii.gz"
+    output:
+        "mesh/{meshname}/volmesh/mesh.xdmf",
+        "mesh/{meshname}/volmesh/mesh.h5",
+    shell:
+        """
+        python scripts/extract_surfaces.py configfiles/{wildcards.meshname}.yml &&
+        python scripts/generate_mesh.py configfiles/{wildcards.meshname}.yml
+        """
+
+
+
+
