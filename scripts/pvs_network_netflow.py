@@ -501,10 +501,33 @@ def run_murray_tree():
 
     return True
 
+def simple_schematic_data(alpha=1.0):
+    """Data for a single bifurcation test case. Data for network
+    consisting of three edges and a single bifurcation, with varying
+    thickness and length between the branches. Scale length by alpha
+    """
+    indices = [(0, 1, 2),]
+    paths = [(0, 1), (0, 2)]
+    
+    # Peristaltic wave parameters: wave length lmbda and (angular) wave number k
+    lmbda = 10.0
+    f = 1.0                 # frequency (Hz = 1/s)
+    omega = 2*np.pi*f       # Angular frequency (Hz)
+    k = 2*np.pi/lmbda       # wave number (1/mm)
+    varepsilon = 0.1        # AU 
+
+    beta=3.0
+    r_o = [0.3, 0.2, 0.1]     # Inner radii (mm) for each element/edge
+    r_e = [beta*r for r in r_o]  # Outer radii (mm) for each element/edge
+    L = [alpha*l for l in [2.0, 1.0, 2.0]]       # Element lengths (mm)
+        
+    data = (indices, paths, r_o, r_e, L, k, omega, varepsilon)
+    return data
+    
 def test_estimate_net_flow():
 
-    print("Running single bifurcation test case via estimate_net_flow")
-    data = single_bifurcation_data(0.1)
+    print("Running simple schematic test case via estimate_net_flow")
+    data = simple_schematic_data(1.0)
     
     avg_Q_prime, avg_u_prime = estimate_net_flow(data)
 
