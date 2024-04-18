@@ -113,19 +113,19 @@
 \begin{tikzpicture}
   [scale=0.7,
   ]
-  \node[vertex,fill=red!40] (n3) at (-1, 0) {}; 
-  \node[vertex,fill=red!40] (n4) at (-1, 2) {}; 
-  \node[vertex,fill=red!40] (n5) at (-1.5, 3) {}; 
-  \node[vertex,fill=red!40] (n7) at (-1.0, 4) {}; 
+  \node[vertex,fill=red!50] (n3) at (-1, 0) {}; 
+  \node[vertex,fill=red!50] (n4) at (-1, 2) {}; 
+  \node[vertex,fill=red!50] (n5) at (-1.5, 3) {}; 
+  \node[vertex,fill=red!50] (n7) at (-1.0, 4) {}; 
 
   \draw[-stealth, ultra thick ] (n3) to  [bend right=20] (n4) ;
   \draw[-stealth, very thick ] (n4) -- (n5);
   \draw[-stealth, thick ] (n4) to [bend right=20] (n7);
 
-  \node[vertex, fill=orange!30] (n0) at (1, 0) {}; 
-  \node[vertex, fill=orange!30] (n9) at (1.0, 3) {}; 
-  \node[vertex, fill=orange!30] (n14) at (0, 5) {}; 
-  \node[vertex, fill=orange!30] (n15) at (2, 6) {}; 
+  \node[vertex, fill=orange!50] (n0) at (1, 0) {}; 
+  \node[vertex, fill=orange!50] (n9) at (1.0, 3) {}; 
+  \node[vertex, fill=orange!50] (n14) at (0, 5) {}; 
+  \node[vertex, fill=orange!50] (n15) at (2, 6) {}; 
 
   \draw[-stealth, ultra thick ] (n0) to [bend left=10] (n9);
   \draw[-stealth, thick ] (n9) -- (n14);
@@ -137,7 +137,7 @@
 \begin{tikzpicture}
   [scale=0.7,
   ]
-  \node[vertex, fill=red!40] (n3) at (-1, 0) {}; 
+  \node[vertex, fill=red!50] (n3) at (-1, 0) {}; 
   \node[vertex] (n4) at (-1, 2) {}; 
   \node[vertex] (n5) at (-1.5, 3) {}; 
   \node[vertex] (n7) at (-1.0, 4) {}; 
@@ -152,7 +152,7 @@
   \draw[-stealth, very thick, blue!30] (n4) -- (n5);
   \draw[-stealth, thick, blue!10] (n4) to [bend right=20] (n7);
 
-  \node[vertex, fill=orange!30] (n0) at (1, 0) {}; 
+  \node[vertex, fill=orange!50] (n0) at (1, 0) {}; 
   \node[vertex] (n9) at (1.0, 3) {}; 
   \node[vertex] (n14) at (0, 5) {}; 
   \node[vertex] (n15) at (2, 6) {}; 
@@ -222,5 +222,6 @@
     orange), we compute one subnetwork for each supply node by
     proximity (\textbf{B}). Each subnetwork is reduced to a minimal,
     bifurcating and directed tree (\textbf{C}) which is then used to
-    compute $\langle Q' \rangle$.}  \end{figure}
+    compute $\langle Q' \rangle$.}
+\end{figure}
 %\end{document}
