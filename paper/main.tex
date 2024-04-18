@@ -4,13 +4,23 @@
 \usepackage{bm}
 \usepackage{caption}
 \usepackage{subcaption}
+% \captionsetup[subfigure]{justification=justified,singlelinecheck=false}
 \usepackage{tikz}
 \usepackage{newtxmath} % MER: Prettier math
 %\usepackage{natbib}
 \usepackage{cleveref} % MER: Allows \Cref (but use Section X.Y not Subsection X.Y)
 \usepackage{booktabs} % MER: Prettier tables
+
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{tikz}
+
+\usetikzlibrary{quotes}
+\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,positioning,fit,petri}
+
 \graphicspath{{figures/}}
 
+\captionsetup[subfigure]{justification=justified,singlelinecheck=false}
 
 \title{In-silico molecular transport in the human intracranial space}
 
@@ -600,6 +610,7 @@ average of the path radii. For the few (2) nodes in $\Lambda$ with
 degree $>3$; i.e.~junctions where a branch splits into more than two
 downstream branches, only the two longest downstream paths are
 included in $\mathcal{T}^j$.
+\input{tikz/fig_pvs_flow}
 
 For each subtree $\mathcal{T}^j = \cup_n E_n^j$, we compute the
 time-averaged downstream flow rate $\langle Q'_n \rangle$ induced by
@@ -613,18 +624,6 @@ longitudinal perivascular velocity $\langle u^{\rm PVS}_i \rangle$ by
 dividing the flow rate $\langle Q'_i \rangle$ by the cross-section
 area $A_i = \pi (r_{e_i}^2 - r_{o_i}^2) = \pi (\beta_i^2 - 1) r_{o_i}^2$
 
-%% \begin{tikzpicture}[level distance=1.5cm,
-%%   level 1/.style={sibling distance=2cm},
-%%   level 2/.style={sibling distance=1.5cm},
-%%   every node/.style={circle, draw}]
-  
-%%   \node {0}
-%%     child {node {1}
-%%       child {node {3}}
-%%       child {node {4}}
-%%     }
-%%     child {node {2}};
-%% \end{tikzpicture}
 
 \subsection{Numerical verification}
 
