@@ -9,7 +9,6 @@
 
 %% %\begin{document}
 %% \captionsetup[subfigure]{justification=justified,singlelinecheck=false}
-
 \tikzset{
   vertex/.style={circle, fill=black!15, font=\tiny, inner sep=2pt},
   blank/.style={circle, fill=black!05, font=\tiny},
@@ -17,6 +16,8 @@
 \begin{figure}
 \centering
   \begin{subfigure}{0.19\textwidth}
+\caption*{\bf A}
+\vspace{-1em}
   \begin{tikzpicture}
   [scale=0.7]
   \node[vertex, fill=red!50] (n3) at (-1, 0) {}; 
@@ -60,9 +61,10 @@
   \draw[ very thick ] (n12) -- (n15);
 
 \end{tikzpicture}
-\caption*{\bf A}
   \end{subfigure}
 \begin{subfigure}{0.19\textwidth}
+\caption*{\bf B}
+\vspace{-1em}
 \begin{tikzpicture}
   [scale=0.7,
   ]
@@ -107,9 +109,10 @@
   \draw[ very thick ] (n11) -- (n12);
   \draw[ very thick ] (n12) -- (n15);
 \end{tikzpicture}
-\caption*{\bf B}
 \end{subfigure}
   \begin{subfigure}{0.19\textwidth}
+\caption*{\bf C}
+\vspace{-1em}
 \begin{tikzpicture}
   [scale=0.7,
   ]
@@ -131,9 +134,10 @@
   \draw[-stealth, thick ] (n9) -- (n14);
   \draw[-stealth, very thick ] (n9) to [bend right=10] (n15);
 \end{tikzpicture}
-\caption*{\bf C}
   \end{subfigure}
   \begin{subfigure}{0.19\textwidth}
+\caption*{\bf D}
+\vspace{-1em}
 \begin{tikzpicture}
   [scale=0.7,
   ]
@@ -166,9 +170,10 @@
   \draw[-stealth, thick, blue!20] (n9) -- (n14);
   \draw[-stealth, very thick, blue!70] (n9) to [bend right=10] (n15);
 \end{tikzpicture}
-\caption*{\bf D}
   \end{subfigure}
 \begin{subfigure}{0.19\textwidth}
+\caption*{\bf E}
+\vspace{-1em}
   \begin{tikzpicture}
   [scale=0.7]
   \node[vertex, fill=red!50] (n3) at (-1, 0) {}; 
@@ -212,8 +217,27 @@
   \draw[-stealth, very thick, blue!70 ] (n12) -- (n15);
 
 \end{tikzpicture}
-\caption*{\bf E}
   \end{subfigure}
+
+\vspace{1em}
+
+\begin{subfigure}{0.32\textwidth}
+\caption*{\bf F}
+\vspace{-2em}
+\includegraphics[width=\textwidth]{figures/arteries_radius_+x.png}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.32\textwidth}
+\caption*{\bf G}
+\vspace{-2em}
+\includegraphics[width=\textwidth]{figures/supply_node_proximity_trees_+x.png}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.32\textwidth}
+\caption*{\bf H}
+\vspace{-2em}
+\includegraphics[width=\textwidth]{figures/pvs_Q_vasomotion_+x.png}
+\end{subfigure}
 \caption{Schematic illustrating network representations for the
     estimation of perivascular flow induced by vascular wall
     motion. (\textbf{A}) For a vascular network with vessels
