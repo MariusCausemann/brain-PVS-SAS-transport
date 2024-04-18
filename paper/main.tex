@@ -588,6 +588,7 @@ here in which $k L$ ranges from $0.003$ to $15.7$.
 \end{table}
 % Vascular radii r_o (min, max, avg, std) (mm):  3.0 1.0 1.2189823238697475 0.3460254324721098
 % Vascular branch lengths L (avg, std, min, max) (mm): 26.91093675823157 30.884149011946235 1.0 200.32862451491792
+\input{tikz/fig_pvs_flow}
 
 This theoretical formalism~\cite{gjerde2023directional} is defined
 relative to a network in the form of a directed, bifurcating tree with
@@ -610,7 +611,6 @@ average of the path radii. For the few (2) nodes in $\Lambda$ with
 degree $>3$; i.e.~junctions where a branch splits into more than two
 downstream branches, only the two longest downstream paths are
 included in $\mathcal{T}^j$.
-\input{tikz/fig_pvs_flow}
 
 For each subtree $\mathcal{T}^j = \cup_n E_n^j$, we compute the
 time-averaged downstream flow rate $\langle Q'_n \rangle$ induced by
@@ -623,7 +623,6 @@ which we set a flow rate of zero). Finally, we define the mean
 longitudinal perivascular velocity $\langle u^{\rm PVS}_i \rangle$ by
 dividing the flow rate $\langle Q'_i \rangle$ by the cross-section
 area $A_i = \pi (r_{e_i}^2 - r_{o_i}^2) = \pi (\beta_i^2 - 1) r_{o_i}^2$
-
 
 \subsection{Numerical verification}
 
