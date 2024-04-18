@@ -76,15 +76,20 @@ def average_radius(radii):
     "How to compute radius of collapsed branch? Here, we take the average."
     return np.average(np.array(radii))
 
-def add_branches(G, a0, a, a_, T, indices, radii, lengths, index_map):
+def add_branches(G, a0, a, a_, T, indices, radii, lengths, index_map,
+                 downstream):
     """For a given graph G with current root node a0, current node a
     and previous node a_, compute (by recursion) 
     - T: a reduced graph including 'radius' edge data , 
     - index_map: a MeshFunction map from G's cell index to T's edge index
+    - downstream: a MeshFunction map over G's cells: +1 if cell is
+      aligned downstream (cell tangent points from root towards
+      leaves), -1 otherwise
 
     The given indices (list), radii (list), lengths (list) are helper
     variables to keep track of the data associated with the paths
     traversed between bifurcation points or root nodes.
+
     """
 
     # counter counts the cells in T (tracks the cell indices in T).
@@ -102,15 +107,25 @@ def add_branches(G, a0, a, a_, T, indices, radii, lengths, index_map):
     # At the (single) root node, we just get started down the G
     if degree == 1 and a0 == a:
         (_, b) = list(G.edges(a))[0]
-        add_branches(G, a0, b, a, T, [], [], [], index_map)
+        add_branches(G, a0, b, a, T, [], [], [], index_map, downstream)
         return
         
     # Update indices and radii with info about the edge (a_, a) we
     # just traversed
-    indices += [G.get_edge_data(a_, a)["index"]]
+    index = G.get_edge_data(a_, a)["index"]
+    indices += [index]
     radii += [G.get_edge_data(a_, a)["radius"]]
     lengths += [G.get_edge_data(a_, a)["length"]]
-    
+
+    # Set downstream for this cell as 1 if aligned downstream or -1 if not
+    v = index_map.mesh().cells()[index]
+    if (a_ == v[0] and a == v[1]):
+        downstream.array()[index] = +1.0
+    elif (a_ == v[1] and a == v[0]):
+        downstream.array()[index] = -1.0
+    else:
+        raise Exception("Something is rotten with the mesh vs G (%r)" % v)
+
     # Leaf node at end of branch, add new edge to minimal tree
     if degree == 1 and not (a0 == a):
 
@@ -123,7 +138,7 @@ def add_branches(G, a0, a, a_, T, indices, radii, lengths, index_map):
         
         # Update index map
         index_map.array()[indices] = counter
-
+        
     # If we are on a path (degree == 2)
     if degree == 2:
 
@@ -133,7 +148,8 @@ def add_branches(G, a0, a, a_, T, indices, radii, lengths, index_map):
         assert (a == _), "Assumption error in path traversal"
 
         # Continue down the new edge 
-        add_branches(G, a0, b, a, T, indices, radii, lengths, index_map)
+        add_branches(G, a0, b, a, T, indices, radii, lengths, index_map,
+                     downstream)
         
     # Ok, at a bifurcation
     if degree == 3:
@@ -152,9 +168,8 @@ def add_branches(G, a0, a, a_, T, indices, radii, lengths, index_map):
         (e1, e2) = [e for e in G.edges(a) if not a_ in e]
         assert (a == e1[0] and a == e2[0]), "Assumption error in tree traversal"
 
-        add_branches(G, a, e1[1], a, T, [], [], [], index_map)
-        add_branches(G, a, e2[1], a, T, [], [], [], index_map)
-
+        add_branches(G, a, e1[1], a, T, [], [], [], index_map, downstream)
+        add_branches(G, a, e2[1], a, T, [], [], [], index_map, downstream)
         
     # Ok, at a bifurcation with more than 4. This shouldn't happen really
     if degree == 4:
@@ -174,10 +189,10 @@ def add_branches(G, a0, a, a_, T, indices, radii, lengths, index_map):
         assert (a == e1[0] and a == e2[0] and a == e3[0]), \
             "Assumption error in G traversal"
 
-        add_branches(G, a, e1[1], a, T, [], [], [], index_map)
-        add_branches(G, a, e2[1], a, T, [], [], [], index_map)
+        add_branches(G, a, e1[1], a, T, [], [], [], index_map, downstream)
+        add_branches(G, a, e2[1], a, T, [], [], [], index_map, downstream)
         print("WARNING: Ignoring edge: (degree > 3) ", e3)
-        #add_branches(G, a, e3[1], a, T, [], [], [], index_map)
+        #add_branches(G, a, e3[1], a, T, [], [], [], index_map, downstream)
 
     if degree > 4:
         raise Exception("degree > 4")
@@ -236,7 +251,6 @@ def graph_to_bifurcations(G, i0, relative_pvs_width):
         r_e[e0] = relative_pvs_width*d["radius"]
         L[e0] = d["length"]
 
-        
     return (indices, paths, r_o, r_e, L)
 
 def test_graph_to_bifurcations():
@@ -256,7 +270,7 @@ def test_graph_to_bifurcations():
                       ("3", "5", {"radius": 0.05, "length": 0.5, "index": 4})])
     Gs += [G]
 
-    beta = 2
+    beta = 3.0
     for G in Gs:
         (indices, paths, r_o, r_e, L) = graph_to_bifurcations(G, 0, beta)
         print("indices = ", indices)
@@ -265,10 +279,14 @@ def test_graph_to_bifurcations():
         print("r_e = ", r_e)
         print("L = ", L)
 
-def extract_minimal_tree(G, mesh, i0):  
+def extract_minimal_tree(G, mesh, i0, downstream=None):  
     """Extract the minimal tree T from the graph G using i0 as the supply
     node, including a map M from edge indices in G/mesh to cell
     indices in T. Returns T and M.
+
+    Use downstream map if given, otherwise create and populate new
+    MeshFunction over cells.
+
     """
 
     # Start creating reduced graph by adding bifurcations and
@@ -286,10 +304,12 @@ def extract_minimal_tree(G, mesh, i0):
 
     UNDEFINED = mesh.num_cells()
     cell_index_map = df.MeshFunction("size_t", mesh, 1, UNDEFINED)
+    if not downstream:
+        downstream = df.MeshFunction("double", mesh, 1, 0)
     global counter
     counter = -1
 
-    add_branches(G, i0, i0, i0, T, [], [], [], cell_index_map)
+    add_branches(G, i0, i0, i0, T, [], [], [], cell_index_map, downstream)
     nv = T.number_of_nodes()
     ne = T.number_of_edges()
     print("... extracted minimal tree T with %d nodes and %d edges" %
@@ -297,7 +317,7 @@ def extract_minimal_tree(G, mesh, i0):
 
     assert (nv == (ne + 1)), "Number of nodes and edges do not match!"
     
-    return T, cell_index_map
+    return T, cell_index_map, downstream
 
 def compute_subtrees(filename, output):
 
@@ -318,12 +338,13 @@ def compute_subtrees(filename, output):
 
     # Extract subtrees from G corresponding for each supply node, and
     # compute minimal tree representation for each
+    downstream = df.MeshFunction("double", mesh, 1, 0)
     for i0 in supply_nodes:
 
         print("Computing minimal subtree starting at %d" % i0)
         subnodes = np.where(mf.array() == i0)[0]
         G0 = G.subgraph(subnodes).copy()
-        T, cell_index_map = extract_minimal_tree(G0, mesh, i0)
+        T, cell_index_map, _ = extract_minimal_tree(G0, mesh, i0, downstream)
         
         # Store the new graph 
         filename = os.path.join(output, "minimal_tree_%d.graphml" % i0)
@@ -336,6 +357,13 @@ def compute_subtrees(filename, output):
             print("... storing index map (mesh -> T) to %s" % filename)
             xdmf.write(cell_index_map)
 
+    # ... and the downstream orientation map: cell orientation vs
+    # downstream orientation (aligned -> 1, not aligned = -1)
+    filename = os.path.join(output, "downstream_map.xdmf")
+    with df.XDMFFile(mesh.mpi_comm(), filename) as xdmf:
+        print("... storing downstream map (mesh -> +-1) to %s" % filename)
+        xdmf.write(downstream)
+        
 def dg0_to_mf(u):
     mesh = u.function_space().mesh()
     mf = df.MeshFunction("double", mesh, mesh.topology().dim(), 0)
