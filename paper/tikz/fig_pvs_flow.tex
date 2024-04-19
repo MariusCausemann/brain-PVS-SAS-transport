@@ -13,7 +13,7 @@
   vertex/.style={circle, fill=black!15, font=\tiny, inner sep=2pt},
   blank/.style={circle, fill=black!05, font=\tiny},
 }
-\begin{figure}
+\begin{figure}[t!]
 \centering
   \begin{subfigure}{0.19\textwidth}
 \caption*{\bf A}
@@ -238,14 +238,14 @@
 \vspace{-2em}
 \includegraphics[width=\textwidth]{figures/pvs_Q_vasomotion_+x.png}
 \end{subfigure}
-\caption{Schematic illustrating network representations for the
-    estimation of perivascular flow induced by vascular wall
-    motion. (\textbf{A}) For a vascular network with vessels
-    represented by edges of varying radii and length and connected at
-    nodes with one or more supply nodes (here two, marked in red and
+\vspace{-1em}
+\caption{Estimating the perivascular flow induced by vascular wall motion. (\textbf{A}) For a vascular network with vessels
+    represented by edges of varying radii and length connected at
+    nodes, and one or more supply nodes (here two, marked in red and
     orange), we compute one subnetwork for each supply node by
     proximity (\textbf{B}). Each subnetwork is reduced to a minimal,
-    bifurcating and directed tree (\textbf{C}) which is then used to
-    compute $\langle Q' \rangle$.}
+    bifurcating and directed tree while preserving path lengths and averaging radii (\textbf{C}) which is then used to
+    compute $\langle Q' \rangle$. \mer{Caption to be continued...}}
+    \label{fig:sup:peristalsis}
 \end{figure}
 %\end{document}
