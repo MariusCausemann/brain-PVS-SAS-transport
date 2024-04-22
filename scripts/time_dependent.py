@@ -8,6 +8,7 @@ import typer
 from pathlib import Path
 from plotting_utils import read_config
 
+
 def write(sols, pvdfiles, t, hdffile=None):
     for s,f in zip(sols, pvdfiles):
         f.write(s, t)
@@ -19,6 +20,7 @@ def run_simulation(configfile: str):
 
     config = read_config(configfile)
     modelname = Path(configfile).stem
+    meshname = config["mesh"]
 
     results_dir = f"results/{modelname}/"
     os.makedirs(results_dir, exist_ok=True)
@@ -39,7 +41,7 @@ def run_simulation(configfile: str):
     pvs_basal_cistern_permability = config.get("pvs_basal_cistern_permability", pvs_csf_permability)
     pvs_ratio_venes = config["pvs_ratio_venes"]
     pvs_ratio_artery = config["pvs_ratio_artery"]
-
+    beta = config["molecular_outflow_resistance"]
 
     vein, vein_radii, vein_roots = read_vtk_network("mesh/networks/venes_smooth.vtk")
     vein_radii = as_P0_function(vein_radii)
@@ -53,7 +55,7 @@ def run_simulation(configfile: str):
     perm_artery  = 2*np.pi*artery_radii 
     area_artery  = np.pi*(artery_radii**2 - (artery_radii/pvs_ratio_artery)**2)
 
-    sas, vol_subdomains = get_sas() 
+    sas, vol_subdomains, sas_components = get_sas(meshname) 
     gdim = sas.geometric_dimension()
     
     assert np.allclose(np.unique(vol_subdomains.array()), [1,2])
@@ -67,6 +69,7 @@ def run_simulation(configfile: str):
     veinmarker.rename("marker", "time")
     vol_subdomains.rename("marker", "time")
     inlet_id = 2
+    efflux_id = 3
     inlet = CompiledSubDomain("on_boundary && " + 
                             "+ (x[0] - m0)*(x[0] - m0) " + 
                             "+ (x[1] - m1)*(x[1] - m1) " + 
@@ -76,6 +79,8 @@ def run_simulation(configfile: str):
 
     bm = MeshFunction("size_t", sas, 2, 0)
     inlet.mark(bm, inlet_id)
+    efflux = CompiledSubDomain("on_boundary && x[2] > 0.2")
+    efflux.mark(bm, efflux_id)
 
     basal_cistern = CompiledSubDomain("(x[0] - m0)*(x[0] - m0) " + 
                             "+ (x[1] - m1)*(x[1] - m1) " + 
@@ -109,9 +114,21 @@ def run_simulation(configfile: str):
             velocity_a = Function(DG)
             file.read_checkpoint(velocity_a, "velocity")
         File(results_dir + f'{modelname}_flux.pvd') << velocity_a
-        #velocity_a /= sqrt(inner(velocity_a, velocity_a)) 
     else:
         velocity_a = Constant([0]*gdim)
+
+    if "csf_velocity_file" in config.keys():
+        vel_file = config["csf_velocity_file"]
+
+        with XDMFFile(vel_file) as file:
+            CG3 = VectorFunctionSpace(sas, "CG", 3)
+            velocity_csf = Function(CG3)
+            file.read_checkpoint(velocity_csf, "velocity")
+
+    else:
+        velocity_csf = Constant([0]*gdim)
+
+
     velocity_v = Constant([0]*gdim)
 
     fa = Constant(0.0) 
@@ -139,12 +156,15 @@ def run_simulation(configfile: str):
                                                
     dx_v = Measure('dx', domain=vein)
     uv, vv = (xii.Average(x, vein, vein_shape) for x in (u, v)) 
+    ds = Measure("ds", sas, subdomain_data=bm)
 
     a = xii.block_form(W, 2)
 
     a[0][0] = phi*(1/dt)*inner(u,v)*dx + phi*Ds*inner(grad(u), grad(v))*dx \
             + xi_a*(perm_artery)*inner(ua, va)*dx_a \
-            + xi_v*(perm_vein)*inner(uv, vv)*dx_v
+            + xi_v*(perm_vein)*inner(uv, vv)*dx_v \
+            - inner(u, dot(velocity_csf, grad(v)))*dx \
+            + beta*u*v*ds(efflux_id)
 
     a[0][1] = -xi_a*(perm_artery)*inner(pa, va)*dx_a
     a[0][2] = -xi_v*(perm_vein)*inner(pv, vv)*dx_v
@@ -160,14 +180,13 @@ def run_simulation(configfile: str):
             + xi_v*(perm_vein)*inner(pv, qv)*dx 
 
     L = xii.block_form(W, 1)
-    L[0]  = phi*(1/dt)*inner(u_i,v)*dx 
+    L[0]  = phi*(1/dt)*inner(u_i,v)*dx
     
     L[1]  = (1/dt)*area_artery*inner(pa_i, qa)*dx + area_artery*inner(fa,qa)*dx
     L[2]  = (1/dt)*area_vein*inner(pv_i, qv)*dx + area_vein*inner(fv,qv)*dx
 
     W_bcs = [[], [], []]
     expressions = []
-    ds = Measure("ds", sas, subdomain_data=bm)
     ds_a = Measure("ds", artery, subdomain_data=artery_roots)
     ds_v = Measure("ds", vein, subdomain_data=vein_roots)
     ds_i = [ds, ds_a, ds_v]
