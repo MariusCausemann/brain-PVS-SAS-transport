@@ -1,6 +1,7 @@
 description : "artery inflow"
 dt : 60
 T : 86400 # 1 day in seconds
+mesh : "mid_mesh"
 output_frequency : 20
 inlet_midpoint : [0.17, 0.21, 0.1]
 inlet_radius : 0.040
@@ -13,8 +14,14 @@ pvs_parenchyma_permability : 3.8e-4 # = C_M * D_f wit C_M = 1e3 as in https://fl
 pvs_csf_permability: 3.8e-4
 pvs_ratio_artery : 2
 pvs_ratio_venes: 2
+molecular_outflow_resistance : 1.0e-10 # 1e-4 mm^2/s 
+arterial_velocity_file : "results/pvs_flow/pvs_flow.xdmf"
+csf_velocity_file : "results/csf_flow/mid_mesh/csf_v.xdmf"
+pvs_basal_cistern_permability : 3.8e-2
+pvs_ratio_artery : 2
+pvs_ratio_venes: 2
 boundary_conditions:
-  arteries : 
+  sas : 
     type : Neumann
     expr : "k*max(0.0, t0 - t)/A" # t and A are computed and updated in the code....
     params : 
