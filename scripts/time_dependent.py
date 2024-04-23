@@ -110,12 +110,12 @@ def run_simulation(configfile: str):
         vel_file = config["arterial_velocity_file"]
 
         with XDMFFile(vel_file) as file:
-            DG = VectorFunctionSpace(artery, "DG", 0)
-            velocity_a = Function(DG)
+            CG = FunctionSpace(artery, "CG", 1)
+            velocity_a = Function(CG)
             file.read_checkpoint(velocity_a, "velocity")
         File(results_dir + f'{modelname}_flux.pvd') << velocity_a
     else:
-        velocity_a = Constant([0]*gdim)
+        velocity_a = Constant(0)
 
     if "csf_velocity_file" in config.keys():
         vel_file = config["csf_velocity_file"]
@@ -157,7 +157,8 @@ def run_simulation(configfile: str):
     dx_v = Measure('dx', domain=vein)
     uv, vv = (xii.Average(x, vein, vein_shape) for x in (u, v)) 
     ds = Measure("ds", sas, subdomain_data=bm)
-
+    # tangent vector
+    tau = xii.TangentCurve(artery)
     a = xii.block_form(W, 2)
 
     a[0][0] = phi*(1/dt)*inner(u,v)*dx + phi*Ds*inner(grad(u), grad(v))*dx \
@@ -171,7 +172,7 @@ def run_simulation(configfile: str):
 
     a[1][0] =-xi_a*(perm_artery)*inner(qa, ua)*dx_a
     a[1][1] = (1/dt)*area_artery*inner(pa,qa)*dx + Da*area_artery*inner(grad(pa), grad(qa))*dx \
-            - area_artery*inner(pa, dot(velocity_a,grad(qa)))*dx  \
+            - area_artery*inner(pa, dot(velocity_a*tau,grad(qa)))*dx  \
             + xi_a*(perm_artery)*inner(pa, qa)*dx
 
     a[2][0] = -xi_v*(perm_vein)*inner(qv, uv)*dx_v
@@ -246,10 +247,10 @@ def run_simulation(configfile: str):
     pvdfiles = (pvdsas, pvdarteries, pvdvenes)
     hdffile = HDF5File(sas.mpi_comm(), results_dir + f"{modelname}.hdf", "w")
 
-    write((u_i, pa_i, pv_i), pvdfiles, 0.0, hdffile=hdffile)
-    write((vol_subdomains, artmarker, veinmarker), pvdfiles, 0.0)
-    write((xi_a, xi_v), (pvdarteries, pvdvenes), 0.0)
-    write([phi], [pvdsas], 0.0)
+    #write((u_i, pa_i, pv_i), pvdfiles, 0.0, hdffile=hdffile)
+    #write((vol_subdomains, artmarker, veinmarker), pvdfiles, 0.0)
+    #write((xi_a, xi_v), (pvdarteries, pvdvenes), 0.0)
+    #write([phi], [pvdsas], 0.0)
 
     wh = xii.ii_Function(W)
     x_ = A_.createVecLeft()
@@ -275,9 +276,8 @@ def run_simulation(configfile: str):
         wh[0].rename("c_sas", "time")
         wh[1].rename("c_artery", "time")
         wh[2].rename("c_vein", "time")
-        if i%config["output_frequency"] == 0:
-            write(wh, pvdfiles, float(t), hdffile)
-
+        #if i%config["output_frequency"] == 0:
+           # write(wh, pvdfiles, float(t), hdffile)
 
 if __name__ == "__main__":
     typer.run(run_simulation)
