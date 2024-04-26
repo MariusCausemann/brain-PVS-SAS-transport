@@ -73,6 +73,8 @@ if __name__ == '__main__':
     uh_mag, ph = wh.split()
 
     QQ = tau.function_space()
+    from IPython import embed 
+    embed()
     # L2 projection to get the flux
     uh, qq = Function(QQ), TestFunction(QQ)
     hK = CellDiameter(mesh)

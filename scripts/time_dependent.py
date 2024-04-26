@@ -73,7 +73,7 @@ def run_simulation(configfile: str):
     inlet = CompiledSubDomain("on_boundary && " + 
                             "+ (x[0] - m0)*(x[0] - m0) " + 
                             "+ (x[1] - m1)*(x[1] - m1) " + 
-                            "+ (x[2] - m2)*(x[2] - m2) < r*r",
+                            "+ (x[2] - m2)*(x[2] - m2) < r* r",
                             m0=inlet_midpoint[0], m1=inlet_midpoint[1],
                             m2=inlet_midpoint[2], r=inlet_radius)
 
@@ -247,10 +247,10 @@ def run_simulation(configfile: str):
     pvdfiles = (pvdsas, pvdarteries, pvdvenes)
     hdffile = HDF5File(sas.mpi_comm(), results_dir + f"{modelname}.hdf", "w")
 
-    #write((u_i, pa_i, pv_i), pvdfiles, 0.0, hdffile=hdffile)
-    #write((vol_subdomains, artmarker, veinmarker), pvdfiles, 0.0)
-    #write((xi_a, xi_v), (pvdarteries, pvdvenes), 0.0)
-    #write([phi], [pvdsas], 0.0)
+    write((u_i, pa_i, pv_i), pvdfiles, 0.0, hdffile=hdffile)
+    write((vol_subdomains, artmarker, veinmarker), pvdfiles, 0.0)
+    write((xi_a, xi_v), (pvdarteries, pvdvenes), 0.0)
+    write([phi], [pvdsas], 0.0)
 
     wh = xii.ii_Function(W)
     x_ = A_.createVecLeft()
@@ -276,8 +276,8 @@ def run_simulation(configfile: str):
         wh[0].rename("c_sas", "time")
         wh[1].rename("c_artery", "time")
         wh[2].rename("c_vein", "time")
-        #if i%config["output_frequency"] == 0:
-           # write(wh, pvdfiles, float(t), hdffile)
+        if i%config["output_frequency"] == 0:
+            write(wh, pvdfiles, float(t), hdffile)
 
 if __name__ == "__main__":
     typer.run(run_simulation)
