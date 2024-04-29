@@ -67,7 +67,7 @@ def compute_sas_flow(meshname : str):
     n = FacetNormal(sas_outer)
 
     mu = Constant(0.7e-3) # units need to be checked 
-    R = Constant(-1e-5)
+    R = Constant(-1e-2) # 1e-5 Pa/(mm s)
     cp1_midpoint = [0.128, 0.229, 0.192] # found in paraview
     cp2_midpoint = [0.2, 0.229, 0.192] # found in paraview
 
@@ -78,16 +78,15 @@ def compute_sas_flow(meshname : str):
                         m0=cp2_midpoint[0], m1=cp2_midpoint[1],
                         m2=cp2_midpoint[2], sigma=0.01, degree=3)
 
-
     gtot = assemble((g1 + g2 )*dx(domain=sas_outer))
 
-    total_production = 0.5e-3/(60*60*24) # 0.5 L / day
+    total_production = 0.63e-3/(60*60*24) # 0.63 L / day
     g = (g1+ g2)* Constant(total_production / gtot)
 
     f = Constant([0]*gdim)
     g_L_per_day = 1e3 *(60*60*24) * assemble(g*dx(domain=sas_outer))
     print(f"production rate: {g_L_per_day} L/day")
-    assert np.isclose(g_L_per_day, 0.5)
+    assert np.isclose(g_L_per_day, 0.63)
     gfunc = project(g, Q)
     File("g.pvd") << gfunc
     a = (inner(2*mu*sym(grad(u)), sym(grad(v)))*dx - inner(p, div(v))*dx
