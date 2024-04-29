@@ -65,10 +65,13 @@ A,b = map(ii_assemble, (a,L))
 A,b = map(ii_convert, (A,b)) 
 pvs_flow = Function(Qa) 
 
+
 solve(A, pvs_flow.vector(), b) 
 
+pvs_flow_vec = project(pvs_flow*tau, VectorFunctionSpace(artery, "DG", 0))
+
 with XDMFFile('results/pvs_flow/pvs_flow.xdmf') as xdmf:
-    xdmf.write_checkpoint(pvs_flow, "velocity")
+    xdmf.write_checkpoint(pvs_flow_vec, "velocity")
 
 
-File('results/pvs_flow/pvs_flow.pvd') << pvs_flow
+File('results/pvs_flow/pvs_flow.pvd') << pvs_flow_vec

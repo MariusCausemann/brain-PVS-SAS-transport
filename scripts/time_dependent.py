@@ -110,12 +110,17 @@ def run_simulation(configfile: str):
         vel_file = config["arterial_velocity_file"]
 
         with XDMFFile(vel_file) as file:
-            CG = FunctionSpace(artery, "CG", 1)
-            velocity_a = Function(CG)
+            DG = VectorFunctionSpace(artery, "DG", 0)
+            velocity_a = Function(DG)
             file.read_checkpoint(velocity_a, "velocity")
+        # make sure the velocity field is tangential to the network
+        tau = xii.TangentCurve(artery)
+        un = velocity_a - tau*inner(velocity_a, tau)
+        assert assemble(inner(un,un)*dx) < 1e-16
+        
         File(results_dir + f'{modelname}_flux.pvd') << velocity_a
     else:
-        velocity_a = Constant(0)
+        velocity_a = Constant([0]*gdim)
 
     if "csf_velocity_file" in config.keys():
         vel_file = config["csf_velocity_file"]
@@ -158,7 +163,6 @@ def run_simulation(configfile: str):
     uv, vv = (xii.Average(x, vein, vein_shape) for x in (u, v)) 
     ds = Measure("ds", sas, subdomain_data=bm)
     # tangent vector
-    tau = xii.TangentCurve(artery)
     a = xii.block_form(W, 2)
 
     a[0][0] = phi*(1/dt)*inner(u,v)*dx + phi*Ds*inner(grad(u), grad(v))*dx \
@@ -172,7 +176,7 @@ def run_simulation(configfile: str):
 
     a[1][0] =-xi_a*(perm_artery)*inner(qa, ua)*dx_a
     a[1][1] = (1/dt)*area_artery*inner(pa,qa)*dx + Da*area_artery*inner(grad(pa), grad(qa))*dx \
-            - area_artery*inner(pa, dot(velocity_a*tau,grad(qa)))*dx  \
+            - area_artery*inner(pa, dot(velocity_a,grad(qa)))*dx  \
             + xi_a*(perm_artery)*inner(pa, qa)*dx
 
     a[2][0] = -xi_v*(perm_vein)*inner(qv, uv)*dx_v
