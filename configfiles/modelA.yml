@@ -1,4 +1,4 @@
-description : "artery inflow"
+description : "standard model A"
 dt : 60
 T : 86400 # 1 day in seconds
 mesh : "mid_mesh"
@@ -7,17 +7,17 @@ inlet_midpoint : [0.17, 0.21, 0.1]
 inlet_radius : 0.040
 ecs_share : 0.2
 sas_diffusion : 3.8e-7 # Valnes 2020, https://www.nature.com/articles/s41598-020-66042-5
-arterial_pvs_diffusion : 3.8e-7
-venous_pvs_diffusion : 3.8e-7
-parenchyma_diffusion : 1.2e-7
-pvs_parenchyma_permability : 3.8e-4 # = C_M * D_f wit C_M = 1e3 as in https://fluidsbarrierscns.biomedcentral.com/articles/10.1186/s12987-023-00421-8
-pvs_csf_permability: 3.8e-4
+arterial_pvs_diffusion : 3.8e-10
+venous_pvs_diffusion : 3.8e-10
+parenchyma_diffusion : 1.2e-10
+pvs_parenchyma_permability : 3.8e-7 # = C_M * D_f wit C_M = 1e3 as in https://fluidsbarrierscns.biomedcentral.com/articles/10.1186/s12987-023-00421-8
+pvs_csf_permability: 3.8e-7 # ???
 pvs_ratio_artery : 2
 pvs_ratio_venes: 2
 molecular_outflow_resistance : 1.0e-10 # 1e-4 mm^2/s 
 arterial_velocity_file : "results/pvs_flow/pvs_flow.xdmf"
 csf_velocity_file : "results/csf_flow/mid_mesh/csf_v.xdmf"
-pvs_basal_cistern_permability : 3.8e-2
+pvs_basal_cistern_permability : 3.8e-4
 pvs_ratio_artery : 2
 pvs_ratio_venes: 2
 boundary_conditions:
