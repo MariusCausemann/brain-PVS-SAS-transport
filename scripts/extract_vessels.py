@@ -24,8 +24,8 @@ def skel_to_mesh(skel):
     mesh["radius"] = skel.radius
     return mesh
 
-def skeletonize(img):
-    skels = kimimaro.skeletonize(img, anisotropy=(1, 1, 1),
+def skeletonize(img, resolution):
+    skels = kimimaro.skeletonize(img, anisotropy=resolution,
                              teasar_params={"scale": scale, "const": const,})
     joined_skels = kimimaro.join_close_components(skels.values(), radius=50)
     ds_skel = joined_skels.downsample(2)
@@ -132,8 +132,8 @@ def as_tubes(splines):
     return tubes
 
 
-scale = 1.0
-const = 1
+scale = 0.5
+const = 0.5
 
 os.makedirs("../mesh/networks", exist_ok=True)
 os.makedirs("../plots", exist_ok=True)
@@ -144,10 +144,11 @@ nroots = [3, 50]
 
 for file, name, nr in zip(files, names, nroots):
     data = nibabel.load(file)
+    resolution = data.header["pixdim"][1:4]
     img = data.get_fdata().astype(int)
-    skel = skeletonize(img)
-    if name=="arteries":
-        skel = skel.crop(Bbox([0,0, 78], img.shape))
+    skel = skeletonize(img, resolution)
+    #if name=="arteries":
+    #    skel = skel.crop(Bbox([0, 0, 78], img.shape))
     G = as_networkx(skel, nroots=nr)
     orig_netw = nx_to_pv(G)
     splines = generate_splines(G, point_ratio=3)
