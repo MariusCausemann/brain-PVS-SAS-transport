@@ -1,5 +1,4 @@
 from dolfin import *
-
 from solver import * 
 import os
 import numpy as np
@@ -10,7 +9,12 @@ import typer
 
 PETScOptions.set("mat_mumps_icntl_4", 3)  # mumps verbosity
 #PETScOptions.set("mat_mumps_icntl_24", 1)  # null pivot detection
+PETScOptions.set("mat_mumps_icntl_35", 1)  # BLR feature
+#PETScOptions.set("mat_mumps_icntl_32", 1)  # forward elimination during solve (useful, but not passed on by petsc)
+PETScOptions.set("mat_mumps_icntl_22", 1)  # out-of-core to reduce memory
 #PETScOptions.set("mat_mumps_icntl_11", 1)  # error analysis
+#PETScOptions.set("mat_mumps_icntl_25", 2)  # turn on null space basis
+
 
 def cell_to_facet_meshfunc(cellfunc):
     facetfct = MeshFunction('size_t', cellfunc.mesh(), cellfunc.dim() - 1)
@@ -25,15 +29,14 @@ def cell_to_facet_meshfunc(cellfunc):
 def compute_sas_flow(meshname : str):
 # get mesh 
     sas = Mesh()
-    with XDMFFile(f'mesh/{meshname}/volmesh/mesh.xdmf') as f:
+    with XDMFFile(f'mesh/{meshname}/volmesh/colors.xdmf') as f:
         f.read(sas)
         gdim = sas.geometric_dimension()
         sas_components = MeshFunction('size_t', sas, gdim, 0)
         f.read(sas_components, 'sas_components')
         sas.scale(1e-3)  # scale from mm to m
 
-    # pick the sas mesh 
-    sas_outer = EmbeddedMesh(sas_components, 1) 
+    sas_outer = EmbeddedMesh(sas_components, [1,3,4]) 
 
     # create boundary markers 
     boundary_markers = MeshFunction("size_t", sas, sas.topology().dim() - 1)
@@ -41,10 +44,10 @@ def compute_sas_flow(meshname : str):
     # Sub domain for efflux route (mark whole boundary of the full domain) 
     class Efflux(SubDomain):
         def inside(self, x, on_boundary):
-            return on_boundary and x[2] > 0.2
+            return on_boundary and x[2] > 0.1
     efflux = Efflux()
     efflux.mark(boundary_markers, 1)
-
+    
     # translate markers to the sas outer mesh 
     boundary_markers_outer = MeshFunction("size_t", sas_outer, sas_outer.topology().dim() - 1, 0)
     DomainBoundary().mark(boundary_markers_outer, 2)
@@ -53,7 +56,6 @@ def compute_sas_flow(meshname : str):
     File("fpp.pvd") << boundary_markers_outer
 
     ds = Measure("ds", domain=sas_outer, subdomain_data=boundary_markers_outer)
-
 
     # Define function spaces for velocity and pressure
     cell = sas_outer.ufl_cell()  
@@ -67,16 +69,21 @@ def compute_sas_flow(meshname : str):
     n = FacetNormal(sas_outer)
 
     mu = Constant(0.7e-3) # units need to be checked 
-    R = Constant(-1e-2) # 1e-5 Pa/(mm s)
+    R = Constant(1e-2) # 1e-5 Pa/(mm s)
     cp1_midpoint = [0.128, 0.229, 0.192] # found in paraview
     cp2_midpoint = [0.2, 0.229, 0.192] # found in paraview
 
-    g1 =  Expression("exp( - ((x[0] - m0)*(x[0] - m0) + (x[1] - m1)*(x[1] - m1) + (x[2] - m2)*(x[2] - m2)) / (sigma*sigma))",
-                        m0=cp1_midpoint[0], m1=cp1_midpoint[1],
-                        m2=cp1_midpoint[2], sigma=0.01, degree=3)
-    g2 =  Expression("exp( - ((x[0] - m0)*(x[0] - m0) + (x[1] - m1)*(x[1] - m1) + (x[2] - m2)*(x[2] - m2)) / (sigma*sigma))",
-                        m0=cp2_midpoint[0], m1=cp2_midpoint[1],
-                        m2=cp2_midpoint[2], sigma=0.01, degree=3)
+    #g1 =  Expression("exp( - ((x[0] - m0)*(x[0] - m0) + (x[1] - m1)*(x[1] - m1) + (x[2] - m2)*(x[2] - m2)) / (sigma*sigma))",
+    #                    m0=cp1_midpoint[0], m1=cp1_midpoint[1],
+    #                    m2=cp1_midpoint[2], sigma=0.01, degree=3)
+    #g2 =  Expression("exp( - ((x[0] - m0)*(x[0] - m0) + (x[1] - m1)*(x[1] - m1) + (x[2] - m2)*(x[2] - m2)) / (sigma*sigma))",
+    #                    m0=cp2_midpoint[0], m1=cp2_midpoint[1],
+    #                    m2=cp2_midpoint[2], sigma=0.01, degree=3)
+
+    LV_marker = as_P0_function(sas_components)
+    LV_marker.vector()[:] = LV_marker.vector()[:] == 3
+    LV_marker_outer = interpolate(LV_marker, FunctionSpace(sas_outer, "DG", 0))
+    g1 = g2 = LV_marker_outer
 
     gtot = assemble((g1 + g2 )*dx(domain=sas_outer))
 
@@ -100,6 +107,12 @@ def compute_sas_flow(meshname : str):
 
     uh, ph = wh.split(deepcopy=True)[:2]
     
+    CG2 = VectorFunctionSpace(sas_outer, "CG", 2)
+    uh2 = interpolate(uh, CG2)
+    with XDMFFile(f'results/csf_flow/{meshname}/csf_vis.xdmf') as xdmf:
+        xdmf.write_checkpoint(uh2, "velocity")
+        xdmf.write_checkpoint(ph, "pressure", append=True)
+
     # extend the solution by zero on the whole domain:
     CG3 = VectorFunctionSpace(sas, "CG", 3)
     uh.set_allow_extrapolation(True)

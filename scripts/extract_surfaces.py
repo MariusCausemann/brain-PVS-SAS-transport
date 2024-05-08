@@ -7,9 +7,8 @@ import typer
 from plotting_utils import read_config
 from pathlib import Path
 
-def extract_surface(img):
+def extract_surface(img, resolution = (1,1,1)):
     # img should be a binary 3D np.array
-    resolution = (1,1,1)
     grid = pv.ImageData(dimensions=img.shape, spacing=resolution, origin=(0, 0, 0))
     mesh = grid.contour([0.5], img.flatten(order="F"), method="marching_cubes")
     surf = mesh.extract_geometry()
@@ -34,8 +33,9 @@ def extract_surfaces(configfile : str):
 
     #load grey matter data 
     gmdata = nibabel.load("data/pcbi.1007073.s006.nii.gz")
+    resolution = wmdata.header["pixdim"][1:4]
     gmimg = gmdata.get_fdata() 
-    surf_grey = extract_surface(gmimg)
+    surf_grey = extract_surface(gmimg, resolution)
     smooth_taubin_grey = surf_grey.smooth_taubin(n_iter=20, pass_band=0.05)
     smooth_taubin_grey.save(f"mesh/{meshname}/surfaces/gm.ply")
 
@@ -44,7 +44,7 @@ def extract_surfaces(configfile : str):
     img = wmimg + gmimg
     for i in range(config["parenchyma_smooth_iterations"]):
         img = binary_smoothing(img, skim.ball(config["parenchyma_smooth_radius"]))
-    surf_grey = extract_surface(img)
+    surf_grey = extract_surface(img, resolution)
     smooth_taubin_parenchyma = surf_grey.smooth_taubin(n_iter=20, pass_band=0.05)
     smooth_taubin_parenchyma.save(f"mesh/{meshname}/surfaces/parenchyma.ply")
 
@@ -58,7 +58,7 @@ def extract_surfaces(configfile : str):
         img = binary_smoothing(img, skim.ball(config["skull_smooth_radius"]))
     for i in range(config["skull_erode_iterations"]):
         img = skim.erosion(img, skim.ball(config["skull_erode_radius"]))
-    surf_dilated = extract_surface(img) 
+    surf_dilated = extract_surface(img, resolution) 
 
     surf_dilated  = surf_dilated.smooth_taubin(n_iter=10, pass_band=0.05)
     surf_dilated.save(f"mesh/{meshname}/surfaces/skull.ply")
