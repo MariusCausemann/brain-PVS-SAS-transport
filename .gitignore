@@ -3,6 +3,7 @@ results/*
 plots/*
 __*
 .snakemake/*
+data/T1.nii.gz
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
