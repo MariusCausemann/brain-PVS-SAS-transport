@@ -45,13 +45,13 @@ def get_result(modelname, domain, times):
 def get_result_fenics(modelname, domain, times):
     from fenics import HDF5File, FunctionSpace, Function
     from plotting_utils import read_config
-    from solver  import get_sas, read_vtk_network, as_P0_function
+    from solver  import get_mesh, read_vtk_network, as_P0_function
     filename = f"results/{modelname}/{modelname}.hdf"
     config = read_config(f"configfiles/{modelname}.yml")
     dt , T= config["dt"], config["T"]
     alltimes = np.arange(0, T + dt, dt*config["output_frequency"])
     if domain=="sas":
-        mesh, vol_subdomains = get_sas()
+        mesh, vol_subdomains = get_mesh()
     if domain == "artery":
         mesh, radii, _ = read_vtk_network("mesh/networks/arteries_smooth.vtk")
     if domain == "vein":
