@@ -11,6 +11,10 @@ from solver import read_vtk_network
 
 import pvs_network_netflow as pnf
 
+# FIXME: Automate
+SUPPLY_NODES = [3492, 8115, 6743]
+
+
 def mark_shortest_paths(mesh, G, roots, output, use_precomputed=False):
     """Identify the shortest path (weighted by "length") from each node in
     G to a root node (in roots). Create a node-based mesh function mf
@@ -322,8 +326,8 @@ def extract_minimal_tree(G, mesh, i0, downstream=None):
 def compute_subtrees(filename, output):
 
     # Label the network supply nodes (FIXME: automate)
-    supply_nodes = [4094, 7220, 7974]
-
+    supply_nodes = SUPPLY_NODES
+    
     # Read network information from file. Never rescale stuff behind
     # the scenes.
     mesh, radii, _ = read_vtk_network(filename, rescale_mm2m=False)
@@ -377,7 +381,7 @@ def print_stats(name, L, unit):
 def compute_pvs_flow(meshfile, output, args):
 
     # Label the network supply nodes (FIXME: automate)
-    roots = [4094, 7220, 7974]
+    roots = SUPPLY_NODES
 
     # Read mesh from file. Never rescale stuff behind the scenes.
     mesh, radii, _ = read_vtk_network(meshfile, rescale_mm2m=False)
