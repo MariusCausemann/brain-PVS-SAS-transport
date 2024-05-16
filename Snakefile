@@ -32,10 +32,10 @@ rule all:
 rule runSimuation:
     conda:"environment.yml"
     input:
-        volmesh="mesh/volmesh/mesh.xdmf",
+        volmesh="mesh/T1/volmesh/mesh.xdmf",
         artmesh="mesh/networks/arteries_smooth.vtk",
         venmesh="mesh/networks/venes_smooth.vtk",
-        flowfield="results/pvs_flow/pvs_flow.xdmf",
+        flowfield="results/pvs_flow/uhat_prod.xdmf",
         config="configfiles/{modelname}.yml"
     output:
         sas="results/{modelname}/{modelname}_sas.pvd",
@@ -131,19 +131,58 @@ rule totalTracer:
     shell:
         "python scripts/mean_concentrations.py {wildcards.modelname} {conctimes}"
 
-rule generateMesh:
+rule segmentT1:
+    input:
+        "data/T1.nii.gz"
+    output:
+        "results/freesurfer/T1_synthseg.nii.gz"
+    shell:
+        "scripts/synthseg.sh"
+
+rule meshT1:
     conda:"environment.yml"
     input:
-        "data/pcbi.1007073.s005.nii.gz",
-        "data/pcbi.1007073.s006.nii.gz"
+        "results/freesurfer/T1_synthseg.nii.gz"
     output:
-        "mesh/{meshname}/volmesh/mesh.xdmf",
-        "mesh/{meshname}/volmesh/mesh.h5",
+        "mesh/T1/volmesh/mesh.xdmf",
+        "mesh/T1/volmesh/mesh.h5",
     shell:
         """
-        python scripts/extract_surfaces.py configfiles/{wildcards.meshname}.yml &&
-        python scripts/generate_mesh.py configfiles/{wildcards.meshname}.yml
+        python scripts/extract_synthseg_surfaces.py &&
+        python scripts/generate_synthseg_mesh.py
         """
+
+rule computeSASFlow:
+    conda:"environment.yml"
+    input:
+        "mesh/T1/volmesh/mesh.xdmf",
+        "mesh/T1/volmesh/mesh.h5",
+    output:
+        "results/csf_flow/T1/csf_v.xdmf",
+        "results/csf_flow/T1/csf_v.h5",
+    shell:
+        "python scripts/sas_flow.py T1"
+
+
+rule AverageSASFlow2PVS:
+    conda:"environment.yml"
+    input:
+        "results/csf_flow/T1/csf_v.xdmf",
+        "results/csf_flow/T1/csf_v.h5",
+    output:
+        'results/pvs_flow/uhat_prod.xdmf',
+        'results/pvs_flow/uhat_prod.h5'
+    shell:
+        "python scripts/uhat_prod.py"
+
+
+
+
+
+    
+
+
+
 
 
 

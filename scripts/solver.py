@@ -50,7 +50,7 @@ def read_vtk_network(filename, rescale_mm2m=True):
     print("... with %d nodes, %d edges" % (mesh.num_vertices(), mesh.num_cells()))
     return mesh, radii, roots
 
-def get_sas(meshname):
+def get_mesh(meshname):
     sas = Mesh()
     with XDMFFile(f'mesh/{meshname}/volmesh/mesh.xdmf') as f:
         f.read(sas)
@@ -58,9 +58,7 @@ def get_sas(meshname):
         vol_subdomains = MeshFunction('size_t', sas, gdim, 0)
         f.read(vol_subdomains, 'label')
         sas.scale(1e-3)  # scale from mm to m
-        sas_components = MeshFunction('size_t', sas, gdim, 0)
-        f.read(sas_components, 'sas_components')
-    return sas, vol_subdomains, sas_components
+    return sas, vol_subdomains
 
 
 def volmarker_to_networkmarker(volm, netw, netw_shape, threshold=0.99):

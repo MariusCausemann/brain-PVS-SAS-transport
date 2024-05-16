@@ -7,7 +7,7 @@ import numpy as np
 import typer
 from pathlib import Path
 from plotting_utils import read_config
-
+from IPython import embed
 
 def write(sols, pvdfiles, t, hdffile=None):
     for s,f in zip(sols, pvdfiles):
@@ -15,6 +15,12 @@ def write(sols, pvdfiles, t, hdffile=None):
     if hdffile is not None:
         for s in sols:
             hdffile.write(s, s.name(), t)
+
+
+CSFID = 1
+PARID = 2
+LVID = 3
+V34ID = 4
 
 def run_simulation(configfile: str):
 
@@ -28,9 +34,6 @@ def run_simulation(configfile: str):
     dt = config["dt"]
     T = config["T"]
 
-    inlet_midpoint = config["inlet_midpoint"]
-    inlet_radius = config["inlet_radius"]
-
     ecs_share = config["ecs_share"]
     sas_diffusion = config["sas_diffusion"]
     arterial_pvs_diffusion = config["arterial_pvs_diffusion"]
@@ -38,7 +41,6 @@ def run_simulation(configfile: str):
     parenchyma_diffusion = config["parenchyma_diffusion"]
     pvs_parenchyma_permability = config["pvs_parenchyma_permability"]
     pvs_csf_permability = config["pvs_csf_permability"]
-    pvs_basal_cistern_permability = config.get("pvs_basal_cistern_permability", pvs_csf_permability)
     pvs_ratio_venes = config["pvs_ratio_venes"]
     pvs_ratio_artery = config["pvs_ratio_artery"]
     beta = config["molecular_outflow_resistance"]
@@ -47,7 +49,7 @@ def run_simulation(configfile: str):
     vein_radii = as_P0_function(vein_radii)
     vein_radii.vector()[:] *= pvs_ratio_venes
     perm_vein  = 2*np.pi*vein_radii
-    area_vein  = np.pi*(vein_radii**2- (vein_radii/pvs_ratio_venes)**2)
+    area_vein  = np.pi*(vein_radii**2 - (vein_radii/pvs_ratio_venes)**2)
     
     artery, artery_radii, artery_roots = read_vtk_network("mesh/networks/arteries_smooth.vtk")
     artery_radii = as_P0_function(artery_radii)
@@ -55,11 +57,11 @@ def run_simulation(configfile: str):
     perm_artery  = 2*np.pi*artery_radii 
     area_artery  = np.pi*(artery_radii**2 - (artery_radii/pvs_ratio_artery)**2)
 
-    sas, vol_subdomains, sas_components = get_sas(meshname) 
-    gdim = sas.geometric_dimension()
+    mesh, vol_subdomains = get_mesh(meshname) 
+    gdim = mesh.geometric_dimension()
     
-    assert np.allclose(np.unique(vol_subdomains.array()), [1,2])
-
+    assert np.allclose(np.unique(vol_subdomains.array()), [CSFID, PARID, LVID, V34ID])
+    vol_subdomains.array()[np.isin(vol_subdomains.array(), [LVID, V34ID])] = CSFID
 
     artery_shape = xii.Circle(radius=artery_radii, degree=20,)
     vein_shape = xii.Circle(radius=vein_radii, degree=20)
@@ -70,35 +72,21 @@ def run_simulation(configfile: str):
     vol_subdomains.rename("marker", "time")
     inlet_id = 2
     efflux_id = 3
-    inlet = CompiledSubDomain("on_boundary && " + 
-                            "+ (x[0] - m0)*(x[0] - m0) " + 
-                            "+ (x[1] - m1)*(x[1] - m1) " + 
-                            "+ (x[2] - m2)*(x[2] - m2) < r* r",
-                            m0=inlet_midpoint[0], m1=inlet_midpoint[1],
-                            m2=inlet_midpoint[2], r=inlet_radius)
+    inlet = CompiledSubDomain("on_boundary && x[2] < zmin + eps",
+                             zmin=mesh.coordinates()[:,2].min(), eps=1e-3)
 
-    bm = MeshFunction("size_t", sas, 2, 0)
+    bm = MeshFunction("size_t", mesh, 2, 0)
     inlet.mark(bm, inlet_id)
     efflux = CompiledSubDomain("on_boundary && x[2] > 0.2")
     efflux.mark(bm, efflux_id)
 
-    basal_cistern = CompiledSubDomain("(x[0] - m0)*(x[0] - m0) " + 
-                            "+ (x[1] - m1)*(x[1] - m1) " + 
-                            "+ (x[2] - m2)*(x[2] - m2) < r*r",
-                            m0=inlet_midpoint[0], m1=inlet_midpoint[1],
-                            m2=inlet_midpoint[2], r=inlet_radius*1.5)
-    cisternmarker = MeshFunction("size_t", artery, 1, 0)
-    basal_cistern.mark(cisternmarker, 1)
-    artmarker.array()[:] =  np.where(cisternmarker.array() * (artmarker.array()>0), 
-                                     3, artmarker.array()[:])
+    xi_dict = {0:Constant(0), CSFID: Constant(pvs_csf_permability), 
+               PARID: Constant(pvs_parenchyma_permability)}
+    phi_dict = {CSFID: Constant(1),  PARID: Constant(ecs_share)}
 
-    xi_dict = {0:Constant(0), 1: Constant(pvs_csf_permability), 
-               2: Constant(pvs_parenchyma_permability),
-               3: Constant(pvs_basal_cistern_permability)}
-    phi_dict = {1: Constant(1),  2: Constant(ecs_share)}
     phi = pcws_constant(vol_subdomains, phi_dict)
-    Ds = pcws_constant(vol_subdomains, {1: Constant(sas_diffusion),  # csf
-                                        2: Constant(parenchyma_diffusion) # parenchyma
+    Ds = pcws_constant(vol_subdomains, {CSFID: Constant(sas_diffusion),  # csf
+                                        PARID: Constant(parenchyma_diffusion) # parenchyma
                                         })
     xi_a = pcws_constant(artmarker, xi_dict)
     xi_v = pcws_constant(veinmarker, xi_dict)
@@ -126,20 +114,21 @@ def run_simulation(configfile: str):
         vel_file = config["csf_velocity_file"]
 
         with XDMFFile(vel_file) as file:
-            CG3 = VectorFunctionSpace(sas, "CG", 3)
+            CG3 = VectorFunctionSpace(mesh, "CG", 3)
             velocity_csf = Function(CG3)
             file.read_checkpoint(velocity_csf, "velocity")
+        
+        File("csf_velocity.pvd") << velocity_csf
 
     else:
         velocity_csf = Constant([0]*gdim)
-
 
     velocity_v = Constant([0]*gdim)
 
     fa = Constant(0.0) 
     fv = Constant(0.0)
 
-    V = FunctionSpace(sas, 'CG', 1)
+    V = FunctionSpace(mesh, 'CG', 1)
     Qa = FunctionSpace(artery, 'CG', 1)
     Qv = FunctionSpace(vein, 'CG', 1)
     W = [V, Qa, Qv]
@@ -161,7 +150,7 @@ def run_simulation(configfile: str):
                                                
     dx_v = Measure('dx', domain=vein)
     uv, vv = (xii.Average(x, vein, vein_shape) for x in (u, v)) 
-    ds = Measure("ds", sas, subdomain_data=bm)
+    ds = Measure("ds", mesh, subdomain_data=bm)
     # tangent vector
     a = xii.block_form(W, 2)
 
@@ -249,7 +238,7 @@ def run_simulation(configfile: str):
     pvdarteries = File(results_dir + f'{modelname}_arteries.pvd') 
     pvdvenes = File(results_dir + f'{modelname}_venes.pvd') 
     pvdfiles = (pvdsas, pvdarteries, pvdvenes)
-    hdffile = HDF5File(sas.mpi_comm(), results_dir + f"{modelname}.hdf", "w")
+    hdffile = HDF5File(mesh.mpi_comm(), results_dir + f"{modelname}.hdf", "w")
 
     write((u_i, pa_i, pv_i), pvdfiles, 0.0, hdffile=hdffile)
     write((vol_subdomains, artmarker, veinmarker), pvdfiles, 0.0)

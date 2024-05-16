@@ -6,6 +6,8 @@ from xii import *
 from petsc4py import PETSc
 import sympy as sp
 import typer
+import numpy_indexed as npi
+from IPython import embed
 
 PETScOptions.set("mat_mumps_icntl_4", 3)  # mumps verbosity
 #PETScOptions.set("mat_mumps_icntl_24", 1)  # null pivot detection
@@ -44,7 +46,7 @@ def compute_sas_flow(meshname : str):
     # Sub domain for efflux route (mark whole boundary of the full domain) 
     class Efflux(SubDomain):
         def inside(self, x, on_boundary):
-            return on_boundary and x[2] > 0.1
+            return on_boundary
     efflux = Efflux()
     efflux.mark(boundary_markers, 1)
     
@@ -69,16 +71,7 @@ def compute_sas_flow(meshname : str):
     n = FacetNormal(sas_outer)
 
     mu = Constant(0.7e-3) # units need to be checked 
-    R = Constant(1e-2) # 1e-5 Pa/(mm s)
-    cp1_midpoint = [0.128, 0.229, 0.192] # found in paraview
-    cp2_midpoint = [0.2, 0.229, 0.192] # found in paraview
-
-    #g1 =  Expression("exp( - ((x[0] - m0)*(x[0] - m0) + (x[1] - m1)*(x[1] - m1) + (x[2] - m2)*(x[2] - m2)) / (sigma*sigma))",
-    #                    m0=cp1_midpoint[0], m1=cp1_midpoint[1],
-    #                    m2=cp1_midpoint[2], sigma=0.01, degree=3)
-    #g2 =  Expression("exp( - ((x[0] - m0)*(x[0] - m0) + (x[1] - m1)*(x[1] - m1) + (x[2] - m2)*(x[2] - m2)) / (sigma*sigma))",
-    #                    m0=cp2_midpoint[0], m1=cp2_midpoint[1],
-    #                    m2=cp2_midpoint[2], sigma=0.01, degree=3)
+    R = Constant(1e4) # 1e-5 Pa/(mm s)
 
     LV_marker = as_P0_function(sas_components)
     LV_marker.vector()[:] = LV_marker.vector()[:] == 3
@@ -108,18 +101,21 @@ def compute_sas_flow(meshname : str):
     uh, ph = wh.split(deepcopy=True)[:2]
     
     CG2 = VectorFunctionSpace(sas_outer, "CG", 2)
-    uh2 = interpolate(uh, CG2)
-    with XDMFFile(f'results/csf_flow/{meshname}/csf_vis.xdmf') as xdmf:
+    uh2 = project(uh, CG2, solver_type="cg", preconditioner_type="hypre_amg")
+ 
+    with XDMFFile(f'results/csf_flow/{meshname}/csf_vis_v_{R}.xdmf') as xdmf:
         xdmf.write_checkpoint(uh2, "velocity")
-        xdmf.write_checkpoint(ph, "pressure", append=True)
+    with XDMFFile(f'results/csf_flow/{meshname}/csf_vis_p_{R}.xdmf') as xdmf:
+        xdmf.write_checkpoint(ph, "pressure")
 
-    # extend the solution by zero on the whole domain:
+    # map the solution back on the whole domain
     CG3 = VectorFunctionSpace(sas, "CG", 3)
-    uh.set_allow_extrapolation(True)
-    uh_global = interpolate(uh, CG3)
-    sas_fct_func = cell_to_facet_meshfunc(sas_components)
-    bc = DirichletBC(CG3, Constant([0]*gdim), sas_fct_func, 0)
-    bc.apply(uh_global.vector())
+    uh_global = Function(CG3)
+    cell_map = sas_outer.parent_entity_map[0][3]
+    for child, parent in cell_map.items():
+        child_dofs = uh.function_space().dofmap().cell_dofs(child)
+        parent_dofs = uh_global.function_space().dofmap().cell_dofs(parent)
+        uh_global.vector().vec().array_w[parent_dofs] = uh.vector().vec().array_r[child_dofs]
 
     with XDMFFile(f'results/csf_flow/{meshname}/csf_v.xdmf') as xdmf:
         xdmf.write_checkpoint(uh_global, "velocity")
