@@ -53,9 +53,9 @@ def get_result_fenics(modelname, domain, times):
     if domain=="sas":
         mesh, vol_subdomains = get_mesh()
     if domain == "artery":
-        mesh, radii, _ = read_vtk_network("mesh/networks/arteries_smooth.vtk")
+        mesh, radii, _ = read_vtk_network("mesh/networks/arteries_smooth.vtk", rescale_mm2m=False)
     if domain == "vein":
-        mesh, radii, _ = read_vtk_network("mesh/networks/venes_smooth.vtk")
+        mesh, radii, _ = read_vtk_network("mesh/networks/venes_smooth.vtk", rescale_mm2m=False)
     V = FunctionSpace(mesh, "CG", 1)
     results = []
     with HDF5File(mesh.mpi_comm(), filename, "r") as f:
