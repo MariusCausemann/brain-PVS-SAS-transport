@@ -8,6 +8,13 @@ import dolfin as df
 import networkx as nx
 import xii
 
+
+CSFID = 1
+PARID = 2
+LVID = 3
+V34ID = 4
+CSFNOFLOWID = 5
+
 def color_connected_components(mesh):
     '''
     Cell function with colors corresponding to connected components of mesh graph. 
@@ -79,10 +86,7 @@ cellmap = sas_outer.parent_entity_map[0][3]
 for i,m in enumerate(cell_f.array()):
     colors.array()[cellmap[i]] = m
 
-colors.array()[colors.array()[:] >=2]  = 5
-colors.array()[label.array()[:] ==3]  = 3
-colors.array()[label.array()[:] ==4]  = 4
-
+label.array()[colors.array()[:] >=2]  = CSFNOFLOWID
 
 def count_external_facets(mesh):
     ext_facet_count = df.MeshFunction('size_t', mesh, gdim, 0)
@@ -91,29 +95,27 @@ def count_external_facets(mesh):
     for i,c in enumerate(df.cells(mesh)):
         n = 0
         for f in df.facets(c):
-            if f.exterior():
-                n +=1
+            n+= f.exterior()
         ext_facet_count.array()[i] = n
     return ext_facet_count
 
 for i in range(10):
-    sas_outer = xii.EmbeddedMesh(colors, [1,3,4]) 
+    sas_outer = xii.EmbeddedMesh(label, [CSFID,LVID,V34ID]) 
     fct_cnt = count_external_facets(sas_outer)
     marker = df.MeshFunction('bool', sas_outer, gdim, 0)
     # cells with 3 or more external facets are overconstrained
     marker.array()[:] = fct_cnt.array()[:] >= 3 
     print(f"found {marker.array().sum()} overconstrained cells")
     if marker.array().sum() == 0:
-        print("no overconstrained cells, good to go!")
-        break
+        print("no overconstrained cells, good to go!");break
     else:
         ext_marker = df.MeshFunction('bool', sas, gdim, 0)
         cellmap = sas_outer.parent_entity_map[0][3]
         for i,m in enumerate(marker.array()):
             ext_marker.array()[cellmap[i]] = m
-        colors.array()[ext_marker.array()] = 5 
+        label.array()[ext_marker.array()] = CSFNOFLOWID 
 
-colors.rename("sas_components", "sas_components")
+label.rename("label", "label")
 
-with df.XDMFFile(f'mesh/T1/volmesh/colors.xdmf') as f:
-    f.write(colors)
+with df.XDMFFile(f'mesh/T1/volmesh/mesh.xdmf') as f:
+    f.write(label)
