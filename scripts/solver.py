@@ -6,12 +6,6 @@ import numpy as np
 import ufl
 
 
-def remove_duplicate_cells(netw):
-    cells = np.array(netw.cells.reshape(-1, 3))[:,1:]
-    cells.sort(axis=1)
-    unique_cells = np.unique(cells, axis=0)
-    netw.cells = np.pad(unique_cells, pad_width=((0,0), (1,0)), constant_values=2)
-    
 def read_vtk_network(filename, rescale_mm2m=True):
     """Read the VTK file given by filename, return a FEniCS 1D Mesh representing the network, a FEniCS MeshFunction (double) representing the radius of each vessel segment (defined over the mesh cells), and a FEniCS MeshFunction (size_t) defining the roots of the network (defined over the mesh vertices, roots are labelled by 2 or 1.) 
 
@@ -21,7 +15,6 @@ def read_vtk_network(filename, rescale_mm2m=True):
     netw = pv.read(filename)
     if rescale_mm2m:
         netw.points *= 1e-3 # scale to m
-    remove_duplicate_cells(netw)
     mesh = Mesh()
     ed = MeshEditor()
     ed.open(mesh, 'interval', 1, 3)
@@ -57,7 +50,6 @@ def get_mesh(meshname):
         gdim = sas.geometric_dimension()
         vol_subdomains = MeshFunction('size_t', sas, gdim, 0)
         f.read(vol_subdomains, 'label')
-        sas.scale(1e-3)  # scale from mm to m
     return sas, vol_subdomains
 
 
@@ -125,10 +117,10 @@ def ksp_vec(tensor):
 
 if __name__ == '__main__':
 
-    vein, vein_radii, vein_roots = read_vtk_network("../mesh/networks/venes_smooth.vtk")
+    vein, vein_radii, vein_roots = read_vtk_network("../mesh/networks/venes_smooth.vtk", rescale_mm2m=False)
     vein_radii = as_P0_function(vein_radii)
 
-    artery, artery_radii, artery_roots = read_vtk_network("../mesh/networks/arteries_smooth.vtk")
+    artery, artery_radii, artery_roots = read_vtk_network("../mesh/networks/arteries_smooth.vtk", rescale_mm2m=False)
     artery_radii = as_P0_function(artery_radii)
     
 

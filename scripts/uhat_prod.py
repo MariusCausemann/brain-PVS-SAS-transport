@@ -11,7 +11,6 @@ with XDMFFile('mesh/T1/volmesh/mesh.xdmf') as f:
     gdim = sas.geometric_dimension()
     vol_subdomains = MeshFunction('size_t', sas, gdim, 0)
     f.read(vol_subdomains, 'label')
-    sas.scale(1e-3)  # scale from mm to m
 
 # pick the sas mesh 
 #sas_outer = EmbeddedMesh(vol_subdomains, 1) 
@@ -36,7 +35,7 @@ velocity_sas = interpolate(velocity_sas_ , VP1)
 
 # read the arterial network and mesh 
 pvs_ratio_artery  = 2.0 
-artery, artery_radii, artery_roots = read_vtk_network("mesh/networks/arteries_smooth.vtk")
+artery, artery_radii, artery_roots = read_vtk_network("mesh/networks/arteries_smooth.vtk", rescale_mm2m=False)
 artery_radii = as_P0_function(artery_radii)
 pvs_radii = Function(artery_radii.function_space())
 pvs_radii.vector().set_local(pvs_ratio_artery*artery_radii.vector().get_local())

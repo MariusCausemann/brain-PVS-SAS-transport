@@ -9,7 +9,7 @@ if __name__ == '__main__':
     from xii import TangentCurve
 
     radius_ratio = 1.4
-    mesh ,artery_radii, artery_roots = read_vtk_network("../mesh/networks/arteries_smooth.vtk")
+    mesh ,artery_radii, artery_roots = read_vtk_network("../mesh/networks/arteries_smooth.vtk", rescale_mm2m=False)
     radius_f = as_P0_function(artery_radii)
    
     assert mesh.topology().dim() == 1
