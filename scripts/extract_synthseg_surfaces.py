@@ -13,6 +13,8 @@ SYNTHSEG_LV = [4, 43]
 SYNTHSEG_VENTRICLE = [SYNTHSEG_V3, SYNTHSEG_V4] +  SYNTHSEG_LV
 SYNTHSEG_CSF = [24]
 
+mm2m = 1e-3
+
 def get_closest_point(a, b):
     dist = ndi.distance_transform_edt(a==False)
     dist[b==False] = np.inf
@@ -36,7 +38,7 @@ os.makedirs("mesh/T1/surfaces", exist_ok=True)
 pad_width = 5
 seg = nibabel.load("results/freesurfer/T1_synthseg.nii.gz")
 img = np.pad(seg.get_fdata(), pad_width=pad_width)
-resolution = seg.header["pixdim"][1:4]
+resolution = np.array(seg.header["pixdim"][1:4])
 origin = - np.array(resolution) * pad_width
 
 
@@ -48,7 +50,7 @@ skull_surf = skull_surf.smooth_taubin(n_iter=20, pass_band=0.05)
 #skull_surf.points = nibabel.affines.apply_affine(seg.affine, skull_surf.points)
 skull_surf = skull_surf.clip_closed_surface(normal=(0,0,1), origin=(0,0, 1))
 skull_surf.compute_normals(inplace=True, flip_normals=False)
-pv.save_meshio("mesh/T1/surfaces/skull.ply", skull_surf)
+pv.save_meshio("mesh/T1/surfaces/skull.ply", skull_surf.scale(mm2m))
 
 # generate parenchyma surface- everything but CSF space
 par_mask = np.isin(img, SYNTHSEG_CSF + SYNTHSEG_VENTRICLE + [0]) == False
@@ -57,7 +59,7 @@ par_surf = par_surf.smooth_taubin(n_iter=20, pass_band=0.05)
 #par_surf.points = nibabel.affines.apply_affine(seg.affine, par_surf.points)
 par_surf = par_surf.clip_closed_surface(normal=(0,0,1), origin=(0,0, 1))
 par_surf.compute_normals(inplace=True, flip_normals=False)
-pv.save_meshio("mesh/T1/surfaces/parenchyma.ply", par_surf)
+pv.save_meshio("mesh/T1/surfaces/parenchyma.ply", par_surf.scale(mm2m))
 
 # compute connection between V3 and V4:
 V3 = np.isin(img, SYNTHSEG_V3)
@@ -78,7 +80,7 @@ ventricle_mask = skim.binary_dilation(ventricle_mask, footprint=skim.ball(1))
 ventricle_surf = extract_surface(ventricle_mask, resolution=resolution, origin=origin)
 ventricle_surf = ventricle_surf.smooth_taubin(n_iter=20, pass_band=0.05)
 ventricle_surf.compute_normals(inplace=True, flip_normals=False)
-pv.save_meshio("mesh/T1/surfaces/ventricles.ply", ventricle_surf)
+pv.save_meshio("mesh/T1/surfaces/ventricles.ply", ventricle_surf.scale(mm2m))
 
 # compute lateral ventricle surface
 LV_mask = np.isin(img, SYNTHSEG_LV)
@@ -86,7 +88,7 @@ LV_mask = skim.binary_dilation(LV_mask, footprint=skim.ball(1))
 LV_mask = extract_surface(LV_mask, resolution=resolution, origin=origin)
 LV_mask = LV_mask.smooth_taubin(n_iter=20, pass_band=0.05)
 LV_mask.compute_normals(inplace=True, flip_normals=False)
-pv.save_meshio("mesh/T1/surfaces/LV.ply", LV_mask)
+pv.save_meshio("mesh/T1/surfaces/LV.ply", LV_mask.scale(mm2m))
 
 # compute V3 and V4 surface
 V34_mask = np.isin(img, [SYNTHSEG_V3, SYNTHSEG_V4]) + conn
@@ -94,7 +96,7 @@ V34_mask = skim.binary_dilation(V34_mask, footprint=skim.ball(1))
 V34_mask = extract_surface(V34_mask, resolution=resolution, origin=origin)
 V34_mask = V34_mask.smooth_taubin(n_iter=20, pass_band=0.05)
 V34_mask.compute_normals(inplace=True, flip_normals=False)
-pv.save_meshio("mesh/T1/surfaces/V34.ply", V34_mask)
+pv.save_meshio("mesh/T1/surfaces/V34.ply", V34_mask.scale(mm2m))
 
 # compute a layer of parenchymal tissue around the ventricles
 # to get a watertight ventricular system and
@@ -120,4 +122,4 @@ par_surf = par_surf.smooth_taubin(n_iter=20, pass_band=0.05)
 #par_surf.points = nibabel.affines.apply_affine(seg.affine, par_surf.points)
 par_surf = par_surf.clip_closed_surface(normal=(0,0,1), origin=(0,0, 1))
 par_surf.compute_normals(inplace=True, flip_normals=False)
-pv.save_meshio("mesh/T1/surfaces/parenchyma_incl_ventr.ply", par_surf)
+pv.save_meshio("mesh/T1/surfaces/parenchyma_incl_ventr.ply", par_surf.scale(mm2m))
