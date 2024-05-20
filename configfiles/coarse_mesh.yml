@@ -1,6 +1,6 @@
 mesh_eps : 0.002
 edge_length : 0.05
-parenchyma_smooth_iterations : 1
+parenchyma_smooth_iterations : 2
 parenchyma_smooth_radius : 7
 skull_dilate_iterations : 3
 skull_dilate_radius : 7
