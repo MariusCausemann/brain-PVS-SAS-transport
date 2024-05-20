@@ -44,7 +44,7 @@ def compute_sas_flow(meshname : str):
     # Sub domain for efflux route (mark whole boundary of the full domain) 
     class Efflux(SubDomain):
         def inside(self, x, on_boundary):
-            return on_boundary and x[2] > 0.1
+            return on_boundary
     efflux = Efflux()
     efflux.mark(boundary_markers, 1)
     
@@ -70,16 +70,7 @@ def compute_sas_flow(meshname : str):
 
     mu = Constant(0.7e-3) # units need to be checked 
     R = Constant(1e-2) # 1e-5 Pa/(mm s)
-    cp1_midpoint = [0.128, 0.229, 0.192] # found in paraview
-    cp2_midpoint = [0.2, 0.229, 0.192] # found in paraview
-
-    #g1 =  Expression("exp( - ((x[0] - m0)*(x[0] - m0) + (x[1] - m1)*(x[1] - m1) + (x[2] - m2)*(x[2] - m2)) / (sigma*sigma))",
-    #                    m0=cp1_midpoint[0], m1=cp1_midpoint[1],
-    #                    m2=cp1_midpoint[2], sigma=0.01, degree=3)
-    #g2 =  Expression("exp( - ((x[0] - m0)*(x[0] - m0) + (x[1] - m1)*(x[1] - m1) + (x[2] - m2)*(x[2] - m2)) / (sigma*sigma))",
-    #                    m0=cp2_midpoint[0], m1=cp2_midpoint[1],
-    #                    m2=cp2_midpoint[2], sigma=0.01, degree=3)
-
+   
     LV_marker = as_P0_function(sas_components)
     LV_marker.vector()[:] = LV_marker.vector()[:] == 3
     LV_marker_outer = interpolate(LV_marker, FunctionSpace(sas_outer, "DG", 0))
