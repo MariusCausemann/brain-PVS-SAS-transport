@@ -9,6 +9,7 @@ import os
 import networkx as nx
 from cloudvolume import Bbox
 
+mm2m = 1e-3
 
 def np2pv(arr, resolution, origin):
     grid = pv.ImageData(dimensions=arr.shape + np.array((1, 1, 1)),
@@ -93,6 +94,12 @@ def as_networkx(skel, nroots):
                                for i in range(G.number_of_nodes())}, "root")
     return G
 
+def remove_duplicate_cells(netw):
+    cells = np.array(netw.cells.reshape(-1, 3))[:,1:]
+    cells.sort(axis=1)
+    unique_cells = np.unique(cells, axis=0)
+    netw.cells = np.pad(unique_cells, pad_width=((0,0), (1,0)), constant_values=2)
+
 def nx_to_pv(G):
     n_segs = G.number_of_edges()
     egdes = np.array(G.edges)
@@ -147,8 +154,8 @@ for file, name, nr in zip(files, names, nroots):
     resolution = data.header["pixdim"][1:4]
     img = data.get_fdata().astype(int)
     skel = skeletonize(img, resolution)
-    #if name=="arteries":
-    #    skel = skel.crop(Bbox([0, 0, 78], img.shape))
+    if name=="arteries":
+        skel = skel.crop(Bbox([0, 0, 37], img.shape))
     G = as_networkx(skel, nroots=nr)
     orig_netw = nx_to_pv(G)
     splines = generate_splines(G, point_ratio=3)
@@ -157,10 +164,16 @@ for file, name, nr in zip(files, names, nroots):
     for l, spl in zip(lines, splines):
         l["radius"] = spl["radius"]
         l["root"] = spl["root"]
-    smooth_netw = pv.MultiBlock(lines).combine().clean()
+    smooth_netw = pv.MultiBlock(lines).combine().clean().scale(mm2m)
+    smooth_netw["radius"] *= mm2m
+    orig_netw["radius"] *= mm2m
+    orig_netw.scale(mm2m, inplace=True)
+    remove_duplicate_cells(smooth_netw)
+    remove_duplicate_cells(orig_netw)
     orig_netw.save(f"../mesh/networks/{name}.vtk")
     smooth_netw.save(f"../mesh/networks/{name}_smooth.vtk")
-    netw_tubes = as_tubes(splines).combine()
+    netw_tubes = as_tubes(splines).combine().scale(mm2m)
+    netw_tubes["radius"] *= mm2m
     netw_tubes.save(f"../mesh/networks/{name}_tubes.vtk")
     netw_tubes.plot(off_screen=True, screenshot=f"../plots/{name}_network.png", zoom=1.6)
     #plot_radii([s for s in splines if s.number_of_points > 4], f"../plots/{name}_arc_radii.png")
