@@ -9,7 +9,10 @@ import numpy as np
 import seaborn as sns
 from IPython import embed
 
-CSFID, PARID = 1,2
+CSFID = 1
+PARID = 2
+LVID = 3
+V34ID = 4
 
 def compare_concentrations(modelname:str, times:List[int]):
     sas_conc, subd_marker = get_result_fenics(modelname, "sas", times)
@@ -18,6 +21,7 @@ def compare_concentrations(modelname:str, times:List[int]):
     config = read_config(f"configfiles/{modelname}.yml")
     pvs_ratio_artery = config["pvs_ratio_artery"]
     pvs_ratio_vein = config["pvs_ratio_venes"]
+    subd_marker.array()[np.isin(subd_marker.array(),[LVID, V34ID])] = CSFID
     dx = Measure("dx", sas_conc[0].function_space().mesh(), subdomain_data=subd_marker)    
     dxa = Measure("dx", art_conc[0].function_space().mesh())
     dxv = Measure("dx", ven_conc[0].function_space().mesh())

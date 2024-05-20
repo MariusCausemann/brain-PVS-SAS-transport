@@ -6,6 +6,10 @@ from typing import Tuple
 from plotting_utils import get_result, time_str, clip_plot, detail_plot, isosurf_plot
 import yaml
 
+CSFID = 1
+PARID = 2
+LVID = 3
+V34ID = 4
 
 def plot_model(modelname: str, t:int, type, cmax:float=None, filename:str=None):
     plotdir = f"plots/{modelname}"
@@ -18,8 +22,8 @@ def plot_model(modelname: str, t:int, type, cmax:float=None, filename:str=None):
     clim = (0, cmax) if cmax is not None else None
     if type=="overview":
         title = f"time: {time_str(t)} h"
-        csf = sas.extract_cells(sas["label"]==1)
-        par = sas.extract_cells(sas["label"]==2)
+        csf = sas.extract_cells(np.isin(sas["label"], [CSFID, LVID, V34ID]))
+        par = sas.extract_cells(sas["label"]==PARID)
         par["c_sas"] *= 0.2
         return clip_plot(csf, par, [art, ven], filename, title, clim=clim, cmap="matter",
               cbar_title="concentration")
@@ -27,7 +31,7 @@ def plot_model(modelname: str, t:int, type, cmax:float=None, filename:str=None):
     if type=="isosurf":
         title = f"time: {time_str(t)} h"
         sas = sas.cell_data_to_point_data()
-        sas["c_sas"] *= (1 - (0.8*sas["label"]==2))
+        sas["c_sas"] *= (1 - (0.8*sas["label"]==PARID))
         return isosurf_plot(sas, [art, ven], filename, title, clim=clim, cmap="matter",
                             cbar_title="concentration")
     

@@ -6,6 +6,8 @@ from xii import *
 from petsc4py import PETSc
 import sympy as sp
 import typer
+import numpy_indexed as npi
+from IPython import embed
 
 PETScOptions.set("mat_mumps_icntl_4", 3)  # mumps verbosity
 #PETScOptions.set("mat_mumps_icntl_24", 1)  # null pivot detection
@@ -15,28 +17,52 @@ PETScOptions.set("mat_mumps_icntl_22", 1)  # out-of-core to reduce memory
 #PETScOptions.set("mat_mumps_icntl_11", 1)  # error analysis
 #PETScOptions.set("mat_mumps_icntl_25", 2)  # turn on null space basis
 
+CSFID = 1
+PARID = 2
+LVID = 3
+V34ID = 4
+CSFNOFLOWID = 5
 
-def cell_to_facet_meshfunc(cellfunc):
+def cell_to_facet_meshfunc(cellfunc, label):
     facetfct = MeshFunction('size_t', cellfunc.mesh(), cellfunc.dim() - 1)
     facetfct.set_all(0)
     #mesh.init(dim - 1, dim) # relates facets to cells
     for f in facets(cellfunc.mesh()):
-        if 1 in cellfunc.array()[f.entities(cellfunc.dim())]: # one of the neighbouring cells of the facet is part of region 1
+        if label in cellfunc.array()[f.entities(cellfunc.dim())]: # one of the neighbouring cells of the facet is part of region 1
             facetfct[f.index()] = 1
     return facetfct
 
+def map_on_global(uh, uh_global):
+    # map the solution back on the whole domain
+    cell_map = uh.function_space().mesh().parent_entity_map[0][3]
+    for child, parent in cell_map.items():
+        child_dofs = uh.function_space().dofmap().cell_dofs(child)
+        parent_dofs = uh_global.function_space().dofmap().cell_dofs(parent)
+        uh_global.vector().vec().array_w[parent_dofs] = uh.vector().vec().array_r[child_dofs]
+
+
+def interpolate_on_global(uh, uh_global, label):
+
+    uh.set_allow_extrapolation(True)
+    uh_global.interpolate(uh)
+    dim = uh.geometric_dimension()
+    lblfct_par = cell_to_facet_meshfunc(label, PARID)
+    lblfct_noflow = cell_to_facet_meshfunc(label, CSFNOFLOWID)
+    bcmagglobpar = DirichletBC(uh_global.function_space(), Constant([0]*dim), lblfct_par, 1)
+    bcmagglobnoflow = DirichletBC(uh_global.function_space(), Constant([0]*dim), lblfct_noflow, 1)
+    bcmagglobpar.apply(uh_global.vector())
+    bcmagglobnoflow.apply(uh_global.vector())
 
 def compute_sas_flow(meshname : str):
 # get mesh 
     sas = Mesh()
-    with XDMFFile(f'mesh/{meshname}/volmesh/colors.xdmf') as f:
+    with XDMFFile(f'mesh/{meshname}/volmesh/mesh.xdmf') as f:
         f.read(sas)
         gdim = sas.geometric_dimension()
-        sas_components = MeshFunction('size_t', sas, gdim, 0)
-        f.read(sas_components, 'sas_components')
-        sas.scale(1e-3)  # scale from mm to m
+        label = MeshFunction('size_t', sas, gdim, 0)
+        f.read(label, 'label')
 
-    sas_outer = EmbeddedMesh(sas_components, [1,3,4]) 
+    sas_outer = EmbeddedMesh(label, [CSFID,LVID,V34ID]) 
 
     # create boundary markers 
     boundary_markers = MeshFunction("size_t", sas, sas.topology().dim() - 1)
@@ -51,7 +77,7 @@ def compute_sas_flow(meshname : str):
     # translate markers to the sas outer mesh 
     boundary_markers_outer = MeshFunction("size_t", sas_outer, sas_outer.topology().dim() - 1, 0)
     DomainBoundary().mark(boundary_markers_outer, 2)
-    sas_outer.translate_markers(boundary_markers, (1, ), marker_f=boundary_markers_outer)
+    #sas_outer.translate_markers(boundary_markers, (1, ), marker_f=boundary_markers_outer)
 
     File("fpp.pvd") << boundary_markers_outer
 
@@ -69,9 +95,9 @@ def compute_sas_flow(meshname : str):
     n = FacetNormal(sas_outer)
 
     mu = Constant(0.7e-3) # units need to be checked 
-    R = Constant(1e-2) # 1e-5 Pa/(mm s)
-   
-    LV_marker = as_P0_function(sas_components)
+    R = Constant(1e4) # 1e-5 Pa/(mm s)
+
+    LV_marker = as_P0_function(label)
     LV_marker.vector()[:] = LV_marker.vector()[:] == 3
     LV_marker_outer = interpolate(LV_marker, FunctionSpace(sas_outer, "DG", 0))
     g1 = g2 = LV_marker_outer
@@ -96,27 +122,43 @@ def compute_sas_flow(meshname : str):
 
     solve(a==L, wh, bcs=bcs, solver_parameters={"linear_solver":"mumps"})
 
-    uh, ph = wh.split(deepcopy=True)[:2]
+    uh, ph = wh.split(deepcopy=True)[:]
     
+    # project to CG2 and write for visualization
     CG2 = VectorFunctionSpace(sas_outer, "CG", 2)
-    uh2 = interpolate(uh, CG2)
-    with XDMFFile(f'results/csf_flow/{meshname}/csf_vis.xdmf') as xdmf:
+    uh2 = project(uh, CG2, solver_type="cg", preconditioner_type="hypre_amg")
+    with XDMFFile(f'results/csf_flow/{meshname}/csf_vis_v_{R}.xdmf') as xdmf:
         xdmf.write_checkpoint(uh2, "velocity")
-        xdmf.write_checkpoint(ph, "pressure", append=True)
+    with XDMFFile(f'results/csf_flow/{meshname}/csf_vis_p_{R}.xdmf') as xdmf:
+        xdmf.write_checkpoint(ph, "pressure")
 
-    # extend the solution by zero on the whole domain:
     CG3 = VectorFunctionSpace(sas, "CG", 3)
-    uh.set_allow_extrapolation(True)
-    uh_global = interpolate(uh, CG3)
-    sas_fct_func = cell_to_facet_meshfunc(sas_components)
-    bc = DirichletBC(CG3, Constant([0]*gdim), sas_fct_func, 0)
-    bc.apply(uh_global.vector())
+    uh_global = Function(CG3)
+    interpolate_on_global(uh, uh_global, label)
+    dxglob = Measure("dx", sas, subdomain_data=label)
+
+    assert np.isclose(assemble(inner(uh_global, uh_global)*dxglob(PARID)), 0)
+    assert np.isclose(assemble(inner(uh_global, uh_global)*dxglob(CSFNOFLOWID)), 0)
+    assert np.isclose(assemble(inner(uh, uh)*dx), assemble(inner(uh_global, uh_global)*dxglob))
+
+    divu_global = assemble(div(uh_global)*div(uh_global)*dxglob)
+    divu = assemble(div(uh)*div(uh)*dx)
+
+    assert np.isclose(divu, divu_global)
 
     with XDMFFile(f'results/csf_flow/{meshname}/csf_v.xdmf') as xdmf:
         xdmf.write_checkpoint(uh_global, "velocity")
 
     with XDMFFile(f'results/csf_flow/{meshname}/csf_p.xdmf') as xdmf:
         xdmf.write_checkpoint(ph, "pressure")
+
+    umag = project(sqrt(inner(uh, uh)), FunctionSpace(sas_outer, "CG", 3),
+                   solver_type="cg", preconditioner_type="hypre_amg")
+    umean = assemble(umag*dx) / assemble(1*dx(domain=sas_outer))
+
+    print(f"div u = {divu}")
+    print(f"u max = {umag.vector().max()}")
+    print(f"u umean = {umean}")
 
 if __name__ == "__main__":
     typer.run(compute_sas_flow)
