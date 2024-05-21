@@ -94,7 +94,7 @@ def run_simulation(configfile: str):
     Da = Constant(arterial_pvs_diffusion) 
     Dv = Constant(venous_pvs_diffusion)
 
-    if "arterial_velocity_file" in config.keys():
+    if False and "arterial_velocity_file" in config.keys():
         vel_file = config["arterial_velocity_file"]
 
         with XDMFFile(vel_file) as file:
@@ -154,21 +154,37 @@ def run_simulation(configfile: str):
     # tangent vector
     a = xii.block_form(W, 2)
 
+
+    def supg_stabilization(u, v, vel):
+        
+        mesh = u.function_space().mesh()
+        hK = CellDiameter(mesh)
+
+        beta = conditional(lt(sqrt(inner(vel, vel)), Constant(1E-10)),
+                            Constant(0),
+                            1/sqrt(inner(vel, vel)))
+
+        dx5 = Measure("dx", metadata={'quadrature_degree': 8})
+
+        return beta*hK*inner(dot(vel, grad(u)), dot(vel, grad(v)))*dx5
+
+
     a[0][0] = phi*(1/dt)*inner(u,v)*dx + phi*Ds*inner(grad(u), grad(v))*dx \
-            + xi_a*(perm_artery)*inner(ua, va)*dx_a \
-            + xi_v*(perm_vein)*inner(uv, vv)*dx_v \
             - inner(u, dot(velocity_csf, grad(v)))*dx \
-            + beta*u*v*ds(efflux_id)
+            + beta*u*v*ds(efflux_id) \
+            + supg_stabilization(u, v, velocity_csf)
+            #+ xi_a*(perm_artery)*inner(ua, va)*dx_a \
+            #+ xi_v*(perm_vein)*inner(uv, vv)*dx_v \
 
-    a[0][1] = -xi_a*(perm_artery)*inner(pa, va)*dx_a
-    a[0][2] = -xi_v*(perm_vein)*inner(pv, vv)*dx_v
+    #a[0][1] = -xi_a*(perm_artery)*inner(pa, va)*dx_a
+    #a[0][2] = -xi_v*(perm_vein)*inner(pv, vv)*dx_v
 
-    a[1][0] =-xi_a*(perm_artery)*inner(qa, ua)*dx_a
+    #a[1][0] =-xi_a*(perm_artery)*inner(qa, ua)*dx_a
     a[1][1] = (1/dt)*area_artery*inner(pa,qa)*dx + Da*area_artery*inner(grad(pa), grad(qa))*dx \
             - area_artery*inner(pa, dot(velocity_a,grad(qa)))*dx  \
             + xi_a*(perm_artery)*inner(pa, qa)*dx
 
-    a[2][0] = -xi_v*(perm_vein)*inner(qv, uv)*dx_v
+    #a[2][0] = -xi_v*(perm_vein)*inner(qv, uv)*dx_v
     a[2][2] = (1/dt)*area_vein*inner(pv,qv)*dx + Dv*area_vein*inner(grad(pv), grad(qv))*dx \
             - area_vein*inner(pv, dot(velocity_v,grad(qv)))*dx \
             + xi_v*(perm_vein)*inner(pv, qv)*dx 
@@ -205,6 +221,9 @@ def run_simulation(configfile: str):
     AA, bb = map(xii.ii_assemble, (a, L))
     if dbcflag:
         AA, _, bc_apply_b = xii.apply_bc(AA, bb, bcs=W_bcs, return_apply_b=True)
+
+    from IPython import embed
+    embed()
 
     A_ = ksp_mat(xii.ii_convert(AA))
 
@@ -253,12 +272,14 @@ def run_simulation(configfile: str):
         t += dt 
         for expr in expressions:
             expr.t = t
-        print("time", t)
+        
         bb = xii.ii_assemble(L)
         if dbcflag:
             bb = bc_apply_b(bb)
         b_ = ksp_vec(xii.ii_convert(bb))
         ksp.solve(b_, x_)
+        
+        print("time", t, '|b|', b_.norm(2), '|x|', x_.norm(2))
         # NOTE: solve(b_, ksp_vec(wh.vector())) segfault most likely because
         # of type incompatibility seq is expected and we have nest
         wh.vector()[:] = PETScVector(x_)
