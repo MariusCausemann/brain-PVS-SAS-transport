@@ -32,14 +32,19 @@ def cell_to_facet_meshfunc(cellfunc, label):
             facetfct[f.index()] = 1
     return facetfct
 
-def map_on_global(uh, uh_global):
+def map_on_global(uh, parentmesh):
     # map the solution back on the whole domain
-    cell_map = uh.function_space().mesh().parent_entity_map[0][3]
-    for child, parent in cell_map.items():
-        child_dofs = uh.function_space().dofmap().cell_dofs(child)
-        parent_dofs = uh_global.function_space().dofmap().cell_dofs(parent)
-        uh_global.vector().vec().array_w[parent_dofs] = uh.vector().vec().array_r[child_dofs]
-
+    el = uh.function_space().ufl_element()
+    V = uh.function_space()
+    eldim = 1 if len(uh.ufl_shape)==0 else uh.ufl_shape[0]
+    V_glob = FunctionSpace(parentmesh, el)
+    c_coords = V.tabulate_dof_coordinates()[::eldim,:]
+    p_coords = V_glob.tabulate_dof_coordinates()[::eldim,:]
+    idxmap = npi.indices(p_coords, c_coords, axis=0)
+    uh_global = Function(V_glob)
+    for i in range(eldim):
+        uh_global.vector()[idxmap*eldim + i] = uh.vector()[i::eldim]
+    return uh_global
 
 def interpolate_on_global(uh, uh_global, label):
 
@@ -132,9 +137,7 @@ def compute_sas_flow(meshname : str):
     with XDMFFile(f'results/csf_flow/{meshname}/csf_vis_p_{R}.xdmf') as xdmf:
         xdmf.write_checkpoint(ph, "pressure")
 
-    CG3 = VectorFunctionSpace(sas, "CG", 3)
-    uh_global = Function(CG3)
-    interpolate_on_global(uh, uh_global, label)
+    uh_global = interpolate_on_global(uh, sas)
     dxglob = Measure("dx", sas, subdomain_data=label)
 
     assert np.isclose(assemble(inner(uh_global, uh_global)*dxglob(PARID)), 0)
