@@ -95,7 +95,7 @@ def compute_sas_flow(meshname : str):
     n = FacetNormal(sas_outer)
 
     mu = Constant(0.7e-3) # units need to be checked 
-    R = Constant(1e4) # 1e-5 Pa/(mm s)
+    R = Constant(1e-4) # 1e-5 Pa/(mm s)
 
     LV_marker = as_P0_function(label)
     LV_marker.vector()[:] = LV_marker.vector()[:] == 3
