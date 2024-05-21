@@ -21,6 +21,7 @@ CSFID = 1
 PARID = 2
 LVID = 3
 V34ID = 4
+CSFNOFLOWID = 5
 
 def run_simulation(configfile: str):
 
@@ -45,13 +46,13 @@ def run_simulation(configfile: str):
     pvs_ratio_artery = config["pvs_ratio_artery"]
     beta = config["molecular_outflow_resistance"]
 
-    vein, vein_radii, vein_roots = read_vtk_network("mesh/networks/venes_smooth.vtk")
+    vein, vein_radii, vein_roots = read_vtk_network("mesh/networks/venes_smooth.vtk", rescale_mm2m=False)
     vein_radii = as_P0_function(vein_radii)
     vein_radii.vector()[:] *= pvs_ratio_venes
     perm_vein  = 2*np.pi*vein_radii
     area_vein  = np.pi*(vein_radii**2 - (vein_radii/pvs_ratio_venes)**2)
     
-    artery, artery_radii, artery_roots = read_vtk_network("mesh/networks/arteries_smooth.vtk")
+    artery, artery_radii, artery_roots = read_vtk_network("mesh/networks/arteries_smooth.vtk", rescale_mm2m=False)
     artery_radii = as_P0_function(artery_radii)
     artery_radii.vector()[:] *= pvs_ratio_artery
     perm_artery  = 2*np.pi*artery_radii 
@@ -60,8 +61,8 @@ def run_simulation(configfile: str):
     mesh, vol_subdomains = get_mesh(meshname) 
     gdim = mesh.geometric_dimension()
     
-    assert np.allclose(np.unique(vol_subdomains.array()), [CSFID, PARID, LVID, V34ID])
-    vol_subdomains.array()[np.isin(vol_subdomains.array(), [LVID, V34ID])] = CSFID
+    assert np.allclose(np.unique(vol_subdomains.array()), [CSFID, PARID, LVID, V34ID, CSFNOFLOWID])
+    vol_subdomains.array()[np.isin(vol_subdomains.array(), [LVID, V34ID, CSFNOFLOWID])] = CSFID
 
     artery_shape = xii.Circle(radius=artery_radii, degree=20,)
     vein_shape = xii.Circle(radius=vein_radii, degree=20)
@@ -74,11 +75,10 @@ def run_simulation(configfile: str):
     efflux_id = 3
     inlet = CompiledSubDomain("on_boundary && x[2] < zmin + eps",
                              zmin=mesh.coordinates()[:,2].min(), eps=1e-3)
-
     bm = MeshFunction("size_t", mesh, 2, 0)
-    inlet.mark(bm, inlet_id)
-    efflux = CompiledSubDomain("on_boundary && x[2] > 0.2")
+    efflux = CompiledSubDomain("on_boundary  && x[2] > 0.05")
     efflux.mark(bm, efflux_id)
+    inlet.mark(bm, inlet_id)
 
     xi_dict = {0:Constant(0), CSFID: Constant(pvs_csf_permability), 
                PARID: Constant(pvs_parenchyma_permability)}
@@ -95,8 +95,8 @@ def run_simulation(configfile: str):
     Dv = Constant(venous_pvs_diffusion)
 
     if "arterial_velocity_file" in config.keys():
+        print("reading arterial velocity from file...")
         vel_file = config["arterial_velocity_file"]
-
         with XDMFFile(vel_file) as file:
             DG = VectorFunctionSpace(artery, "DG", 0)
             velocity_a = Function(DG)
@@ -111,6 +111,7 @@ def run_simulation(configfile: str):
         velocity_a = Constant([0]*gdim)
 
     if "csf_velocity_file" in config.keys():
+        print("reading CSF velocity from file...")
         vel_file = config["csf_velocity_file"]
 
         with XDMFFile(vel_file) as file:
