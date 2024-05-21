@@ -5,6 +5,22 @@ import pyvista as pv
 import numpy as np
 import ufl
 
+def mark_internal_interface(mesh, subdomains, bm, interface_id,
+                            doms=None):
+    # set internal interface
+    for f in facets(mesh):
+        domains = []
+        for c in cells(f):
+            domains.append(subdomains[c])
+        domains = set(domains)
+        if len(domains)==2:
+            # if doms is None, mark any interface
+            if doms is None:
+                bm[f] = interface_id
+            # mark only interfaces between the domains specified in doms
+            elif set(doms)==domains:
+                bm[f] = interface_id
+
 
 def read_vtk_network(filename, rescale_mm2m=True):
     """Read the VTK file given by filename, return a FEniCS 1D Mesh representing the network, a FEniCS MeshFunction (double) representing the radius of each vessel segment (defined over the mesh cells), and a FEniCS MeshFunction (size_t) defining the roots of the network (defined over the mesh vertices, roots are labelled by 2 or 1.) 
