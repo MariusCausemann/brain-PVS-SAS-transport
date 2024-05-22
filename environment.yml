@@ -18,6 +18,7 @@ dependencies:
   - bioconda::snakemake
   - pip:
     - pyacvd
+    - cmocean
     - dufte
     - kimimaro
     - git+https://github.com/blocknics/cbc.block.git

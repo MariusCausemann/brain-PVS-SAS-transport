@@ -22,6 +22,8 @@ def minmax(arr_list, percentile=95):
 
 def get_result(modelname, domain, times):
     filename = f"results/{modelname}/{modelname}_{domain}.pvd"
+    from plotting_utils import read_config
+    config = read_config(f"configfiles/{modelname}.yml")
     reader = pv.get_reader(filename)
     if not isinstance(times, collections.Iterable):
         times = [times]
@@ -38,7 +40,7 @@ def get_result(modelname, domain, times):
         for ar in d.array_names:
             data[f"{ar}_{t}"] = d[ar]
     if domain=="sas":
-        marker = pv.read("mesh/volmesh/mesh.xdmf")
+        marker = pv.read(f"mesh/{config['mesh']}/volmesh/mesh.xdmf")
         data["label"] = marker["label"]
     return data
 
@@ -51,7 +53,7 @@ def get_result_fenics(modelname, domain, times):
     dt , T= config["dt"], config["T"]
     alltimes = np.arange(0, T + dt, dt*config["output_frequency"])
     if domain=="sas":
-        mesh, vol_subdomains = get_mesh()
+        mesh, vol_subdomains = get_mesh(config["mesh"])
     if domain == "artery":
         mesh, radii, _ = read_vtk_network("mesh/networks/arteries_smooth.vtk", rescale_mm2m=False)
     if domain == "vein":
@@ -114,7 +116,7 @@ def clip_plot(csf, par, networks, filename, title, clim, cmap, cbar_title):
     pl.add_mesh(csf_clipped, cmap=cmap, clim=clim,
                 scalar_bar_args=dict(title=cbar_title, vertical=False,
                                     height=0.1, width=0.6, position_x=0.2,
-                                    position_y=0.0, title_font_size=36,
+                                    position_y=-0.0, title_font_size=36,
                                     label_font_size=32))
     pl.add_mesh(par_clipped, cmap=cmap, clim=clim, show_scalar_bar=False)
     for netw in networks:
@@ -123,7 +125,7 @@ def clip_plot(csf, par, networks, filename, title, clim, cmap, cbar_title):
 
     pl.camera_position = 'zx'
     pl.camera.roll += 90
-    pl.camera.zoom(1.6)
+    pl.camera.zoom(1.3)
     pl.add_title(title, font_size=12)
     return pl.screenshot(filename, transparent_background=True, return_img=True)
 
@@ -147,7 +149,7 @@ def isosurf_plot(sas, networks, filename, title, clim, cmap, cbar_title):
 
     pl.camera_position = 'zx'
     pl.camera.roll += 90
-    pl.camera.zoom(1.6)
+    pl.camera.zoom(1.3)
     pl.add_title(title, font_size=12)
     return pl.screenshot(filename, transparent_background=False, return_img=True)
 
@@ -168,6 +170,6 @@ def detail_plot(sas, networks, filename, center, clim, cmap, cbar_title):
     pl.camera.roll += 90
     pl.camera.azimuth -= 40
     pl.camera.elevation += 20
-    pl.set_focus(center)
-    pl.camera.zoom(8)
+    #pl.set_focus(center)
+    pl.camera.zoom(2)
     return pl.screenshot(filename, transparent_background=True, return_img=True)

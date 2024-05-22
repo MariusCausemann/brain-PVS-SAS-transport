@@ -10,6 +10,7 @@ CSFID = 1
 PARID = 2
 LVID = 3
 V34ID = 4
+CSFNOFLOWID = 5
 
 def plot_model(modelname: str, t:int, type, cmax:float=None, filename:str=None):
     plotdir = f"plots/{modelname}"
@@ -22,7 +23,7 @@ def plot_model(modelname: str, t:int, type, cmax:float=None, filename:str=None):
     clim = (0, cmax) if cmax is not None else None
     if type=="overview":
         title = f"time: {time_str(t)} h"
-        csf = sas.extract_cells(np.isin(sas["label"], [CSFID, LVID, V34ID]))
+        csf = sas.extract_cells(np.isin(sas["label"], [CSFID, LVID, V34ID, CSFNOFLOWID]))
         par = sas.extract_cells(sas["label"]==PARID)
         par["c_sas"] *= 0.2
         return clip_plot(csf, par, [art, ven], filename, title, clim=clim, cmap="matter",
