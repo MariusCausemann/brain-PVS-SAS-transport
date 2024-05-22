@@ -5,6 +5,7 @@ dependencies:
   - fenics-dolfin
   - python=3.9    
   - numpy
+  - numpy-indexed
   - matplotlib
   - pyvista
   - scikit-image
