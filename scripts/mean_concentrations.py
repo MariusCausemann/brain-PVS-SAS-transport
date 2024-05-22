@@ -86,6 +86,11 @@ def compare_concentrations(modelname:str, times:List[int]):
     conc_jump = [project(cavg - cart, DG0a) for  cavg, cart in zip(c_averages, art_conc)]
     rel_conc_jump = [project(100*(cavg - cart)/( 0.5*(cavg + cart) + 1e-16), DG0a) for cavg, cart in zip(c_averages, art_conc)]
 
+    pvdjump = File(f"results/{modelname}/{modelname}_rel_jump_artery.pvd") 
+    for rcj,t in zip(rel_conc_jump, times):
+        rcj.rename("rel c jump", "rel c jump")
+        pvdjump.write(rcj, t)
+
     xlabels = {"abs": "$\Delta c$ (mmol/l)", "rel":"$\Delta c_{rel}$ (%)"}
     kdecut = {"abs": 0, "rel":2}
     perclevel = {"abs": 80, "rel":90}
