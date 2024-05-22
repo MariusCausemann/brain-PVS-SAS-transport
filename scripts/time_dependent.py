@@ -184,7 +184,7 @@ def run_simulation(configfile: str):
             - area_artery*inner(pa, dot(velocity_a,grad(qa)))*dx  \
             + xi_a*(perm_artery)*inner(pa, qa)*dx
 
-    #a[2][0] = -xi_v*(perm_vein)*inner(qv, uv)*dx_v
+    a[2][0] = -xi_v*(perm_vein)*inner(qv, uv)*dx_v
     a[2][2] = (1/dt)*area_vein*inner(pv,qv)*dx + Dv*area_vein*inner(grad(pv), grad(qv))*dx \
             - area_vein*inner(pv, dot(velocity_v,grad(qv)))*dx \
             + xi_v*(perm_vein)*inner(pv, qv)*dx 
