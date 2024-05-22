@@ -172,9 +172,9 @@ def run_simulation(configfile: str):
     a[0][0] = phi*(1/dt)*inner(u,v)*dx + phi*Ds*inner(grad(u), grad(v))*dx \
             - inner(u, dot(velocity_csf, grad(v)))*dx \
             + beta*u*v*ds(efflux_id) \
-            + supg_stabilization(u, v, velocity_csf)\
             + xi_a*(perm_artery)*inner(ua, va)*dx_a \
             + xi_v*(perm_vein)*inner(uv, vv)*dx_v \
+            + supg_stabilization(u, v, velocity_csf) \
 
     a[0][1] = -xi_a*(perm_artery)*inner(pa, va)*dx_a
     a[0][2] = -xi_v*(perm_vein)*inner(pv, vv)*dx_v
