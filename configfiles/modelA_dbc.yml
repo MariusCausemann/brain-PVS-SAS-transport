@@ -1,8 +1,8 @@
 description : "standard model A"
-dt : 0.003
+dt : 10
 T : 86400 # 1 day in seconds
 mesh : "T1"
-output_frequency : 20
+output_frequency : 120
 ecs_share : 0.2
 sas_diffusion : 3.8e-10 # Valnes 2020, https://www.nature.com/articles/s41598-020-66042-5
 arterial_pvs_diffusion : 3.8e-10
@@ -13,17 +13,17 @@ pvs_csf_permability: 3.8e-7 # ???
 pvs_ratio_artery : 2
 pvs_ratio_venes: 2
 molecular_outflow_resistance : 1.0e-10 # 1e-4 mm^2/s 
-#arterial_velocity_file : "results/csf_flow/sas_flow/pvs_flow.xdmf"
+#arterial_velocity_file : "results/pvs_flow/uhat_prod.xdmf"
 csf_velocity_file : "results/csf_flow/sas_flow/csf_v.xdmf"
 pvs_ratio_artery : 2
 pvs_ratio_venes: 2
 boundary_conditions:
-  sas : 
-    type : Neumann
-    expr : "k*max(0.0, t0 - t)/A" # t and A are computed and updated in the code....
-    params : 
-      t0 : 7200
-      k : 1.0e-9
-#  sas: 
-#    type : Dirichlet
-#    expr : "1"
+#  sas : 
+#    type : Neumann
+#    expr : "k*max(0.0, t0 - t)/A" # t (current time) and A (surface area) are computed and updated in the code.
+#    params : 
+#      t0 : 7200
+#      k : 1.0e-9
+  sas: 
+    type : Dirichlet
+    expr : "1"
