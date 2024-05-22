@@ -94,7 +94,7 @@ def run_simulation(configfile: str):
     Da = Constant(arterial_pvs_diffusion) 
     Dv = Constant(venous_pvs_diffusion)
 
-    if False and "arterial_velocity_file" in config.keys():
+    if "arterial_velocity_file" in config.keys():
         vel_file = config["arterial_velocity_file"]
         with XDMFFile(vel_file) as file:
             DG = VectorFunctionSpace(artery, "DG", 0)
