@@ -7,7 +7,9 @@ from petsc4py import PETSc
 import sympy as sp
 import typer
 import numpy_indexed as npi
+from plotting_utils import read_config
 from IPython import embed
+from pathlib import Path
 
 def directsolve(a, L, bcs, a_prec, W):
     wh = Function(W)
@@ -66,7 +68,7 @@ def iterativesolve(a, L, bcs, a_prec, W):
 PETScOptions.set("mat_mumps_icntl_4", 3)  # mumps verbosity
 #PETScOptions.set("mat_mumps_icntl_24", 1)  # null pivot detection
 PETScOptions.set("mat_mumps_icntl_35", 1)  # BLR feature
-PETScOptions.set("mat_mumps_icntl_32", 1)  # forward elimination during solve (useful, but not passed on by petsc)
+#PETScOptions.set("mat_mumps_icntl_32", 1)  # forward elimination during solve (useful, but not passed on by petsc)
 #PETScOptions.set("mat_mumps_icntl_22", 1)  # out-of-core to reduce memory
 #PETScOptions.set("mat_mumps_icntl_11", 1)  # error analysis
 #PETScOptions.set("mat_mumps_icntl_25", 2)  # turn on null space basis
@@ -113,8 +115,15 @@ def get_normal_func(mesh):
     return nh
 
 
-def compute_sas_flow(meshname : str):
-# get mesh 
+def compute_sas_flow(configfile : str):
+
+    config = read_config(configfile)
+    modelname = Path(configfile).stem
+    meshname = config["mesh"]
+
+    results_dir = f"results/csf_flow/{modelname}/"
+    os.makedirs(results_dir, exist_ok=True)
+    # get mesh 
     sas = Mesh()
     with XDMFFile(f'mesh/{meshname}/volmesh/mesh.xdmf') as f:
         f.read(sas)
@@ -158,16 +167,15 @@ def compute_sas_flow(meshname : str):
     v , q = TestFunctions(W)
     n = FacetNormal(sas_outer)
 
-    mu = Constant(0.7e-3) # units need to be checked 
-    R = Constant(0) # 1e-5 Pa/(mm s)
+    mu = Constant(config["mu"]) # units need to be checked 
+    R = Constant(config["R"]) # 1e-5 Pa/(mm s)
     f = Constant([0]*gdim)
 
     LV_surface_area = assemble(1*ds(LV_INTERF_ID))
-    total_production = 0.63e-3/(60*60*24) # 0.63 L / day
+    total_production = config["production_rate"]
     g = total_production / LV_surface_area
     g_L_per_day = 1e3 *(60*60*24) * assemble(g*ds(LV_INTERF_ID))
     print(f"production rate: {g_L_per_day} L/day")
-    assert np.isclose(g_L_per_day, 0.63)
 
     a = (inner(2*mu*sym(grad(u)), sym(grad(v)))*dx - inner(p, div(v))*dx
             -inner(q, div(u))*dx + inner(R*dot(u,n), dot(v,n))*ds(EFFLUX_ID)) 
@@ -186,14 +194,13 @@ def compute_sas_flow(meshname : str):
     wh = directsolve(a, L, bcs, a_prec, W)
     uh, ph = wh.split(deepcopy=True)[:]
 
-    embed()
-    #assert np.isclose(assemble(inner(u,n)*ds(LV_INTERF_ID)), total_production)
+    assert np.isclose(assemble(inner(uh,-n)*ds(LV_INTERF_ID)), total_production)
     
     # project to CG2 and write for visualization
     uh2 = project(uh, CG2, solver_type="cg", preconditioner_type="hypre_amg")
-    with XDMFFile(f'results/csf_flow/{meshname}/csf_vis_v.xdmf') as xdmf:
+    with XDMFFile(f'{results_dir}/csf_vis_v.xdmf') as xdmf:
         xdmf.write_checkpoint(uh2, "velocity")
-    with XDMFFile(f'results/csf_flow/{meshname}/csf_vis_p.xdmf') as xdmf:
+    with XDMFFile(f'{results_dir}/csf_vis_p.xdmf') as xdmf:
         xdmf.write_checkpoint(ph, "pressure")
     
     uh_global = map_on_global(uh, sas)
@@ -208,10 +215,11 @@ def compute_sas_flow(meshname : str):
 
     assert np.isclose(divu, divu_global)
 
-    with XDMFFile(f'results/csf_flow/{meshname}/csf_v.xdmf') as xdmf:
-        xdmf.write_checkpoint(uh_global, "velocity")
+    with XDMFFile(f'{results_dir}/csf_v.xdmf') as xdmf:
+        xdmf.write(sas)
+        xdmf.write_checkpoint(uh_global, "velocity", append=True)
 
-    with XDMFFile(f'results/csf_flow/{meshname}/csf_p.xdmf') as xdmf:
+    with XDMFFile(f'{results_dir}/csf_p.xdmf') as xdmf:
         xdmf.write_checkpoint(ph, "pressure")
 
     umag = project(sqrt(inner(uh, uh)), FunctionSpace(sas_outer, "CG", 3),
