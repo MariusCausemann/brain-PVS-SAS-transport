@@ -21,7 +21,11 @@ boundary_conditions:
   # influx of a total of 0.5mmol tracer with a linearly decreasing function over the first two hours
   sas : 
     type : Neumann
-    expr : "2*c_tot / (t0*t0) * max(0.0, t0 - t) / A" # t (current time) and A (surface area) are computed and updated in the code
+    expr : " (t < t1) ? \
+              2*c_tot / (t1*t2) * t / A : \
+              2*c_tot / (t1*t2) * max(0.0, t2 - t) / A "
+     # t (current time) and A (surface area) are computed and updated in the code
     params : 
-      t0 : 7200 # s
+      t1 : 3600 # s
+      t2 : 7200 # s
       c_tot : 0.5e-3 # mol
