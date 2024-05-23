@@ -1,18 +1,18 @@
 import numpy as np
 from scripts.plotting_utils import read_config
 
-models = ["modelA", "modelA_dbc"]
+models = ["modelA", "modelA2", "modelA3"]
 times = list(np.array([1, 6, 12, 18, 24])*60*60)
-conctimes =  list(np.array([0, 1,2,3, 4, 5, 6, 9, 12, 15, 18, 21, 24])*60*60)
+conctimes =  list(np.array([0, 1, 2, 4, 6, 12, 18, 24])*60*60)
 
-cmax = {"detail":{"modelA_modelB":5, "modelB_modelC":5},
-        "overview":{"modelA_modelB":10, "modelB_modelC":8, "modelB_modelE":10},  
-        "isosurf":{"modelA_modelB":10, "modelB_modelC":8, "modelB_modelE":8,},          
+cmax = {"detail":{"modelA_modelA2":5, "modelA_modelA3":5},
+        "overview":{"modelA_modelA2":10, "modelA_modelA3":10},
+        "isosurf":{"modelA_modelA2":10, "modelA_modelA2":8, "modelA_modelA2":8,},          
         
 }
 
 diffmax = {"detail":{"modelA_modelB":1, "modelB_modelC":1},
-           "overview":{"modelA_modelB":1, "modelB_modelC":5, "modelB_modelE":1},     
+        "overview":{"modelA_modelA2":1, "modelA_modelA3":1},
             "isosurf":{"modelA_modelB":1, "modelB_modelC":5, "modelB_modelE":1},               
 }
 types = ["overview","detail", "isosurf"]
@@ -22,7 +22,8 @@ def getconfig(m, k):
 
 rule all:
     input:
-        "plots/comparisons/modelA_modelB/modelA_modelB_overview.png",
+        "plots/comparisons/modelA_modelA2/modelA_modelA2_overview.png",
+        "plots/comparisons/modelA_modelA3/modelA_modelA3_overview.png",
         #"plots/comparisons/modelB_modelE/modelB_modelE_isosurf.png",
         #"plots/comparisons/modelA_modelB/modelA_modelB_detail.png",
         expand("plots/{modelname}/{modelname}_tracer_vessel_dist.png", modelname=models),

@@ -30,20 +30,20 @@ def plot_model_diff(modela: str, modelb: str, t:int, type,  cmax:float=None, fil
         par = sasa.extract_cells(sasa["label"]==2)
         par["c_sas"] *= 0.2
         return clip_plot(csf, par, [arta, vena], filename, title, clim=clim, 
-                  cmap="curl", cbar_title="concentration diff")
+                  cmap="curl", cbar_title="concentration diff (mmol/l)")
     
     if type=="detail":
         center = (0.2877, 0.17, 0.23)
         filename = f"{plotdir}/{modela}_{modelb}_diff_detail_{t}.png"
         return detail_plot(sasa, [arta, vena], filename, center, clim=clim, 
-                cmap="curl", cbar_title="concentration diff")
+                cmap="curl", cbar_title="concentration diff (mmol/l)")
     
     elif type=="isosurf":
         pv.global_theme.allow_empty_mesh = True
         filename = f"{plotdir}/{modela}_{modelb}_diff_isosurf_{t}.png"
         title = f"time: {time_str(t)} h"
         return isosurf_plot(sasa, [arta, vena], filename,  title, clim=clim,
-                            cbar_title="concentration diff",
+                            cbar_title="concentration diff (mmol/l)",
                             cmap="curl")
 
 if __name__ == "__main__":
