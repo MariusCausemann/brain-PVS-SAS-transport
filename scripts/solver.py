@@ -118,6 +118,30 @@ def as_P0_function(mesh_f):
 
     return f
 
+def as_Pk_function(mesh_f, k=0):
+    '''Represent as DGk'''
+    p0 = as_P0_function(mesh_f)
+    assert p0.ufl_shape == ()
+    V0dm = p0.function_space().dofmap()
+    p0_values = p0.vector().get_local()
+
+    mesh = mesh_f.mesh()
+    Vk = FunctionSpace(mesh, "DG", k)
+    pk = Function(Vk)
+    Vkdm = Vk.dofmap()
+
+    pk_values = pk.vector().get_local()
+    for cell in cells(mesh):
+        pk_values[Vkdm.cell_dofs(cell.index())] = p0_values[V0dm.cell_dofs(cell.index())]
+    pk.vector().set_local(pk_values)
+
+    return pk
+    
+    assert mesh_f.dim() == mesh.topology().dim()
+
+    return f
+
+
 
 def ksp_mat(tensor):
     '''Underlying PETSc thing'''
