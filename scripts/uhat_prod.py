@@ -15,18 +15,24 @@ def compute_avg_flow(csf_flow_model:  str):
         V = VectorFunctionSpace(sas, "CG", 3)
         velocity_sas = Function(V)
         f.read_checkpoint(velocity_sas, "velocity")
-
+    
+    #cell = sas.ufl_cell()
+    #VP1_elem = VectorElement('Lagrange', cell, 1)
+    #VP1 = FunctionSpace(sas, VP1_elem)
+    #velocity_sas = Function(VP1) 
+    #velocity_sas = interpolate(velocity_sas_ , VP1)
     # read the arterial network and mesh 
     pvs_ratio_artery  = 2.0 
     artery, artery_radii, artery_roots = read_vtk_network("mesh/networks/arteries_smooth.vtk", rescale_mm2m=False)
-    artery_radii = as_P0_function(artery_radii)
-    artery_radii.set_allow_extrapolation(True)
+    artery_radii = as_Pk_function(artery_radii, k=3)
+
+    # artery_radii.set_allow_extrapolation(True)
     pvs_radii = Function(artery_radii.function_space())
     pvs_radii.vector().set_local(pvs_ratio_artery*artery_radii.vector().get_local())
-    pvs_radii.set_allow_extrapolation(True)
+    # pvs_radii.set_allow_extrapolation(True)
 
     # define velocity average using Fenics_ii average functionality 
-    disk_pvs  = Disk(radius = pvs_radii, degree =11)
+    disk_pvs  = Disk(radius    = pvs_radii, degree =11)
     disk_artery  = Disk(radius = artery_radii, degree =11)
     velocity_sas_averaged = Average(velocity_sas, artery, disk_pvs) -  Average(velocity_sas, artery, disk_artery)
 
