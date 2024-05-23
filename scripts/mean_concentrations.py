@@ -49,12 +49,13 @@ def compare_concentrations(modelname:str, times:List[int]):
     #inflow = np.cumsum([k*max(0.0, t0 - t) for t in alltimes]) * dt
     set_plotting_defaults()
     sns.set_palette("dark")
+    mol2mmol = 1e3
     plt.figure()
-    plt.plot(times / (60*60), par_tot, ".-" , label="par")
-    plt.plot(times / (60*60), csf_tot, ".-" , label="csf")
-    plt.plot(times / (60*60), art_tot, ".-" , label="art")
-    plt.plot(times / (60*60), ven_tot, ".-" , label="ven")
-    plt.plot(times / (60*60), tot, ".-" , label="total")
+    plt.plot(times / (60*60), par_tot*mol2mmol, ".-" , label="par")
+    plt.plot(times / (60*60), csf_tot*mol2mmol, ".-" , label="csf")
+    plt.plot(times / (60*60), art_tot*mol2mmol, ".-" , label="art")
+    plt.plot(times / (60*60), ven_tot*mol2mmol, ".-" , label="ven")
+    plt.plot(times / (60*60), tot*mol2mmol, ".-" , label="total")
     #plt.plot(alltimes / (60*60), inflow, "--" , label="inflow")
     plt.legend()
     plt.xlabel("time (h)")
@@ -82,24 +83,25 @@ def compare_concentrations(modelname:str, times:List[int]):
     pvs_radii.vector().set_local(pvs_ratio_artery*art_radii.vector().get_local())
     pvs_shape = Circle(radius=pvs_radii, degree=20,)
     c_averages = [ii_project(Average(c, artery, pvs_shape), DG0a) for c in sas_conc]
-    conc_jump = [project(cavg - cart, DG0a) for  cavg, cart in zip(c_averages, art_conc)]
-    rel_conc_jump = [project(100*(cavg - cart)/( 0.5*(cavg + cart) + 1e-16), DG0a) for cavg, cart in zip(c_averages, art_conc)]
+    conc_jump = [project((cavg - cart), DG0a) for  cavg, cart in zip(c_averages, art_conc)]
+    rel_conc_jump = [project(100*(cavg - cart)/(cavg  + 1e-16), DG0a) for cavg, cart in zip(c_averages, art_conc)]
 
     pvdjump = File(f"results/{modelname}/{modelname}_rel_jump_artery.pvd") 
     for rcj,t in zip(rel_conc_jump, times):
         rcj.rename("rel c jump", "rel c jump")
         pvdjump.write(rcj, t)
 
+    # mmol/l equals mol/m^3
     xlabels = {"abs": "$\Delta c$ (mmol/l)", "rel":"$\Delta c_{rel}$ (%)"}
     kdecut = {"abs": 0, "rel":2}
-    perclevel = {"abs": 80, "rel":90}
+    perclevel = {"abs": 80, "rel":95}
     for mode, jump_data in zip(["abs", "rel"], [conc_jump, rel_conc_jump]):
         cj_arr = [cj.vector() for cj in jump_data]
         jumpminmax = minmax(cj_arr, percentile=perclevel[mode])
 
         for cj,t in zip(jump_data, times):
             plt.figure()
-            plt.hist(cj.vector()[:], range=jumpminmax, density=True, bins=20)
+            plt.hist(cj.vector()[:], range=jumpminmax, density=True, bins=100)
             filename = f"plots/{modelname}/{modelname}_{mode}_conc_jump_{t}.png"
             plt.savefig(filename)
 
@@ -114,15 +116,17 @@ def compare_concentrations(modelname:str, times:List[int]):
         cjdfclipped[cjdf < jumpminmax[0]] = np.nan
 
         plt.figure()
-        sns.kdeplot(cjdfclipped, bw_adjust=3, cut=kdecut[mode], fill=True, common_norm=False,
+        sns.kdeplot(cjdfclipped, bw_adjust=1, cut=kdecut[mode], fill=True, common_norm=False,
                     palette="crest", alpha=.3, linewidth=1)
+        if mode=="abs":
+            plt.xlim(np.array(jumpminmax)*0.5)
         filename = f"plots/{modelname}/{modelname}_{mode}_conc_jump_kde.png"
         plt.xlabel(xlabels[mode])
         plt.tight_layout()
         plt.savefig(filename)
 
         plt.figure()
-        sns.histplot(cjdfclipped, fill=True, common_norm=False, bins=10,
+        sns.histplot(cjdfclipped, fill=True, common_norm=False, bins=50,
                     palette="crest", alpha=.5, linewidth=1,multiple="dodge",)
         plt.xlabel(xlabels[mode])
         filename = f"plots/{modelname}/{modelname}_{mode}_conc_jump_hist.png"
