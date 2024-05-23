@@ -29,7 +29,8 @@ def compute_avg_flow(csf_flow_model:  str):
     # artery_radii.set_allow_extrapolation(True)
     pvs_radii = Function(artery_radii.function_space())
     pvs_radii.vector().set_local(pvs_ratio_artery*artery_radii.vector().get_local())
-    # pvs_radii.set_allow_extrapolation(True)
+    pvs_radii.set_allow_extrapolation(True)
+    artery_radii.set_allow_extrapolation(True)
 
     # define velocity average using Fenics_ii average functionality 
     disk_pvs  = Disk(radius    = pvs_radii, degree =11)
