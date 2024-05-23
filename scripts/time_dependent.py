@@ -182,14 +182,17 @@ def run_simulation(configfile: str):
     a[1][0] =-xi_a*(perm_artery)*inner(qa, ua)*dx_a
     a[1][1] = (1/dt)*area_artery*inner(pa,qa)*dx + Da*area_artery*inner(grad(pa), grad(qa))*dx \
             - area_artery*inner(pa, dot(velocity_a,grad(qa)))*dx  \
-            + xi_a*(perm_artery)*inner(pa, qa)*dx
+            + xi_a*(perm_artery)*inner(pa, qa)*dx \
+            + supg_stabilization(pa, area_artery*qa, velocity_a) 
+
 
     a[2][0] = -xi_v*(perm_vein)*inner(qv, uv)*dx_v
     a[2][2] = (1/dt)*area_vein*inner(pv,qv)*dx + Dv*area_vein*inner(grad(pv), grad(qv))*dx \
             - area_vein*inner(pv, dot(velocity_v,grad(qv)))*dx \
-            + xi_v*(perm_vein)*inner(pv, qv)*dx 
+            + xi_v*(perm_vein)*inner(pv, qv)*dx \
+            + supg_stabilization(pv, area_vein*qv, velocity_v) 
 
-    L = xii.block_form(W, 1)
+    L     = xii.block_form(W, 1)
     L[0]  = phi*(1/dt)*inner(u_i,v)*dx
     
     L[1]  = (1/dt)*area_artery*inner(pa_i, qa)*dx + area_artery*inner(fa,qa)*dx
@@ -252,7 +255,7 @@ def run_simulation(configfile: str):
     xi_a.rename("xi", "time")
     xi_v.rename("xi", "time")
 
-    pvdsas = File(results_dir + f'{modelname}_sas.pvd') 
+    pvdsas      = File(results_dir + f'{modelname}_sas.pvd') 
     pvdarteries = File(results_dir + f'{modelname}_arteries.pvd') 
     pvdvenes = File(results_dir + f'{modelname}_venes.pvd') 
     pvdfiles = (pvdsas, pvdarteries, pvdvenes)
