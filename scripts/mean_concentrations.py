@@ -44,10 +44,9 @@ def compare_concentrations(modelname:str, times:List[int]):
     ven_tot = np.array([assemble(area_vein*c*dxv) for c in ven_conc])
     tot = par_tot + csf_tot + art_tot + ven_tot
     times = np.array(times)
-    k, t0 = 1e-9, 7200, 
     dt , T= config["dt"], config["T"]
     alltimes = np.arange(0, times[-1], dt)
-    inflow = np.cumsum([k*max(0.0, t0 - t) for t in alltimes]) * dt
+    #inflow = np.cumsum([k*max(0.0, t0 - t) for t in alltimes]) * dt
     set_plotting_defaults()
     sns.set_palette("dark")
     plt.figure()
@@ -59,7 +58,7 @@ def compare_concentrations(modelname:str, times:List[int]):
     #plt.plot(alltimes / (60*60), inflow, "--" , label="inflow")
     plt.legend()
     plt.xlabel("time (h)")
-    plt.ylabel("total tracer")
+    plt.ylabel("total tracer content (mmol)")
     plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.1), ncol=6, columnspacing=0.7)
     plt.tight_layout()
     filename = f"plots/{modelname}/{modelname}_total_conc.png"
