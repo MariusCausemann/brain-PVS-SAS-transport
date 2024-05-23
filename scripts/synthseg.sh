@@ -1,5 +1,5 @@
 docker run --rm -ti \
-  --user $(id -u):$(id -g) \
+  --user $(id -u):$(id -g) --platform linux/amd64 \
   -v "$(pwd)"/results/freesurfer:/usr/local/freesurfer/subjects \
   -v "$(pwd)"/freesurfer_license:/usr/local/freesurfer/licence \
   -v "$(pwd)"/data:/usr/local/freesurfer/data \
