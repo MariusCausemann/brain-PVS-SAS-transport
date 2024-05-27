@@ -21,6 +21,15 @@ def mark_internal_interface(mesh, subdomains, bm, interface_id,
             elif set(doms)==domains:
                 bm[f] = interface_id
 
+def mark_external_boundary(mesh, subdomains, bm, boundary_id,
+                            doms=None):
+    # set internal interface
+    for f in facets(mesh):
+        if f.exterior(): 
+            domain = subdomains[list(cells(f))[0]]
+            if domain in doms:
+                bm[f] = boundary_id
+
 
 def read_vtk_network(filename, rescale_mm2m=True):
     """Read the VTK file given by filename, return a FEniCS 1D Mesh representing the network, a FEniCS MeshFunction (double) representing the radius of each vessel segment (defined over the mesh cells), and a FEniCS MeshFunction (size_t) defining the roots of the network (defined over the mesh vertices, roots are labelled by 2 or 1.) 
