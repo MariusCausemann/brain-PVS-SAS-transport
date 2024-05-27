@@ -7,7 +7,9 @@ import os
 import dolfin as df
 import networkx as nx
 import xii
-
+import typer
+from pathlib import Path
+from plotting_utils import read_config
 
 CSFID = 1
 PARID = 2
@@ -51,71 +53,92 @@ csg_tree = {"operation":"union",
                 },
             } 
 
-tetra = wm.Tetrahedralizer(epsilon=0.002, edge_length_r=0.03,
-                           coarsen=False)
-tetra.load_csg_tree(json.dumps(csg_tree))
-tetra.tetrahedralize()
-point_array, cell_array, marker = tetra.get_tet_mesh()
-mesh = meshio.Mesh(
-        point_array, [("tetra", cell_array)], cell_data={"label": [marker.ravel()]}
-    )
-mesh = pv.from_meshio(mesh).clean()
-os.makedirs(f"mesh/T1/volmesh", exist_ok=True)
-pv.save_meshio(f"mesh/T1/volmesh/mesh.xdmf", mesh)
+def generate_mesh(configfile : str):
 
+    config = read_config(configfile)
+    meshname = Path(configfile).stem
 
-# read in again and use fenics to exclude problematic parts 
-# of the CSF space from the Stokes computation (disconnected domains
-# and overconstrained cells) 
+    tetra = wm.Tetrahedralizer(epsilon=config["epsilon"],
+                               edge_length_r=config["edge_length_r"],
+                               coarsen=False)
+    
+    tetra.load_csg_tree(json.dumps(csg_tree))
+    tetra.tetrahedralize()
+    point_array, cell_array, marker = tetra.get_tet_mesh()
+    mesh = meshio.Mesh(
+            point_array, [("tetra", cell_array)], cell_data={"label": [marker.ravel()]}
+        )
+    mesh = pv.from_meshio(mesh).clean()
+    os.makedirs(f"mesh/{meshname}/volmesh", exist_ok=True)
+    pv.save_meshio(f"mesh/{meshname}/volmesh/mesh.xdmf", mesh)
 
-sas = df.Mesh()
-with df.XDMFFile(f'mesh/T1/volmesh/mesh.xdmf') as f:
-    f.read(sas)
-    gdim = sas.geometric_dimension()
-    label = df.MeshFunction('size_t', sas, gdim, 0)
-    f.read(label, 'label')
+    # read in again and use fenics to exclude problematic parts 
+    # of the CSF space from the Stokes computation (disconnected domains
+    # and overconstrained cells) 
 
-sas_outer = xii.EmbeddedMesh(label, [1,3,4]) 
-cell_f = color_connected_components(sas_outer) 
-ncomps = len(np.unique(cell_f.array()))
+    sas = df.Mesh()
+    with df.XDMFFile(f'mesh/{meshname}/volmesh/mesh.xdmf') as f:
+        f.read(sas)
+        gdim = sas.geometric_dimension()
+        label = df.MeshFunction('size_t', sas, gdim, 0)
+        f.read(label, 'label')
 
-colors = df.MeshFunction('size_t', sas, gdim, 0)
+    coords = (0.0847, 0.0833, 0.001)
+    mf = df.MeshFunction("bool", sas, 3, 0)
+    rm = df.CompiledSubDomain("(x[0] - c0)*(x[0] - c0) + (x[1] - c1)*(x[1] - c1) + (x[2] - c2)*(x[2] - c2) < r*r",
+                            r = 0.01, c0=coords[0],  c1=coords[1],  c2=coords[2])
+    rm.mark(mf, True)
+    sas = df.refine(sas, mf)
+    label = df.adapt(label, sas)
+    mf = df.MeshFunction("bool", sas, 3, 0)
+    rm.mark(mf, True)
+    sas = df.refine(sas, mf)
+    label = df.adapt(label, sas)
 
-cellmap = sas_outer.parent_entity_map[0][3]
+    sas_outer = xii.EmbeddedMesh(label, [1,3,4]) 
+    cell_f = color_connected_components(sas_outer) 
+    ncomps = len(np.unique(cell_f.array()))
 
-for i,m in enumerate(cell_f.array()):
-    colors.array()[cellmap[i]] = m
+    colors = df.MeshFunction('size_t', sas, gdim, 0)
 
-label.array()[colors.array()[:] >=2]  = CSFNOFLOWID
+    cellmap = sas_outer.parent_entity_map[sas.id()][3]
 
-def count_external_facets(mesh):
-    ext_facet_count = df.MeshFunction('size_t', mesh, gdim, 0)
-    tdim = mesh.topology().dim()
-    mesh.init(tdim-1, tdim)  #  Facet to cell
-    for i,c in enumerate(df.cells(mesh)):
-        n = 0
-        for f in df.facets(c):
-            n+= f.exterior()
-        ext_facet_count.array()[i] = n
-    return ext_facet_count
+    for i,m in enumerate(cell_f.array()):
+        colors.array()[cellmap[i]] = m
 
-for i in range(10):
-    sas_outer = xii.EmbeddedMesh(label, [CSFID,LVID,V34ID]) 
-    fct_cnt = count_external_facets(sas_outer)
-    marker = df.MeshFunction('bool', sas_outer, gdim, 0)
-    # cells with 3 or more external facets are overconstrained
-    marker.array()[:] = fct_cnt.array()[:] >= 3 
-    print(f"found {marker.array().sum()} overconstrained cells")
-    if marker.array().sum() == 0:
-        print("no overconstrained cells, good to go!");break
-    else:
-        ext_marker = df.MeshFunction('bool', sas, gdim, 0)
-        cellmap = sas_outer.parent_entity_map[0][3]
-        for i,m in enumerate(marker.array()):
-            ext_marker.array()[cellmap[i]] = m
-        label.array()[ext_marker.array()] = CSFNOFLOWID 
+    label.array()[colors.array()[:] >=2]  = CSFNOFLOWID
 
-label.rename("label", "label")
+    def count_external_facets(mesh):
+        ext_facet_count = df.MeshFunction('size_t', mesh, gdim, 0)
+        tdim = mesh.topology().dim()
+        mesh.init(tdim-1, tdim)  #  Facet to cell
+        for i,c in enumerate(df.cells(mesh)):
+            n = 0
+            for f in df.facets(c):
+                n+= f.exterior()
+            ext_facet_count.array()[i] = n
+        return ext_facet_count
 
-with df.XDMFFile(f'mesh/T1/volmesh/mesh.xdmf') as f:
-    f.write(label)
+    for i in range(10):
+        sas_outer = xii.EmbeddedMesh(label, [CSFID,LVID,V34ID]) 
+        fct_cnt = count_external_facets(sas_outer)
+        marker = df.MeshFunction('bool', sas_outer, gdim, 0)
+        # cells with 3 or more external facets are overconstrained
+        marker.array()[:] = fct_cnt.array()[:] >= 3 
+        print(f"found {marker.array().sum()} overconstrained cells")
+        if marker.array().sum() == 0:
+            print("no overconstrained cells, good to go!");break
+        else:
+            ext_marker = df.MeshFunction('bool', sas, gdim, 0)
+            cellmap = sas_outer.parent_entity_map[sas.id()][3]
+            for i,m in enumerate(marker.array()):
+                ext_marker.array()[cellmap[i]] = m
+            label.array()[ext_marker.array()] = CSFNOFLOWID 
+
+    label.rename("label", "label")
+
+    with df.XDMFFile(f'mesh/{meshname}/volmesh/mesh.xdmf') as f:
+        f.write(label)
+
+if __name__ == "__main__":
+    typer.run(generate_mesh)
