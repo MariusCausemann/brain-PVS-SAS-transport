@@ -147,12 +147,12 @@ rule meshT1:
     input:
         "results/freesurfer/T1_synthseg.nii.gz"
     output:
-        "mesh/T1/volmesh/mesh.xdmf",
-        "mesh/T1/volmesh/mesh.h5",
+        "mesh/{meshname}/volmesh/mesh.xdmf",
+        "mesh/{meshname}/volmesh/mesh.h5",
     shell:
         """
         python scripts/extract_synthseg_surfaces.py &&
-        python scripts/generate_synthseg_mesh.py
+        python scripts/generate_synthseg_mesh.py configfiles/{wildcards.meshname}.yml
         """
 
 rule computeSASFlow:
