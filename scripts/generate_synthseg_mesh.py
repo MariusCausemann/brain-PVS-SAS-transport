@@ -75,13 +75,26 @@ with df.XDMFFile(f'mesh/T1/volmesh/mesh.xdmf') as f:
     label = df.MeshFunction('size_t', sas, gdim, 0)
     f.read(label, 'label')
 
+coords = (0.0847, 0.0833, 0.001)
+
+mf = df.MeshFunction("bool", sas, 3, 0)
+rm = df.CompiledSubDomain("(x[0] - c0)*(x[0] - c0) + (x[1] - c1)*(x[1] - c1) + (x[2] - c2)*(x[2] - c2) < r*r",
+                        r = 0.01, c0=coords[0],  c1=coords[1],  c2=coords[2])
+rm.mark(mf, True)
+sas = df.refine(sas, mf)
+label = df.adapt(label, sas)
+mf = df.MeshFunction("bool", sas, 3, 0)
+rm.mark(mf, True)
+sas = df.refine(sas, mf)
+label = df.adapt(label, sas)
+
 sas_outer = xii.EmbeddedMesh(label, [1,3,4]) 
 cell_f = color_connected_components(sas_outer) 
 ncomps = len(np.unique(cell_f.array()))
 
 colors = df.MeshFunction('size_t', sas, gdim, 0)
 
-cellmap = sas_outer.parent_entity_map[0][3]
+cellmap = sas_outer.parent_entity_map[sas.id()][3]
 
 for i,m in enumerate(cell_f.array()):
     colors.array()[cellmap[i]] = m
@@ -110,7 +123,7 @@ for i in range(10):
         print("no overconstrained cells, good to go!");break
     else:
         ext_marker = df.MeshFunction('bool', sas, gdim, 0)
-        cellmap = sas_outer.parent_entity_map[0][3]
+        cellmap = sas_outer.parent_entity_map[sas.id()][3]
         for i,m in enumerate(marker.array()):
             ext_marker.array()[cellmap[i]] = m
         label.array()[ext_marker.array()] = CSFNOFLOWID 
