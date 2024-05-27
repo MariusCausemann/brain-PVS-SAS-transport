@@ -8,8 +8,8 @@ parameters["ghost_mode"] = "shared_facet"
 
 # Parameters
 D = Constant(3.8e-10)
-t_end = 86400
-dt = 20
+t_end = 12000
+dt = 30
 beta = Constant(3.8e-7)
 
 mesh = Mesh()
@@ -119,6 +119,8 @@ opts.setValue('ksp_type', 'preonly')
 opts.setValue('pc_type', 'lu')
 opts.setValue("pc_factor_mat_solver_type", "mumps")
 opts.setValue("mat_mumps_icntl_4", "3")
+opts.setValue("mat_mumps_icntl_35", 1)
+opts.setValue("mat_mumps_cntl_7",  1e-12)  # BLR eps
 
 A, bb = assemble_system(L, b)
 ksp = PETSc.KSP().create()
@@ -140,7 +142,6 @@ while t < t_end:
     t += dt
     g.t = t
     i += 1
-    if i%2==0:
-        # Save to file
+    if i%5==0:
         file.write_checkpoint(u, "velocity", t, append=True)
 file.close()
