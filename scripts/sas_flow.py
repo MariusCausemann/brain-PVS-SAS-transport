@@ -68,6 +68,7 @@ def iterativesolve(a, L, bcs, a_prec, W):
 PETScOptions.set("mat_mumps_icntl_4", 3)  # mumps verbosity
 #PETScOptions.set("mat_mumps_icntl_24", 1)  # null pivot detection
 PETScOptions.set("mat_mumps_icntl_35", 1)  # BLR feature
+PETScOptions.set("mat_mumps_cntl_7", 1e-8)  # BLR eps
 #PETScOptions.set("mat_mumps_icntl_32", 1)  # forward elimination during solve (useful, but not passed on by petsc)
 #PETScOptions.set("mat_mumps_icntl_22", 1)  # out-of-core to reduce memory
 #PETScOptions.set("mat_mumps_icntl_11", 1)  # error analysis
