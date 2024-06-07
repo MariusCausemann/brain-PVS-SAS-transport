@@ -5,6 +5,7 @@ dependencies:
   - fenics-dolfin
   - python=3.9    
   - numpy
+  - numpy-indexed
   - matplotlib
   - pyvista
   - scikit-image
@@ -17,6 +18,7 @@ dependencies:
   - bioconda::snakemake
   - pip:
     - pyacvd
+    - cmocean
     - dufte
     - kimimaro
     - git+https://github.com/blocknics/cbc.block.git

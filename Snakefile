@@ -1,24 +1,31 @@
 import numpy as np
-models = ["modelA", "modelB", "modelC"] #, "modelD"]
-times = list(np.array([1, 6, 12, 18, 24])*60*60)
-conctimes =  list(np.array([0, 0.5, 1,2,3, 4, 5, 6, 9, 12, 15, 18, 21, 24])*60*60)
+from scripts.plotting_utils import read_config
 
-cmax = {"detail":{"modelA_modelB":5, "modelB_modelC":5},
-        "overview":{"modelA_modelB":10, "modelB_modelC":8},          
+models = ["modelA", "modelA2", "modelA3"]
+times = list(np.array([1, 6, 12, 18, 24])*60*60)
+conctimes =  list(np.array([0, 1, 2, 4, 6, 12, 18, 24])*60*60)
+
+cmax = {"detail":{"modelA_modelA2":5, "modelA_modelA3":5},
+        "overview":{"modelA_modelA2":10, "modelA_modelA3":10},
+        "isosurf":{"modelA_modelA2":10, "modelA_modelA2":8, "modelA_modelA2":8,},          
+        
 }
 
 diffmax = {"detail":{"modelA_modelB":1, "modelB_modelC":1},
-           "overview":{"modelA_modelB":1, "modelB_modelC":5},          
+        "overview":{"modelA_modelA2":1, "modelA_modelA3":1},
+            "isosurf":{"modelA_modelB":1, "modelB_modelC":5, "modelB_modelE":1},               
 }
-types = ["overview","detail"]
+types = ["overview","detail", "isosurf"]
+
+def getconfig(m, k):
+    return read_config(f"configfiles/{m}.yml").get(k, [])
 
 rule all:
     input:
-        "plots/comparisons/modelA_modelB/modelA_modelB_overview.png",
-        "plots/comparisons/modelA_modelB/modelA_modelB_detail.png",
-        "plots/comparisons/modelB_modelC/modelB_modelC_overview.png",
-        "plots/comparisons/modelB_modelC/modelB_modelC_detail.png",
-        #"plots/comparisons/modelA_modelD/modelA_modelD.png",
+        "plots/comparisons/modelA_modelA2/modelA_modelA2_overview.png",
+        "plots/comparisons/modelA_modelA3/modelA_modelA3_overview.png",
+        #"plots/comparisons/modelB_modelE/modelB_modelE_isosurf.png",
+        #"plots/comparisons/modelA_modelB/modelA_modelB_detail.png",
         expand("plots/{modelname}/{modelname}_tracer_vessel_dist.png", modelname=models),
         expand("plots/{modelname}/{modelname}_total_conc.png", modelname=models),
         expand("plots/{modelname}/{modelname}_{tp}_{t}.png", modelname=models, t=times, tp=types)
@@ -27,11 +34,12 @@ rule all:
 rule runSimuation:
     conda:"environment.yml"
     input:
-        volmesh="mesh/volmesh/mesh.xdmf",
+        volmesh="mesh/T1/volmesh/mesh.xdmf",
         artmesh="mesh/networks/arteries_smooth.vtk",
         venmesh="mesh/networks/venes_smooth.vtk",
-        flowfield="results/pvs_flow/pvs_flow.xdmf",
-        config="configfiles/{modelname}.yml"
+        config="configfiles/{modelname}.yml",
+        csf_velocity_file=lambda wildcards: getconfig(wildcards.modelname, "csf_velocity_file"),
+        arterial_velocity_file=lambda wildcards: getconfig(wildcards.modelname, "arterial_velocity_file")
     output:
         sas="results/{modelname}/{modelname}_sas.pvd",
         art="results/{modelname}/{modelname}_arteries.pvd",
@@ -113,7 +121,7 @@ rule analyzeTracerDist:
     output:
         plot="plots/{modelname}/{modelname}_tracer_vessel_dist.png"
     shell:
-        "python scripts/analyze_tracer_dist.py {wildcards.modelname}"
+        "python scripts/analyze_tracer_dist.py {wildcards.modelname} {times}"
 
 rule totalTracer:
     conda:"environment.yml"
@@ -125,3 +133,60 @@ rule totalTracer:
         plot="plots/{modelname}/{modelname}_total_conc.png"
     shell:
         "python scripts/mean_concentrations.py {wildcards.modelname} {conctimes}"
+
+rule segmentT1:
+    input:
+        "data/T1.nii.gz"
+    output:
+        "results/freesurfer/T1_synthseg.nii.gz"
+    shell:
+        "scripts/synthseg.sh"
+
+rule meshT1:
+    conda:"environment.yml"
+    input:
+        "results/freesurfer/T1_synthseg.nii.gz"
+    output:
+        "mesh/{meshname}/volmesh/mesh.xdmf",
+        "mesh/{meshname}/volmesh/mesh.h5",
+    shell:
+        """
+        python scripts/extract_synthseg_surfaces.py &&
+        python scripts/generate_synthseg_mesh.py configfiles/{wildcards.meshname}.yml
+        """
+
+rule computeSASFlow:
+    conda:"environment.yml"
+    input:
+        "mesh/T1/volmesh/mesh.xdmf",
+        "mesh/T1/volmesh/mesh.h5",
+    output:
+        "results/csf_flow/{csf_flow_model}/csf_v.xdmf",
+        "results/csf_flow/{csf_flow_model}/csf_v.h5",
+    shell:
+        "python scripts/sas_flow.py configfiles/{wildcards.csf_flow_model}.yml"
+
+
+rule AverageSASFlow2PVS:
+    conda:"environment.yml"
+    input:
+        "results/csf_flow/{csf_flow_model}/csf_v.xdmf",
+        "results/csf_flow/{csf_flow_model}/csf_v.h5",
+    output:
+        'results/csf_flow/{csf_flow_model}/pvs_flow.xdmf',
+        'results/csf_flow/{csf_flow_model}/pvs_flow.h5'
+    shell:
+        "python scripts/uhat_prod.py {wildcards.csf_flow_model}"
+
+
+
+
+
+    
+
+
+
+
+
+
+

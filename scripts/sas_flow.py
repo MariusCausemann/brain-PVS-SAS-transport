@@ -1,156 +1,243 @@
 from dolfin import *
-
 from solver import * 
 import os
 import numpy as np
 from xii import *
 from petsc4py import PETSc
 import sympy as sp
+import typer
+import numpy_indexed as npi
+from plotting_utils import read_config
+from IPython import embed
+from pathlib import Path
+
+def directsolve(a, L, bcs, a_prec, W):
+    wh = Function(W)
+    solve(a==L, wh, bcs=bcs, solver_parameters={"linear_solver":"mumps"})
+    return wh
+
+def iterativesolve(a, L, bcs, a_prec, W):
+    A, b = assemble_system(a, L, bcs)
+    B, _ = assemble_system(a_prec, L, bcs) 
+
+    ns = Function(W)    # W is mixed FS
+    nullspace_basis = ns.vector().copy()
+    W.sub(1).dofmap().set(nullspace_basis, 1.0)
+    nullspace_basis.apply('insert')
+    nullspace = VectorSpaceBasis([nullspace_basis])
+    nullspace.orthonormalize()
+
+    as_backend_type(A).set_nullspace(nullspace)
+    wh = Function(W)
+    solver = PETScKrylovSolver()
+    solver.set_operators(A, B)
+
+    ksp = solver.ksp()
+    opts = PETSc.Options()
+    opts.setValue('ksp_type', 'minres')
+    opts.setValue('ksp_minres_qlp', 1)
+    opts.setValue('ksp_rtol', 1E-5)                
+    opts.setValue('ksp_view_pre', None)
+    opts.setValue('ksp_monitor_true_residual', None)                
+    opts.setValue('ksp_converged_reason', None)
+    # Specify that the preconditioner is block diagonal and customize
+    # inverses of individual blocks
+    opts.setValue('fieldsplit_0_ksp_type', 'preonly')
+    opts.setValue('fieldsplit_0_pc_type', 'lu')
+    opts.setValue('fieldsplit_0_pc_factor_mat_solver_type', 'mumps')
+    opts.setValue('fieldsplit_1_ksp_type', 'preonly')
+    opts.setValue('fieldsplit_1_pc_type', 'lu')
+    opts.setValue('fieldsplit_1_pc_factor_mat_solver_type', 'mumps')
+    pc = ksp.getPC()
+    pc.setType(PETSc.PC.Type.FIELDSPLIT)
+    is_V = PETSc.IS().createGeneral(W.sub(0).dofmap().dofs())
+    is_Q = PETSc.IS().createGeneral(W.sub(1).dofmap().dofs())
+    pc.setFieldSplitIS(('0', is_V), ('1', is_Q))
+    pc.setFieldSplitType(PETSc.PC.CompositeType.ADDITIVE) 
+    ksp.setUp()
+    subksps = pc.getFieldSplitSubKSP()
+    A0, B0 = subksps[0].getOperators()
+    gdim = W.mesh().geometry().dim()
+    A0.setBlockSize(gdim)
+    B0.setBlockSize(gdim)
+    pc.setFromOptions()
+    ksp.setFromOptions()
+    niters = solver.solve(wh.vector(), b)
+    return wh
+
+PETScOptions.set("mat_mumps_icntl_4", 3)  # mumps verbosity
+#PETScOptions.set("mat_mumps_icntl_24", 1)  # null pivot detection
+PETScOptions.set("mat_mumps_icntl_35", 1)  # BLR feature
+PETScOptions.set("mat_mumps_cntl_7", 1e-8)  # BLR eps
+#PETScOptions.set("mat_mumps_icntl_32", 1)  # forward elimination during solve (useful, but not passed on by petsc)
+#PETScOptions.set("mat_mumps_icntl_22", 1)  # out-of-core to reduce memory
+#PETScOptions.set("mat_mumps_icntl_11", 1)  # error analysis
+#PETScOptions.set("mat_mumps_icntl_25", 2)  # turn on null space basis
+
+# domain IDs
+CSFID = 1
+PARID = 2
+LVID = 3
+V34ID = 4
+CSFNOFLOWID = 5
+
+# interface/boundary ids
+EFFLUX_ID = 1
+NO_SLIP_ID = 2
+LV_INTERF_ID = 3
+SPINAL_OUTLET_IT = 4
+
+def map_on_global(uh, parentmesh, eps_digits=10):
+    # map the solution back on the whole domain
+    el = uh.function_space().ufl_element()
+    V = uh.function_space()
+    eldim = 1 if len(uh.ufl_shape)==0 else uh.ufl_shape[0]
+    V_glob = FunctionSpace(parentmesh, el)
+    c_coords = np.round(V.tabulate_dof_coordinates()[::eldim,:], eps_digits)
+    p_coords = np.round(V_glob.tabulate_dof_coordinates()[::eldim,:], eps_digits)
+    idxmap = npi.indices(p_coords, c_coords, axis=0)
+    uh_global = Function(V_glob)
+    for i in range(eldim):
+        uh_global.vector()[idxmap*eldim + i] = uh.vector()[i::eldim]
+    return uh_global
+
+def get_normal_func(mesh):
+    n = FacetNormal(mesh)
+    V = VectorFunctionSpace(mesh, "CG", 1)
+    u = TrialFunction(V)
+    v = TestFunction(V)
+    a = inner(u,v)*ds
+    l = inner(n, v)*ds
+    A = assemble(a, keep_diagonal=True)
+    L = assemble(l)
+
+    A.ident_zeros()
+    nh = Function(V)
+    solve(A, nh.vector(), L, "cg", "jacobi")
+    return nh
 
 
+def compute_sas_flow(configfile : str):
 
-# get mesh 
-sas = Mesh()
-with XDMFFile('mesh/volmesh/mesh.xdmf') as f:
-    f.read(sas)
-    gdim = sas.geometric_dimension()
-    vol_subdomains = MeshFunction('size_t', sas, gdim, 0)
-    f.read(vol_subdomains, 'label')
-    sas.scale(1e-3)  # scale from mm to m
+    config = read_config(configfile)
+    modelname = Path(configfile).stem
+    meshname = config["mesh"]
 
-# pick the sas mesh 
-sas_outer = EmbeddedMesh(vol_subdomains, 1) 
+    results_dir = f"results/csf_flow/{modelname}/"
+    os.makedirs(results_dir, exist_ok=True)
+    # get mesh 
+    sas = Mesh()
+    with XDMFFile(f'mesh/{meshname}/volmesh/mesh.xdmf') as f:
+        f.read(sas)
+        gdim = sas.geometric_dimension()
+        label = MeshFunction('size_t', sas, gdim, 0)
+        f.read(label, 'label')
 
-# create boundary markers 
-boundary_markers = MeshFunction("size_t", sas, sas.topology().dim() - 1)
-boundary_markers.set_all(0)
-# Sub domain for efflux route (mark whole boundary of the full domain) 
-class Efflux(SubDomain):
-    def inside(self, x, on_boundary):
-        return on_boundary
-efflux = Efflux()
-efflux.mark(boundary_markers,1)
+    sas_outer = EmbeddedMesh(label, [CSFID,LVID,V34ID]) 
 
-# translate markers to the sas outer mesh 
-boundary_markers_outer = MeshFunction("size_t", sas_outer, sas_outer.topology().dim() - 1, 0)
-DomainBoundary().mark(boundary_markers_outer, 2)
-sas_outer.translate_markers(boundary_markers, (1, ), marker_f=boundary_markers_outer)
+    # create boundary markers 
+    boundary_markers = MeshFunction("size_t", sas, sas.topology().dim() - 1)
+    boundary_markers.set_all(0)
+    # Sub domain for efflux route (mark whole boundary of the full domain) 
+    efflux = CompiledSubDomain("on_boundary && x[2] > m",m=config["noslip_max_z"])
+    efflux.mark(boundary_markers, EFFLUX_ID)
+    
+    # mark LV surface
+    mark_internal_interface(sas, label, boundary_markers, LV_INTERF_ID,
+                            doms=[LVID, PARID])
+    
+    # translate markers to the sas outer mesh 
+    boundary_markers_outer = MeshFunction("size_t", sas_outer, sas_outer.topology().dim() - 1, 0)
+    DomainBoundary().mark(boundary_markers_outer, NO_SLIP_ID)
+    sas_outer.translate_markers(boundary_markers, (EFFLUX_ID, LV_INTERF_ID), marker_f=boundary_markers_outer)
 
-File("fpp.pvd") << boundary_markers_outer
+    spinal_outlet = CompiledSubDomain("on_boundary && x[2] < zmin + eps",
+                                       zmin=sas.coordinates()[:,2].min(), eps=1e-3)
+    spinal_outlet.mark(boundary_markers_outer, SPINAL_OUTLET_IT)
 
-ds = Measure("ds", domain=sas_outer, subdomain_data=boundary_markers_outer)
+    File("fpp.pvd") << boundary_markers_outer
 
-# Define function spaces for velocity and pressure
-cell = sas_outer.ufl_cell()  
-Velm = VectorElement('Lagrange', cell, 2)
-Qelm = FiniteElement('Lagrange', cell, 1) 
-Welm = MixedElement([Velm, Qelm]) 
-W = FunctionSpace(sas_outer, Welm)
+    ds = Measure("ds", domain=sas_outer, subdomain_data=boundary_markers_outer)
 
-u , p = TrialFunctions(W) 
-v , q = TestFunctions(W)
-n = FacetNormal(sas_outer)
+    # Define function spaces for velocity and pressure
+    cell = sas_outer.ufl_cell()  
+    Velm = VectorElement('Lagrange', cell, 3)
+    Qelm = FiniteElement('Lagrange', cell, 2) 
+    Q = FunctionSpace(sas_outer, Qelm)
+    W = FunctionSpace(sas_outer, Velm * Qelm)
 
-mu = Constant(1e-3) # units need to be checked 
-R = Constant(-1e-5)
-f = Constant((1,1,1)) # right hand side, ofcourse needs to modified to obtain the right thing 
+    u , p = TrialFunctions(W) 
+    v , q = TestFunctions(W)
+    n = FacetNormal(sas_outer)
 
-a = (inner(2*mu*sym(grad(u)), sym(grad(v)))*dx - inner(p, div(v))*dx
-         -inner(q, div(u))*dx  + inner(R*dot(u,n), dot(v,n))*ds(1)) 
-bcs = [DirichletBC(W.sub(0), Constant((0.0,0.0,0.0)), ds.subdomain_data(), 2)] 
+    mu = Constant(config["mu"]) # units need to be checked 
+    R = Constant(config["R"]) # 1e-5 Pa/(mm s)
+    f = Constant([0]*gdim)
 
-L = inner(f, v)*dx 
+    LV_surface_area = assemble(1*ds(LV_INTERF_ID))
+    total_production = config["production_rate"]
+    g = total_production / LV_surface_area
+    g_L_per_day = 1e3 *(60*60*24) * assemble(g*ds(LV_INTERF_ID))
+    print(f"production rate: {g_L_per_day} L/day")
 
-A, b = assemble_system(a, L, bcs)
+    a = (inner(2*mu*sym(grad(u)), sym(grad(v)))*dx - inner(p, div(v))*dx
+            -inner(q, div(u))*dx + inner(R*dot(u,n), dot(v,n))*ds(EFFLUX_ID)) 
+    L = inner(f, v)*dx
 
-# Preconditioner
-a_prec = (inner(2*mu*grad(u), grad(v))*dx + inner(R*dot(u,n), dot(v,n))*ds(1)
-            + (1/mu)*inner(p, q)*dx) 
+    CG2 = VectorFunctionSpace(sas_outer, "CG", 2)
+    inflow = get_normal_func(sas_outer)
+    inflow.vector()[:] *= -g
+    bcs = [DirichletBC(W.sub(0), Constant((0, 0, 0)), ds.subdomain_data(), NO_SLIP_ID),
+           DirichletBC(W.sub(0), inflow, ds.subdomain_data(), LV_INTERF_ID)]
+    
+    if config["spinal_outflow_bc"] == "noslip":
+        bcs += [DirichletBC(W.sub(0), Constant((0, 0, 0)), ds.subdomain_data(), SPINAL_OUTLET_IT)]
+    elif config["spinal_outflow_bc"] == "zeroneumann":
+        pass
+    else:
+        raise Exception("spinal bc must be one of {noslip,zeroneumann}")
 
-B, _ = assemble_system(a_prec, L, bcs)    
+    a_prec = (inner(2*mu*grad(u), grad(v))*dx + inner(R*dot(u,n), dot(v,n))*ds(EFFLUX_ID)
+                    + (1/mu)*inner(p, q)*dx) 
 
+    #wh = iterativesolve(a, L, bcs, a_prec, W)
+    wh = directsolve(a, L, bcs, a_prec, W)
+    uh, ph = wh.split(deepcopy=True)[:]
+    #assert np.isclose(assemble(inner(uh,-n)*ds(LV_INTERF_ID)), total_production, rtol=0.03)
+    
+    # project to CG2 and write for visualization
+    uh2 = project(uh, CG2, solver_type="cg", preconditioner_type="hypre_amg")
+    with XDMFFile(f'{results_dir}/csf_vis_v.xdmf') as xdmf:
+        xdmf.write_checkpoint(uh2, "velocity")
+    with XDMFFile(f'{results_dir}/csf_vis_p.xdmf') as xdmf:
+        xdmf.write_checkpoint(ph, "pressure")
+    
+    uh_global = map_on_global(uh, sas)
+    dxglob = Measure("dx", sas, subdomain_data=label)
 
-print(W.sub(0).collapse().dim(), W.sub(1).collapse().dim())
+    assert np.isclose(assemble(inner(uh_global, uh_global)*dxglob(PARID)), 0)
+    assert np.isclose(assemble(inner(uh_global, uh_global)*dxglob(CSFNOFLOWID)), 0)
+    assert np.isclose(assemble(inner(uh, uh)*dx), assemble(inner(uh_global, uh_global)*dxglob))
 
-wh = Function(W)
+    divu_global = assemble(div(uh_global)*div(uh_global)*dxglob)
+    divu = assemble(div(uh)*div(uh)*dx)
 
-solver = PETScKrylovSolver()
-solver.set_operators(A, B)
+    assert np.isclose(divu, divu_global, rtol=0.2)
 
-ksp = solver.ksp()
+    with XDMFFile(f'{results_dir}/csf_v.xdmf') as xdmf:
+        xdmf.write(sas)
+        xdmf.write_checkpoint(uh_global, "velocity", append=True)
 
-opts = PETSc.Options()
-opts.setValue('ksp_type', 'minres')
-opts.setValue('ksp_rtol', 1E-5)                
-opts.setValue('ksp_view_pre', None)
-opts.setValue('ksp_monitor_true_residual', None)                
-opts.setValue('ksp_converged_reason', None)
-# Specify that the preconditioner is block diagonal and customize
-# inverses of individual blocks
-opts.setValue('fieldsplit_0_ksp_type', 'preonly')
-#opts.setValue('fieldsplit_0_pc_type', 'lu')        # Exact inverse for velocity
-opts.setValue('fieldsplit_0_pc_type', 'hypre')        # Exact inverse for velocity
+    with XDMFFile(f'{results_dir}/csf_p.xdmf') as xdmf:
+        xdmf.write_checkpoint(ph, "pressure")
 
-#   -pc_hypre_boomeramg_cycle_type <V> (choose one of) V W (None)
-#   -pc_hypre_boomeramg_max_levels <25>: Number of levels (of grids) allowed (None)
-opts.setValue('fieldsplit_0_pc_hypre_boomeramg_max_iter', 2)  # : Maximum iterations used PER hypre call (None)
-#   -pc_hypre_boomeramg_tol <0.>: Convergence tolerance PER hypre call (0.0 = use a fixed number of iterations) (None)
-#   -pc_hypre_boomeramg_truncfactor <0.>: Truncation factor for interpolation (0=no truncation) (None)
-#   -pc_hypre_boomeramg_P_max <0>: Max elements per row for interpolation operator (0=unlimited) (None)
-#   -pc_hypre_boomeramg_agg_nl <0>: Number of levels of aggressive coarsening (None)
-#   -pc_hypre_boomeramg_agg_num_paths <1>: Number of paths for aggressive coarsening (None)
-opts.setValue('fieldsplit_0_pc_hypre_boomeramg_strong_threshold', 0.99)  # : Threshold for being strongly connected (None)
-#   -pc_hypre_boomeramg_max_row_sum <0.9>: Maximum row sum (None)
-#   -pc_hypre_boomeramg_grid_sweeps_all <1>: Number of sweeps for the up and down grid levels (None)
-opts.setValue('fieldsplit_0_pc_hypre_boomeramg_nodal_coarsen', 1) #  Use a nodal based coarsening 1-6 (HYPRE_BoomerAMGSetNodal)
-#   -pc_hypre_boomeramg_vec_interp_variant <0>: Variant of algorithm 1-3 (HYPRE_BoomerAMGSetInterpVecVariant)
-#   -pc_hypre_boomeramg_grid_sweeps_down <1>: Number of sweeps for the down cycles (None)\
-opts.setValue('fieldsplit_0_pc_hypre_boomeramg_grid_sweeps_down', 3)
-opts.setValue('fieldsplit_0_pc_hypre_boomeramg_grid_sweeps_up', 3) # Number of sweeps for the up cycles (None)
-#   -pc_hypre_boomeramg_grid_sweeps_coarse <1>: Number of sweeps for the coarse level (None)
-#   -pc_hypre_boomeramg_smooth_type <Schwarz-smoothers> (choose one of) Schwarz-smoothers Pilut ParaSails Euclid (None)
-#   -pc_hypre_boomeramg_smooth_num_levels <25>: Number of levels on which more complex smoothers are used (None)
-#   -pc_hypre_boomeramg_eu_level <0>: Number of levels for ILU(k) in Euclid smoother (None)
-#   -pc_hypre_boomeramg_eu_droptolerance <0.>: Drop tolerance for ILU(k) in Euclid smoother (None)
-#   -pc_hypre_boomeramg_eu_bj: <FALSE> Use Block Jacobi for ILU in Euclid smoother? (None)
-#   -pc_hypre_boomeramg_relax_type_all <symmetric-SOR/Jacobi> (choose one of) Jacobi sequential-Gauss-Seidel seqboundary-Gauss-Seidel SOR/Jacobi backward-SOR/Jacobi  symmetric-SOR/Jacobi  l1scaled-SOR/Jacobi Gaussian-elimination      CG Chebyshev FCF-Jacobi l1scaled-Jacobi (None)
-#   -pc_hypre_boomeramg_relax_type_down <symmetric-SOR/Jacobi> (choose one of) Jacobi sequential-Gauss-Seidel seqboundary-Gauss-Seidel SOR/Jacobi backward-SOR/Jacobi  symmetric-SOR/Jacobi  l1scaled-SOR/Jacobi Gaussian-elimination      CG Chebyshev FCF-Jacobi l1scaled-Jacobi (None)
-#   -pc_hypre_boomeramg_relax_type_up <symmetric-SOR/Jacobi> (choose one of) Jacobi sequential-Gauss-Seidel seqboundary-Gauss-Seidel SOR/Jacobi backward-SOR/Jacobi  symmetric-SOR/Jacobi  l1scaled-SOR/Jacobi Gaussian-elimination      CG Chebyshev FCF-Jacobi l1scaled-Jacobi (None)
-#   -pc_hypre_boomeramg_relax_type_coarse <Gaussian-elimination> (choose one of) Jacobi sequential-Gauss-Seidel seqboundary-Gauss-Seidel SOR/Jacobi backward-SOR/Jacobi  symmetric-SOR/Jacobi  l1scaled-SOR/Jacobi Gaussian-elimination      CG Chebyshev FCF-Jacobi l1scaled-Jacobi (None)
-#   -pc_hypre_boomeramg_relax_weight_all <1.>: Relaxation weight for all levels (0 = hypre estimates, -k = determined with k CG steps) (None)
-#   -pc_hypre_boomeramg_relax_weight_level <1.>: Set the relaxation weight for a particular level (weight,level) (None)
-#   -pc_hypre_boomeramg_outer_relax_weight_all <1.>: Outer relaxation weight for all levels (-k = determined with k CG steps) (None)
-#   -pc_hypre_boomeramg_outer_relax_weight_level <1.>: Set the outer relaxation weight for a particular level (weight,level) (None)
-#   -pc_hypre_boomeramg_no_CF: <FALSE> Do not use CF-relaxation (None)
-#   -pc_hypre_boomeramg_measure_type <local> (choose one of) local global (None)
-#   -pc_hypre_boomeramg_coarsen_type <Falgout> (choose one of) CLJP Ruge-Stueben  modifiedRuge-Stueben   Falgout  PMIS  HMIS (None)
-#   -pc_hypre_boomeramg_interp_type <classical> (choose one of) classical   direct multipass multipass-wts ext+i ext+i-cc standard standard-wts   FF FF1 (None)
-#   -pc_hypre_boomeramg_print_statistics: Print statistics (None)
-#   -pc_hypre_boomeramg_print_statistics <3>: Print statistics (None)
-#   -pc_hypre_boomeramg_print_debug: Print debug information (None)
-#   -pc_hypre_boomeramg_nodal_relaxation: <FALSE> Nodal relaxation via Schwarz (None)
+    umag = project(sqrt(inner(uh, uh)), FunctionSpace(sas_outer, "CG", 3),
+                   solver_type="cg", preconditioner_type="hypre_amg")
+    umean = assemble(umag*dx) / assemble(1*dx(domain=sas_outer))
 
-opts.setValue('fieldsplit_1_ksp_type', 'preonly')
-opts.setValue('fieldsplit_1_pc_type', 'lu')     # AMG for pressure
+    print(f"div u = {divu}")
+    print(f"u max = {umag.vector().max()}")
+    print(f"u umean = {umean}")
 
-#opts.setValue('fieldsplit_2_ksp_type', 'preonly')
-#opts.setValue('fieldsplit_2_pc_type', 'lu')                
-pc = ksp.getPC()
-pc.setType(PETSc.PC.Type.FIELDSPLIT)
-is_V = PETSc.IS().createGeneral(W.sub(0).dofmap().dofs())
-is_Q = PETSc.IS().createGeneral(W.sub(1).dofmap().dofs())
-
-pc.setFieldSplitIS(('0', is_V), ('1', is_Q))
-pc.setFieldSplitType(PETSc.PC.CompositeType.MULTIPLICATIVE) 
-
-ksp.setUp()
-pc.setFromOptions()
-ksp.setFromOptions()
-niters = solver.solve(wh.vector(), b)
-rnorm = ksp.getResidualNorm()
-uh, ph = wh.split(deepcopy=True)[:2]
-# write solutions 
-ufile_pvd = File("velocity_sas.pvd")
-ufile_pvd << uh
-pfile_pvd = File("pressure.pvd")
-pfile_pvd << ph
+if __name__ == "__main__":
+    typer.run(compute_sas_flow)

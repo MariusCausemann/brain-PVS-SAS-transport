@@ -10,9 +10,11 @@ from create_diff_plot import plot_model_diff
 crop_dict = {"overview":lambda img : img[100:-10,140:-140],
              "overview_bottom":lambda img : img[100:-100,140:-140],
              "detail":lambda img : img,
+            "isosurf":lambda img : img[100:-10,140:-140],
             "detail_bottom":lambda img : img,
+            "isosurf_bottom":lambda img : img[100:-100,140:-140],
              }
-padding = {"overview":0, "detail":0.05}
+padding = {"overview":0, "detail":0.05, "isosurf":0}
 percentile = 95
 
 def compare_models(modela:str, modelb:str, type:str, cmax:float, diffmax:float, times:List[int]):

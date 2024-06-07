@@ -5,22 +5,41 @@ import pyvista as pv
 import numpy as np
 import ufl
 
+def mark_internal_interface(mesh, subdomains, bm, interface_id,
+                            doms=None):
+    # set internal interface
+    for f in facets(mesh):
+        domains = []
+        for c in cells(f):
+            domains.append(subdomains[c])
+        domains = set(domains)
+        if len(domains)==2:
+            # if doms is None, mark any interface
+            if doms is None:
+                bm[f] = interface_id
+            # mark only interfaces between the domains specified in doms
+            elif set(doms)==domains:
+                bm[f] = interface_id
 
-def remove_duplicate_cells(netw):
-    cells = np.array(netw.cells.reshape(-1, 3))[:,1:]
-    cells.sort(axis=1)
-    unique_cells = np.unique(cells, axis=0)
-    netw.cells = np.pad(unique_cells, pad_width=((0,0), (1,0)), constant_values=2)
-    
+def mark_external_boundary(mesh, subdomains, bm, boundary_id,
+                            doms=None):
+    # set internal interface
+    for f in facets(mesh):
+        if f.exterior(): 
+            domain = subdomains[list(cells(f))[0]]
+            if domain in doms:
+                bm[f] = boundary_id
+
+
 def read_vtk_network(filename, rescale_mm2m=True):
     """Read the VTK file given by filename, return a FEniCS 1D Mesh representing the network, a FEniCS MeshFunction (double) representing the radius of each vessel segment (defined over the mesh cells), and a FEniCS MeshFunction (size_t) defining the roots of the network (defined over the mesh vertices, roots are labelled by 2 or 1.) 
 
-    rescale_mm2m is set to True by default, in which case the information on file is rescaled by a factor 1.e-3. 
+    rescale_mm2m is set to True by default, in which case the information on file is rescaled by a factor 1.e-3. MER: This is error-prone, I suggest no rescaling behind the scenes.
 """
+    print("Reading network mesh from %s" % filename)
     netw = pv.read(filename)
     if rescale_mm2m:
         netw.points *= 1e-3 # scale to m
-    remove_duplicate_cells(netw)
     mesh = Mesh()
     ed = MeshEditor()
     ed.open(mesh, 'interval', 1, 3)
@@ -43,17 +62,19 @@ def read_vtk_network(filename, rescale_mm2m=True):
 
     if rescale_mm2m:
         radii.array()[:] = netw["radius"] * 1e-3 # scale to m
+    else:
+        radii.array()[:] = netw["radius"]
 
+    print("... with %d nodes, %d edges" % (mesh.num_vertices(), mesh.num_cells()))
     return mesh, radii, roots
 
-def get_sas():
+def get_mesh(meshname):
     sas = Mesh()
-    with XDMFFile('mesh/volmesh/mesh.xdmf') as f:
+    with XDMFFile(f'mesh/{meshname}/volmesh/mesh.xdmf') as f:
         f.read(sas)
         gdim = sas.geometric_dimension()
         vol_subdomains = MeshFunction('size_t', sas, gdim, 0)
         f.read(vol_subdomains, 'label')
-        sas.scale(1e-3)  # scale from mm to m
     return sas, vol_subdomains
 
 
@@ -106,6 +127,30 @@ def as_P0_function(mesh_f):
 
     return f
 
+def as_Pk_function(mesh_f, k=0):
+    '''Represent as DGk'''
+    p0 = as_P0_function(mesh_f)
+    assert p0.ufl_shape == ()
+    V0dm = p0.function_space().dofmap()
+    p0_values = p0.vector().get_local()
+
+    mesh = mesh_f.mesh()
+    Vk = FunctionSpace(mesh, "DG", k)
+    pk = Function(Vk)
+    Vkdm = Vk.dofmap()
+
+    pk_values = pk.vector().get_local()
+    for cell in cells(mesh):
+        pk_values[Vkdm.cell_dofs(cell.index())] = p0_values[V0dm.cell_dofs(cell.index())]
+    pk.vector().set_local(pk_values)
+
+    return pk
+    
+    assert mesh_f.dim() == mesh.topology().dim()
+
+    return f
+
+
 
 def ksp_mat(tensor):
     '''Underlying PETSc thing'''
@@ -121,10 +166,10 @@ def ksp_vec(tensor):
 
 if __name__ == '__main__':
 
-    vein, vein_radii, vein_roots = read_vtk_network("../mesh/networks/venes_smooth.vtk")
+    vein, vein_radii, vein_roots = read_vtk_network("../mesh/networks/venes_smooth.vtk", rescale_mm2m=False)
     vein_radii = as_P0_function(vein_radii)
 
-    artery, artery_radii, artery_roots = read_vtk_network("../mesh/networks/arteries_smooth.vtk")
+    artery, artery_radii, artery_roots = read_vtk_network("../mesh/networks/arteries_smooth.vtk", rescale_mm2m=False)
     artery_radii = as_P0_function(artery_radii)
     
 
