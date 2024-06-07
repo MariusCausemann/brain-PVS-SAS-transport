@@ -1,0 +1,251 @@
+%% \documentclass{article}
+%% \usepackage{a4wide}
+%% \usepackage{graphicx}
+%% \usepackage{subcaption}
+%% \usepackage{tikz}
+
+%% \usetikzlibrary{quotes}
+%% \usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,positioning,fit,petri}
+
+%% %\begin{document}
+%% \captionsetup[subfigure]{justification=justified,singlelinecheck=false}
+\tikzset{
+  vertex/.style={circle, fill=black!15, font=\tiny, inner sep=2pt},
+  blank/.style={circle, fill=black!05, font=\tiny},
+}
+\begin{figure}[t!]
+\centering
+  \begin{subfigure}{0.19\textwidth}
+\caption*{\bf A}
+\vspace{-1em}
+  \begin{tikzpicture}
+  [scale=0.7]
+  \node[vertex, fill=red!50] (n3) at (-1, 0) {}; 
+  \node[vertex, fill=orange!50] (n0) at (1, 0) {}; 
+  \node[vertex] (n2) at (-0.5, 1) {}; 
+  \node[vertex] (n1) at (0.5, 1) {}; 
+
+  \node[vertex] (n4) at (-1, 2) {}; 
+  \node[vertex] (n5) at (-1.5, 3) {}; 
+  \node[vertex] (n6) at (-0.5, 3) {}; 
+  \node[vertex] (n7) at (-1.0, 4) {}; 
+
+  \node[vertex] (n8) at (1.0, 2) {}; 
+  \node[vertex] (n9) at (1.0, 3) {}; 
+  \node[vertex] (n10) at (0.5, 4) {}; 
+  \node[vertex] (n11) at (1.5, 4) {}; 
+  \node[vertex] (n12) at (2.0, 5) {}; 
+  \node[vertex] (n13) at (0.5, 2.5) {}; 
+  \node[vertex] (n14) at (0, 5) {}; 
+  \node[vertex] (n15) at (2, 6) {}; 
+
+  \draw[ ultra thick ] (n3) -- (n2);% node[right]{$ \bf x$};
+  \draw[ ultra thick ] (n2) -- (n1);
+  \draw[ ultra thick ] (n0) -- (n1);
+
+  \draw[ very thick ] (n2) -- (n4);
+  \draw[ very thick ] (n4) -- (n5);
+  \draw[ thick ] (n4) -- (n6);
+  \draw[ thick ] (n6) -- (n7);
+
+  \draw[ very thick ] (n1) -- (n8);
+  \draw[ very thick ] (n8) -- (n9);
+
+  \draw[ thick ] (n9) -- (n10);
+  \draw[ thick ] (n10) -- (n14);
+
+  \draw[ thick] (n9) -- (n13);
+
+  \draw[ very thick ] (n9) -- (n11);
+  \draw[ very thick ] (n11) -- (n12);
+  \draw[ very thick ] (n12) -- (n15);
+
+\end{tikzpicture}
+  \end{subfigure}
+\begin{subfigure}{0.19\textwidth}
+\caption*{\bf B}
+\vspace{-1em}
+\begin{tikzpicture}
+  [scale=0.7,
+  ]
+
+  \node[vertex,fill=red!50] (n3) at (-1, 0) {}; 
+  \node[vertex,fill=orange!50] (n0) at (1, 0) {}; 
+  \node[vertex,fill=red!50] (n2) at (-0.5, 1) {}; 
+  \node[vertex,fill=orange!50] (n1) at (0.5, 1) {}; 
+
+  \node[vertex,fill=red!50] (n4) at (-1, 2) {}; 
+  \node[vertex,fill=red!50] (n5) at (-1.5, 3) {}; 
+  \node[vertex,fill=red!50] (n6) at (-0.5, 3) {}; 
+  \node[vertex,fill=red!50] (n7) at (-1.0, 4) {}; 
+
+  \node[vertex,fill=orange!50] (n8) at (1.0, 2) {}; 
+  \node[vertex,fill=orange!50] (n9) at (1.0, 3) {}; 
+  \node[vertex,fill=orange!50] (n10) at (0.5, 4) {}; 
+  \node[vertex,fill=orange!50] (n11) at (1.5, 4) {}; 
+  \node[vertex,fill=orange!50] (n12) at (2.0, 5) {}; 
+  \node[vertex,fill=orange!50] (n13) at (0.5, 2.5) {}; 
+  \node[vertex,fill=orange!50] (n14) at (0, 5) {}; 
+  \node[vertex,fill=orange!50] (n15) at (2, 6) {}; 
+
+  \draw[ ultra thick ] (n3) -- (n2);% node[right]{$ \bf x$};
+
+  \draw[ ultra thick ] (n0) -- (n1);
+
+  \draw[ very thick ] (n2) -- (n4);
+  \draw[ very thick ] (n4) -- (n5);
+  \draw[ thick ] (n4) -- (n6);
+  \draw[ thick ] (n6) -- (n7);
+
+  \draw[ very thick ] (n1) -- (n8);
+  \draw[ very thick ] (n8) -- (n9);
+
+  \draw[ thick ] (n9) -- (n10);
+  \draw[ thick ] (n10) -- (n14);
+
+  \draw[ thick, dotted ] (n9) -- (n13);
+
+  \draw[ very thick ] (n9) -- (n11);
+  \draw[ very thick ] (n11) -- (n12);
+  \draw[ very thick ] (n12) -- (n15);
+\end{tikzpicture}
+\end{subfigure}
+  \begin{subfigure}{0.19\textwidth}
+\caption*{\bf C}
+\vspace{-1em}
+\begin{tikzpicture}
+  [scale=0.7,
+  ]
+  \node[vertex,fill=red!50] (n3) at (-1, 0) {}; 
+  \node[vertex,fill=red!50] (n4) at (-1, 2) {}; 
+  \node[vertex,fill=red!50] (n5) at (-1.5, 3) {}; 
+  \node[vertex,fill=red!50] (n7) at (-1.0, 4) {}; 
+
+  \draw[-stealth, ultra thick ] (n3) to  [bend right=20] (n4) ;
+  \draw[-stealth, very thick ] (n4) -- (n5);
+  \draw[-stealth, thick ] (n4) to [bend right=20] (n7);
+
+  \node[vertex, fill=orange!50] (n0) at (1, 0) {}; 
+  \node[vertex, fill=orange!50] (n9) at (1.0, 3) {}; 
+  \node[vertex, fill=orange!50] (n14) at (0, 5) {}; 
+  \node[vertex, fill=orange!50] (n15) at (2, 6) {}; 
+
+  \draw[-stealth, ultra thick ] (n0) to [bend left=10] (n9);
+  \draw[-stealth, thick ] (n9) -- (n14);
+  \draw[-stealth, very thick ] (n9) to [bend right=10] (n15);
+\end{tikzpicture}
+  \end{subfigure}
+  \begin{subfigure}{0.19\textwidth}
+\caption*{\bf D}
+\vspace{-1em}
+\begin{tikzpicture}
+  [scale=0.7,
+  ]
+  \node[vertex, fill=red!50] (n3) at (-1, 0) {}; 
+  \node[vertex] (n4) at (-1, 2) {}; 
+  \node[vertex] (n5) at (-1.5, 3) {}; 
+  \node[vertex] (n7) at (-1.0, 4) {}; 
+
+
+% alpha = 1.0
+%Running simple schematic test case via estimate_net_flow
+%<Q'>_n (mm^3/s) =  [0.00707734 0.00634445 0.0007329 ]
+%<u'>_n (mm/s) =  [0.00312887 0.00631094 0.0029161 ]
+
+  \draw[-stealth, ultra thick, blue!40] (n3) to  [bend right=20] (n4) ;
+  \draw[-stealth, very thick, blue!30] (n4) -- (n5);
+  \draw[-stealth, thick, blue!10] (n4) to [bend right=20] (n7);
+
+  \node[vertex, fill=orange!50] (n0) at (1, 0) {}; 
+  \node[vertex] (n9) at (1.0, 3) {}; 
+  \node[vertex] (n14) at (0, 5) {}; 
+  \node[vertex] (n15) at (2, 6) {}; 
+
+% alpha = 2.0
+%Running simple schematic test case via estimate_net_flow
+%<Q'>_n (mm^3/s) =  [0.01923927 0.01708518 0.00215408]
+%<u'>_n (mm/s) =  [0.00850562 0.01699495 0.00857082]
+
+  \draw[-stealth, ultra thick, blue!80] (n0) to [bend left=10] (n9);
+  \draw[-stealth, thick, blue!20] (n9) -- (n14);
+  \draw[-stealth, very thick, blue!70] (n9) to [bend right=10] (n15);
+\end{tikzpicture}
+  \end{subfigure}
+\begin{subfigure}{0.19\textwidth}
+\caption*{\bf E}
+\vspace{-1em}
+  \begin{tikzpicture}
+  [scale=0.7]
+  \node[vertex, fill=red!50] (n3) at (-1, 0) {}; 
+  \node[vertex, fill=orange!50] (n0) at (1, 0) {}; 
+  \node[vertex] (n2) at (-0.5, 1) {}; 
+  \node[vertex] (n1) at (0.5, 1) {}; 
+
+  \node[vertex] (n4) at (-1, 2) {}; 
+  \node[vertex] (n5) at (-1.5, 3) {}; 
+  \node[vertex] (n6) at (-0.5, 3) {}; 
+  \node[vertex] (n7) at (-1.0, 4) {}; 
+
+  \node[vertex] (n8) at (1.0, 2) {}; 
+  \node[vertex] (n9) at (1.0, 3) {}; 
+  \node[vertex] (n10) at (0.5, 4) {}; 
+  \node[vertex] (n11) at (1.5, 4) {}; 
+  \node[vertex] (n12) at (2.0, 5) {}; 
+  \node[vertex] (n13) at (0.5, 2.5) {}; 
+  \node[vertex] (n14) at (0, 5) {}; 
+  \node[vertex] (n15) at (2, 6) {}; 
+
+  \draw[-stealth, ultra thick, blue!40] (n3) -- (n2);% node[right]{$ \bf x$};
+  \draw[-, ultra thick, black!10 ] (n2) -- (n1);
+  \draw[-stealth, ultra thick, blue!80] (n0) -- (n1);
+
+  \draw[-stealth, very thick, blue!40 ] (n2) -- (n4);
+  \draw[-stealth, very thick, blue!30 ] (n4) -- (n5);
+  \draw[-stealth, thick, blue!10 ] (n4) -- (n6);
+  \draw[-stealth, thick, blue!10 ] (n6) -- (n7);
+
+  \draw[-stealth, very thick, blue!80 ] (n1) -- (n8);
+  \draw[-stealth, very thick, blue!80 ] (n8) -- (n9);
+
+  \draw[-stealth, thick, blue!20 ] (n9) -- (n10);
+  \draw[-stealth, thick, blue!20 ] (n10) -- (n14);
+
+  \draw[ thick, black!10] (n9) -- (n13);
+
+  \draw[-stealth, very thick, blue!70 ] (n9) -- (n11);
+  \draw[-stealth, very thick, blue!70 ] (n11) -- (n12);
+  \draw[-stealth, very thick, blue!70 ] (n12) -- (n15);
+
+\end{tikzpicture}
+  \end{subfigure}
+
+\vspace{1em}
+
+\begin{subfigure}{0.32\textwidth}
+\caption*{\bf F}
+\vspace{-2em}
+\includegraphics[width=\textwidth]{figures/arteries_radius_+x.png}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.32\textwidth}
+\caption*{\bf G}
+\vspace{-2em}
+\includegraphics[width=\textwidth]{figures/supply_node_proximity_trees_+x.png}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.32\textwidth}
+\caption*{\bf H}
+\vspace{-2em}
+\includegraphics[width=\textwidth]{figures/pvs_Q_vasomotion_+x.png}
+\end{subfigure}
+\vspace{-1em}
+\caption{Estimating the perivascular flow induced by vascular wall motion. (\textbf{A}) For a vascular network with vessels
+    represented by edges of varying radii and length connected at
+    nodes, and one or more supply nodes (here two, marked in red and
+    orange), we compute one subnetwork for each supply node by
+    proximity (\textbf{B}). Each subnetwork is reduced to a minimal,
+    bifurcating and directed tree while preserving path lengths and averaging radii (\textbf{C}) which is then used to
+    compute $\langle Q' \rangle$. \mer{Caption to be continued...}}
+    \label{fig:sup:peristalsis}
+\end{figure}
+%\end{document}

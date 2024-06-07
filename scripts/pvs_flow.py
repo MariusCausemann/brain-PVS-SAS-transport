@@ -53,7 +53,7 @@ if __name__ == '__main__':
     from xii import TangentCurve
 
     radius_ratio = 1.4
-    mesh ,artery_radii, artery_roots = read_vtk_network("mesh/networks/arteries_smooth.vtk")
+    mesh ,artery_radii, artery_roots = read_vtk_network("mesh/networks/arteries_smooth.vtk", rescale_mm2m=False)
     radius_f = as_P0_function(artery_radii)
     
     # Grab the tangent of xii; bottom line is that this is vector valued
@@ -73,6 +73,8 @@ if __name__ == '__main__':
     uh_mag, ph = wh.split()
 
     QQ = tau.function_space()
+    from IPython import embed 
+    embed()
     # L2 projection to get the flux
     uh, qq = Function(QQ), TestFunction(QQ)
     hK = CellDiameter(mesh)

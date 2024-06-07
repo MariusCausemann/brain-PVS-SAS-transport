@@ -4,12 +4,23 @@
 \usepackage{bm}
 \usepackage{caption}
 \usepackage{subcaption}
+% \captionsetup[subfigure]{justification=justified,singlelinecheck=false}
+\usepackage{tikz}
 \usepackage{newtxmath} % MER: Prettier math
 %\usepackage{natbib}
 \usepackage{cleveref} % MER: Allows \Cref (but use Section X.Y not Subsection X.Y)
 \usepackage{booktabs} % MER: Prettier tables
+
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{tikz}
+
+\usetikzlibrary{quotes}
+\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,positioning,fit,petri}
+
 \graphicspath{{figures/}}
 
+\captionsetup[subfigure]{justification=justified,singlelinecheck=false}
 
 \title{In-silico molecular transport in the human intracranial space}
 
@@ -26,7 +37,7 @@
 \newcommand{\discuss}[1]{\textcolor{red}{#1}}
 \newcommand{\draft}[1]{\textcolor{gray}{#1}}
 
-% Hello hello hello overleaf
+% Hello darkness my old friend. I've come to talk with you again. 
 
 %\affil[+]{these authors contributed equally to this work}
 
@@ -115,6 +126,11 @@ Molecular transport in perivascular spaces (PVSs) is established as a key pathwa
 
 \draft{\lipsum[1]}
 
+\begin{figure}
+  \vspace{10em}
+  \caption{Results: Perivascular flow}
+  \label{fig:pvs}
+\end{figure}
 
 \subsection*{Clearance and the brain's waterscape}
 
@@ -297,8 +313,7 @@ domain defined by the connected centerlines by $\Gamma$. The vascular
 domain is then represented as the union of cylindrical vessels of
 radius $R_1^i$ surrounding the centerlines $\Gamma^i$. Moreover, we
 consider the surrounding perivascular spaces as the union of annular
-cylinders of inner radius $R_1^i$ and outer radius $R_2^i = (1 +
-\alpha) R_1^i$ of width $R_2^i - R_1^i = \alpha R_1^i$. Both the
+cylinders of inner radius $R_1^i$ and outer radius $R_2^i = \beta R_1^i$ of width $R_2^i - R_1^i = (\beta - 1) R_1^i$. Both the
 vasculature and perivasculature are thus defined relative to a common
 network of vessel segments.
 
@@ -341,12 +356,53 @@ Similarly, on the associated perivascular network inlet nodes $\partial \Lambda_
 
 \mer{MER: Who would like to draft a paragraph on our numerical approximation? @Miro? I recommend ``describing with words'' to reach relevant audiences. We need to demonstrate that our ``quantities are converged'', meaning we have a feel for how accurate our results are in practice (e.g.$\pm$ 1\%, 10\%, 100\%, 1000\%). Refer to the Supplementary table for a numerical verification table (quantities of interest versus mesh and time refinement for pure diffusion and one case with convection). Not on top of list of priorities, but not on bottom either.} 
 
-\subsection*{Perivascular fluid flow}
+%\subsection*{Perivascular fluid flow}
+
+%In the perivascular network, we set an average axial velocity $u_{\rm
+%  pvs} = \langle u_{v, s} \rangle$ of $18.7$ $\mu$m/s as reported by
+%Mestre et al.~\cite{mestre2018flow} in mouse perivascular spaces under
+%normal physiological conditions. We may also consider a reduced
+%perivascular velocity corresponding to hypertension in model
+%variations.
 
 \mer{MER: This we will probably have to condense. Move the detailed explanation to Supplementary Methods?}
 
-We may consider non-zero convection in the SAS $u_{\rm sas} \not = 0$ e.g.~resulting from steady state CSF production as predicted by~\cite{hornkjol2022csf} in model variations, but may start with $u_{\rm sas} = 0$ as a baseline. In the perivascular network, we set an average axial velocity $u_{\rm pvs} = \langle u_{v, s} \rangle$ of $18.7$ $\mu$m/s as reported by Mestre et al.~\cite{mestre2018flow} in mouse perivascular spaces under normal physiological conditions. We may also consider a reduced perivascular velocity corresponding to hypertension in model variations.
-\subsubsection*{Steady state PVS flow model} We solve 1D Darcy equations in the vessel network. The unknowns are the averaged PVS velocity, $u_{\rm pvs} = \langle u_{v,s} \rangle$, and the cross-section pressure $p_{\rm pvs} $ (assumed to be constant in each cross-section). The system is given by  \cite{daversin2022geometrically} 
+\subsection*{Perivascular fluid flow induced by vascular wall motion}
+
+Using the theoretical framework introduced by Gjerde et
+al.~\cite{gjerde2023directional}, we compute analytic estimates for
+the time-average perivascular flow rate $\langle Q' \rangle$ induced
+by rhythmic vascular wall motions for different frequencies $f$,
+amplitudes $\varepsilon$ and wave lengths $\lambda$ in the arterial
+network $\Lambda^a$ (see also Supplementary
+Methods~\ref{sec:sup:peristalsis}). The corresponding contribution to
+the convective velocity $\hat{u}_{\rm x}$ is defined vessel-wise as
+$\hat{u}_{\rm x}|_{\Lambda_i} = \langle Q'_i \rangle/A_i$ where $A_i$
+is the cross-section area of the PVS segment ($A_i = \pi (R_2^i -
+R_1^i$)) and $\langle Q_i' \rangle$ is its mean flow rate. Two wall
+motion patterns are considered: \emph{cardiac} pulsations with $f =
+1.0$ (Hz), $\lambda = 2000$ (mm) and $\varepsilon = 1\%$, and very
+low-frequency \emph{vasomotion} with $f = 0.1$ (Hz), $\lambda = 80$
+(mm), and $\varepsilon = 10\%$. The corresponding net convective
+velocities (in the antegrade direction) are for \emph{vasomotion}:
+$9.345 \pm 6.695$ $\mu$m/s, range: $(-65.81, 63.96) \mu$m/s, and for
+\emph{cardiac}: $0.475 \pm 0.5115 \mu$m/s, range: $(- 3.825, 4.861)
+\mu$m/s, where negative velocities correspond to retrograde flow
+(\Cref{fig:pvs}\mer{X}). No perivascular fluid flow induced by wall
+motion is considered for the venous network.
+
+% python3 peristalticflow.py --frequency 0.1 --wavelength 80.0 --amplitude 0.1 --beta 3.0 --recompute
+% <Q'_i> (avg, std, min, max): 0.3775, 0.4485, -1.654, 3.387 (mm^3/s)
+% <u'_i> (avg, std, min, max): 0.009345, 0.006695, -0.06581, 0.06396 (mm/s)
+% <u'_i> (avg, std, min, max): 9.345, 6.695, -65.81, 63.96 (mum/s)
+%python3 peristalticflow.py --frequency 1.0 --wavelength 2000.0 --amplitude 0.01 --beta 3.0 --recompute
+%<Q'_i> (avg, std, min, max): 0.01933, 0.02733, -0.09614, 0.2203 (mm^3/s)
+%<u'_i> (avg, std, min, max): 0.000475, 0.0005115, -0.003825, 0.004861 (mm/s)
+%<u'_i> (avg, std, min, max): 0.475, 0.5115, -3.825, 4.861 (mum/s)
+
+\subsection*{Perivascular fluid flow induced by pressure gradients/fluid source}
+
+We solve 1D Darcy equations in the vessel network. The unknowns are the averaged PVS velocity, $u_{\rm pvs} = \langle u_{v,s} \rangle$, and the cross-section pressure $p_{\rm pvs} $ (assumed to be constant in each cross-section). The system is given by  \cite{daversin2022geometrically} 
 \begin{alignat}{2}
 A \,  u_{\rm pvs}   + \frac{\kappa}{\mu} \, A \, \partial_{s} p_{\rm pvs} & = 0, &&  \quad \rm in  \,\, \Lambda  \\ 
 -\partial_s (A \, u_{\rm pvs}) & = f, && \quad \rm in  \,\, \Lambda .  
@@ -368,6 +424,8 @@ On $\partial \Lambda^{\rm in}$, we prescribe homogeneous Dirichlet data for the 
 \rami{to be completed }
 
 \subsection*{Cerebrospinal fluid flow in the subarachnoid space}
+
+We may consider non-zero convection in the SAS $u_{\rm sas} \not = 0$ e.g.~resulting from steady state CSF production as predicted by~\cite{hornkjol2022csf}
 
 \draft{\lipsum[1]}
 
@@ -478,6 +536,64 @@ The corresponding author is responsible for submitting a \href{http://www.nature
 \appendix
 
 \section{Supplementary methods}
+
+\subsection{Estimating net perivascular flow induced by peristaltic waves}
+\label{sec:sup:peristalsis}
+
+We use the theoretical framework introduced by Gjerde et
+al.~\cite{gjerde2023directional} to compute an analytic estimate of
+the time-averaged (or \emph{net}) flow rates $\langle Q'_i \rangle$
+(mm$^3$/s) induced by peristaltic pumping in a perivascular network
+$\Lambda = \cup_i \Lambda_i$. The motion of the (inner) vascular wall
+is described by a periodic travelling (peristaltic) wave of relative amplitude $\varepsilon$, wave length $\lambda$ (mm) and frequency $f$, acting normal to the wall. By definition, the wave number is $k = 2 \pi/\lambda$ and the angular frequency is $\omega = 2 \pi f$. Each PVS segment $\Lambda_i$ has length $L_i$ with wave-relative length $\ell_i = k L$, baseline inner radius $r_{o_i}'$, fixed outer radius $r_{e_i}'$, and outer-to-inner ratio $\beta_i = r_{e_i}'/r_{o_i}'$ (see also \Cref{tab:pvs:parameters}). These geometric parameters and the assumption of annular cylindrical PVS segments yield hydraulic resistances $\mathcal{R}_{o, i}$ and additional characteristic parameters, see \cite{gjerde2023directional} for the complete definitions and schematics. Since the analytical estimate is derived
+under the assumption that $k L \approx \mathcal{O} 1)$~\cite{gjerde2023directional} and has been verified against numerical simulations for $k L$ of the order $10^{-1}-10^2$~\cite[Table I]{gjerde2023directional}, we consider it
+applicable for the wave lengths and vascular network data considered
+here in which $k L$ ranges from $0.003$ to $15.7$.
+%Vascular branch lengths L (avg, std, min, max) (mm): 26.91093675823157 30.884149011946235 1.0 200.32862451491792
+%... k L: (avg, std, min, max) 2.113580030521996 2.4256353912075688 0.07853981633974483 15.733773376995357 (k = 0.07853981633974483 ) # lmbda = 80 mm
+%... k L: (avg, std, min, max) 0.08454320122087983 0.09702541564830276 0.0031415926535897933 0.6293509350798143 (k = 0.0031415926535897933 ) # lmbda = 2000 mm
+% 
+\begin{table}
+  \small
+  \begin{tabular}{llrc}
+    \toprule
+    Parameter & Description & Value(s)  & Ref.\\ 
+    \midrule
+    Relative PVS size $\beta$ & $\beta = \beta_i = r_{e_i} / r_{o_i}$ & 3 & \cite{mestre2018flow} \\
+    Wave frequency $f$ & Travelling wave frequency of vascular motion & $0.1-1.0$ Hz & \discuss{\cite{gjerde2023directional}} \\
+    Wave length $\lambda$ & Travelling wave length of vascular motion & $80-2000$ mm & \discuss{\cite{gjerde2023directional}} \\
+    Wave amplitude & Relative amplitude of inner wall motion & $1-10\%$ & \discuss{\cite{gjerde2023directional}} \\
+    Vascular radii $\{r_{o_i}\}$ & Vascular network radii data (avg $\pm$ std, $\min$, $\max$) & $1.22 \pm 0.35$, $1.0$, $3.0$  mm & \cite{hodneland2019new} \\
+    Vascular branch lengths $\{L_{i}\}$ & Path length between vasc. junctions (avg $\pm$ std, $\min$, $\max$) & $26.91 \pm 30.89$, $1.0$, $200.33$  mm & \discuss{--} \\
+    \bottomrule
+  \end{tabular}
+  \caption{Perivascular flow induced by vascular wall motion: parameters and key data characteristics.}
+  \label{tab:pvs:parameters}
+\end{table}
+% Vascular radii r_o (min, max, avg, std) (mm):  3.0 1.0 1.2189823238697475 0.3460254324721098
+% Vascular branch lengths L (avg, std, min, max) (mm): 26.91093675823157 30.884149011946235 1.0 200.32862451491792
+
+\input{tikz/fig_pvs_flow}
+This theoretical formalism~\cite{gjerde2023directional} is defined
+relative to a network in the form of a directed, bifurcating tree with
+a single supply node/root $i_0$. To extend to a network of cerebral
+arteries with multiple supply nodes (such as the basilar and two
+internal carotid arteries in the current data
+set~\cite{hodneland2019new}), we separate the network $\Lambda$ into
+edge-disjoint subnetworks $\Lambda^1, \Lambda^2, \Lambda^3$, one for
+each of the supply nodes (\Cref{fig:sup:peristalsis}). Each node is assigned to the subnetwork associated with the nearest supply node, and edges between nodes are preserved. Next, we compute a minimal, bifurcating and directed tree representation of each subnetwork: $\mathcal{T}^1, \mathcal{T}^2, \mathcal{T}^3$. Each tree $\mathcal{T}^j = \cup E_n^j$ consists of the subset of the nodes from $\Lambda^j$ that have degree 1 (are leaf or root nodes) or degree $3$ (are true bifurcation points), and each path between nodes with degree $\not = 2$ in $\Lambda^j$ is represented in $\mathcal{T}^j$ by an edge $E^j$ with edge length $L$ corresponding to the total length of the original path and edge radius $r_o$ as the average of the path radii. For the few (2) nodes in $\Lambda$ with degree $>3$; i.e.~junctions where a branch splits into more than two downstream branches, only the two longest downstream paths are included in $\mathcal{T}^j$.
+
+For each subtree $\mathcal{T}^j = \cup_n E_n^j$, we compute the
+time-averaged downstream flow rate $\langle Q'_n \rangle$ induced by
+the vascular wall motion for each edge $n$ via~\cite[eq.~(5),
+  (34)]{gjerde2023directional}. We next uniquely assign the flow rate
+$\langle Q'_n \rangle$ to each of the branches $\Lambda_i$ that form
+the path $E_n^j$, thus yielding $\langle Q'_i \rangle$ for each
+perivascular segment $\Lambda_i$ (except those ignored above, for
+which we set a flow rate of zero). Finally, we define the mean
+longitudinal perivascular velocity $\langle u^{\rm PVS}_i \rangle$ by
+dividing the flow rate $\langle Q'_i \rangle$ by the cross-section
+area $A_i = \pi (r_{e_i}^2 - r_{o_i}^2) = \pi (\beta_i^2 - 1) r_{o_i}^2$
 
 \subsection{Numerical verification}
 

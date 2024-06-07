@@ -52,3 +52,12 @@ For networks/, there is the original, a smoothened and a tube representation of 
 For surfaces/, there is the white matter (pial) surface (wm.ply), the white-gray matter interface (gm.ply) and parenchyma.ply, all in .ply format. 
 
 For volmesh/, there is the generated volumetric mesh of the parenchyma, including both white and gray matter (mesh.xdmf+h5).
+
+
+#### Steps to run CSF flow on ex3
+* login on ex3
+* clone git repo
+* install environment with conda/mamba - `mamba env create -f environment.yml`
+* activate environment - `conda activate pvs_transport_env`
+* run scrpt with slurm - `srun python scripts/sas_flow.py`
+
