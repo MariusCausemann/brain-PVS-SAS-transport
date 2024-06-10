@@ -83,21 +83,27 @@ def generate_mesh(configfile : str):
         label = df.MeshFunction('size_t', sas, gdim, 0)
         f.read(label, 'label')
 
-    coords = (0.0847, 0.0833, 0.001)
-    mf = df.MeshFunction("bool", sas, 3, 0)
-    rm = df.CompiledSubDomain("(x[0] - c0)*(x[0] - c0) + (x[1] - c1)*(x[1] - c1) + (x[2] - c2)*(x[2] - c2) < r*r",
-                            r = 0.01, c0=coords[0],  c1=coords[1],  c2=coords[2])
-    rm.mark(mf, True)
-    sas = df.refine(sas, mf)
-    label = df.adapt(label, sas)
-    mf = df.MeshFunction("bool", sas, 3, 0)
-    rm.mark(mf, True)
-    sas = df.refine(sas, mf)
-    label = df.adapt(label, sas)
 
-    sas_outer = xii.EmbeddedMesh(label, [1,3,4]) 
+    def refine_sphere(sas, coords, radius, label):
+        mf = df.MeshFunction("bool", sas, 3, 0)
+        rm = df.CompiledSubDomain("(x[0] - c0)*(x[0] - c0) + (x[1] - c1)*(x[1] - c1) + (x[2] - c2)*(x[2] - c2) < r*r",
+                                r = 0.01, c0=coords[0],  c1=coords[1],  c2=coords[2])
+        rm.mark(mf, True)
+        sas = df.refine(sas, mf)
+        label = df.adapt(label, sas)
+        return sas, label
+
+    coords = (0.0847, 0.0833, 0.001)
+
+    sas, label = refine_sphere(sas, coords, 0.01, label)
+    sas, label = refine_sphere(sas, coords, 0.01, label)
+
+
+    coords = (0.084, 0.11, 0.052)
+    sas, label = refine_sphere(sas, coords, 0.02, label)
+
+    sas_outer = xii.EmbeddedMesh(label, [CSFID,LVID,V34ID]) 
     cell_f = color_connected_components(sas_outer) 
-    ncomps = len(np.unique(cell_f.array()))
 
     colors = df.MeshFunction('size_t', sas, gdim, 0)
 
