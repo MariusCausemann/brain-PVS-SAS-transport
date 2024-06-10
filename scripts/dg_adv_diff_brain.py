@@ -1,26 +1,29 @@
 from dolfin import *
 from petsc4py import PETSc
-from solver import mark_internal_interface, mark_external_boundary
+from solver import mark_internal_interface, mark_external_boundary, as_P0_function
 from IPython import embed 
+import numpy as np
 
 parameters['form_compiler']['cpp_optimize'] = True
 parameters['form_compiler']['optimize'] = True
 parameters["ghost_mode"] = "shared_facet"
 
+CSFID = 1
+PARID = 2
+LVID = 3
+V34ID = 4
+CSFNOFLOWID = 5
+
+inlet_id = 2
+par_csf_id = 3
+par_outer_id = 4
 # Parameters
 D = Constant(3.8e-10)
-t_end = 900
+t_end = 3600 * 12
 dt = 30
 beta = Constant(3.8e-7)
 
 mesh = Mesh()
-
-with XDMFFile(f'results/csf_flow/cardiac_sas_flow/csf_v.xdmf') as f:
-    f.read(mesh)
-    V = VectorFunctionSpace(mesh, "CG", 3)
-    cb = Function(V)
-    f.read_checkpoint(cb, "velocity")
-
 
 with XDMFFile(f'results/csf_flow/sas_flow/csf_v.xdmf') as f:
     f.read(mesh)
@@ -28,16 +31,35 @@ with XDMFFile(f'results/csf_flow/sas_flow/csf_v.xdmf') as f:
     b = Function(V)
     f.read_checkpoint(b, "velocity")
 
-umag = project(sqrt(inner(cb, cb)), FunctionSpace(mesh, "DG", 1),
-                solver_type="cg", preconditioner_type="jacobi")
 
-dispersion_fac = 1e3 / umag.vector().max()
-D *= (1 + umag*dispersion_fac)
+with XDMFFile(f'results/csf_flow/cardiac_sas_flow/csf_p.xdmf') as f:
+    V = FunctionSpace(mesh, "CG", 2)
+    p = Function(V)
+    f.read_checkpoint(p, "pressure")
+
+
+gradp = sqrt(inner(grad(p), grad(p)))
+rho = 993 # kg/m^3
+nu = 7e-7 # m^2/s
+omega = 2*np.pi
+h = 3e-3 / 2
+P = gradp /(rho*omega*nu/h)
+
+Sc = nu / D
+alpha = np.sqrt(h**2 * omega / nu)
+beta2 = alpha**2 * Sc
 
 with XDMFFile(f'mesh/T1/volmesh/mesh.xdmf') as f:
     gdim = mesh.geometric_dimension()
-    label = MeshFunction('size_t', mesh, gdim, 1)
+    label = MeshFunction('size_t', mesh, gdim, 0)
     f.read(label, 'label')
+
+
+csf_indicator = MeshFunction('size_t', mesh, gdim, 0)
+csf_indicator.array()[np.isin(label.array(), [CSFID, LVID, V34ID])] = 1
+R = project(as_P0_function(csf_indicator) * (P**2) / alpha**3, FunctionSpace(mesh, "DG", 0))
+D *= (1 + R)
+File("R.pvd") << R
 
 # Define function spaces
 DG = FunctionSpace(mesh, "DG", 1)
@@ -54,17 +76,6 @@ alpha = Constant(1e3)
 # ( dot(v, n) + |dot(v, n)| )/2.0
 bn = (dot(b, n) + abs(dot(b, n)))/2.0
 
-
-
-CSFID = 1
-PARID = 2
-LVID = 3
-V34ID = 4
-CSFNOFLOWID = 5
-
-inlet_id = 2
-par_csf_id = 3
-par_outer_id = 4
 
 inlet = CompiledSubDomain("on_boundary && x[2] < zmin + eps",
                             zmin=mesh.coordinates()[:,2].min(), eps=0.4e-3)
@@ -87,17 +98,16 @@ g = Expression(" (t < t1) ? \
               2*c_tot / (t1*t2) * max(0.0, t2 - t) / A ", 
               t1=3600, t2=7200, c_tot=0.5e-3, t=0, A=assemble(1*ds(inlet_id)), degree=1)
 
-#g = Expression('exp(- (pow(x[0] - c0, 2) + pow(x[1] - c1, 2))/(2*sig))',
-#                      degree=4, sig=0.000002, c0=coords[0], c1=coords[1])
-gf = interpolate(g, DG)
-gf.rename("g", "g")
-
 eta = 1.0 
 def a(u,v) :
    
     # Bilinear form
     dSi = dS(0)
-    a_int = dot(grad(v), D*grad(u) - b*u)*dx
+    a_int = dot(grad(v), D*grad(u))*dx \
+        - dot(grad(v),b*u)*dx(CSFID) \
+        - dot(grad(v),b*u)*dx(LVID) \
+        - dot(grad(v),b*u)*dx(V34ID)
+
     
     DF = Constant(2)*D('+')*D('-')/(D('+') + D('-'))
 
@@ -126,7 +136,8 @@ b = (1/dt)*inner(u0, v)*dx + v*g*ds(inlet_id)
 # Create files for storing results
 file = XDMFFile("temp/adv_diff_brain.xdmf")
 u = Function(DG)
-file.write_checkpoint(u, "velocity", 0.0)
+file.write_checkpoint(R, "R", 0.0)
+file.write_checkpoint(u, "c", 0.0)
 
 u.assign(u0)
 u.rename("u", "u")
@@ -161,6 +172,6 @@ while t < t_end:
     i += 1
     if i%2==0:
         print(t)
-        file.write_checkpoint(u, "velocity", t, append=True)
+        file.write_checkpoint(u, "c", t, append=True)
 
 file.close()
