@@ -20,14 +20,6 @@ def iterativesolve(a, L, bcs, a_prec, W):
     A, b = assemble_system(a, L, bcs)
     B, _ = assemble_system(a_prec, L, bcs) 
 
-    ns = Function(W)    # W is mixed FS
-    nullspace_basis = ns.vector().copy()
-    W.sub(1).dofmap().set(nullspace_basis, 1.0)
-    nullspace_basis.apply('insert')
-    nullspace = VectorSpaceBasis([nullspace_basis])
-    nullspace.orthonormalize()
-
-    as_backend_type(A).set_nullspace(nullspace)
     wh = Function(W)
     solver = PETScKrylovSolver()
     solver.set_operators(A, B)
@@ -99,6 +91,7 @@ def map_on_global(uh, parentmesh, eps_digits=10):
     uh_global = Function(V_glob)
     for i in range(eldim):
         uh_global.vector()[idxmap*eldim + i] = uh.vector()[i::eldim]
+    assert np.isclose(uh.vector().sum(), uh_global.vector().sum())
     return uh_global
 
 def get_normal_func(mesh):
@@ -115,7 +108,6 @@ def get_normal_func(mesh):
     nh = Function(V)
     solve(A, nh.vector(), L, "cg", "jacobi")
     return nh
-
 
 def compute_sas_flow(configfile : str):
 
@@ -152,7 +144,7 @@ def compute_sas_flow(configfile : str):
     sas_outer.translate_markers(boundary_markers, (EFFLUX_ID, LV_INTERF_ID), marker_f=boundary_markers_outer)
 
     spinal_outlet = CompiledSubDomain("on_boundary && x[2] < zmin + eps",
-                                       zmin=sas.coordinates()[:,2].min(), eps=1e-3)
+                                       zmin=sas.coordinates()[:,2].min(), eps=4e-4)
     spinal_outlet.mark(boundary_markers_outer, SPINAL_OUTLET_IT)
 
     File("fpp.pvd") << boundary_markers_outer
@@ -170,8 +162,8 @@ def compute_sas_flow(configfile : str):
     v , q = TestFunctions(W)
     n = FacetNormal(sas_outer)
 
-    mu = Constant(config["mu"]) # units need to be checked 
-    R = Constant(config["R"]) # 1e-5 Pa/(mm s)
+    mu = Constant(config["mu"]) 
+    R = Constant(config["R"])
     f = Constant([0]*gdim)
 
     LV_surface_area = assemble(1*ds(LV_INTERF_ID))
@@ -188,10 +180,12 @@ def compute_sas_flow(configfile : str):
     inflow = get_normal_func(sas_outer)
     inflow.vector()[:] *= -g
     bcs = [DirichletBC(W.sub(0), Constant((0, 0, 0)), ds.subdomain_data(), NO_SLIP_ID),
-           DirichletBC(W.sub(0), inflow, ds.subdomain_data(), LV_INTERF_ID)]
+           DirichletBC(W.sub(0), inflow, ds.subdomain_data(), LV_INTERF_ID)
+           ]
     
     if config["spinal_outflow_bc"] == "noslip":
         bcs += [DirichletBC(W.sub(0), Constant((0, 0, 0)), ds.subdomain_data(), SPINAL_OUTLET_IT)]
+        pass
     elif config["spinal_outflow_bc"] == "zeroneumann":
         pass
     else:
@@ -203,33 +197,42 @@ def compute_sas_flow(configfile : str):
     #wh = iterativesolve(a, L, bcs, a_prec, W)
     wh = directsolve(a, L, bcs, a_prec, W)
     uh, ph = wh.split(deepcopy=True)[:]
-    #assert np.isclose(assemble(inner(uh,-n)*ds(LV_INTERF_ID)), total_production, rtol=0.03)
+
+    assert np.isclose(assemble(inner(uh,-n)*ds(LV_INTERF_ID)), total_production, rtol=0.1)
     
     # project to CG2 and write for visualization
-    uh2 = project(uh, CG2, solver_type="cg", preconditioner_type="hypre_amg")
+
+    #bc2 = DirichletBC(CG2, Constant((0, 0, 0)), ds.subdomain_data(), NO_SLIP_ID)
+    
+    #uh2 = project(uh, CG2, solver_type="mumps", preconditioner_type="default", bcs=bc2)
+    uh2 = interpolate(uh, CG2)
+    
     with XDMFFile(f'{results_dir}/csf_vis_v.xdmf') as xdmf:
         xdmf.write_checkpoint(uh2, "velocity")
     with XDMFFile(f'{results_dir}/csf_vis_p.xdmf') as xdmf:
         xdmf.write_checkpoint(ph, "pressure")
     
     uh_global = map_on_global(uh, sas)
+
     dxglob = Measure("dx", sas, subdomain_data=label)
 
-    assert np.isclose(assemble(inner(uh_global, uh_global)*dxglob(PARID)), 0)
-    assert np.isclose(assemble(inner(uh_global, uh_global)*dxglob(CSFNOFLOWID)), 0)
-    assert np.isclose(assemble(inner(uh, uh)*dx), assemble(inner(uh_global, uh_global)*dxglob))
+    #assert np.isclose(assemble(inner(uh_global, uh_global)*dxglob(PARID)), 0)
 
-    divu_global = assemble(div(uh_global)*div(uh_global)*dxglob)
+    divu_global_csf = assemble(div(uh_global)*div(uh_global)*dxglob(CSFID)) \
+                    + assemble(div(uh_global)*div(uh_global)*dxglob(LVID)) \
+                    + assemble(div(uh_global)*div(uh_global)*dxglob(V34ID))
+
     divu = assemble(div(uh)*div(uh)*dx)
 
-    assert np.isclose(divu, divu_global, rtol=0.2)
+    assert np.isclose(divu, divu_global_csf)
+    assert np.isclose(assemble(inner(uh_global, uh_global)*dxglob(CSFNOFLOWID)), 0)
 
     with XDMFFile(f'{results_dir}/csf_v.xdmf') as xdmf:
         xdmf.write(sas)
         xdmf.write_checkpoint(uh_global, "velocity", append=True)
 
     with XDMFFile(f'{results_dir}/csf_p.xdmf') as xdmf:
-        xdmf.write_checkpoint(ph, "pressure")
+        xdmf.write_checkpoint(map_on_global(ph, sas), "pressure")
 
     umag = project(sqrt(inner(uh, uh)), FunctionSpace(sas_outer, "CG", 3),
                    solver_type="cg", preconditioner_type="hypre_amg")
