@@ -1,6 +1,6 @@
 mesh : T1
 mu : 0.7e-3 
 R : 0 # 1e-5 Pa/(mm s) 
-production_rate : 1.0e-5 # in m^3/s , equals  10 ml / s - roughly peak of net blood inflow
+production_rate : 5.0e-4 # in m^3/s
 spinal_outflow_bc: "zeroneumann"
 noslip_max_z: 20 # npslip on the whole skull 
