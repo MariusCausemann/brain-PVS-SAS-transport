@@ -4,6 +4,7 @@ plots/*
 __*
 .snakemake/*
 data/T1.nii.gz
+temp/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
