@@ -8,27 +8,26 @@ parameters["ghost_mode"] = "shared_facet"
 
 # Parameters
 D = Constant(3.8e-10)
-t_end = 12000
+t_end = 7200
 dt = 30
 beta = Constant(3.8e-7)
 
 mesh = Mesh()
 
 from IPython import embed 
-embed()
-
-with XDMFFile(f'results/csf_flow/cardiac_sas_flow/csf_v.xdmf') as f:
-    f.read(mesh)
-    V = VectorFunctionSpace(mesh, "CG", 3)
-    cb = Function(V)
-    f.read_checkpoint(cb, "velocity")
+# embed()
 
 
 with XDMFFile(f'results/csf_flow/sas_flow/csf_v.xdmf') as f:
     f.read(mesh)
-    V = VectorFunctionSpace(mesh, "CG", 3)
+    V = VectorFunctionSpace(mesh, "CR", 1)
     b = Function(V)
     f.read_checkpoint(b, "velocity")
+ 
+with XDMFFile(f'results/csf_flow/cardiac_sas_flow/csf_v.xdmf') as f:
+    cb = Function(V)
+    f.read_checkpoint(cb, "velocity")
+
 
 umag = project(sqrt(inner(cb, cb)), FunctionSpace(mesh, "DG", 1),
                 solver_type="cg", preconditioner_type="jacobi")
@@ -41,6 +40,11 @@ with XDMFFile(f'mesh/T1/volmesh/mesh.xdmf') as f:
     label = MeshFunction('size_t', mesh, gdim, 1)
     f.read(label, 'label')
 
+with XDMFFile(f'mesh_labeled.xdmf') as f: 
+    bm = MeshFunction('size_t', mesh, gdim - 1,0) 
+    f.read(bm)
+
+File("bm.pvd") << bm
 # Define function spaces
 DG = FunctionSpace(mesh, "DG", 1)
 v = TestFunction(DG)
@@ -56,8 +60,6 @@ alpha = Constant(100)
 # ( dot(v, n) + |dot(v, n)| )/2.0
 bn = (dot(b, n) + abs(dot(b, n)))/2.0
 
-
-
 CSFID = 1
 PARID = 2
 LVID = 3
@@ -68,21 +70,24 @@ inlet_id = 2
 par_csf_id = 3
 par_outer_id = 4
 
-inlet = CompiledSubDomain("on_boundary && x[2] < zmin + eps",
-                            zmin=mesh.coordinates()[:,2].min(), eps=0.4e-3)
-bm = MeshFunction("size_t", mesh, 2, 0)
-inlet.mark(bm, inlet_id)
+#inlet = CompiledSubDomain("on_boundary && x[2] < zmin + eps",
+#                           zmin=mesh.coordinates()[:,2].min(), eps=0.4e-3)
+#bm = MeshFunction("size_t", mesh, 2, 0)
+#inlet.mark(bm, inlet_id)
 
-for i in [CSFID, LVID, V34ID, CSFNOFLOWID]:
-    mark_internal_interface(mesh, label, bm, par_csf_id,
-                            doms=[i, PARID])
-    
-mark_external_boundary(mesh, label, bm, par_outer_id, doms=[PARID])
+#for i in [CSFID, LVID, V34ID, CSFNOFLOWID]:
+#    mark_internal_interface(mesh, label, bm, par_csf_id,
+#                           doms=[i, PARID])
+     
+#mark_external_boundary(mesh, label, bm, par_outer_id, doms=[PARID])
+
 File("bm.pvd") << bm
+
 
 ds = Measure("ds", mesh, subdomain_data=bm)
 dS = Measure("dS", mesh, subdomain_data=bm)
 dx = Measure("dx", mesh, subdomain_data=label)
+
 
 g = Expression(" (t < t1) ? \
               2*c_tot / (t1*t2) * t / A : \
@@ -105,13 +110,13 @@ def a(u,v) :
 
     wavg = lambda f, w: f("+")*w("-")/(w("-") + w("+")) + f("-")*w("+")/(w("-") + w("+"))
 
-    a_fac = (alpha/avg(h))*DF*dot(jump(u, n), jump(v, n))*dSi \
-            - dot(wavg(grad(u), D), jump(v, n))*dSi \
-            - dot(jump(u, n), wavg(grad(v), D))*dSi \
+    a_fac = (alpha/avg(h))*dot(jump(u, n), jump(v, n))*dSi \
+            - dot(avg(D*grad(u)), jump(v, n))*dSi \
+            - dot(jump(u, n), avg(D*grad(v)))*dSi \
             + beta*jump(u)*jump(v)*dS(par_csf_id)
     
-    #a_vel = dot(jump(v), bn('+')*u('+') - bn('-')*u('-') )*dSi
-    a_vel = dot(dot(b,n('+'))*avg(u), jump(v))*dS + (eta/2)*dot(abs(dot(b,n('+')))*jump(u), jump(v))*dS + dot(v, bn*u)*ds
+    a_vel = dot(jump(v), bn('+')*u('+') - bn('-')*u('-') )*dSi +  dot(v, bn*u)*ds
+    #a_vel = dot(dot(b('+'),n('+'))*avg(u), jump(v))*dS + (eta/2)*dot(abs(dot(b('+'),n('+')))*jump(u), jump(v))*dS + dot(v, bn*u)*ds
 
     a = a_int + a_fac + a_vel
 
@@ -149,6 +154,8 @@ t = 0.0
 i = 0
 while t < t_end:
     bb = assemble(b)
+    print(t)
+
     # Compute
     ksp.solve(as_backend_type(bb).vec(), 
               as_backend_type(u.vector()).vec())
@@ -159,7 +166,6 @@ while t < t_end:
     g.t = t
     i += 1
     if i%5==0:
-        print(t)
         file.write_checkpoint(u, "velocity", t, append=True)
 
 file.close()
