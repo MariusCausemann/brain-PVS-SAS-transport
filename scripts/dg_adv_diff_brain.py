@@ -1,6 +1,7 @@
 from dolfin import *
 from petsc4py import PETSc
 from solver import mark_internal_interface, mark_external_boundary
+from IPython import embed 
 
 parameters['form_compiler']['cpp_optimize'] = True
 parameters['form_compiler']['optimize'] = True
@@ -8,14 +9,26 @@ parameters["ghost_mode"] = "shared_facet"
 
 # Parameters
 D = Constant(3.8e-10)
+<<<<<<< HEAD
 t_end = 7200
+=======
+t_end = 900
+>>>>>>> 971838ebfbf2903855bca70a6679e1279e147024
 dt = 30
 beta = Constant(3.8e-7)
 
 mesh = Mesh()
 
+<<<<<<< HEAD
 from IPython import embed 
 # embed()
+=======
+with XDMFFile(f'results/csf_flow/cardiac_sas_flow/csf_v.xdmf') as f:
+    f.read(mesh)
+    V = VectorFunctionSpace(mesh, "CG", 3)
+    cb = Function(V)
+    f.read_checkpoint(cb, "velocity")
+>>>>>>> 971838ebfbf2903855bca70a6679e1279e147024
 
 
 with XDMFFile(f'results/csf_flow/sas_flow/csf_v.xdmf') as f:
@@ -55,7 +68,7 @@ u0 = Function(DG)
 # STABILIZATION
 h = CellDiameter(mesh)
 n = FacetNormal(mesh)
-alpha = Constant(100)
+alpha = Constant(1e3)
 
 # ( dot(v, n) + |dot(v, n)| )/2.0
 bn = (dot(b, n) + abs(dot(b, n)))/2.0
@@ -108,15 +121,23 @@ def a(u,v) :
     
     DF = Constant(2)*D('+')*D('-')/(D('+') + D('-'))
 
-    wavg = lambda f, w: f("+")*w("-")/(w("-") + w("+")) + f("-")*w("+")/(w("-") + w("+"))
+    #wavg = lambda f, w: f("+")*w("-")/(w("-") + w("+")) + f("-")*w("+")/(w("-") + w("+"))
+    wavg = lambda gr, k: 2*k("+")*k("-") / (k("+") + k("-")) * avg(gr)
 
     a_fac = (alpha/avg(h))*dot(jump(u, n), jump(v, n))*dSi \
             - dot(avg(D*grad(u)), jump(v, n))*dSi \
             - dot(jump(u, n), avg(D*grad(v)))*dSi \
             + beta*jump(u)*jump(v)*dS(par_csf_id)
     
+<<<<<<< HEAD
     a_vel = dot(jump(v), bn('+')*u('+') - bn('-')*u('-') )*dSi +  dot(v, bn*u)*ds
     #a_vel = dot(dot(b('+'),n('+'))*avg(u), jump(v))*dS + (eta/2)*dot(abs(dot(b('+'),n('+')))*jump(u), jump(v))*dS + dot(v, bn*u)*ds
+=======
+    #a_vel = dot(jump(v), bn('+')*u('+') - bn('-')*u('-') )*dSi
+    a_vel = dot(dot(b,n('+'))*avg(u), jump(v))*dSi \
+        + (eta/2)*dot(abs(dot(b,n('+')))*jump(u), jump(v))*dSi \
+        + dot(v, bn*u)*ds
+>>>>>>> 971838ebfbf2903855bca70a6679e1279e147024
 
     a = a_int + a_fac + a_vel
 
@@ -165,7 +186,12 @@ while t < t_end:
     t += dt
     g.t = t
     i += 1
+<<<<<<< HEAD
     if i%5==0:
+=======
+    if i%2==0:
+        print(t)
+>>>>>>> 971838ebfbf2903855bca70a6679e1279e147024
         file.write_checkpoint(u, "velocity", t, append=True)
 
 file.close()
