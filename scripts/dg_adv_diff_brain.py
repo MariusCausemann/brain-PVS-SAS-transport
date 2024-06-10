@@ -25,11 +25,11 @@ beta = Constant(3.8e-7)
 
 mesh = Mesh()
 
-with XDMFFile(f'results/csf_flow/sas_flow/csf_v.xdmf') as f:
+with XDMFFile(f'results/csf_flow/cardiac_sas_flow/csf_v.xdmf') as f:
     f.read(mesh)
     V = VectorFunctionSpace(mesh, "CG", 3)
-    b = Function(V)
-    f.read_checkpoint(b, "velocity")
+    cb = Function(V)
+    f.read_checkpoint(cb, "velocity")
 
 
 with XDMFFile(f'results/csf_flow/cardiac_sas_flow/csf_p.xdmf') as f:
@@ -77,21 +77,25 @@ alpha = Constant(1e3)
 bn = (dot(b, n) + abs(dot(b, n)))/2.0
 
 
+
 inlet = CompiledSubDomain("on_boundary && x[2] < zmin + eps",
-                            zmin=mesh.coordinates()[:,2].min(), eps=0.4e-3)
+                           zmin=mesh.coordinates()[:,2].min(), eps=0.4e-3)
 bm = MeshFunction("size_t", mesh, 2, 0)
 inlet.mark(bm, inlet_id)
 
 for i in [CSFID, LVID, V34ID, CSFNOFLOWID]:
     mark_internal_interface(mesh, label, bm, par_csf_id,
-                            doms=[i, PARID])
-    
+                           doms=[i, PARID])
+     
 mark_external_boundary(mesh, label, bm, par_outer_id, doms=[PARID])
+
 File("bm.pvd") << bm
+
 
 ds = Measure("ds", mesh, subdomain_data=bm)
 dS = Measure("dS", mesh, subdomain_data=bm)
 dx = Measure("dx", mesh, subdomain_data=label)
+
 
 g = Expression(" (t < t1) ? \
               2*c_tot / (t1*t2) * t / A : \
@@ -161,6 +165,8 @@ t = 0.0
 i = 0
 while t < t_end:
     bb = assemble(b)
+    print(t)
+
     # Compute
     ksp.solve(as_backend_type(bb).vec(), 
               as_backend_type(u.vector()).vec())
@@ -170,6 +176,7 @@ while t < t_end:
     t += dt
     g.t = t
     i += 1
+
     if i%2==0:
         print(t)
         file.write_checkpoint(u, "c", t, append=True)
