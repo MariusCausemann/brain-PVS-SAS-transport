@@ -1,6 +1,7 @@
 import dolfin as df
 import networkx as nx
 import numpy as np
+
 from xii import *
 import pyvista as pv 
 
@@ -33,6 +34,20 @@ if __name__ == '__main__':
     from slepc4py import SLEPc
     from petsc4py import PETSc
     
+<<<<<<< HEAD
+    path = '/home/mirok/Downloads/mesh.xdmf'
+    mesh = df.Mesh()
+    with df.XDMFFile(mesh.mpi_comm(), path) as f:
+        f.read(mesh)
+    gdim = mesh.geometry().dim()
+
+    # Extract mesh as largest connected component
+    if mesh.mpi_comm().size == 1:
+        cell_f = color_connected_components(mesh)        
+        ncomps = len(np.unique(cell_f.array()))
+        if ncomps > 1:
+            mesh = df.SubMesh(mesh, cell_f, 1)
+=======
     path = 'mesh/mid_mesh/volmesh/mesh.xdmf' 
  
     # get mesh 
@@ -74,6 +89,7 @@ if __name__ == '__main__':
     df.XDMFFile("mesh/mid_mesh/volmesh/sas_outer.xdmf").write(cell_f) 
 
     sas_outer = EmbeddedMesh(cell_f, 1) 
+>>>>>>> f4126d1a02f5c4a0a7888520ba351c54b0b10885
 
     df.set_log_level(10)
     # Sanity check in terms of vector Poisson. Don't want any zero
@@ -98,7 +114,11 @@ if __name__ == '__main__':
     
     opts.setValue('eps_max_it', 50_000)
     opts.setValue('eps_nev', 10)
+<<<<<<< HEAD
+    opts.setValue('eps_monitor', None)
+=======
     #opts.setValue('eps_monitor', None)
+>>>>>>> f4126d1a02f5c4a0a7888520ba351c54b0b10885
     opts.setValue('eps_view', None)
     opts.setValue('eps_view_pre', None)    
     opts.setValue('eps_tol', 1E-8)
@@ -106,6 +126,9 @@ if __name__ == '__main__':
     opts.setValue('st_ksp_rtol', 1E-12)
     opts.setValue('st_ksp_type', 'cg')
     opts.setValue('st_pc_type', 'hypre')
+<<<<<<< HEAD
+    opts.setValue('st_ksp_monitor_true_residual', None)
+
     #opts.setValue('st_ksp_monitor_true_residual', None)
     # Setup the eigensolver
     E = SLEPc.EPS().create()
