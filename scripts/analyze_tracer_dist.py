@@ -27,8 +27,8 @@ def plot_mean_concentrations(mean_sas, mean_art, mean_ven, times, filename):
     sns.set_palette("Set2")
     plt.figure()
     plt.plot(times, mean_sas, label=f"c sas", marker="o")
-    plt.plot(times, mean_art, label=f"c arteries", marker="o")
-    plt.plot(times, mean_ven, label=f"c venes", marker="o")
+    plt.plot(times, mean_art, label=f"c artery", marker="o")
+    plt.plot(times, mean_ven, label=f"c vein", marker="o")
 
     plt.legend()
     plt.xlabel("time (s)")
@@ -40,10 +40,11 @@ def plot_mean_concentrations(mean_sas, mean_art, mean_ven, times, filename):
 
 def analyze_tracer_dist(modelname: str, times:List[int]):
     domain = "sas"
-    times = 3600*np.array([1, 6, 12, 18, 24])
+    #times = 3600*np.array([1, 6, 12, 18, 24])
+    times = 3600*np.array([1,2,3])
     sas = get_result(modelname, domain, times)
-    art = get_result(modelname, "arteries", 0)
-    ven = get_result(modelname, "venes", 0)
+    art = get_result(modelname, "artery", 0)
+    ven = get_result(modelname, "vein", 0)
     tree = KDTree(np.concatenate((art.points, ven.points), axis=0))
     d, idx = tree.query(sas.points)
     sas["distances"] = d
@@ -52,7 +53,7 @@ def analyze_tracer_dist(modelname: str, times:List[int]):
     isosurfs = [sas.threshold(d, scalars="distances") for d in isodists]
     c_time_series = {}
     for t in times:
-        c_time_series[t] = [isos[f"c_sas_{t}"].mean() for isos in isosurfs]
+        c_time_series[t] = [isos[f"c_{t}"].mean() for isos in isosurfs]
     filename = f"plots/{modelname}/{modelname}_tracer_vessel_dist.png"
     plot_concentration_distance(c_time_series, isodists, filename)
 
