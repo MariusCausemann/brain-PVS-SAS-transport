@@ -16,6 +16,25 @@ def write(sols, pvdfiles, t, hdffile=None):
         for s in sols:
             hdffile.write(s, s.name(), t)
 
+def get_dispersion_enhancement(pressure_csf):
+    mesh = pressure_csf.function_space().mesh()
+    gradp = sqrt(inner(grad(pressure_csf), grad(pressure_csf)))
+    rho = 993 # kg/m^3
+    nu = 7e-7 # m^2/s
+    omega = 2*np.pi
+    h = 3e-3 / 2
+    P = gradp /(rho*omega*nu/h)
+    alpha = np.sqrt(h**2 * omega / nu)
+
+    V = FunctionSpace(mesh, "CG", 1)
+    u,v = TrialFunction(V), TestFunction(V)
+    R = Function(V)
+    a = (Constant(1e-5)*inner(grad(u), grad(v)) + Constant(1)*u*v)*dx
+    L = P**2*v*dx
+    R.rename("R","R")
+    solve(a==L, R)
+    return interpolate(R, FunctionSpace(mesh, "DG", 0))
+
 
 CSFID = 1
 PARID = 2
@@ -61,6 +80,8 @@ def run_simulation(configfile: str):
     mesh, vol_subdomains = get_mesh(meshname) 
     gdim = mesh.geometric_dimension()
     
+    label = MeshFunction('size_t', mesh, gdim, 0)
+    label.array()[:] = vol_subdomains.array()[:]
     assert np.allclose(np.unique(vol_subdomains.array()), [CSFID, PARID, LVID, V34ID, CSFNOFLOWID])
     vol_subdomains.array()[np.isin(vol_subdomains.array(), [LVID, V34ID, CSFNOFLOWID])] = CSFID
 
@@ -71,14 +92,25 @@ def run_simulation(configfile: str):
     artmarker.rename("marker", "time")
     veinmarker.rename("marker", "time")
     vol_subdomains.rename("marker", "time")
+    outer_id = 1
     inlet_id = 2
     efflux_id = 3
+    par_csf_id = 4
+    par_outer_id = 5
     inlet = CompiledSubDomain("on_boundary && x[2] < zmin + eps",
-                             zmin=mesh.coordinates()[:,2].min(), eps=1e-3)
+                             zmin=mesh.coordinates()[:,2].min(), eps=0.2e-3)
     bm = MeshFunction("size_t", mesh, 2, 0)
     efflux = CompiledSubDomain("on_boundary  && x[2] > 0.05")
+    outer = CompiledSubDomain("on_boundary")
+    outer.mark(bm, outer_id)
     efflux.mark(bm, efflux_id)
     inlet.mark(bm, inlet_id)
+
+    mark_internal_interface(mesh, vol_subdomains, bm, par_csf_id,
+                            doms=[CSFID, PARID])
+    mark_external_boundary(mesh, vol_subdomains, bm, par_outer_id,
+                           doms=[PARID])
+    File("bm.pvd") << bm
 
     xi_dict = {0:Constant(0), CSFID: Constant(pvs_csf_permability), 
                PARID: Constant(pvs_parenchyma_permability)}
@@ -114,21 +146,36 @@ def run_simulation(configfile: str):
         vel_file = config["csf_velocity_file"]
 
         with XDMFFile(vel_file) as file:
+            sm = xii.EmbeddedMesh(vol_subdomains, [CSFID, LVID, V34ID])
             CG3 = VectorFunctionSpace(mesh, "CG", 3)
             velocity_csf = Function(CG3)
             file.read_checkpoint(velocity_csf, "velocity")
         
         File("csf_velocity.pvd") << velocity_csf
-
     else:
         velocity_csf = Constant([0]*gdim)
 
+    if "csf_dispersion_pressure_file" in config.keys():
+        print("reading CSF dispersion pressure from file...")
+        p_file = config["csf_dispersion_pressure_file"]
+
+        with XDMFFile(p_file) as file:
+            sm = xii.EmbeddedMesh(label, [CSFID, LVID, V34ID])
+            CG2 = FunctionSpace(sm, "CG", 2)
+            pressure_csf = Function(CG2)
+            file.read_checkpoint(pressure_csf, "pressure")
+
+        from sas_flow import map_on_global
+        R = map_on_global(get_dispersion_enhancement(pressure_csf), mesh)
+        File("R.pvd") << R
+        Ds *= (1 + R)
+        
     velocity_v = Constant([0]*gdim)
 
     fa = Constant(0.0) 
     fv = Constant(0.0)
 
-    V = FunctionSpace(mesh, 'CG', 1)
+    V = FunctionSpace(mesh, 'DG', 1)
     Qa = FunctionSpace(artery, 'CG', 1)
     Qv = FunctionSpace(vein, 'CG', 1)
     W = [V, Qa, Qv]
@@ -154,6 +201,37 @@ def run_simulation(configfile: str):
     # tangent vector
     a = xii.block_form(W, 2)
 
+    eta = 1.0 
+    alpha = Constant(1e3)
+    beta_csf_par = Constant(3.8e-7)
+
+    dx_s = Measure("dx", mesh, subdomain_data=vol_subdomains)
+    dS = Measure("dS", mesh, subdomain_data=bm)
+
+    def a_dg_adv_diff(u,v) :
+
+        # Bilinear form for DG advection diffusion
+        n = FacetNormal(mesh)
+        h = CellDiameter(mesh)
+        b = velocity_csf
+        bn = (dot(b, n) + abs(dot(b, n)))/2.0
+        dSi = dS(0)
+        a_int = dot(grad(v), Ds*phi*grad(u))*dx - dot(grad(v),b*u)*dx_s(CSFID)
+
+        wavg = lambda k: 2*k("+")*k("-") / (k("+") + k("-"))
+        DF = wavg(Ds*phi)
+
+        a_fac = (alpha/avg(h))*DF*dot(jump(u, n), jump(v, n))*dSi \
+                - dot(avg(grad(u))*DF, jump(v, n))*dSi \
+                - dot(jump(u, n), avg(grad(v)) * DF)*dSi \
+                + beta_csf_par*jump(u)*jump(v)*dS(par_csf_id)
+        
+        a_vel = dot(dot(b,n('+'))*avg(u), jump(v))*dSi \
+            + (eta/2)*dot(abs(dot(b,n('+')))*jump(u), jump(v))*dSi #\
+            #+ dot(v, bn*u)*ds
+
+        a = a_int + a_fac + a_vel
+        return a
 
     def supg_stabilization(u, v, vel):
         
@@ -169,12 +247,11 @@ def run_simulation(configfile: str):
         return beta*hK*inner(dot(vel, grad(u)), dot(vel, grad(v)))*dx5
 
 
-    a[0][0] = phi*(1/dt)*inner(u,v)*dx + phi*Ds*inner(grad(u), grad(v))*dx \
-            - inner(u, dot(velocity_csf, grad(v)))*dx \
+    a[0][0] = phi*(1/dt)*inner(u,v)*dx \
+            + a_dg_adv_diff(u,v) \
             + beta*u*v*ds(efflux_id) \
             + xi_a*(perm_artery)*inner(ua, va)*dx_a \
-            + xi_v*(perm_vein)*inner(uv, vv)*dx_v \
-            + supg_stabilization(u, v, velocity_csf) \
+            + xi_v*(perm_vein)*inner(uv, vv)*dx_v
 
     a[0][1] = -xi_a*(perm_artery)*inner(pa, va)*dx_a
     a[0][2] = -xi_v*(perm_vein)*inner(pv, vv)*dx_v
@@ -241,6 +318,8 @@ def run_simulation(configfile: str):
     opts.setValue('pc_type', 'lu')
     opts.setValue("pc_factor_mat_solver_type", "mumps")
     opts.setValue("mat_mumps_icntl_4", "3")
+    opts.setValue("mat_mumps_icntl_35", 1)
+    opts.setValue("mat_mumps_cntl_7",  1e-8)  # BLR eps
 
     #opts.setValue('ksp_initial_guess_nonzero', 1)
 
@@ -249,22 +328,32 @@ def run_simulation(configfile: str):
     ksp.setFromOptions()
     print('Start solve')
     t = 0.0 
-    u_i.rename("c_sas", "time")
-    pa_i.rename("c_artery", "time")
-    pv_i.rename("c_vein", "time")
-    xi_a.rename("xi", "time")
-    xi_v.rename("xi", "time")
+    u_i.rename("c", "c")
+    pa_i.rename("c", "c")
+    pv_i.rename("c", "c")
+    xi_a.rename("xi", "c")
+    xi_v.rename("xi", "c")
 
-    pvdsas      = File(results_dir + f'{modelname}_sas.pvd') 
-    pvdarteries = File(results_dir + f'{modelname}_arteries.pvd') 
-    pvdvenes = File(results_dir + f'{modelname}_venes.pvd') 
-    pvdfiles = (pvdsas, pvdarteries, pvdvenes)
-    hdffile = HDF5File(mesh.mpi_comm(), results_dir + f"{modelname}.hdf", "w")
+    xdmfsas = XDMFFile(results_dir + f'{modelname}_sas.xdmf') 
+    xdmfart = XDMFFile(results_dir + f'{modelname}_artery.xdmf') 
+    xdmfven = XDMFFile(results_dir + f'{modelname}_vein.xdmf') 
+    pvdarteries = File(results_dir + f'{modelname}_artery.pvd') 
+    pvdvenes = File(results_dir + f'{modelname}_vein.pvd') 
+    xfiles = (xdmfsas, xdmfart, xdmfven)
+    pvdfiles = (pvdarteries, pvdvenes)
 
-    write((u_i, pa_i, pv_i), pvdfiles, 0.0, hdffile=hdffile)
-    write((vol_subdomains, artmarker, veinmarker), pvdfiles, 0.0)
-    write((xi_a, xi_v), (pvdarteries, pvdvenes), 0.0)
-    write([phi], [pvdsas], 0.0)
+    pvdarteries.write(pa_i, t)
+    pvdvenes.write(pv_i, t)
+    xdmfsas.write_checkpoint(u_i, "c", t, append=False)
+    xdmfart.write_checkpoint(pa_i, "c", t, append=False)
+    xdmfven.write_checkpoint(pv_i, "c", t, append=False)
+
+    #hdffile = HDF5File(mesh.mpi_comm(), results_dir + f"{modelname}.hdf", "w")
+
+    #write((u_i, pa_i, pv_i), pvdfiles, 0.0, hdffile=hdffile)
+    #write((vol_subdomains, artmarker, veinmarker), pvdfiles, 0.0)
+    #write((xi_a, xi_v), (pvdarteries, pvdvenes), 0.0)
+    #write([phi], [pvdsas], 0.0)
 
     wh = xii.ii_Function(W)
     x_ = A_.createVecLeft()
@@ -289,11 +378,16 @@ def run_simulation(configfile: str):
         pa_i.assign(wh[1]) 
         pv_i.assign(wh[2])
 
-        wh[0].rename("c_sas", "time")
-        wh[1].rename("c_artery", "time")
-        wh[2].rename("c_vein", "time")
+        wh[0].rename("c", "c")
+        wh[1].rename("c", "c")
+        wh[2].rename("c", "c")
         if i%config["output_frequency"] == 0:
-            write(wh, pvdfiles, float(t), hdffile)
+            #write(wh, pvdfiles, float(t), hdffile)
+            xdmfsas.write_checkpoint(wh[0], "c", t, append=True)
+            xdmfart.write_checkpoint(wh[1], "c", t, append=True)
+            xdmfven.write_checkpoint(wh[2], "c", t, append=True)
+            pvdarteries.write(pa_i, t)
+            pvdvenes.write(pv_i, t)
 
 if __name__ == "__main__":
     typer.run(run_simulation)
