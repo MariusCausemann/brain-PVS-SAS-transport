@@ -78,6 +78,7 @@ EFFLUX_ID = 1
 NO_SLIP_ID = 2
 LV_INTERF_ID = 3
 SPINAL_OUTLET_IT = 4
+CSF_INTERF_ID = 5
 
 def map_on_global(uh, parentmesh, eps_digits=10):
     # map the solution back on the whole domain
@@ -138,10 +139,15 @@ def compute_sas_flow(configfile : str):
     mark_internal_interface(sas, label, boundary_markers, LV_INTERF_ID,
                             doms=[LVID, PARID])
     
+    mark_internal_interface(sas, label, boundary_markers, CSF_INTERF_ID,
+                            doms=[CSFID, PARID])
+    
     # translate markers to the sas outer mesh 
     boundary_markers_outer = MeshFunction("size_t", sas_outer, sas_outer.topology().dim() - 1, 0)
     DomainBoundary().mark(boundary_markers_outer, NO_SLIP_ID)
-    sas_outer.translate_markers(boundary_markers, (EFFLUX_ID, LV_INTERF_ID), marker_f=boundary_markers_outer)
+    sas_outer.translate_markers(boundary_markers,
+                                (EFFLUX_ID, LV_INTERF_ID, CSF_INTERF_ID),
+                                marker_f=boundary_markers_outer)
 
     spinal_outlet = CompiledSubDomain("on_boundary && x[2] < zmin + eps",
                                        zmin=sas.coordinates()[:,2].min(), eps=4e-4)
@@ -167,20 +173,22 @@ def compute_sas_flow(configfile : str):
     f = Constant([0]*gdim)
 
     LV_surface_area = assemble(1*ds(LV_INTERF_ID))
-    total_production = config["production_rate"]
-    g = total_production / LV_surface_area
-    g_L_per_day = 1e3 *(60*60*24) * assemble(g*ds(LV_INTERF_ID))
-    print(f"production rate: {g_L_per_day} L/day")
+    PAR_surface_area = assemble(1*ds(CSF_INTERF_ID))
+    g_LV = config["LV_inflow_rate"] / LV_surface_area
+    g_par = config["tissue_inflow_rate"] / PAR_surface_area
 
     a = (inner(2*mu*sym(grad(u)), sym(grad(v)))*dx - inner(p, div(v))*dx
             -inner(q, div(u))*dx + inner(R*dot(u,n), dot(v,n))*ds(EFFLUX_ID)) 
     L = inner(f, v)*dx
 
     CG2 = VectorFunctionSpace(sas_outer, "CG", 2)
-    inflow = get_normal_func(sas_outer)
-    inflow.vector()[:] *= -g
+    LV_inflow = get_normal_func(sas_outer)
+    LV_inflow.vector()[:] *= -g_LV
+    PAR_inflow = get_normal_func(sas_outer)
+    PAR_inflow.vector()[:] *= -g_par
     bcs = [DirichletBC(W.sub(0), Constant((0, 0, 0)), ds.subdomain_data(), NO_SLIP_ID),
-           DirichletBC(W.sub(0), inflow, ds.subdomain_data(), LV_INTERF_ID)
+           DirichletBC(W.sub(0), LV_inflow, ds.subdomain_data(), LV_INTERF_ID),
+           DirichletBC(W.sub(0), PAR_inflow, ds.subdomain_data(), CSF_INTERF_ID)
            ]
     
     if config["spinal_outflow_bc"] == "noslip":
@@ -198,8 +206,9 @@ def compute_sas_flow(configfile : str):
     wh = directsolve(a, L, bcs, a_prec, W)
     uh, ph = wh.split(deepcopy=True)[:]
 
-    assert np.isclose(assemble(inner(uh,-n)*ds(LV_INTERF_ID)), total_production, rtol=0.1)
-    
+    assert np.isclose(assemble(inner(uh,-n)*ds(LV_INTERF_ID)), config["LV_inflow_rate"], rtol=0.1)
+    assert np.isclose(assemble(inner(uh,-n)*ds(CSF_INTERF_ID)), config["tissue_inflow_rate"], rtol=0.1)
+
     # project to CG2 and write for visualization
     uh2 = interpolate(uh, CG2)
     
@@ -230,13 +239,11 @@ def compute_sas_flow(configfile : str):
     with XDMFFile(f'{results_dir}/csf_p.xdmf') as xdmf:
         xdmf.write_checkpoint(map_on_global(ph, sas), "pressure")
 
-    umag = project(sqrt(inner(uh, uh)), FunctionSpace(sas_outer, "CG", 3),
-                   solver_type="cg", preconditioner_type="hypre_amg")
-    umean = assemble(umag*dx) / assemble(1*dx(domain=sas_outer))
+    #umag = project(sqrt(inner(uh, uh)), FunctionSpace(sas_outer, "CG", 3),
+    #               solver_type="cg", preconditioner_type="hypre_amg")
+    #umean = assemble(umag*dx) / assemble(1*dx(domain=sas_outer))
 
     print(f"div u = {divu}")
-    print(f"u max = {umag.vector().max()}")
-    print(f"u umean = {umean}")
 
 if __name__ == "__main__":
     typer.run(compute_sas_flow)
