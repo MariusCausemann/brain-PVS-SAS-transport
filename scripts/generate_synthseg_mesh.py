@@ -69,6 +69,11 @@ def generate_mesh(configfile : str):
             point_array, [("tetra", cell_array)], cell_data={"label": [marker.ravel()]}
         )
     mesh = pv.from_meshio(mesh).clean()
+
+    # compute distance to interface for later refinement
+    parenchyma_surf = pv.read("mesh/T1/surfaces/parenchyma.ply")
+    dist = mesh.compute_implicit_distance(parenchyma_surf).ptc()
+    mesh["par_dist"] = dist["implicit_distance"]
     os.makedirs(f"mesh/{meshname}/volmesh", exist_ok=True)
     pv.save_meshio(f"mesh/{meshname}/volmesh/mesh.xdmf", mesh)
 
@@ -81,21 +86,24 @@ def generate_mesh(configfile : str):
         f.read(sas)
         gdim = sas.geometric_dimension()
         label = df.MeshFunction('size_t', sas, gdim, 0)
+        par_dist = df.MeshFunction('size_t', sas, gdim, 0)
         f.read(label, 'label')
+        f.read(par_dist, 'par_dist')
 
-
-    def refine_sphere(sas, coords, radius, label):
+    def refine_sphere(sas, coords, radius, label, criterion=None):
         mf = df.MeshFunction("bool", sas, 3, 0)
         rm = df.CompiledSubDomain("(x[0] - c0)*(x[0] - c0) + (x[1] - c1)*(x[1] - c1) + (x[2] - c2)*(x[2] - c2) < r*r",
                                 r = 0.01, c0=coords[0],  c1=coords[1],  c2=coords[2])
         rm.mark(mf, True)
+        if criterion is not None:
+            mf.array()[criterion==False] = False
         sas = df.refine(sas, mf)
         label = df.adapt(label, sas)
         return sas, label
 
     coords = (0.0847, 0.0833, 0.001)
-
-    sas, label = refine_sphere(sas, coords, 0.01, label)
+    crit = abs(par_dist.array()[:]) < 0.002
+    sas, label = refine_sphere(sas, coords, 0.01, label, criterion=crit)
     sas, label = refine_sphere(sas, coords, 0.01, label)
 
 
