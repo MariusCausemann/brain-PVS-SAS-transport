@@ -1,8 +1,8 @@
 description : "xi 10x"
-dt : 10
-T : 86400 # 1 day in seconds
+dt : 60
+T : 14400 # 1 day in seconds
 mesh : "T1"
-output_frequency : 20
+output_frequency : 10
 ecs_share : 0.2
 sas_diffusion : 3.8e-10 # Valnes 2020, https://www.nature.com/articles/s41598-020-66042-5
 arterial_pvs_diffusion : 3.8e-10
@@ -12,16 +12,21 @@ pvs_parenchyma_permability : 3.8e-7 # = C_M * D_f wit C_M = 1e3 as in https://fl
 pvs_csf_permability: 3.8e-6 # ???
 pvs_ratio_artery : 2
 pvs_ratio_venes: 2
-molecular_outflow_resistance : 1.0e-10 # 1e-4 mm^2/s 
+molecular_outflow_resistance : 0 #1.0e-10 # 1e-4 mm^2/s 
 arterial_velocity_file : "results/csf_flow/sas_flow/pvs_flow.xdmf"
 csf_velocity_file : "results/csf_flow/sas_flow/csf_v.xdmf"
+csf_dispersion_pressure_file : "results/csf_flow/cardiac_sas_flow/csf_p.xdmf"
 pvs_ratio_artery : 2
 pvs_ratio_venes: 2
 boundary_conditions:
   # influx of a total of 0.5mmol tracer with a linearly decreasing function over the first two hours
   sas : 
     type : Neumann
-    expr : "2*c_tot / (t0*t0) * max(0.0, t0 - t) / A" # t (current time) and A (surface area) are computed and updated in the code
+    expr : " (t < t1) ? \
+              2*c_tot / (t1*t2) * t / A : \
+              2*c_tot / (t1*t2) * max(0.0, t2 - t) / A "
+     # t (current time) and A (surface area) are computed and updated in the code
     params : 
-      t0 : 7200 # s
+      t1 : 3600 # s
+      t2 : 7200 # s
       c_tot : 0.5e-3 # mol
