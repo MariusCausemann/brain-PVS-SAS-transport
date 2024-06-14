@@ -48,14 +48,17 @@ def compare_concentrations(modelname:str, times:List[int]):
     alltimes = np.arange(0, times[-1], dt)
     #inflow = np.cumsum([k*max(0.0, t0 - t) for t in alltimes]) * dt
     set_plotting_defaults()
-    sns.set_palette("dark")
+    sns.set_palette("magma_r", n_colors=4)
     mol2mmol = 1e3
     plt.figure()
-    plt.plot(times / (60*60), par_tot*mol2mmol, ".-" , label="par")
-    plt.plot(times / (60*60), csf_tot*mol2mmol, ".-" , label="csf")
-    plt.plot(times / (60*60), art_tot*mol2mmol, ".-" , label="art")
-    plt.plot(times / (60*60), ven_tot*mol2mmol, ".-" , label="ven")
-    plt.plot(times / (60*60), tot*mol2mmol, ".-" , label="total")
+    tot = np.zeros_like(times)
+    labels = ["CSF", "parenchyma", "PVS artery", "PVS vein"]
+    compartments = [csf_tot, par_tot, art_tot, ven_tot]
+    for q,l in zip(compartments, labels):
+        new_tot = tot + q*mol2mmol
+        #plt.plot(times / (60*60), new_tot, ".-", label=l)
+        plt.fill_between(times/ (60*60), new_tot, tot, alpha=0.7, label=l)
+        tot = new_tot
     #plt.plot(alltimes / (60*60), inflow, "--" , label="inflow")
     plt.legend()
     plt.xlabel("time (h)")
