@@ -1,18 +1,18 @@
 import numpy as np
 from scripts.plotting_utils import read_config
 
-models = ["modelA", "modelA2", "modelA3"]
-times = list(np.array([1, 6, 12, 18, 24])*60*60)
-conctimes =  list(np.array([0, 1, 2, 4, 6, 12, 18, 24])*60*60)
+models = ["modelA", "modelA2"]
+times = list(np.array([1, 6, 12, 24])*60*60)
+conctimes =  list(np.array([1,2,3,6 ,12, 18, 24])*60*60)
 
-cmax = {"detail":{"modelA_modelA2":5, "modelA_modelA3":5},
-        "overview":{"modelA_modelA2":10, "modelA_modelA3":10},
+cmax = {"detail":{"modelA_modelA2":1, "modelA_modelA3":1},
+        "overview":{"modelA_modelA2":1, "modelA_modelA3":1},
         "isosurf":{"modelA_modelA2":10, "modelA_modelA2":8, "modelA_modelA2":8,},          
         
 }
 
-diffmax = {"detail":{"modelA_modelB":1, "modelB_modelC":1},
-        "overview":{"modelA_modelA2":1, "modelA_modelA3":1},
+diffmax = {"detail":{"modelA_modelB":0.1, "modelB_modelC":0.1},
+        "overview":{"modelA_modelA2":0.1, "modelA_modelA3":0.1},
             "isosurf":{"modelA_modelB":1, "modelB_modelC":5, "modelB_modelE":1},               
 }
 types = ["overview","detail", "isosurf"]
@@ -23,7 +23,7 @@ def getconfig(m, k):
 rule all:
     input:
         "plots/comparisons/modelA_modelA2/modelA_modelA2_overview.png",
-        "plots/comparisons/modelA_modelA3/modelA_modelA3_overview.png",
+        #"plots/comparisons/modelA_modelA3/modelA_modelA3_overview.png",
         #"plots/comparisons/modelB_modelE/modelB_modelE_isosurf.png",
         #"plots/comparisons/modelA_modelB/modelA_modelB_detail.png",
         expand("plots/{modelname}/{modelname}_tracer_vessel_dist.png", modelname=models),
@@ -39,11 +39,12 @@ rule runSimuation:
         venmesh="mesh/networks/venes_smooth.vtk",
         config="configfiles/{modelname}.yml",
         csf_velocity_file=lambda wildcards: getconfig(wildcards.modelname, "csf_velocity_file"),
-        arterial_velocity_file=lambda wildcards: getconfig(wildcards.modelname, "arterial_velocity_file")
+        arterial_velocity_file=lambda wildcards: getconfig(wildcards.modelname, "arterial_velocity_file"),
+        dispersion_pressure_file=lambda wildcards: getconfig(wildcards.modelname, "csf_dispersion_pressure_file"),
     output:
-        sas="results/{modelname}/{modelname}_sas.pvd",
-        art="results/{modelname}/{modelname}_arteries.pvd",
-        ven="results/{modelname}/{modelname}_venes.pvd",
+        sas="results/{modelname}/{modelname}_sas.xdmf",
+        art="results/{modelname}/{modelname}_artery.xdmf",
+        ven="results/{modelname}/{modelname}_vein.xdmf",
     shell:
         "python scripts/time_dependent.py {input.config}"
 
@@ -59,9 +60,9 @@ rule computeFlowField:
 rule generatePlot:
     conda:"environment.yml"
     input:
-        sas="results/{modelname}/{modelname}_sas.pvd",
-        art="results/{modelname}/{modelname}_arteries.pvd",
-        ven="results/{modelname}/{modelname}_venes.pvd",
+        sas="results/{modelname}/{modelname}_sas.xdmf",
+        art="results/{modelname}/{modelname}_artery.xdmf",
+        ven="results/{modelname}/{modelname}_vein.xdmf",
     output:
         plot="plots/{modelname}/{modelname}_{type}_{time,[0-9]*}.png"
     shell:
@@ -70,12 +71,12 @@ rule generatePlot:
 rule generateDiffPlot:
     conda:"environment.yml"
     input:
-        sas1="results/{model1}/{model1}_sas.pvd",
-        art1="results/{model1}/{model1}_arteries.pvd",
-        ven1="results/{model1}/{model1}_venes.pvd",
-        sas2="results/{model2}/{model2}_sas.pvd",
-        art2="results/{model2}/{model2}_arteries.pvd",
-        ven2="results/{model2}/{model2}_venes.pvd",
+        sas1="results/{model1}/{model1}_sas.xdmf",
+        art1="results/{model1}/{model1}_artery.xdmf",
+        ven1="results/{model1}/{model1}_vein.xdmf",
+        sas2="results/{model2}/{model2}_sas.xdmf",
+        art2="results/{model2}/{model2}_artery.xdmf",
+        ven2="results/{model2}/{model2}_vein.xdmf",
     output:
         plot="plots/comparisons/{model1}_{model2}/{model1}_{model2}_diff_{type}_{time}.png"
     shell:
@@ -84,9 +85,9 @@ rule generateDiffPlot:
 rule getConcentrationRange:
     conda:"environment.yml"
     input:
-        sas="results/{modelname}/{modelname}_sas.pvd",
-        art="results/{modelname}/{modelname}_arteries.pvd",
-        ven="results/{modelname}/{modelname}_venes.pvd",
+        sas="results/{modelname}/{modelname}_sas.xdmf",
+        art="results/{modelname}/{modelname}_artery.xdmf",
+        ven="results/{modelname}/{modelname}_vein.xdmf",
     output:
         ranges="plots/{modelname}/{modelname}_ranges.yml"
     params:
@@ -98,12 +99,12 @@ rule getConcentrationRange:
 rule compareModels:
     conda:"environment.yml"
     input:
-        sas1="results/{model1}/{model1}_sas.pvd",
-        art1="results/{model1}/{model1}_arteries.pvd",
-        ven1="results/{model1}/{model1}_venes.pvd",
-        sas2="results/{model2}/{model2}_sas.pvd",
-        art2="results/{model2}/{model2}_arteries.pvd",
-        ven2="results/{model2}/{model2}_venes.pvd"
+        sas1="results/{model1}/{model1}_sas.xdmf",
+        art1="results/{model1}/{model1}_artery.xdmf",
+        ven1="results/{model1}/{model1}_vein.xdmf",
+        sas2="results/{model2}/{model2}_sas.xdmf",
+        art2="results/{model2}/{model2}_artery.xdmf",
+        ven2="results/{model2}/{model2}_vein.xdmf"
     output:
         plot="plots/comparisons/{model1}_{model2}/{model1}_{model2}_{type}.png"
     params:
@@ -115,9 +116,9 @@ rule compareModels:
 rule analyzeTracerDist:
     conda:"environment.yml"
     input:
-        sas="results/{modelname}/{modelname}_sas.pvd",
-        art="results/{modelname}/{modelname}_arteries.pvd",
-        ven="results/{modelname}/{modelname}_venes.pvd",
+        sas="results/{modelname}/{modelname}_sas.xdmf",
+        art="results/{modelname}/{modelname}_artery.xdmf",
+        ven="results/{modelname}/{modelname}_vein.xdmf",
     output:
         plot="plots/{modelname}/{modelname}_tracer_vessel_dist.png"
     shell:
@@ -126,9 +127,9 @@ rule analyzeTracerDist:
 rule totalTracer:
     conda:"environment.yml"
     input:
-        sas="results/{modelname}/{modelname}_sas.pvd",
-        art="results/{modelname}/{modelname}_arteries.pvd",
-        ven="results/{modelname}/{modelname}_venes.pvd",
+        sas="results/{modelname}/{modelname}_sas.xdmf",
+        art="results/{modelname}/{modelname}_artery.xdmf",
+        ven="results/{modelname}/{modelname}_vein.xdmf",
     output:
         plot="plots/{modelname}/{modelname}_total_conc.png"
     shell:
@@ -163,6 +164,8 @@ rule computeSASFlow:
     output:
         "results/csf_flow/{csf_flow_model}/csf_v.xdmf",
         "results/csf_flow/{csf_flow_model}/csf_v.h5",
+        "results/csf_flow/{csf_flow_model}/csf_p.xdmf",
+        "results/csf_flow/{csf_flow_model}/csf_p.h5",
     shell:
         "python scripts/sas_flow.py configfiles/{wildcards.csf_flow_model}.yml"
 
