@@ -21,50 +21,42 @@ def minmax(arr_list, percentile=95):
         return float(np.min(percentiles)), float(np.max(percentiles))
 
 def get_result(modelname, domain, times):
-    filename = f"results/{modelname}/{modelname}_{domain}.pvd"
-    from plotting_utils import read_config
-    config = read_config(f"configfiles/{modelname}.yml")
-    reader = pv.get_reader(filename)
+    from vtk_adapter import create_vtk_structures
     if not isinstance(times, collections.Iterable):
         times = [times]
-    reader.set_active_time_value(times[0])
-    ds = reader.active_datasets[0]
-    data = pv.read(f"results/{modelname}/{ds.path}")
-    if len(times) > 1:
-        for ar in data.array_names:
-            data.rename_array(ar, f"{ar}_{times[0]}")
-    for t in times:
-        reader.set_active_time_value(t)
-        ds = reader.active_datasets[0]
-        d =  pv.read(f"results/{modelname}/{ds.path}")
-        for ar in d.array_names:
-            data[f"{ar}_{t}"] = d[ar]
-    if domain=="sas":
-        marker = pv.read(f"mesh/{config['mesh']}/volmesh/mesh.xdmf")
-        data["label"] = marker["label"]
-    return data
+    res, label = get_result_fenics(modelname, domain, times)
+    Vh = res[0].function_space()
+    topology, cell_types, x = create_vtk_structures(Vh)
+    grid = pv.UnstructuredGrid(topology, cell_types, x)
+    for r,t in zip(res, times):
+        grid[f"{r.name()}_{t}"] = r.vector()[:]
+    if domain == "sas":
+        grid["label"] = label.array()[:]
+    return grid
 
 def get_result_fenics(modelname, domain, times):
-    from fenics import HDF5File, FunctionSpace, Function
-    from plotting_utils import read_config
+    from fenics import XDMFFile, FunctionSpace, Function
     from solver  import get_mesh, read_vtk_network, as_P0_function
-    filename = f"results/{modelname}/{modelname}.hdf"
+    filename = f"results/{modelname}/{modelname}_{domain}.xdmf"
     config = read_config(f"configfiles/{modelname}.yml")
     dt , T= config["dt"], config["T"]
     alltimes = np.arange(0, T + dt, dt*config["output_frequency"])
     if domain=="sas":
         mesh, vol_subdomains = get_mesh(config["mesh"])
+        V = FunctionSpace(mesh, "DG", 1)
     if domain == "artery":
         mesh, radii, _ = read_vtk_network("mesh/networks/arteries_smooth.vtk", rescale_mm2m=False)
+        V = FunctionSpace(mesh, "CG", 1)
     if domain == "vein":
         mesh, radii, _ = read_vtk_network("mesh/networks/venes_smooth.vtk", rescale_mm2m=False)
-    V = FunctionSpace(mesh, "CG", 1)
+        V = FunctionSpace(mesh, "CG", 1)
     results = []
-    with HDF5File(mesh.mpi_comm(), filename, "r") as f:
+    with XDMFFile(filename) as f:
         for t in times:
             i = np.where(alltimes==t)[0][0]
             c = Function(V)
-            f.read(c, f"c_{domain}/vector_{i}")
+            c.rename("c","c")
+            f.read_checkpoint(c, "c", i)
             results.append(c)
     if domain in ["artery", "vein"]:
         return results, as_P0_function(radii)
@@ -82,9 +74,9 @@ def get_diff_range(modela, modelb, domain, times, var, percentile=95):
     
 def compute_ranges(modelname: str, times: List[int], percentile=95):
     ranges = dict()
-    ranges["sas"] = get_range(modelname, "sas", times, "c_sas", percentile=percentile)
-    ranges["arteries"] = get_range(modelname, "arteries", times, "c_artery", percentile=percentile)
-    ranges["veines"] = get_range(modelname, "venes", times, "c_vein", percentile=percentile)
+    ranges["sas"] = get_range(modelname, "sas", times, "c", percentile=percentile)
+    ranges["arteries"] = get_range(modelname, "arteries", times, "c", percentile=percentile)
+    ranges["veines"] = get_range(modelname, "venes", times, "c", percentile=percentile)
 
     return ranges
 
