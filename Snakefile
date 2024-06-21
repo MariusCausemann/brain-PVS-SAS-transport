@@ -170,6 +170,7 @@ rule computeSASFlow:
         "results/csf_flow/{csf_flow_model}/csf_v.xdmf",
         "results/csf_flow/{csf_flow_model}/csf_v.h5",
         "results/csf_flow/{csf_flow_model}/csf_p.xdmf",
+        "results/csf_flow/{csf_flow_model}/csf_vis_p.xdmf",
         "results/csf_flow/{csf_flow_model}/csf_p.h5",
     shell:
         "python scripts/sas_flow.py configfiles/{wildcards.csf_flow_model}.yml"
