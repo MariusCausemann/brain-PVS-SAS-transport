@@ -1,21 +1,21 @@
 import numpy as np
 from scripts.plotting_utils import read_config
 
-models = ["modelA", "modelA2"]
+models = ["modelA", "modelA2", "modelA3", "modelA4"]
 times = list(np.array([1, 6, 12, 24])*60*60)
-conctimes =  list(np.array([1,2,3,6 ,12, 18, 24])*60*60)
+conctimes =  list(np.array([0, 1, 2, 3, 4, 6 , 12, 18, 24])*60*60)
 
-cmax = {"detail":{"modelA_modelA2":1, "modelA_modelA3":1},
-        "overview":{"modelA_modelA2":1, "modelA_modelA3":1},
+cmax = {"detail":{"modelA_modelA2":2, "modelA_modelA3":2, "modelA_modelA4":2},
+        "overview":{"modelA_modelA2":2, "modelA_modelA3":2, "modelA_modelA4":2},
         "isosurf":{"modelA_modelA2":10, "modelA_modelA2":8, "modelA_modelA2":8,},          
         
 }
 
-diffmax = {"detail":{"modelA_modelB":0.1, "modelB_modelC":0.1},
-        "overview":{"modelA_modelA2":0.1, "modelA_modelA3":0.1},
+diffmax = {"detail":{"modelA_modelB":1, "modelB_modelC":0.1},
+            "overview":{"modelA_modelA2":1, "modelA_modelA3":1, "modelA_modelA4":1},
             "isosurf":{"modelA_modelB":1, "modelB_modelC":5, "modelB_modelE":1},               
 }
-types = ["overview","detail", "isosurf"]
+types = ["overview"]
 
 def getconfig(m, k):
     return read_config(f"configfiles/{m}.yml").get(k, [])
@@ -23,6 +23,8 @@ def getconfig(m, k):
 rule all:
     input:
         "plots/comparisons/modelA_modelA2/modelA_modelA2_overview.png",
+        "plots/comparisons/modelA_modelA3/modelA_modelA3_overview.png",
+        "plots/comparisons/modelA_modelA4/modelA_modelA4_overview.png",
         #"plots/comparisons/modelA_modelA3/modelA_modelA3_overview.png",
         #"plots/comparisons/modelB_modelE/modelB_modelE_isosurf.png",
         #"plots/comparisons/modelA_modelB/modelA_modelB_detail.png",
@@ -111,7 +113,10 @@ rule compareModels:
         cmax= lambda wildcards: cmax[wildcards.type][f"{wildcards.model1}_{wildcards.model2}"],
         diffmax= lambda wildcards: diffmax[wildcards.type][f"{wildcards.model1}_{wildcards.model2}"]
     shell:
-        "python scripts/compare_models.py {wildcards.model1} {wildcards.model2} {wildcards.type} {params.cmax} {params.diffmax} {times}"
+        """
+        python scripts/compare_models.py {wildcards.model1} {wildcards.model2} {wildcards.type} {params.cmax} {params.diffmax} {times} &&
+        python scripts/compare_models_horizontal.py {wildcards.model1} {wildcards.model2} {wildcards.type} {params.cmax} {times}
+        """
 
 rule analyzeTracerDist:
     conda:"environment.yml"
