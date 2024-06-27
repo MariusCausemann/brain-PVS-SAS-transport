@@ -3,7 +3,6 @@ from dolfin import *
 import xii  
 import pyvista as pv
 import numpy as np
-import ufl
 
 def mark_internal_interface(mesh, subdomains, bm, interface_id,
                             doms=None):
@@ -103,18 +102,12 @@ def volmarker_to_networkmarker(volm, netw, netw_shape, threshold=0.99):
 
 def pcws_constant(subdomains, values):
     mesh = subdomains.mesh()
-    dx = Measure('dx', domain=mesh, subdomain_data=subdomains)
-
-    V = FunctionSpace(mesh, 'DG', 0)
-    v = TestFunction(V)
-    hK = CellVolume(mesh)
-
-    form = sum((1/hK)*inner(Constant(value), v)*dx(tag) for tag, value in values.items())
-
-    foo = Function(V)
-    assemble(form, foo.vector())
-
-    return foo
+    assert np.allclose(np.unique(subdomains.array()), np.sort(list(values.keys())))
+    u = Function(FunctionSpace(mesh, 'DG', 0))
+    for k,v in values.items():
+        u.vector().add_local(v*(subdomains.array()==k))
+    assert np.allclose(np.unique(u.vector()), np.sort(list(values.values())))
+    return u
 
 def as_P0_function(mesh_f):
     '''Represent as DG0'''
