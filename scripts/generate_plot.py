@@ -26,7 +26,7 @@ def plot_model(modelname: str, t:int, type, cmax:float=None, filename:str=None):
         csf = sas.extract_cells(np.isin(sas["label"], [CSFID, LVID, V34ID, CSFNOFLOWID]))
         par = sas.extract_cells(sas["label"]==PARID)
         par[f"c_{t}"] *= 0.2
-        return clip_plot(csf, par, [art, ven], filename, title, clim=clim, cmap="matter",
+        return clip_plot(csf, par, [art, ven], filename, title, clim=clim, cmap="tempo",
               cbar_title="concentration (mmol/l)")
     
     if type=="isosurf":

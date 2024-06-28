@@ -1,11 +1,13 @@
-name: pvs_transport_env
+name: pvs_transport_env2019.2
 channels:
   - conda-forge
+  - conda-forge/label/fenics-dev
 dependencies:
-  - fenics-dolfin
+  - fenics-dolfin=2019.2.0.dev
   - python=3.9    
   - numpy
   - numpy-indexed
+  - ipython
   - matplotlib
   - pyvista
   - scikit-image
@@ -13,6 +15,7 @@ dependencies:
   - seaborn
   - nibabel
   - pip
+  - tqdm
   - typer
   - pykdtree
   - bioconda::snakemake
@@ -21,6 +24,7 @@ dependencies:
     - cmocean
     - dufte
     - kimimaro
-    - git+https://github.com/blocknics/cbc.block.git
-    - git+https://github.com/MiroK/fenics_ii.git@point-trace
+    - git+https://github.com/MiroK/ulfy.git@ufl_legacy
+    - git+https://github.com/MiroK/fenics_ii.git@ufl_legacy
+    - git+https://github.com/blocknics/cbc.block.git@mirok/ufl_legacy
     - git+https://github.com/MariusCausemann/wildmeshing-python.git

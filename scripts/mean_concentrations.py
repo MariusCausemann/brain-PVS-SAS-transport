@@ -10,6 +10,7 @@ import numpy as np
 import seaborn as sns
 from IPython import embed
 import pandas as pd
+from matplotlib.markers import MarkerStyle
 
 CSFID = 1
 PARID = 2
@@ -50,23 +51,31 @@ def compare_concentrations(modelname:str, times:List[int]):
     set_plotting_defaults()
     sns.set_palette("magma_r", n_colors=4)
     mol2mmol = 1e3
-    plt.figure()
+    fig, ax = plt.subplots()
+    ax2 = ax.twinx()
     tot = np.zeros_like(times)
     labels = ["CSF", "parenchyma", "PVS artery", "PVS vein"]
     compartments = [csf_tot, par_tot, art_tot, ven_tot]
-    for q,l in zip(compartments, labels):
+    volumes = [assemble(phi*dx(CSFID)), assemble(phi*dx(PARID)),
+               assemble(area_artery*dxa),assemble(area_vein*dxv)]
+    for q,v, l in zip(compartments, volumes, labels):
         new_tot = tot + q*mol2mmol
         #plt.plot(times / (60*60), new_tot, ".-", label=l)
-        plt.fill_between(times/ (60*60), new_tot, tot, alpha=0.7, label=l)
+        fill = ax.fill_between(times/ (60*60), new_tot, tot, alpha=0.7, label=l)
+        ax2.plot(times/ (60*60), q/v,"o-" , ms=10,
+                 mfc=fill.get_facecolor(), color="grey")
         tot = new_tot
+    
     #plt.plot(alltimes / (60*60), inflow, "--" , label="inflow")
-    plt.legend()
     plt.xlabel("time (h)")
-    plt.ylabel("total tracer content (mmol)")
-    plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.1), ncol=6, columnspacing=0.7)
+    ax2.set_ylabel('mean tracer concentration (mol/l)')
+    ax.set_ylabel("total tracer content (mmol)")
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.1), ncol=6, columnspacing=0.7)
     plt.tight_layout()
     filename = f"plots/{modelname}/{modelname}_total_conc.png"
     plt.savefig(filename)
+
+    times = times[1:]
 
     def ii_project(f, V):
         u = TrialFunction(V)
@@ -96,7 +105,7 @@ def compare_concentrations(modelname:str, times:List[int]):
 
     # mmol/l equals mol/m^3
     xlabels = {"abs": "$\Delta c$ (mmol/l)", "rel":"$\Delta c_{rel}$ (%)"}
-    kdecut = {"abs": 0, "rel":2}
+    kdecut = {"abs": 0, "rel":0}
     perclevel = {"abs": 80, "rel":95}
     for mode, jump_data in zip(["abs", "rel"], [conc_jump, rel_conc_jump]):
         cj_arr = [cj.vector() for cj in jump_data]
@@ -115,14 +124,16 @@ def compare_concentrations(modelname:str, times:List[int]):
 
         cjdf = pd.DataFrame({f"{int(t/3600)} h":cj for t,cj in zip(times, cj_arr)})
         cjdfclipped = cjdf.copy()
+        jumpminmax = (jumpminmax[0], 100)
         cjdfclipped[cjdf > jumpminmax[1]] = np.nan
         cjdfclipped[cjdf < jumpminmax[0]] = np.nan
 
         plt.figure()
         sns.kdeplot(cjdfclipped, bw_adjust=1, cut=kdecut[mode], fill=True, common_norm=False,
-                    palette="crest", alpha=.3, linewidth=1)
+                    palette="magma", alpha=.3, linewidth=1,)
         if mode=="abs":
             plt.xlim(np.array(jumpminmax)*0.5)
+        plt.xlim((-50, 100))
         filename = f"plots/{modelname}/{modelname}_{mode}_conc_jump_kde.png"
         plt.xlabel(xlabels[mode])
         plt.tight_layout()
