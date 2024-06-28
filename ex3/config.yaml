@@ -1,0 +1,28 @@
+cluster:
+  module load mpich &&
+  mkdir -p logs/{rule} &&
+  sbatch
+    --partition={resources.partition}
+    --ntasks={resources.ntasks}
+    --job-name={rule}-{wildcards}
+    --output=logs/{rule}/{wildcards}-%j.out
+    --time={resources.time}
+    --cpus-per-task={resources.ncpuspertask}
+default-resources:
+  - partition=milanq,fpgaq
+  - mem="10G"
+  - time="60:00"
+  - ntasks=1
+  - ncpuspertask=1
+restart-times: 0
+max-jobs-per-second: 10
+max-status-checks-per-second: 10
+local-cores: 5
+cores : 10
+latency-wait: 60
+jobs: 100
+keep-going: True
+rerun-incomplete: True
+printshellcmds: True
+scheduler: greedy
+use-conda: True

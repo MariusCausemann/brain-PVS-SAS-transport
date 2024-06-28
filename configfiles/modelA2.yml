@@ -1,21 +1,21 @@
-description : "xi 10x"
+description : "diffusion only"
 dt : 60
-T : 14400 # 1 day in seconds
+T : 86400 # 1 day in seconds
 mesh : "T1"
 output_frequency : 10
 ecs_share : 0.2
 sas_diffusion : 3.8e-10 # Valnes 2020, https://www.nature.com/articles/s41598-020-66042-5
 arterial_pvs_diffusion : 3.8e-10
 venous_pvs_diffusion : 3.8e-10
-parenchyma_diffusion : 1.2e-10
-pvs_parenchyma_permability : 3.8e-7 # = C_M * D_f wit C_M = 1e3 as in https://fluidsbarrierscns.biomedcentral.com/articles/10.1186/s12987-023-00421-8
-pvs_csf_permability: 3.8e-6 # ???
+parenchyma_diffusion : 3.8e-10
+pvs_parenchyma_permability : 3.8e-7 #3.8e-7 # = C_M * D_f wit C_M = 1e3 as in https://fluidsbarrierscns.biomedcentral.com/articles/10.1186/s12987-023-00421-8
+pvs_csf_permability: 3.8e-7 #3.8e-7 # ???
 pvs_ratio_artery : 2
 pvs_ratio_venes: 2
-molecular_outflow_resistance : 0 #1.0e-10 # 1e-4 mm^2/s 
-arterial_velocity_file : "results/csf_flow/sas_flow/pvs_flow.xdmf"
-csf_velocity_file : "results/csf_flow/sas_flow/csf_v.xdmf"
-csf_dispersion_pressure_file : "results/csf_flow/cardiac_sas_flow/csf_p.xdmf"
+molecular_outflow_resistance : 1.0e-10 # 1e-4 mm^2/s 
+#arterial_velocity_file : "results/csf_flow/sas_flow/pvs_flow.xdmf"
+#csf_velocity_file : "results/csf_flow/sas_flow/csf_v.xdmf"
+csf_dispersion_pressure_file : "results/csf_flow/cardiac_sas_flow/csf_vis_p.xdmf"
 pvs_ratio_artery : 2
 pvs_ratio_venes: 2
 boundary_conditions:
