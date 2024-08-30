@@ -1,24 +1,24 @@
 import numpy as np
 from scripts.plotting_utils import read_config
 
-models = ["modelA", "modelA2", "modelA3", "modelA4"]
+models = ["modelA", "modelA2", "modelA3", "modelA4","modelABDM"]
 times = list(np.array([1, 6, 12, 24])*60*60)
 conctimes =  list(np.array([0, 1, 2, 3, 4, 6 , 12, 18, 24])*60*60)
 
 cmax = {"detail":{"modelA_modelA2":2, "modelA_modelA3":2, "modelA_modelA4":2},
-        "overview":{"modelA_modelA2":2, "modelA_modelA3":2, "modelA_modelA4":2},
+        "overview":{"modelA_modelA2":2, "modelA_modelA3":2, "modelA_modelA4":2, "modelA_modelABDM":2},
         "isosurf":{"modelA_modelA2":10, "modelA_modelA2":8, "modelA_modelA2":8,},          
         
 }
 
 diffmax = {"detail":{"modelA_modelB":1, "modelB_modelC":0.1},
-            "overview":{"modelA_modelA2":1, "modelA_modelA3":1, "modelA_modelA4":1},
+            "overview":{"modelA_modelA2":1, "modelA_modelA3":1, "modelA_modelA4":1, "modelA_modelABDM":1},
             "isosurf":{"modelA_modelB":1, "modelB_modelC":5, "modelB_modelE":1},               
 }
 types = ["overview"]
 
-def getconfig(m, k):
-    return read_config(f"configfiles/{m}.yml").get(k, [])
+def getconfig(model, key):
+    return read_config(f"configfiles/{model}.yml").get(key, [])
 
 rule all:
     input:
