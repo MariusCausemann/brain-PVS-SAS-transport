@@ -106,7 +106,7 @@ def pcws_constant(subdomains, values):
     u = Function(FunctionSpace(mesh, 'DG', 0))
     for k,v in values.items():
         u.vector().add_local(v*(subdomains.array()==k))
-    assert np.allclose(np.unique(u.vector()), np.sort(list(values.values())))
+    assert np.allclose(np.unique(u.vector()), np.unique(list(map(float, values.values()))))
     return u
 
 def as_P0_function(mesh_f):
