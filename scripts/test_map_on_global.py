@@ -63,6 +63,6 @@ with XDMFFile("uh.xdmf") as file:
     file.write_checkpoint(uhdg, "uh")
 
 uh.set_allow_extrapolation(True)
-uh_global_dg = interpolate(uh_global, VectorFunctionSpace(mesh, "DG", 1))
+uh_global_dg = interpolate(uh, VectorFunctionSpace(mesh, "DG", 1))
 with XDMFFile("uh_gobal.xdmf") as file:
     file.write_checkpoint(uh_global_dg, "uh_global")
