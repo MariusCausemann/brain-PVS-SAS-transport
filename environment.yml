@@ -19,6 +19,7 @@ dependencies:
   - typer
   - pykdtree
   - bioconda::snakemake
+  - gcc<13 # fTetWild install via pip requires gcc<13
   - pip:
     - pyacvd
     - cmocean
