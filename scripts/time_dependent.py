@@ -112,13 +112,13 @@ def run_simulation(configfile: str):
                            doms=[PARID])
     File("bm.pvd") << bm
 
-    xi_dict = {0:Constant(0), CSFID: Constant(pvs_csf_permability), 
-               PARID: Constant(pvs_parenchyma_permability)}
-    phi_dict = {CSFID: Constant(1),  PARID: Constant(ecs_share)}
+    xi_dict = {0:0, CSFID: pvs_csf_permability, 
+               PARID: pvs_parenchyma_permability}
+    phi_dict = {CSFID: 1,  PARID: ecs_share}
 
     phi = pcws_constant(vol_subdomains, phi_dict)
-    Ds = pcws_constant(vol_subdomains, {CSFID: Constant(sas_diffusion),  # csf
-                                        PARID: Constant(parenchyma_diffusion) # parenchyma
+    Ds = pcws_constant(vol_subdomains, {CSFID: sas_diffusion,  # csf
+                                        PARID: parenchyma_diffusion # parenchyma
                                         })
     xi_a = pcws_constant(artmarker, xi_dict)
     xi_v = pcws_constant(veinmarker, xi_dict)
@@ -146,11 +146,16 @@ def run_simulation(configfile: str):
         vel_file = config["csf_velocity_file"]
 
         with XDMFFile(vel_file) as file:
-            sm = xii.EmbeddedMesh(vol_subdomains, [CSFID, LVID, V34ID])
-            CG3 = VectorFunctionSpace(mesh, "CG", 3)
-            velocity_csf = Function(CG3)
+            if "bdm" in vel_file:
+                vel_space = VectorFunctionSpace(mesh, "DG", 1)
+            else:
+                vel_space = VectorFunctionSpace(mesh, "CG", 3)
+            velocity_csf = Function(vel_space)
             file.read_checkpoint(velocity_csf, "velocity")
-        
+        if "bdm" in vel_file:
+            dx_s = Measure("dx", mesh, subdomain_data=vol_subdomains)
+            assert abs(assemble(div(velocity_csf)*dx_s(CSFID))) < 1e-14
+
         File("csf_velocity.pvd") << velocity_csf
     else:
         velocity_csf = Constant([0]*gdim)
@@ -214,7 +219,6 @@ def run_simulation(configfile: str):
         n = FacetNormal(mesh)
         h = CellDiameter(mesh)
         b = velocity_csf
-        bn = (dot(b, n) + abs(dot(b, n)))/2.0
         dSi = dS(0)
         a_int = dot(grad(v), Ds*phi*grad(u))*dx - dot(grad(v),b*u)*dx_s(CSFID)
 
@@ -226,9 +230,8 @@ def run_simulation(configfile: str):
                 - dot(jump(u, n), avg(grad(v)) * DF)*dSi \
                 + beta_csf_par*jump(u)*jump(v)*dS(par_csf_id)
         
-        a_vel = dot(dot(b,n('+'))*avg(u), jump(v))*dSi \
-            + (eta/2)*dot(abs(dot(b,n('+')))*jump(u), jump(v))*dSi #\
-            #+ dot(v, bn*u)*ds
+        a_vel = dot(dot(b("+"),n('+'))*avg(u), jump(v))*dSi \
+            + (eta/2)*dot(abs(dot(b("+"),n('+')))*jump(u), jump(v))*dSi
 
         a = a_int + a_fac + a_vel
         return a
@@ -315,7 +318,7 @@ def run_simulation(configfile: str):
     #opts.setValue('ksp_monitor_true_residual', None)
     #opts.setValue('ksp_rtol', 1E-40)
     #opts.setValue('ksp_atol', 1E-12)   # |AX-b| < 1E-
-    opts.setValue('pc_type', 'lu')
+    opts.setValue('pc_type', 'cholesky')
     opts.setValue("pc_factor_mat_solver_type", "mumps")
     opts.setValue("mat_mumps_icntl_4", "3")
     opts.setValue("mat_mumps_icntl_35", 1)
