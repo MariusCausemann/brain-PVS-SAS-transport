@@ -1,4 +1,4 @@
-mesh : "mesh/standard/standard.xdmf"
+mesh : "mesh/LowRes/LowRes.xdmf"
 discretization : TH
 mu : 0.7e-3 
 R : 0 # 1e-5 Pa/(mm s) 

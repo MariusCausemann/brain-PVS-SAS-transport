@@ -1,7 +1,7 @@
 import numpy as np
 from scripts.plotting_utils import read_config
 
-models = ["modelA", "modelA2", "modelA3", "modelA4","modelABDM"]
+models = ["modelA"] #["modelA", "modelA2", "modelA3", "modelA4","modelABDM"]
 times = list(np.array([1, 6, 12, 24])*60*60)
 conctimes =  list(np.array([0, 1, 2, 3, 4, 6 , 12, 18, 24])*60*60)
 
@@ -12,8 +12,8 @@ cmax = {"detail":{"modelA_modelA2":2, "modelA_modelA3":2, "modelA_modelA4":2},
 }
 
 diffmax = {"detail":{"modelA_modelB":1, "modelB_modelC":0.1},
-            "overview":{"modelA_modelA2":1, "modelA_modelA3":1, "modelA_modelA4":1, "modelA_modelABDM":1},
-            "isosurf":{"modelA_modelB":1, "modelB_modelC":5, "modelB_modelE":1},               
+           "overview":{"modelA_modelA2":1, "modelA_modelA3":1, "modelA_modelA4":1, "modelA_modelABDM":1},
+           "isosurf":{"modelA_modelB":1, "modelB_modelC":5, "modelB_modelE":1},               
 }
 types = ["overview"]
 
@@ -22,9 +22,9 @@ def getconfig(model, key):
 
 rule all:
     input:
-        "plots/comparisons/modelA_modelA2/modelA_modelA2_overview.png",
-        "plots/comparisons/modelA_modelA3/modelA_modelA3_overview.png",
-        "plots/comparisons/modelA_modelA4/modelA_modelA4_overview.png",
+        #"plots/comparisons/modelA_modelA2/modelA_modelA2_overview.png",
+        #"plots/comparisons/modelA_modelA3/modelA_modelA3_overview.png",
+        #"plots/comparisons/modelA_modelA4/modelA_modelA4_overview.png",
         #"plots/comparisons/modelA_modelA3/modelA_modelA3_overview.png",
         #"plots/comparisons/modelB_modelE/modelB_modelE_isosurf.png",
         #"plots/comparisons/modelA_modelB/modelA_modelB_detail.png",
@@ -36,7 +36,7 @@ rule all:
 rule runSimuation:
     conda:"environment.yml"
     input:
-        volmesh="mesh/T1/volmesh/mesh.xdmf",
+        volmesh=lambda wildcards: getconfig(wildcards.modelname, "mesh"),
         artmesh="mesh/networks/arteries_smooth.vtk",
         venmesh="mesh/networks/venes_smooth.vtk",
         config="configfiles/{modelname}.yml",
@@ -148,32 +148,44 @@ rule segmentT1:
     shell:
         "scripts/synthseg.sh"
 
-rule meshT1:
+
+rule generateSurfaces:
     conda:"environment.yml"
     input:
         "results/freesurfer/T1_synthseg.nii.gz"
     output:
-        "mesh/{meshname}/volmesh/mesh.xdmf",
-        "mesh/{meshname}/volmesh/mesh.h5",
+        [f"mesh/T1/surfaces/{n}.ply" for n in ["LV", "parenchyma", "skull", "V34"]]
     shell:
         """
-        python scripts/extract_synthseg_surfaces.py &&
-        python scripts/generate_synthseg_mesh.py configfiles/{wildcards.meshname}.yml
+        python scripts/extract_synthseg_surfaces.py
+        """
+
+rule generateMesh:
+    conda:"environment.yml"
+    input:
+        [f"mesh/T1/surfaces/{n}.ply" for n in ["LV", "parenchyma", "skull", "V34"]]
+    output:
+        "mesh/{meshname}/{meshname}.xdmf",
+        "mesh/{meshname}/{meshname}.h5",
+    shell:
+        """
+        python scripts/generate_synthseg_mesh.py configfiles/meshconfig/{wildcards.meshname}.yml
         """
 
 rule computeSASFlow:
     conda:"environment.yml"
     input:
-        "mesh/T1/volmesh/mesh.xdmf",
-        "mesh/T1/volmesh/mesh.h5",
+        volmesh=lambda wildcards: getconfig(wildcards.csf_flow_model, "mesh"),
     output:
         "results/csf_flow/{csf_flow_model}/csf_v.xdmf",
         "results/csf_flow/{csf_flow_model}/csf_v.h5",
         "results/csf_flow/{csf_flow_model}/csf_p.xdmf",
         "results/csf_flow/{csf_flow_model}/csf_vis_p.xdmf",
         "results/csf_flow/{csf_flow_model}/csf_p.h5",
+    params:
+        discr=lambda wildcards: getconfig(wildcards.csf_flow_model, "discretization"),
     shell:
-        "python scripts/sas_flow.py configfiles/{wildcards.csf_flow_model}.yml"
+        "python scripts/sas_flow_{params.discr}.py configfiles/{wildcards.csf_flow_model}.yml"
 
 
 rule AverageSASFlow2PVS:
