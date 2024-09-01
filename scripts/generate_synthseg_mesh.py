@@ -10,6 +10,7 @@ import xii
 import typer
 from pathlib import Path
 from plotting_utils import read_config
+import yaml
 
 CSFID = 1
 PARID = 2
@@ -90,6 +91,13 @@ def generate_mesh(configfile : str):
         f.read(label, 'label')
         f.read(par_dist, 'par_dist')
 
+    def refine_region(sas, label, labelids):
+        mf = df.MeshFunction("bool", sas, 3, 0)
+        mf.array()[:] = np.isin(label.array()[:], labelids)
+        sas = df.refine(sas, mf)
+        label = df.adapt(label, sas)
+        return sas, label
+
     def refine_sphere(sas, coords, radius, label, criterion=None):
         mf = df.MeshFunction("bool", sas, 3, 0)
         rm = df.CompiledSubDomain("(x[0] - c0)*(x[0] - c0) + (x[1] - c1)*(x[1] - c1) + (x[2] - c2)*(x[2] - c2) < r*r",
@@ -105,6 +113,7 @@ def generate_mesh(configfile : str):
     crit = abs(par_dist.array()[:]) < 0.002
     sas, label = refine_sphere(sas, coords, 0.01, label, criterion=crit)
     sas, label = refine_sphere(sas, coords, 0.01, label)
+    sas, label = refine_region(sas, label, labelids=[V34ID])
 
 
     coords = (0.084, 0.11, 0.052)
@@ -151,8 +160,20 @@ def generate_mesh(configfile : str):
 
     label.rename("label", "label")
 
-    with df.XDMFFile(f'mesh/{meshname}/volmesh/mesh.xdmf') as f:
+    with df.XDMFFile(f'mesh/{meshname}/{meshname}.xdmf') as f:
         f.write(label)
+    mesh = label.mesh()
+    meshinfo = {"hmax":mesh.hmax(),"hmin":mesh.hmin(),
+                "ncells":mesh.num_cells(),"npoints":mesh.num_vertices()}
+
+    labelids = {"CSFID":CSFID, "PARID":PARID, "LVID":LVID,
+                "V34ID":V34ID,"CSFNOFLOWID":CSFNOFLOWID}
+    dx = df.Measure("dx", mesh, subdomain_data=label)
+    for k,v in labelids.items():
+        meshinfo[f"vol_{k}"] = df.assemble(df.Constant(1)*dx(v))
+
+    with open(f'mesh/{meshname}/{meshname}.yml', 'w') as outfile:
+        yaml.dump(meshinfo, outfile, default_flow_style=False)
 
 if __name__ == "__main__":
     typer.run(generate_mesh)
