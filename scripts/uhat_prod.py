@@ -12,7 +12,7 @@ def compute_avg_flow(csf_flow_model:  str):
     sas = Mesh()
     with XDMFFile(f'results/csf_flow/{csf_flow_model}/csf_v.xdmf') as f:
         f.read(sas)
-        V = VectorFunctionSpace(sas, "CG", 3)
+        V = VectorFunctionSpace(sas, "DG", 1)
         velocity_sas = Function(V)
         f.read_checkpoint(velocity_sas, "velocity")
     

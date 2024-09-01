@@ -1,0 +1,8 @@
+mesh : "mesh/LowRes/LowRes.xdmf"
+discretization : Hdiv
+mu : 0.7e-3 
+R : 1e4 # 1e-5 Pa/(mm s) 
+LV_inflow_rate : 7.291666666666667e-09 # in m^3/s , equals  0.63 L / day
+tissue_inflow_rate : 0
+spinal_outflow_bc: "noslip"
+noslip_max_z: 0.05 # noslip on lower part of outer boundary

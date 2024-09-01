@@ -20,7 +20,7 @@ PETScOptions.set("mat_mumps_icntl_4", 3)  # mumps verbosity
 #PETScOptions.set("mat_mumps_icntl_24", 1)  # null pivot detection
 PETScOptions.set("mat_mumps_icntl_35", 1)  # BLR feature
 PETScOptions.set("mat_mumps_cntl_7", 1e-8)  # BLR eps
-#PETScOptions.set("mat_mumps_icntl_32", 1)  # forward elimination during solve (useful, but not passed on by petsc)
+#PETScOptions.set("mat_mumps_icntl_32", 1)  # forward elimination during solve (ptentially useful, but not passed on by petsc)
 #PETScOptions.set("mat_mumps_icntl_22", 1)  # out-of-core to reduce memory
 #PETScOptions.set("mat_mumps_icntl_11", 1)  # error analysis
 #PETScOptions.set("mat_mumps_icntl_25", 2)  # turn on null space basis
@@ -84,7 +84,7 @@ def compute_sas_flow(configfile : str, elm:str = 'BDM'):
     os.makedirs(results_dir, exist_ok=True)
     # get mesh 
     sas = Mesh()
-    with XDMFFile(f'mesh/{meshname}/volmesh/mesh.xdmf') as f:
+    with XDMFFile(meshname) as f:
         f.read(sas)
         gdim = sas.geometric_dimension()
         label = MeshFunction('size_t', sas, gdim, 0)
@@ -213,9 +213,9 @@ def compute_sas_flow(configfile : str, elm:str = 'BDM'):
     
     uhdg = interpolate(uh, VectorFunctionSpace(sas_outer, "DG", 1))
     assert np.isclose(assemble(div(uhdg)*div(uhdg)*dx), 0)
-    with XDMFFile(f'{results_dir}/csf_vis_v_bdm.xdmf') as xdmf:
+    with XDMFFile(f'{results_dir}/csf_vis_v.xdmf') as xdmf:
         xdmf.write_checkpoint(uhdg, "velocity")
-    with XDMFFile(f'{results_dir}/csf_vis_p_bdm.xdmf') as xdmf:
+    with XDMFFile(f'{results_dir}/csf_vis_p.xdmf') as xdmf:
         xdmf.write_checkpoint(ph, "pressure")
     
     #uh_global = map_on_global(uh, sas)
@@ -238,14 +238,11 @@ def compute_sas_flow(configfile : str, elm:str = 'BDM'):
     uh_global_dg = project(as_P0_function(csf_indicator) * uh_global,
                                 VectorFunctionSpace(sas, "DG", 1), solver_type="mumps")
 
-    with XDMFFile(f'{results_dir}/csf_v_bdm.xdmf') as xdmf:
+    with XDMFFile(f'{results_dir}/csf_v.xdmf') as xdmf:
         xdmf.write(sas)
-        xdmf.write_checkpoint(uh_global, "velocity", append=True)
+        xdmf.write_checkpoint(uh_global_dg, "velocity", append=True)
 
-    with XDMFFile(f'{results_dir}/csf_v_bdm_glob.xdmf') as xdmf:
-        xdmf.write_checkpoint(uh_global_dg, "velocity")
-
-    with XDMFFile(f'{results_dir}/csf_p_bdm.xdmf') as xdmf:
+    with XDMFFile(f'{results_dir}/csf_p.xdmf') as xdmf:
         xdmf.write_checkpoint(map_on_global(ph, sas), "pressure")
 
     assert np.isclose(divu, divu_global_csf)

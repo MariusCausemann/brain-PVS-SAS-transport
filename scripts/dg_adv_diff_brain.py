@@ -1,7 +1,7 @@
 from dolfin import *
 from petsc4py import PETSc
 from solver import mark_internal_interface, mark_external_boundary, as_P0_function
-from sas_flow import map_on_global
+from scripts.sas_flow_TH import map_on_global
 from IPython import embed 
 import numpy as np
 import xii 
