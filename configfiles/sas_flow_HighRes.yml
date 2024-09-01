@@ -1,4 +1,4 @@
-mesh : "mesh/standard/standard.xdmf"
+mesh : "mesh/HighRes/HighRes.xdmf"
 discretization : Hdiv
 mu : 0.7e-3 
 R : 1e4 # 1e-5 Pa/(mm s) 

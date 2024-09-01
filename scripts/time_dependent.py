@@ -7,6 +7,7 @@ import numpy as np
 import typer
 from pathlib import Path
 from plotting_utils import read_config
+from sas_flow_TH import map_on_global
 from IPython import embed
 
 def write(sols, pvdfiles, t, hdffile=None):
@@ -29,10 +30,11 @@ def get_dispersion_enhancement(pressure_csf):
     V = FunctionSpace(mesh, "CG", 1)
     u,v = TrialFunction(V), TestFunction(V)
     R = Function(V)
-    a = (Constant(1e-5)*inner(grad(u), grad(v)) + Constant(1)*u*v)*dx
+    a = (Constant(1e-4)*inner(grad(u), grad(v)) + Constant(1)*u*v)*dx
     L = P**2*v*dx
     R.rename("R","R")
     solve(a==L, R)
+    assert R.vector().min() > 0
     return interpolate(R, FunctionSpace(mesh, "DG", 0))
 
 
@@ -84,7 +86,7 @@ def run_simulation(configfile: str):
     label.array()[:] = vol_subdomains.array()[:]
     assert np.allclose(np.unique(vol_subdomains.array()), [CSFID, PARID, LVID, V34ID, CSFNOFLOWID])
     vol_subdomains.array()[np.isin(vol_subdomains.array(), [LVID, V34ID, CSFNOFLOWID])] = CSFID
-
+    File(results_dir + "subdomains.pvd") << vol_subdomains
     artery_shape = xii.Circle(radius=artery_radii, degree=20,)
     vein_shape = xii.Circle(radius=vein_radii, degree=20)
     artmarker = volmarker_to_networkmarker(vol_subdomains, artery, artery_shape)
@@ -110,7 +112,7 @@ def run_simulation(configfile: str):
                             doms=[CSFID, PARID])
     mark_external_boundary(mesh, vol_subdomains, bm, par_outer_id,
                            doms=[PARID])
-    File("bm.pvd") << bm
+    File(results_dir + "bm.pvd") << bm
 
     xi_dict = {0:0, CSFID: pvs_csf_permability, 
                PARID: pvs_parenchyma_permability}
@@ -146,17 +148,20 @@ def run_simulation(configfile: str):
         vel_file = config["csf_velocity_file"]
 
         with XDMFFile(vel_file) as file:
-            if "bdm" in vel_file:
-                vel_space = VectorFunctionSpace(mesh, "DG", 1)
-            else:
+            if "TH" in vel_file:
+                print("Using CG3 velocity space")
                 vel_space = VectorFunctionSpace(mesh, "CG", 3)
+            else:
+                vel_space = VectorFunctionSpace(mesh, "DG", 1)
             velocity_csf = Function(vel_space)
             file.read_checkpoint(velocity_csf, "velocity")
-        if "bdm" in vel_file:
+            velocity_csf.rename("v", "v")
             dx_s = Measure("dx", mesh, subdomain_data=vol_subdomains)
-            assert abs(assemble(div(velocity_csf)*dx_s(CSFID))) < 1e-14
+            if not "TH" in vel_file: assert abs(assemble(div(velocity_csf)*dx)) < 1e-14
+            assert assemble(inner(velocity_csf, velocity_csf)*dx_s(PARID)) < 1e-14
+            with XDMFFile(results_dir + "csf_v.xdmf") as outfile:
+                outfile.write_checkpoint(velocity_csf,"v", 0, append=False)
 
-        File("csf_velocity.pvd") << velocity_csf
     else:
         velocity_csf = Constant([0]*gdim)
 
@@ -170,9 +175,8 @@ def run_simulation(configfile: str):
             pressure_csf = Function(CG2)
             file.read_checkpoint(pressure_csf, "pressure")
 
-        from sas_flow import map_on_global
         R = map_on_global(get_dispersion_enhancement(pressure_csf), mesh)
-        File("R.pvd") << R
+        File(results_dir + "R.pvd") << R
         Ds *= (1 + R)
         
     velocity_v = Constant([0]*gdim)
@@ -373,7 +377,10 @@ def run_simulation(configfile: str):
         b_ = ksp_vec(xii.ii_convert(bb))
         ksp.solve(b_, x_)
         
-        print("time", t, '|b|', b_.norm(2), '|x|', x_.norm(2))
+        x2 = x_.norm(2)
+
+        print("time", t, '|b|', b_.norm(2), '|x|', x2)
+
         # NOTE: solve(b_, ksp_vec(wh.vector())) segfault most likely because
         # of type incompatibility seq is expected and we have nest
         wh.vector()[:] = PETScVector(x_)
@@ -391,6 +398,8 @@ def run_simulation(configfile: str):
             xdmfven.write_checkpoint(wh[2], "c", t, append=True)
             pvdarteries.write(pa_i, t)
             pvdvenes.write(pv_i, t)
+        if np.isnan(x2) or x2 > 1e9:
+            raise OverflowError(f"mumps produced nans at time {t}: |x| = {x2}")
 
 if __name__ == "__main__":
     typer.run(run_simulation)

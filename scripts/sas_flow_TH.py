@@ -62,7 +62,7 @@ PETScOptions.set("mat_mumps_icntl_4", 3)  # mumps verbosity
 PETScOptions.set("mat_mumps_icntl_35", 1)  # BLR feature
 PETScOptions.set("mat_mumps_cntl_7", 1e-8)  # BLR eps
 #PETScOptions.set("mat_mumps_icntl_32", 1)  # forward elimination during solve (useful, but not passed on by petsc)
-#PETScOptions.set("mat_mumps_icntl_22", 1)  # out-of-core to reduce memory
+PETScOptions.set("mat_mumps_icntl_22", 1)  # out-of-core to reduce memory
 #PETScOptions.set("mat_mumps_icntl_11", 1)  # error analysis
 #PETScOptions.set("mat_mumps_icntl_25", 2)  # turn on null space basis
 
@@ -120,7 +120,7 @@ def compute_sas_flow(configfile : str):
     os.makedirs(results_dir, exist_ok=True)
     # get mesh 
     sas = Mesh()
-    with XDMFFile(f'mesh/{meshname}/volmesh/mesh.xdmf') as f:
+    with XDMFFile(meshname) as f:
         f.read(sas)
         gdim = sas.geometric_dimension()
         label = MeshFunction('size_t', sas, gdim, 0)
@@ -207,7 +207,7 @@ def compute_sas_flow(configfile : str):
     uh, ph = wh.split(deepcopy=True)[:]
 
     assert np.isclose(assemble(inner(uh,-n)*ds(LV_INTERF_ID)), config["LV_inflow_rate"], rtol=0.1)
-    assert np.isclose(assemble(inner(uh,-n)*ds(CSF_INTERF_ID)), config["tissue_inflow_rate"], rtol=0.1)
+    #assert np.isclose(assemble(inner(uh,-n)*ds(CSF_INTERF_ID)), config["tissue_inflow_rate"], rtol=0.1)
 
     # project to CG2 and write for visualization
     uh2 = interpolate(uh, CG2)

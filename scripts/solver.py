@@ -69,7 +69,7 @@ def read_vtk_network(filename, rescale_mm2m=True):
 
 def get_mesh(meshname):
     sas = Mesh()
-    with XDMFFile(f'mesh/{meshname}/volmesh/mesh.xdmf') as f:
+    with XDMFFile(meshname) as f:
         f.read(sas)
         gdim = sas.geometric_dimension()
         vol_subdomains = MeshFunction('size_t', sas, gdim, 0)
