@@ -1,19 +1,20 @@
 import numpy as np
 from scripts.plotting_utils import read_config
+from collections import defaultdict
 
-models = ["modelA"] #["modelA", "modelA2", "modelA3", "modelA4","modelABDM"]
+models = ["modelA","modelALowRes"] #["modelA", "modelA2", "modelA3", "modelA4","modelABDM"]
 times = list(np.array([1, 6, 12, 24])*60*60)
 conctimes =  list(np.array([0, 1, 2, 3, 4, 6 , 12, 18, 24])*60*60)
 
-cmax = {"detail":{"modelA_modelA2":2, "modelA_modelA3":2, "modelA_modelA4":2},
-        "overview":{"modelA_modelA2":2, "modelA_modelA3":2, "modelA_modelA4":2, "modelA_modelABDM":2},
-        "isosurf":{"modelA_modelA2":10, "modelA_modelA2":8, "modelA_modelA2":8,},          
+cmax = {"detail":defaultdict(lambda: 2,{"modelA_modelA4":2}),
+        "overview":defaultdict(lambda: 2,{"modelA_modelA4":2}),
+        "isosurf":defaultdict(lambda: 10,{"modelA_modelA4":8}),        
         
 }
 
-diffmax = {"detail":{"modelA_modelB":1, "modelB_modelC":0.1},
-           "overview":{"modelA_modelA2":1, "modelA_modelA3":1, "modelA_modelA4":1, "modelA_modelABDM":1},
-           "isosurf":{"modelA_modelB":1, "modelB_modelC":5, "modelB_modelE":1},               
+diffmax = {"detail":defaultdict(lambda: 0.1,{"modelA_modelA4":0.2}),
+           "overview":defaultdict(lambda: 1,{"modelA_modelA4":1}),
+           "isosurf":defaultdict(lambda: 1,{"modelA_modelA4":1}),          
 }
 types = ["overview"]
 
@@ -22,7 +23,7 @@ def getconfig(model, key):
 
 rule all:
     input:
-        #"plots/comparisons/modelA_modelA2/modelA_modelA2_overview.png",
+        "plots/comparisons/modelA_modelALowRes/modelA_modelALowRes_overview.png",
         #"plots/comparisons/modelA_modelA3/modelA_modelA3_overview.png",
         #"plots/comparisons/modelA_modelA4/modelA_modelA4_overview.png",
         #"plots/comparisons/modelA_modelA3/modelA_modelA3_overview.png",
@@ -47,8 +48,9 @@ rule runSimuation:
         sas="results/{modelname}/{modelname}_sas.xdmf",
         art="results/{modelname}/{modelname}_artery.xdmf",
         ven="results/{modelname}/{modelname}_vein.xdmf",
+    threads: 4
     shell:
-        "python scripts/time_dependent.py {input.config}"
+        "export OMP_NUM_THREADS={threads} && python scripts/time_dependent.py {input.config}"
 
 rule computeFlowField:
     conda:"environment.yml"
