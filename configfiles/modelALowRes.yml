@@ -1,5 +1,5 @@
 description : "advection + diffusion"
-dt : 30
+dt : 60
 T : 86400 # 1 day in seconds
 mesh : "mesh/LowRes/LowRes.xdmf"
 output_frequency : 10
