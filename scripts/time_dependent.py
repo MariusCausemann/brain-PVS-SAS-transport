@@ -322,7 +322,7 @@ def run_simulation(configfile: str):
     #opts.setValue('ksp_monitor_true_residual', None)
     #opts.setValue('ksp_rtol', 1E-40)
     #opts.setValue('ksp_atol', 1E-12)   # |AX-b| < 1E-
-    opts.setValue('pc_type', 'cholesky')
+    opts.setValue('pc_type', 'lu')
     opts.setValue("pc_factor_mat_solver_type", "mumps")
     opts.setValue("mat_mumps_icntl_4", "3")
     opts.setValue("mat_mumps_icntl_35", 1)
