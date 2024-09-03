@@ -50,6 +50,18 @@
 %\keywords{Keyword1, Keyword2, Keyword3}
 
 \begin{abstract}
+  TODOs:
+  \begin{itemize}
+  \item
+    See notes in text
+  \item
+    Could Marius place meshes, especially the coarest one, somewhere
+    accessible? Can be convenient to have actual mesh, not just code
+    to generate it.
+  \item
+    Marie asks Hodneland about publishing the T1 data.
+  \end{itemize}
+
 \end{abstract}
 \begin{document}
 
@@ -60,6 +72,8 @@
 %  Click the title above to edit the author information and abstract
 %
 \thispagestyle{empty}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Introduction}
@@ -267,7 +281,7 @@ Effect of pia permeability (Model N-1)
 
 \subsection*{Brain parenchyma, SAS, and interface geometries}
 
-\mer{MER: Suggestion @Rami: Would you have a go a refining this section? Keep it brief. Mention number of cells and max/min mesh size for both 3D and (peri)vasculature. I like including references to tools used as you have done. Refer to \Cref{fig:concept}. Include units when describing the geometry. Describe the radii provided. Describe the default assumption on the PVS size (probably we vary this in a model variation). Clearly illustrate the boundaries in the Figure, and refer to these in the text. Description should be such that it is easily to intuitively understand, but perhaps not reproduce immediately (that is why we will also share the code). }  
+\mer{MER: Suggestion @Marius: Would you have a go a refining this section? Keep it brief. Mention number of cells and max/min mesh size. I like including references to tools used as you have done. Refer to \Cref{fig:concept}. Include units when describing the geometry. Clearly illustrate the boundaries in the Figure, and refer to these in the text. Description should be such that it is easily to intuitively understand, but perhaps not reproduce immediately (that is why we will also share the code).}  
 
 
 Hodneland et al~\cite{hodneland2019new} developed a method to image
@@ -301,6 +315,8 @@ _{\rm{SC}}$ which is given by $\Gamma_{\rm {SC}} \backslash \Gamma_{{brain}}$. \
 
 \subsection*{Vascular and perivascular domains and networks}
 
+\mer{Is this up-to-date? @Rami checks sanity and numbers of paragraph.}
+
 We skeletonize the binary masks of the arteries and veins of the
 Hodneland~\cite{hodneland2019new} data set using
 Kiminaro~\cite{william_silversmith_2021_5539913}, to obtain the
@@ -325,11 +341,13 @@ vasculature and perivasculature are thus defined relative to a common
 network of vessel segments.
 
 \begin{figure}
-  \caption{\mer{MER: Concept figure illustrating the compartments and story line. (A) Concept sketch of the SAS, PVS and the brain; (B) Visualization of geometry domains (brain, sas and vasculature; think about colors and associations; please don't make blood blue and water red e.g.) ; (C) Zoom-in/detail on vasculature, which are which arteries (ACA, MCA, PCA, CoW)  and veins (XXX); (D) Zoom-in 2 on vascular position versus SAS and brain; (E) Zoom-in 3 on where PVS ends; (F) Illustration of boundaries? (G) Concept illustration of the mathematical model (diffusion, convection, exchange, boundaries).}}
+  \caption{@Marius: Starts adding parts of this. \mer{MER: Concept figure illustrating the compartments and story line. (A) Concept sketch of the SAS, PVS and the brain; (B) Visualization of geometry domains (brain, sas and vasculature; think about colors and associations; please don't make blood blue and water red e.g.) ; (C) Zoom-in/detail on vasculature, which are which arteries (ACA, MCA, PCA, CoW)  and veins (XXX); (D) Zoom-in 2 on vascular position versus SAS and brain; (E) Zoom-in 3 on where PVS ends; (F) Illustration of boundaries? (G) Concept illustration of the mathematical model (diffusion, convection, exchange, boundaries).}}
 \label{fig:concept}
 \end{figure}
 
 \subsection*{Multi-dimensional intracranial transport equations}
+
+\mer{@Rami revisits. Is the interface jump condition the right one? Rami will draft, Marius will check versus code. In text, refer to Table for parameters.}
 
 We model diffusion, convection and exchange of a solute in PVSs, in the surrounding SAS and in the brain parenchyma (Fig.~\ref{fig:concept}) via a comprehensive multi-dimensional transport model~\cite{masri2023modelling} over a timescale of minutes to hours. More specifically, we solve for a solute concentration $c$ (defined locally in each subdomain $\Omega_{\rm{brain}}$ and $\Omega_{\rm{SAS}}$ in the 3D SAS and brain~\cite{sykova2008diffusion} $\Omega$, and an averaged solute concentration $\hat c$ in a 1D network of centerlines $\Lambda$ representing the PVS, such that the following equations hold
 \begin{subequations}
@@ -349,10 +367,14 @@ We set the initial concentrations $c_0, \hat{c}_0$ in the three-dimensional doma
 
 \subsection*{Boundary conditions: extracranial efflux and perivascular parenchymal influx}
 
-On $\Gamma_{\mathrm{skull}}$, the interface towards the dura and skull , we consider a constant uptake (or efflux) rate, represented by the boundary condition $- D \nabla c \cdot \bm{n}  +   \bm u \cdot \bm n c  = \beta c $ (\Cref{fig:concept}) where $\beta$ represents a molecular outflow resistance. Here, we take $\beta = 10^{-4} \,\, \mathrm{mm}^2/\mathrm{s}$\cite{hornkjol2022csf}. On $\Gamma_{\mathrm{spine}}$, the interface towards the spinal compartment , we prescribe a time-dependent solute influx rate by the condition $D \nabla c \cdot \bm{n}  -  \bm u \cdot \bm n  c = g_{\mathrm{influx}}(t) \geq 0$ representing the distribution of solute injected in the spinal compartment. Here, we set $g_\mathrm{influx}(t) = \max(0, \kappa (T_0 - t))$ where $\kappa  = $ and $T_0 = $ \rami{marius, double check in the code they are different than \cite{hornkjol2022csf}}. 
+On $\Gamma_{\mathrm{skull}}$, the interface towards the dura and skull , we consider a constant uptake (or efflux) rate, represented by the boundary condition $- D \nabla c \cdot \bm{n} + \bm u \cdot \bm n c  = \beta c $ (\Cref{fig:concept}) where $\beta$ represents a molecular outflow resistance. Here, we take $\beta = 10^{-4} \,\, \mathrm{mm}^2/\mathrm{s}$\cite{hornkjol2022csf}.
+\mer{Marius says that this $\beta$ makes the solute accumulate. Maybe we want to modify this parameter.}
 
-\rami{Here is what we do now, to be discussed or changed when the domain changes} 
+On $\Gamma_{\mathrm{spine}}$, the interface towards the spinal compartment , we prescribe a time-dependent solute influx rate by the condition $D \nabla c \cdot \bm{n}  -  \bm u \cdot \bm n  c = g_{\mathrm{influx}}(t) \geq 0$ representing the distribution of solute injected in the spinal compartment. Here, we set $g_\mathrm{influx}(t) = \max(0, \kappa (T_0 - t))$ where $\kappa  = $ and $T_0 = $. \mer{@Marius: modify this above paragraph to reflect the current approach.}
+% \rami{marius, double check in the code they are different than \cite{hornkjol2022csf}}. 
 
+
+\mer{@Marius: Could you edit the paragraph below to reflect the simplified set-up (which we can because of the improved geometry.)}
 On the associated perivascular network inlet nodes $\partial \Lambda_{\mathrm{in}}$ (\Cref{fig:concept}), we prescribe a homogenous Neumann condition $\hat D A \partial_s (\phi \hat c) - A \hat u \hat c  = 0 $. For the vessels that 
 lie in a sphere of radius of $0.04$ located at the base of the third ventricle, we set the permeability  $\xi_{\rm{PVS,CSF-BC}}= 100\xi_{\rm{PVS,CSF}}$ . For the "leaf" nodes of the perivascular network (representing the end of the surface perivascular network and start of perivascular spaces within the parenchyma), we also sel homogenous Neumann boundary conditions $ D A \partial_s (\phi \hat c) - A \hat u \hat c  = 0 $ . % g_{\mathrm{pvs-par}}$.  
 % \rami{I don't think we can have anything different than $g_{\mathrm{pvs-par}} = 0$ since we would also have to modify the 3D equation. The interaction b/w the pvs and the parenchyma is along the entire perivascular boundary as  
@@ -368,7 +390,9 @@ lie in a sphere of radius of $0.04$ located at the base of the third ventricle, 
 %% \end{alignat}
 
 
-\subsection{Cerebrospinal fluid flow in the subarachnoid space} \label{sec:csf_fluid_vel}
+\subsection*{Cerebrospinal fluid flow in the subarachnoid space} \label{sec:csf_fluid_vel}
+
+\mer{@Marius: Update this description here. @Rami, write down the corresponding numerical scheme in the Supplementary Methods.}
 We consider non-zero convection in the SAS $u_{\rm sas} \not = 0$ in \eqref{eq:multi_transport_3d} e.g.~resulting from steady state CSF production as predicted by~\cite{hornkjol2022csf}.  Recall that the $\Omega_{\mathrm{sas}}$ represents the SAS space and that $\Gamma_{\mathrm{skull}}$ and $\Gamma_{\mathrm{pia}}$ represent  the boundaries facing the dura and the skull respectively.  We solve the  steady state Stokes equations for the velocity and the pressure $(\bm u_{\mathrm{sas}}, p_{\mathrm{sas}})$
 in the SAS domain: 
 \begin{subequations}
@@ -390,21 +414,53 @@ The
 magnitutude and the support of $g$ are determined so that the prodution rate is $0.5 \rm L / \rm {day}$. 
 Condition \eqref{eq:efflux_condition} models an efflux site with positive resistance $R_0 \geq 0$. We set the parameter $R_0 = 1\rm e-05$ which was determined numerically from \cite{hornkjol2022csf}.  The Stokes system is solved with $\mathbb{P}^3-\mathbb{P}^2$ elements in FEniCS, stored and then subsequently read for all the relevant solute transport simulations. See the Figure~\ref{fig:visualize_g} (b) (\rami{place holder for now}) for a streamline visualisation of the obtained velocity profile. 
 
-\subsection{Cerebrospinal fluid flow in the perivascular spaces}  \label{sec:csf_pvs}
+\subsection*{Dispersion induced by pulsatile fluid flow in the CSF spaces}
+
+\mer{@Marius. Could you draft 1 paragraph on this here?}
+
+\subsection*{Cerebrospinal fluid flow in the perivascular spaces}
+\label{sec:csf_pvs}
 We obtain the fluid velcoity $\hat u = \hat u_{\rm prod}$  in \eqref{eq:multi_transport_1d} by averaging the tangential component of $\bm u_{\mathrm{sas}}$ locally on each centerline $\Lambda_i$. Precisely, for all $i$ we compute 
 \begin{equation}
 \hat u_{\rm {prod}}(s) = \frac{1}{A(s)} \int_{\Theta(s)} \bm u \cdot \bm \tau_i, \quad \mathrm{in} \,\,  \Lambda_i.   
 \end{equation}
  In the above $\bm u$ evaluates to $\bm u_{\rm{sas}}$ on $\Omega_{\rm{sas}}$ and to zero otherwise, $\bm \tau_i$ is the tangent vector determined by the centerline $\Lambda_i$, $\Theta(s)$ is the cross-section of the PVS point at point $s$ and  $A$ is the area of this cross-section. \rami{to place a visualisation here too }
-\subsection{Fluid flow within the parenchyma} \label{sec:csf_brain}
+
+\subsection*{Fluid flow within the parenchyma}
+\label{sec:csf_brain}
 
 We assume no significant convection in the brain $\Omega_{\rm brain}$, and set $u = u_{\rm brain} = 0$ there as a first approximation. 
 
+\subsection*{Numerical approximation of multi-dimensional transport}
 
+\mer{@Rami: Could you draft one paragraph here describing the essential bits of the numerical scheme? I recommend ``describing with words'' to reach relevant audiences. Refer to the Supplementary Methods for details. Mention theoretical expected convergence order.} 
 
-\subsection*{Numerical approximation, implementation and verification}
+\subsection*{Implementation and numerical verification}
 
-\mer{MER: Who would like to draft a paragraph on our numerical approximation? @Miro? I recommend ``describing with words'' to reach relevant audiences. We need to demonstrate that our ``quantities are converged'', meaning we have a feel for how accurate our results are in practice (e.g.$\pm$ 1\%, 10\%, 100\%, 1000\%). Refer to the Supplementary table for a numerical verification table (quantities of interest versus mesh and time refinement for pure diffusion and one case with convection). Not on top of list of priorities, but not on bottom either.} 
+\mer{@Miro: 2-3 sentences on the implementation.}
+
+\mer{We need to demonstrate that our ``quantities are converged'', meaning we have a feel for how accurate our results are in practice (e.g.$\pm$ 1\%, 10\%, 100\%, 1000\%). Refer to the Supplementary table for a numerical verification table (quantities of interest versus mesh and time refinement for pure diffusion and one case with convection). Not on top of list of priorities, but not on bottom either.} 
+
+\begin{enumerate}
+\item
+  Examine ``practical convergence'' of the CSF flow field. Three
+  different meshes. \mer{@Marius.} Ideas for things to compute: Max
+    flow. Div u.
+\item
+  Stokes flow fields on different meshes - averaged over the network -
+  PVS advective velocity. (Tests averaging procedure and effect of
+  meshsize in flow field).
+\item
+  Examine convergence of the transport equations. Each mesh, compute
+  flow (as above), compute concentrations. Compare quantities of
+  interest. Max relative undershoot. Total amount of tracer in the
+  PVS, SAS, parenchyma over time.
+\item
+  (Optional in paper (but good to do for our sake): Unit cube with
+  convergence for the transport equation. )
+\end{enumerate}
+
+\mer{MER: Stop here for now - base model first.}
 
 %\subsection*{Perivascular fluid flow}
 
@@ -553,6 +609,8 @@ We use the diffusion coefficient $D_{\rm gad}$ of Gadubutrol in free water in th
 
 \begin{itemize}
 \item
+  Numerics undershoots/overshoots. 
+\item
   Pulsating brain. Natural to consider in follow-up work.
 \item
   PVS-blood exchange and BBB leakage. Natural to consider in model variation here, or follow-up work.
@@ -560,6 +618,15 @@ We use the diffusion coefficient $D_{\rm gad}$ of Gadubutrol in free water in th
   Accounting for brain diffusive anisotropy. Little effect expected. Maybe something to consider in small follow-up work.
 \item
   Permeability and stiffness of the pial membrane
+\end{itemize}
+
+\subsection*{Outlook}
+
+\begin{itemize}
+\item
+  Considering the (maybe) low diffusion in CSF spaces, maybe pure
+  advection would be relevant? Both computational and physiological
+  implications/interest.
 \end{itemize}
 
 \bibliography{references}
