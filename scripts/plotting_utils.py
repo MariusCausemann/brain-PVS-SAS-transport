@@ -1,13 +1,12 @@
-import pyvista as pv
 import numpy as np
 import yaml
 import collections
-import matplotlib.pyplot as plt
 from typing import List
 from IPython import embed
 
 def set_plotting_defaults():
     import seaborn as sns
+    import matplotlib.pyplot as plt
     plt.rc("axes.spines", top=False, right=False)
     sns.set_context("notebook")
     sns.set_palette("blend:#7AB,#EDA")
@@ -22,6 +21,7 @@ def minmax(arr_list, percentile=95):
 
 def get_result(modelname, domain, times):
     from vtk_adapter import create_vtk_structures
+    import pyvista as pv
     if not isinstance(times, collections.Iterable):
         times = [times]
     res, label = get_result_fenics(modelname, domain, times)
@@ -102,6 +102,7 @@ def read_config(configfile):
 
 
 def clip_plot(csf, par, networks, filename, title, clim, cmap, cbar_title):
+    import pyvista as pv
     csf_clipped = csf.clip(normal="y")
     par_clipped = par.clip(normal="y")
     pl = pv.Plotter(off_screen=True)
@@ -122,6 +123,7 @@ def clip_plot(csf, par, networks, filename, title, clim, cmap, cbar_title):
     return pl.screenshot(filename, transparent_background=True, return_img=True)
 
 def isosurf_plot(sas, networks, filename, title, clim, cmap, cbar_title):
+    import pyvista as pv
     n = 3
     if clim is not None:
         contours = sas.contour(np.linspace(clim[0] + clim[1]/n, clim[1], 3))
@@ -146,6 +148,7 @@ def isosurf_plot(sas, networks, filename, title, clim, cmap, cbar_title):
     return pl.screenshot(filename, transparent_background=False, return_img=True)
 
 def detail_plot(sas, networks, filename, center, clim, cmap, cbar_title):
+    import pyvista as pv
     slice = sas.slice_orthogonal(x=center[0], y=center[1], z=center[2],
                                   contour=False)
     pl = pv.Plotter(off_screen=True)
