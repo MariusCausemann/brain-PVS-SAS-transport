@@ -1,5 +1,5 @@
-cluster:
-  module load mpich &&
+executor: cluster-generic
+cluster-generic-submit-cmd:  module load mpich &&
   mkdir -p logs/{rule} &&
   sbatch
     --partition={resources.partition}
@@ -9,7 +9,7 @@ cluster:
     --time={resources.time}
     --cpus-per-task={resources.ncpuspertask}
 default-resources:
-  - partition=milanq,fpgaq
+  - partition=genoaxq,milanq,defq,fpgaq,dgx2q,hgx2q
   - mem="10G"
   - time="60:00"
   - ntasks=1
