@@ -2,7 +2,7 @@ import numpy as np
 from scripts.plotting_utils import read_config
 from collections import defaultdict
 
-models = ["modelA","modelALowRes"] #["modelA", "modelA2", "modelA3", "modelA4","modelABDM"]
+models = ["modelA","modelALowRes", "modelAHighRes"] #["modelA", "modelA2", "modelA3", "modelA4","modelABDM"]
 times = list(np.array([1, 6, 12, 24])*60*60)
 conctimes =  list(np.array([0, 1, 2, 3, 4, 6 , 12, 18, 24])*60*60)
 
@@ -24,6 +24,7 @@ def getconfig(model, key):
 rule all:
     input:
         "plots/comparisons/modelA_modelALowRes/modelA_modelALowRes_overview.png",
+        "plots/comparisons/modelA_modelAHighRes/modelA_modelAHighRes_overview.png",
         #"plots/comparisons/modelA_modelA3/modelA_modelA3_overview.png",
         #"plots/comparisons/modelA_modelA4/modelA_modelA4_overview.png",
         #"plots/comparisons/modelA_modelA3/modelA_modelA3_overview.png",
