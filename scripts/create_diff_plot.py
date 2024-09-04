@@ -21,6 +21,11 @@ def plot_model_diff(modela: str, modelb: str, t:int, type,  cmax:float=None, fil
     sasb = get_result(modelb, "sas", t)
     artb = get_result(modelb, "artery", t)
     venb = get_result(modelb, "vein", t)
+    if sasa.n_points > sasb.n_points:
+        sasb = sasa.sample(sasb, pass_point_data=False)
+    elif sasa.n_points < sasb.n_points:
+        sasa = sasb.sample(sasa, pass_point_data=False)
+
     sasa["diff"] = sasa[f"c_{t}"] - sasb[f"c_{t}"]
     arta["diff"] = arta[f"c_{t}"] - artb[f"c_{t}"]
     vena["diff"] = vena[f"c_{t}"] - venb[f"c_{t}"]
@@ -28,6 +33,7 @@ def plot_model_diff(modela: str, modelb: str, t:int, type,  cmax:float=None, fil
     arta.set_active_scalars("diff")
     vena.set_active_scalars("diff")
     clim = (-cmax, cmax) if cmax is not None else None
+        
 
     if type=="overview":
         filename = f"{plotdir}/{modela}_{modelb}_diff_{t}.png"
