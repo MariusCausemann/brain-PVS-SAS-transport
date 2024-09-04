@@ -11,7 +11,7 @@ cluster-generic-submit-cmd:  module load mpich &&
 default-resources:
   - partition=genoaxq,milanq,defq,fpgaq,dgx2q,hgx2q
   - mem="10G"
-  - time="60:00"
+  - time="240:00"
   - ntasks=1
   - ncpuspertask=1
 restart-times: 0
