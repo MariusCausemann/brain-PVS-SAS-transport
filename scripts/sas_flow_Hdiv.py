@@ -10,6 +10,7 @@ import numpy_indexed as npi
 from plotting_utils import read_config
 from IPython import embed
 from pathlib import Path
+import yaml
 
 def directsolve(a, L, bcs, a_prec, W):
     wh = Function(W)
@@ -229,7 +230,7 @@ def compute_sas_flow(configfile : str, elm:str = 'BDM'):
                     + assemble(div(uh_global)*div(uh_global)*dxglob(LVID)) \
                     + assemble(div(uh_global)*div(uh_global)*dxglob(V34ID))
 
-    divu = assemble(div(uh)*div(uh)*dx)
+    divu = assemble(sqrt(div(uh)*div(uh))*dx)
 
     assert np.isclose(divu, 0)
 
@@ -248,7 +249,17 @@ def compute_sas_flow(configfile : str, elm:str = 'BDM'):
     assert np.isclose(divu, divu_global_csf)
     #assert np.isclose(assemble(inner(uh_global, uh_global)*dxglob(CSFNOFLOWID)), 0)
 
-    print(f"div u = {divu}")
+    # collect key metrics:
+    metrics
+    sas_vol = assemble(1*dx(domain=sas_outer))
+    umean = assemble(sqrt(inner(uh, uh))*dx) / sas_vol
+    umag = project(sqrt(inner(uh, uh)), FunctionSpace(sas_outer, "CG", 1),
+                   solver_type="cg", preconditioner_type="hypre_amg")
+    umax = norm(umag.vector(), 'linf') 
+    metrics = dict(umean=umean, umax=umax, divu=divu)
+
+    with open(f'{results_dir}/metrics.yml', 'w') as outfile:
+        yaml.dump(metrics, outfile, default_flow_style=False)
 
 if __name__ == "__main__":
     typer.run(compute_sas_flow)
