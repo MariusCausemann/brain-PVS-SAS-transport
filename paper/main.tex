@@ -35,10 +35,11 @@
 
 \newcommand{\rami}[1]{\textcolor{blue}{#1}}
 \newcommand{\mer}[1]{\textcolor{magenta}{#1}}
+\newcommand{\mar}[1]{\textcolor{violet}{#1}}
 \newcommand{\discuss}[1]{\textcolor{red}{#1}}
 \newcommand{\draft}[1]{\textcolor{gray}{#1}}
 \newcommand{\brain}{\Omega_{\rm{brain}}} 
-\newcommand{\sas}{\Omega_{\rm{SAS}}}
+\newcommand{\sas}{\Omega_{\rm CSF}}
 \newcommand{\pia}{\Gamma_{\rm{Pia}}}
 \newcommand{\spinal}{\Gamma_{\rm{SC}}}
 \newcommand{\skull}{\Gamma_{\rm{skull}}}
@@ -50,6 +51,17 @@
 %\keywords{Keyword1, Keyword2, Keyword3}
 
 \begin{abstract}
+\end{abstract}
+\begin{document}
+
+\flushbottom
+\maketitle
+% * <john.hammersley@gmail.com> 2015-02-09T12:07:31.197Z:
+%
+%  Click the title above to edit the author information and abstract
+%
+\thispagestyle{empty}
+
   TODOs:
   \begin{itemize}
   \item
@@ -61,17 +73,6 @@
   \item
     Marie asks Hodneland about publishing the T1 data.
   \end{itemize}
-
-\end{abstract}
-\begin{document}
-
-\flushbottom
-\maketitle
-% * <john.hammersley@gmail.com> 2015-02-09T12:07:31.197Z:
-%
-%  Click the title above to edit the author information and abstract
-%
-\thispagestyle{empty}
 
 
 
@@ -281,8 +282,6 @@ Effect of pia permeability (Model N-1)
 
 \subsection*{Brain parenchyma, SAS, and interface geometries}
 
-\mer{MER: Suggestion @Marius: Would you have a go a refining this section? Keep it brief. Mention number of cells and max/min mesh size. I like including references to tools used as you have done. Refer to \Cref{fig:concept}. Include units when describing the geometry. Clearly illustrate the boundaries in the Figure, and refer to these in the text. Description should be such that it is easily to intuitively understand, but perhaps not reproduce immediately (that is why we will also share the code).}  
-
 
 Hodneland et al~\cite{hodneland2019new} developed a method to image
 the brains' microvasculature based on time-of-flight (ToF) and
@@ -290,28 +289,16 @@ quantitative susceptibility mapping (QSM) to identify arterial and
 venous networks.  We derive a detailed tetrahedral mesh of the
 parenchyma and the surrounding CSF-filled spaces alongside a network
 representation of the vasculature from the anatomical data provided
-therein. We merge the white and grey matter masks provided by
-\cite{hodneland2019new} to extract the pial surface.
- 
+therein. 
 
+First, we segment the structual T1 image using Synthseg \cite{billot2023robust,billot2023synthseg} to obtain masks of the parenchymal tissue and the CSF-filled spaces. In addition, we slightly modify the segmentation to ensure correct connectivity of the ventricular system. In particular, we elongate the aquaduct and enforce no communication between the ventricles and the surrounding CSF spaces except for the median aperture. The SAS is slightly dilated to ensure a physiological volume of the CSF space. After morphological smoothing of the segmented image, we extract surface representations of the outer SAS boundary, the pial membrane and the components of the ventricular system. From these surface representations, we create a tetrahedral mesh of both the parenchymal tissue and the CSF-filled spaces using the mesh generator fTetWild \cite{hu2020fast}. The resulting mesh consists of 97274 vertices and 536132 cells, which vary between $0.1$\,mm and $1.2$\,cm in cell diameter. The parenchyma has a total volume of $1382$\, ml, whereas the ventricles and the outer SAS contribute $32$\,ml and $277$\,ml to a total CSF volume of $309$\,ml, respectively.
+\mar{this could also go into results. Keep it here for the moment?}
 
-As no data on the CSF-filled spaces is available, we smooth and extend
-the pial surface by about 5\,mm to obtain an approximation of the SAS
-and include the inner fluid-filled cavities such as the ventricular
-system.  Finally, we generate a tetrahedral mesh of both compartments
-using the fTetWild meshing algorithm \cite{hu2020fast}.
-
-The computational domain $\Omega$ is defined by the union of the SAS $\Omega_{\rm sas}$ and brain parenchyma $\Omega_{\rm brain}$. The thin pia membrane encloses the brain, and thus the pial surface (of the brain) defines the SAS-brain interface $\Gamma_{\rm pia}$.
-
-
-Surface representations of the outer SAS boundary, pial membrane, and delimiters of other CSF-filled spaces such as the lateral ventricles, third and fourth ventricle, and aqueduct are extracted from MR-images of human subject(s), see e.g. the pipeline described by Hornkjøl et al.~\cite{hornkjol2022csf}. From these surface representations, we create volumetric meshes of the SAS and brain using SVMTK~\cite{mardal2022mathematical}. 
-
+The computational domain $\Omega$ is defined by the union of the CSF spaces $\Omega_{\rm CSF}$ and brain parenchyma $\Omega_{\rm brain}$. The thin pia membrane encloses the brain, and thus the pial surface (of the brain) defines the CSF-brain interface $\Gamma_{\rm pia}$.
 We mark the different regions of the boundary of $\Omega$, with
-$\Gamma_{\mathrm{skull}}$ facing the dura and skull and
-$\Gamma_{\mathrm{spine}}$ representing the lower interface towards the
-spinal compartment (\Cref{fig:concept}).  We also the interface between the $\Omega_{\rm{brain}} $ and $\Omega_{\rm{SAS}}$ by  $\Gamma_{\rm{Pia}}$. The boundary of the spinal canal is denoted by $\Gamma
-_{\rm{SC}}$ which is given by $\Gamma_{\rm {SC}} \backslash \Gamma_{{brain}}$. \mer{MER: I put this here, keep
-  it here. How about the ventricles?}
+$\Gamma_{\mathrm{skull}}$ facing the dura and skull and $\Gamma_{\rm spine}$ representing the lower interface towards the spinal compartment (\Cref{fig:concept}).  The boundary of the spinal canal is denoted by $\Gamma
+_{\rm{SC}}$ which is given by $\Gamma_{\rm {SC}} \backslash \Gamma_{{\rm brain}}$.  Further, we denote the surface of the lateral ventricles with $\Gamma_{\rm LV}$.
+\mar{revisit once we have the concept figure.}
 
 \subsection*{Vascular and perivascular domains and networks}
 
@@ -341,6 +328,27 @@ vasculature and perivasculature are thus defined relative to a common
 network of vessel segments.
 
 \begin{figure}
+     \centering
+     \begin{subfigure}[b]{0.33\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{example-image-a}
+         \caption{Concept sketch}
+         \label{fig:y equals x}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{0.33\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{paper/figures/geometry_concept.png}
+         \caption{The arterial (red) and venous (blue) networks (top left), the parenchyma and CSF space (top right), combined (bottom row)}
+         \label{fig:three sin x}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{0.33\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{example-image-c}
+         \caption{Zoom in}
+         \label{fig:five over x}
+     \end{subfigure}
   \caption{@Marius: Starts adding parts of this. \mer{MER: Concept figure illustrating the compartments and story line. (A) Concept sketch of the SAS, PVS and the brain; (B) Visualization of geometry domains (brain, sas and vasculature; think about colors and associations; please don't make blood blue and water red e.g.) ; (C) Zoom-in/detail on vasculature, which are which arteries (ACA, MCA, PCA, CoW)  and veins (XXX); (D) Zoom-in 2 on vascular position versus SAS and brain; (E) Zoom-in 3 on where PVS ends; (F) Illustration of boundaries? (G) Concept illustration of the mathematical model (diffusion, convection, exchange, boundaries).}}
 \label{fig:concept}
 \end{figure}
@@ -349,10 +357,10 @@ network of vessel segments.
 
 \mer{@Rami revisits. Is the interface jump condition the right one? Rami will draft, Marius will check versus code. In text, refer to Table for parameters.}
 
-We model diffusion, convection and exchange of a solute in PVSs, in the surrounding SAS and in the brain parenchyma (Fig.~\ref{fig:concept}) via a comprehensive multi-dimensional transport model~\cite{masri2023modelling} over a timescale of minutes to hours. More specifically, we solve for a solute concentration $c$ (defined locally in each subdomain $\Omega_{\rm{brain}}$ and $\Omega_{\rm{SAS}}$ in the 3D SAS and brain~\cite{sykova2008diffusion} $\Omega$, and an averaged solute concentration $\hat c$ in a 1D network of centerlines $\Lambda$ representing the PVS, such that the following equations hold
+We model diffusion, convection and exchange of a solute in PVSs, in the surrounding SAS and in the brain parenchyma (Fig.~\ref{fig:concept}) via a comprehensive multi-dimensional transport model~\cite{masri2023modelling} over a timescale of minutes to hours. More specifically, we solve for a solute concentration $c$ (defined locally in each subdomain $\Omega_{\rm{brain}}$ and $\Omega_{\rm CSF}$ in the 3D SAS and brain~\cite{sykova2008diffusion} $\Omega$, and an averaged solute concentration $\hat c$ in a 1D network of centerlines $\Lambda$ representing the PVS, such that the following equations hold
 \begin{subequations}
 \begin{alignat}{2}
-  \partial_t (\phi c) - \nabla \cdot (D \nabla (\phi c) ) + \nabla \cdot (\bm u c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma & = f && \quad \quad \mathrm{in} \quad \Omega_{\rm{SAS}} \cup \Omega_{\rm{brain}}, \label{eq:multi_transport_3d} \\ 
+  \partial_t (\phi c) - \nabla \cdot (D \nabla (\phi c) ) + \nabla \cdot (\bm u c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma & = f && \quad \quad \mathrm{in} \quad \Omega_{\rm CSF} \cup \Omega_{\rm{brain}}, \label{eq:multi_transport_3d} \\ 
   \partial_t (A \phi \hat c) - \partial_s(\hat D A \partial_s (\phi \hat c)) +\partial_s(A \hat u \hat c )  +  \xi P (\hat c - \overline{c})  &= A \hat f && \quad \quad \mathrm{in} \quad  \Lambda . \label{eq:multi_transport_1d}
  \end{alignat}
 \end{subequations}
@@ -370,25 +378,16 @@ We set the initial concentrations $c_0, \hat{c}_0$ in the three-dimensional doma
 On $\Gamma_{\mathrm{skull}}$, the interface towards the dura and skull , we consider a constant uptake (or efflux) rate, represented by the boundary condition $- D \nabla c \cdot \bm{n} + \bm u \cdot \bm n c  = \beta c $ (\Cref{fig:concept}) where $\beta$ represents a molecular outflow resistance. Here, we take $\beta = 10^{-4} \,\, \mathrm{mm}^2/\mathrm{s}$\cite{hornkjol2022csf}.
 \mer{Marius says that this $\beta$ makes the solute accumulate. Maybe we want to modify this parameter.}
 
-On $\Gamma_{\mathrm{spine}}$, the interface towards the spinal compartment , we prescribe a time-dependent solute influx rate by the condition $D \nabla c \cdot \bm{n}  -  \bm u \cdot \bm n  c = g_{\mathrm{influx}}(t) \geq 0$ representing the distribution of solute injected in the spinal compartment. Here, we set $g_\mathrm{influx}(t) = \max(0, \kappa (T_0 - t))$ where $\kappa  = $ and $T_0 = $. \mer{@Marius: modify this above paragraph to reflect the current approach.}
-% \rami{marius, double check in the code they are different than \cite{hornkjol2022csf}}. 
+Modelling an intrathecal injection, we prescribe a time-dependent solute influx rate on the interface towards the spinal compartment $\Gamma_{\mathrm{spine}}$
+with the condition $D \nabla c \cdot \bm{n}  -  \bm u \cdot \bm n  c = g_{\mathrm{influx}}(t) \geq 0$. Here, we set
+\begin{equation}
+g_\mathrm{influx}(t) = \frac{m_{\rm tot}}{T_{\rm max}^2 |\Gamma_{\rm spine}|} \max(0, T_{\rm max} - |t - T_{\rm max}|)
+\end{equation}
+which results in a triangular inflow function with a peak at $T_{max} = 3600\,$s and a total tracer injection of $m_{tot} = 0.5$\,mM.
 
+For the perivascular network, the boundary nodes are split into $\partial \Lambda^{\mathrm{in}}$  and $\partial \Lambda^{\mathrm{out}}$ based on the specified orientation of the network \mar{(figure?)}. We assume no tracer outflow on all boundary nodes and precribe a homogenous Neumann condition: $\hat D A \partial_s (\phi \hat c) - A \hat u \hat c  = 0 $ on $\partial \Lambda^{\mathrm{in}} \cup \partial \Lambda^{\mathrm{out}}$.
 
-\mer{@Marius: Could you edit the paragraph below to reflect the simplified set-up (which we can because of the improved geometry.)}
-On the associated perivascular network inlet nodes $\partial \Lambda_{\mathrm{in}}$ (\Cref{fig:concept}), we prescribe a homogenous Neumann condition $\hat D A \partial_s (\phi \hat c) - A \hat u \hat c  = 0 $. For the vessels that 
-lie in a sphere of radius of $0.04$ located at the base of the third ventricle, we set the permeability  $\xi_{\rm{PVS,CSF-BC}}= 100\xi_{\rm{PVS,CSF}}$ . For the "leaf" nodes of the perivascular network (representing the end of the surface perivascular network and start of perivascular spaces within the parenchyma), we also sel homogenous Neumann boundary conditions $ D A \partial_s (\phi \hat c) - A \hat u \hat c  = 0 $ . % g_{\mathrm{pvs-par}}$.  
-% \rami{I don't think we can have anything different than $g_{\mathrm{pvs-par}} = 0$ since we would also have to modify the 3D equation. The interaction b/w the pvs and the parenchyma is along the entire perivascular boundary as  
-
-%\rami{The approach of setting $\hat g = 0$ and of setting the permeabitliy to be high (follows the arguments \cite{eide2024functional}) for the perivascular spaces that are near the spine, @Marius can you please add more details ? } accounted for in the coupling terms. 
-
-\noindent \mer{MER: @Rami: I've edited this subsection. Maybe I've swapped the labeling of the network inlet and outlet nodes. Please review. We will probably discuss this a bit. A figure showing overview and details of the perivascular network will help in any case.}
-
-%% For the network, the boundary nodes are split into $\partial \Lambda^{\mathrm{in}}$  and $\partial \Lambda^{\mathrm{out}}$ based on the specified orientation of the network (\color{blue} to be specified more precisely (with a figure?)\color{black}). We impose the following conditions. 
-%% \begin{alignat}{2}
-%% D A \partial_s \hat c &= 0, && \quad \mathrm{on} \,\, \partial \Lambda^ {\mathrm{in}}, \\ 
-%% D A \partial_s  \hat c &= \hat g(t),  && \quad \mathrm{on} \,\, \partial \Lambda^{\mathrm{out}} .
-%% \end{alignat}
-
+\mar{I assume that we need the split of the boundary nodes for the boundary conditions of the PVS flow models, oterwise we could furter simplify here...}
 
 \subsection*{Cerebrospinal fluid flow in the subarachnoid space} \label{sec:csf_fluid_vel}
 
@@ -397,8 +396,8 @@ We consider non-zero convection in the SAS $u_{\rm sas} \not = 0$ in \eqref{eq:m
 in the SAS domain: 
 \begin{subequations}
     \begin{alignat}{2}
- - \mu \Delta \bm u_{\mathrm{sas}} + \nabla p_{\rm{sas}} & =  0 \quad && \mathrm{in} \,\,  \Omega_{\rm{sas}}, \label{eq:momnetum_equation}  \\ 
- \nabla \cdot  \bm u_{\mathrm{sas}} & = g \quad && \mathrm{in} \,\,   \Omega_{\rm{sas}}, \label{eq:divergence_equation}  \\ 
+ - \mu \Delta \bm u_{\mathrm{sas}} + \nabla p_{\rm{sas}} & =  0 \quad && \mathrm{in} \,\,  \Omega_{\rm CSF}, \label{eq:momnetum_equation}  \\ 
+ \nabla \cdot  \bm u_{\mathrm{sas}} & = g \quad && \mathrm{in} \,\,   \Omega_{\rm CSF}, \label{eq:divergence_equation}  \\ 
 \mu \nabla \bm u_{\mathrm{sas}} \cdot \bm{n} -  p \bm n  &  = -R_0 ( \bm u \cdot \bm n ) \bm n\,\,   && \mathrm{on}  \label{eq:efflux_condition} \,\, \Gamma_{\mathrm{skull}}, \\ 
 \bm u_{\mathrm{sas}} & = 0 && \mathrm{on} \,\, \Gamma_{\rm{pia}}.  
 \end{alignat}
@@ -424,7 +423,7 @@ We obtain the fluid velcoity $\hat u = \hat u_{\rm prod}$  in \eqref{eq:multi_tr
 \begin{equation}
 \hat u_{\rm {prod}}(s) = \frac{1}{A(s)} \int_{\Theta(s)} \bm u \cdot \bm \tau_i, \quad \mathrm{in} \,\,  \Lambda_i.   
 \end{equation}
- In the above $\bm u$ evaluates to $\bm u_{\rm{sas}}$ on $\Omega_{\rm{sas}}$ and to zero otherwise, $\bm \tau_i$ is the tangent vector determined by the centerline $\Lambda_i$, $\Theta(s)$ is the cross-section of the PVS point at point $s$ and  $A$ is the area of this cross-section. \rami{to place a visualisation here too }
+ In the above $\bm u$ evaluates to $\bm u_{\rm{sas}}$ on $\Omega_{\rm CSF}$ and to zero otherwise, $\bm \tau_i$ is the tangent vector determined by the centerline $\Lambda_i$, $\Theta(s)$ is the cross-section of the PVS point at point $s$ and  $A$ is the area of this cross-section. \rami{to place a visualisation here too }
 
 \subsection*{Fluid flow within the parenchyma}
 \label{sec:csf_brain}
@@ -719,7 +718,7 @@ V_h^k = \{v_h \in L^2(\Omega): \quad  v_h \vert_E \in \mathbb{P}^k(E), \quad \fo
 \end{equation}
 Recall that the 3D concentration $c$ is defined locally in each subdomian of $\Omega$ and satisfies
 \begin{equation}
-     \partial_t (\phi c) - \nabla \cdot (D \nabla (\phi c) ) + \nabla \cdot (\bm u c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma = f \quad \quad \mathrm{in} \quad \Omega_{\rm{SAS}} \cup \Omega_{\rm{brain}}.  \label{eq:3d_pde}
+     \partial_t (\phi c) - \nabla \cdot (D \nabla (\phi c) ) + \nabla \cdot (\bm u c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma = f \quad \quad \mathrm{in} \quad \Omega_{\rm CSF} \cup \Omega_{\rm{brain}}.  \label{eq:3d_pde}
 \end{equation}
 The above is supplemented with the following boundary conditions. 
 \begin{alignat}{2}
