@@ -7,13 +7,13 @@ ecs_share : 0.2
 sas_diffusion : 3.8e-10 # Valnes 2020, https://www.nature.com/articles/s41598-020-66042-5
 arterial_pvs_diffusion : 3.8e-10
 venous_pvs_diffusion : 3.8e-10
-parenchyma_diffusion : 3.8e-10
+parenchyma_diffusion : 1.2e-10
 pvs_parenchyma_permability : 3.8e-7 #3.8e-7 # = C_M * D_f wit C_M = 1e3 as in https://fluidsbarrierscns.biomedcentral.com/articles/10.1186/s12987-023-00421-8
 pvs_csf_permability: 3.8e-7 #3.8e-7 # ???
 pvs_ratio_artery : 2
 pvs_ratio_venes: 2
 molecular_outflow_resistance : 1.0e-10 # 1e-4 mm^2/s 
-arterial_velocity_file : "results/csf_flow/sas_flow/pvs_flow.xdmf"
+arterial_velocity_file : "results/csf_flow/sas_flow_HighRes/pvs_flow.xdmf"
 csf_velocity_file : "results/csf_flow/sas_flow_HighRes/csf_v.xdmf"
 csf_dispersion_pressure_file : "results/csf_flow/cardiac_sas_flow_HighRes/csf_vis_p.xdmf"
 pvs_ratio_artery : 2
@@ -22,11 +22,8 @@ boundary_conditions:
   # influx of a total of 0.5mmol tracer with a linearly decreasing function over the first two hours
   sas : 
     type : Neumann
-    expr : " (t < t1) ? \
-              2*c_tot / (t1*t2) * t / A : \
-              2*c_tot / (t1*t2) * max(0.0, t2 - t) / A "
+    expr : "m_tot/(t_max*t_max*A) *max(0.0, t_max - abs(t - t_max))"
      # t (current time) and A (surface area) are computed and updated in the code
     params : 
-      t1 : 3600 # s
-      t2 : 7200 # s
-      c_tot : 0.5e-3 # mol
+      t_max : 3600 # s
+      m_tot : 0.5e-3 # mol
