@@ -344,6 +344,10 @@ def run_simulation(configfile: str):
     xdmfsas = XDMFFile(results_dir + f'{modelname}_sas.xdmf') 
     xdmfart = XDMFFile(results_dir + f'{modelname}_artery.xdmf') 
     xdmfven = XDMFFile(results_dir + f'{modelname}_vein.xdmf') 
+    xdmfsas.parameters["flush_output"] = True
+    xdmfart.parameters["flush_output"] = True
+    xdmfsas.parameters["flush_output"] = True
+
     pvdarteries = File(results_dir + f'{modelname}_artery.pvd') 
     pvdvenes = File(results_dir + f'{modelname}_vein.pvd') 
     xfiles = (xdmfsas, xdmfart, xdmfven)
