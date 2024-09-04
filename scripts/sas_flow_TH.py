@@ -62,7 +62,7 @@ PETScOptions.set("mat_mumps_icntl_4", 3)  # mumps verbosity
 PETScOptions.set("mat_mumps_icntl_35", 1)  # BLR feature
 PETScOptions.set("mat_mumps_cntl_7", 1e-8)  # BLR eps
 #PETScOptions.set("mat_mumps_icntl_32", 1)  # forward elimination during solve (useful, but not passed on by petsc)
-PETScOptions.set("mat_mumps_icntl_22", 1)  # out-of-core to reduce memory
+#PETScOptions.set("mat_mumps_icntl_22", 1)  # out-of-core to reduce memory
 #PETScOptions.set("mat_mumps_icntl_11", 1)  # error analysis
 #PETScOptions.set("mat_mumps_icntl_25", 2)  # turn on null space basis
 
