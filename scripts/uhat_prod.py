@@ -6,6 +6,7 @@ from xii import *
 from petsc4py import PETSc
 import sympy as sp
 import typer
+import yaml
 
 def compute_avg_flow(csf_flow_model:  str):
 
@@ -59,6 +60,14 @@ def compute_avg_flow(csf_flow_model:  str):
         xdmf.write_checkpoint(pvs_flow_vec, "velocity")
 
     File(f'results/csf_flow/{csf_flow_model}/pvs_flow.pvd') << pvs_flow_vec
+
+
+    length = assemble(1*dx(domain=artery))
+    umean = assemble(pvs_flow*dx) / length
+    umax = norm(pvs_flow.vector(), "linf")
+    metrics = dict(umean=umean,umax=umax)
+    with open(f'results/csf_flow/{csf_flow_model}/pvs_metrics.yml', 'w') as outfile:
+        yaml.dump(metrics, outfile, default_flow_style=False)
 
 if __name__ == "__main__":
     typer.run(compute_avg_flow)
