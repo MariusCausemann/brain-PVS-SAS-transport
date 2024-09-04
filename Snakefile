@@ -50,6 +50,8 @@ rule runSimuation:
         art="results/{modelname}/{modelname}_artery.xdmf",
         ven="results/{modelname}/{modelname}_vein.xdmf",
     threads: 4
+    resources:
+        ncpuspertask=4
     shell:
         "export OMP_NUM_THREADS={threads} && python scripts/time_dependent.py {input.config}"
 
@@ -71,7 +73,7 @@ rule generatePlot:
     output:
         plot="plots/{modelname}/{modelname}_{type}_{time,[0-9]*}.png"
     shell:
-        "python scripts/generate_plot.py {wildcards.modelname} {wildcards.time} {wildcards.type} --filename {output.plot}"
+        "xvfb-run -a python scripts/generate_plot.py {wildcards.modelname} {wildcards.time} {wildcards.type} --filename {output.plot}"
 
 rule generateDiffPlot:
     conda:"environment.yml"
@@ -85,7 +87,7 @@ rule generateDiffPlot:
     output:
         plot="plots/comparisons/{model1}_{model2}/{model1}_{model2}_diff_{type}_{time}.png"
     shell:
-        "python scripts/create_diff_plot.py {wildcards.model1} {wildcards.model2} {wildcards.time} {wildcards.type} --filename {output.plot}"
+        "xvfb-run -a python scripts/create_diff_plot.py {wildcards.model1} {wildcards.model2} {wildcards.time} {wildcards.type} --filename {output.plot}"
 
 rule getConcentrationRange:
     conda:"environment.yml"
@@ -117,8 +119,8 @@ rule compareModels:
         diffmax= lambda wildcards: diffmax[wildcards.type][f"{wildcards.model1}_{wildcards.model2}"]
     shell:
         """
-        python scripts/compare_models.py {wildcards.model1} {wildcards.model2} {wildcards.type} {params.cmax} {params.diffmax} {times} &&
-        python scripts/compare_models_horizontal.py {wildcards.model1} {wildcards.model2} {wildcards.type} {params.cmax} {times}
+        xvfb-run -a python scripts/compare_models.py {wildcards.model1} {wildcards.model2} {wildcards.type} {params.cmax} {params.diffmax} {times} &&
+        xvfb-run -a python scripts/compare_models_horizontal.py {wildcards.model1} {wildcards.model2} {wildcards.type} {params.cmax} {times}
         """
 
 rule analyzeTracerDist:
@@ -130,7 +132,7 @@ rule analyzeTracerDist:
     output:
         plot="plots/{modelname}/{modelname}_tracer_vessel_dist.png"
     shell:
-        "python scripts/analyze_tracer_dist.py {wildcards.modelname} {times}"
+        "xvfb-run -a python scripts/analyze_tracer_dist.py {wildcards.modelname} {times}"
 
 rule totalTracer:
     conda:"environment.yml"
@@ -141,7 +143,7 @@ rule totalTracer:
     output:
         plot="plots/{modelname}/{modelname}_total_conc.png"
     shell:
-        "python scripts/mean_concentrations.py {wildcards.modelname} {conctimes}"
+        "xvfb-run -a python scripts/mean_concentrations.py {wildcards.modelname} {conctimes}"
 
 rule segmentT1:
     input:
