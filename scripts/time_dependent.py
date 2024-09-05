@@ -9,6 +9,7 @@ from pathlib import Path
 from plotting_utils import read_config
 from sas_flow_TH import map_on_global
 from IPython import embed
+import yaml
 
 def write(sols, pvdfiles, t, hdffile=None):
     for s,f in zip(sols, pvdfiles):
@@ -49,7 +50,7 @@ def run_simulation(configfile: str):
     config = read_config(configfile)
     modelname = Path(configfile).stem
     meshname = config["mesh"]
-
+    metrics = dict()
     results_dir = f"results/{modelname}/"
     os.makedirs(results_dir, exist_ok=True)
 
@@ -177,6 +178,9 @@ def run_simulation(configfile: str):
 
         R = map_on_global(get_dispersion_enhancement(pressure_csf), mesh)
         File(results_dir + "R.pvd") << R
+        metrics["R_mean"] = assemble(R*dx) / assemble(1*dx(domain=sm))
+        metrics["R_max"] = R.vector().max()
+        metrics["R_min"] = R.vector().min()
         Ds *= (1 + R)
         
     velocity_v = Constant([0]*gdim)
@@ -369,6 +373,11 @@ def run_simulation(configfile: str):
     wh = xii.ii_Function(W)
     x_ = A_.createVecLeft()
     i = 0
+
+    for dom in ["csf", "ven", "art"]:
+        metrics[f"{dom}_min"] = [] 
+        metrics[f"{dom}_max"] = [] 
+
     while t < T: 
         i += 1
         t += dt 
@@ -395,6 +404,11 @@ def run_simulation(configfile: str):
         wh[0].rename("c", "c")
         wh[1].rename("c", "c")
         wh[2].rename("c", "c")
+
+        for dom, v in zip(["csf", "ven", "art"], [u_i, pa_i, pv_i]):
+            metrics[f"{dom}_min"].append(v.vector().min())
+            metrics[f"{dom}_max"].append(v.vector().max())
+
         if i%config["output_frequency"] == 0:
             #write(wh, pvdfiles, float(t), hdffile)
             xdmfsas.write_checkpoint(wh[0], "c", t, append=True)
@@ -404,6 +418,9 @@ def run_simulation(configfile: str):
             pvdvenes.write(pv_i, t)
         if np.isnan(x2) or x2 > 1e9:
             raise OverflowError(f"mumps produced nans at time {t}: |x| = {x2}")
+
+    with open(results_dir + f'{modelname}_metrics.yml', 'w') as outfile:
+        yaml.dump(metrics, outfile, default_flow_style=False)
 
 if __name__ == "__main__":
     typer.run(run_simulation)

@@ -11,6 +11,7 @@ import seaborn as sns
 from IPython import embed
 import pandas as pd
 from matplotlib.markers import MarkerStyle
+import yaml
 
 CSFID = 1
 PARID = 2
@@ -74,6 +75,14 @@ def compare_concentrations(modelname:str, times:List[int]):
     plt.tight_layout()
     filename = f"plots/{modelname}/{modelname}_total_conc.png"
     plt.savefig(filename)
+
+    metrics = dict()
+    for l,v, comp in zip(labels, volumes, compartments):
+        metrics.update({f"cmean_{l}_{t}":float(c/v) for t,c in zip(times, comp)})
+        metrics.update({f"ctot_{l}_{t}":float(c) for t,c in zip(times, comp)})
+
+    with open(f'results/{modelname}/mean_concentrations.yml', 'w') as outfile:
+        yaml.dump(metrics, outfile, default_flow_style=False)
 
     times = times[1:]
 

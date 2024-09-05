@@ -250,7 +250,7 @@ def compute_sas_flow(configfile : str, elm:str = 'BDM'):
     #assert np.isclose(assemble(inner(uh_global, uh_global)*dxglob(CSFNOFLOWID)), 0)
 
     # collect key metrics:
-    metrics
+
     sas_vol = assemble(1*dx(domain=sas_outer))
     umean = assemble(sqrt(inner(uh, uh))*dx) / sas_vol
     umag = project(sqrt(inner(uh, uh)), FunctionSpace(sas_outer, "CG", 1),
