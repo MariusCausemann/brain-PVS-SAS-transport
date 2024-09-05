@@ -18,6 +18,9 @@ diffmax = {"detail":defaultdict(lambda: 0.1,{"modelA_modelA4":0.2}),
 }
 types = ["overview"]
 
+# check for headless server here? https://github.com/pyvista/pyvista/blob/f872ffebc7f56b1ff03541e368935c3304fc5e33/pyvista/plotting/tools.py#L54
+# or try vtk osmesa build...
+
 def getconfig(model, key):
     return read_config(f"configfiles/{model}.yml").get(key, [])
 
