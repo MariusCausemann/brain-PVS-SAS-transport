@@ -65,7 +65,7 @@ def compute_avg_flow(csf_flow_model:  str):
     length = assemble(1*dx(domain=artery))
     umean = assemble(pvs_flow*dx) / length
     umax = norm(pvs_flow.vector(), "linf")
-    metrics = dict(umean=umean,umax=umax)
+    metrics = dict(pvsumean=umean,pvsumax=umax)
     with open(f'results/csf_flow/{csf_flow_model}/pvs_metrics.yml', 'w') as outfile:
         yaml.dump(metrics, outfile, default_flow_style=False)
 
