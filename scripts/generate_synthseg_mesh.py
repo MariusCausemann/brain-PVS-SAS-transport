@@ -115,6 +115,9 @@ def generate_mesh(configfile : str):
     sas, label = refine_sphere(sas, coords, 0.01, label)
     sas, label = refine_region(sas, label, labelids=[V34ID])
 
+    # refine AQ
+    coords = (0.0837, 0.08, 0.065) 
+    sas, label = refine_sphere(sas, coords, 0.007, label)
 
     coords = (0.084, 0.11, 0.052)
     sas, label = refine_sphere(sas, coords, 0.02, label)
