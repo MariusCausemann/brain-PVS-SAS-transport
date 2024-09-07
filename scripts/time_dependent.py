@@ -18,25 +18,6 @@ def write(sols, pvdfiles, t, hdffile=None):
         for s in sols:
             hdffile.write(s, s.name(), t)
 
-def get_dispersion_enhancement(pressure_csf):
-    mesh = pressure_csf.function_space().mesh()
-    gradp = sqrt(inner(grad(pressure_csf), grad(pressure_csf)))
-    rho = 993 # kg/m^3
-    nu = 7e-7 # m^2/s
-    omega = 2*np.pi
-    h = 3e-3 / 2
-    P = gradp /(rho*omega*nu/h)
-    alpha = np.sqrt(h**2 * omega / nu)
-
-    V = FunctionSpace(mesh, "CG", 1)
-    u,v = TrialFunction(V), TestFunction(V)
-    R = Function(V)
-    a = (Constant(1e-4)*inner(grad(u), grad(v)) + Constant(1)*u*v)*dx
-    L = P**2*v*dx
-    R.rename("R","R")
-    solve(a==L, R)
-    assert R.vector().min() > 0
-    return interpolate(R, FunctionSpace(mesh, "DG", 0))
 
 
 CSFID = 1
@@ -166,21 +147,17 @@ def run_simulation(configfile: str):
     else:
         velocity_csf = Constant([0]*gdim)
 
-    if "csf_dispersion_pressure_file" in config.keys():
-        print("reading CSF dispersion pressure from file...")
-        p_file = config["csf_dispersion_pressure_file"]
-
-        with XDMFFile(p_file) as file:
+    if "csf_dispersion_file" in config.keys():
+        print("reading CSF dispersion from file...")
+        dispersion_file = config["csf_dispersion_file"]
+        with XDMFFile(dispersion_file) as file:
             sm = xii.EmbeddedMesh(label, [CSFID, LVID, V34ID])
-            CG2 = FunctionSpace(sm, "CG", 2)
-            pressure_csf = Function(CG2)
-            file.read_checkpoint(pressure_csf, "pressure")
-
-        R = map_on_global(get_dispersion_enhancement(pressure_csf), mesh)
-        File(results_dir + "R.pvd") << R
+            R = Function(FunctionSpace(sm, "DG", 0))
+            file.read_checkpoint(R, "R")
         metrics["R_mean"] = assemble(R*dx) / assemble(1*dx(domain=sm))
         metrics["R_max"] = R.vector().max()
         metrics["R_min"] = R.vector().min()
+        R = map_on_global(R, mesh)
         Ds *= (1 + R)
         
     velocity_v = Constant([0]*gdim)
