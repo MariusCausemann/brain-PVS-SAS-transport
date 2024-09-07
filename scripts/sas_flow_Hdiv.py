@@ -140,8 +140,10 @@ def compute_sas_flow(configfile : str, elm:str = 'BDM'):
 
     LV_surface_area = assemble(1*ds(LV_INTERF_ID))
     PAR_surface_area = assemble(1*ds(CSF_INTERF_ID))
+    SK_surface_area = assemble(1*ds(NO_SLIP_ID))
     g_LV = config["LV_inflow_rate"] / LV_surface_area
     g_par = config["tissue_inflow_rate"] / PAR_surface_area
+    g_SK = config["skull_inflow_rate"] / SK_surface_area
 
     a = (inner(2*mu*sym(grad(u)), sym(grad(v)))*dx - inner(p, div(v))*dx
             -inner(q, div(u))*dx + inner(R*dot(u,n), dot(v,n))*ds(EFFLUX_ID)) 
@@ -182,8 +184,12 @@ def compute_sas_flow(configfile : str, elm:str = 'BDM'):
     LV_inflow.vector()[:] *= -g_LV
     PAR_inflow = get_normal_func(sas_outer)
     PAR_inflow.vector()[:] *= -g_par
+    SK_inflow = get_normal_func(sas_outer)
+    SK_inflow.vector()[:] *= -g_SK
+
+
     bcs = [
-           DirichletBC(W.sub(0), Constant((0, 0, 0)), ds.subdomain_data(), NO_SLIP_ID),
+           DirichletBC(W.sub(0), SK_inflow, ds.subdomain_data(), NO_SLIP_ID),
            DirichletBC(W.sub(0), LV_inflow, ds.subdomain_data(), LV_INTERF_ID),
            DirichletBC(W.sub(0), PAR_inflow, ds.subdomain_data(), CSF_INTERF_ID)
            ]
@@ -217,8 +223,13 @@ def compute_sas_flow(configfile : str, elm:str = 'BDM'):
     with XDMFFile(f'{results_dir}/csf_vis_v.xdmf') as xdmf:
         xdmf.write_checkpoint(uhdg, "velocity")
     with XDMFFile(f'{results_dir}/csf_vis_p.xdmf') as xdmf:
-        xdmf.write_checkpoint(ph, "pressure")
-    
+        xdmf.write(sas_outer)
+        xdmf.write_checkpoint(ph, "pressure", append=True)
+
+    assert np.isclose(assemble(inner(uh,-n)*ds(LV_INTERF_ID)), config["LV_inflow_rate"], rtol=0.05)
+    assert np.isclose(assemble(inner(uh,-n)*ds(CSF_INTERF_ID)), config["tissue_inflow_rate"], rtol=0.05)
+    assert np.isclose(assemble(inner(uh,-n)*ds(NO_SLIP_ID)), config["skull_inflow_rate"], rtol=0.05)
+
     #uh_global = map_on_global(uh, sas)
     uh.set_allow_extrapolation(True)
     uh_global = interpolate(uh, FunctionSpace(sas, "BDM", 1))
@@ -256,7 +267,8 @@ def compute_sas_flow(configfile : str, elm:str = 'BDM'):
     umag = project(sqrt(inner(uh, uh)), FunctionSpace(sas_outer, "CG", 1),
                    solver_type="cg", preconditioner_type="hypre_amg")
     umax = norm(umag.vector(), 'linf') 
-    metrics = dict(umean=umean, umax=umax, divu=divu)
+    metrics = dict(umean=umean, umax=umax, divu=divu, 
+                   pmax=ph.vector().max(), pmin=ph.vector().min())
 
     with open(f'{results_dir}/metrics.yml', 'w') as outfile:
         yaml.dump(metrics, outfile, default_flow_style=False)

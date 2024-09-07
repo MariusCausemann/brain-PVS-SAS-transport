@@ -15,7 +15,7 @@ pvs_ratio_venes: 2
 molecular_outflow_resistance : 1.0e-10 # 1e-4 mm^2/s 
 #arterial_velocity_file : "results/csf_flow/sas_flow/pvs_flow.xdmf"
 #csf_velocity_file : "results/csf_flow/sas_flow/csf_v.xdmf"
-csf_dispersion_pressure_file : "results/csf_flow/cardiac_sas_flow/csf_vis_p.xdmf"
+csf_dispersion_file : "results/csf_flow/cardiac_sas_flow/csf_vis_p.xdmf"
 pvs_ratio_artery : 2
 pvs_ratio_venes: 2
 boundary_conditions:

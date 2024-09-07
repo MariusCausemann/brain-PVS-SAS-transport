@@ -47,7 +47,7 @@ rule runSimuation:
         config="configfiles/{modelname}.yml",
         csf_velocity_file=lambda wildcards: getconfig(wildcards.modelname, "csf_velocity_file"),
         arterial_velocity_file=lambda wildcards: getconfig(wildcards.modelname, "arterial_velocity_file"),
-        dispersion_pressure_file=lambda wildcards: getconfig(wildcards.modelname, "csf_dispersion_pressure_file"),
+        csf_dispersion_file=lambda wildcards: getconfig(wildcards.modelname, "csf_dispersion_file"),
     output:
         sas="results/{modelname}/{modelname}_sas.xdmf",
         art="results/{modelname}/{modelname}_artery.xdmf",
@@ -57,6 +57,15 @@ rule runSimuation:
         ncpuspertask=4
     shell:
         "export OMP_NUM_THREADS={threads} && python scripts/time_dependent.py {input.config}"
+
+rule computeDispersionField:
+    conda:"environment.yml"
+    input:
+        csf_pressure_file="results/csf_flow/{csf_flow_model}/csf_vis_p.xdmf",
+    output:
+        csf_dispersion_file="results/csf_flow/{csf_flow_model}/R.xdmf",
+    shell:
+        "python scripts/compute_dispersion_field.py {input.csf_pressure_file} {output.csf_dispersion_file}"
 
 rule computeFlowField:
     conda:"environment.yml"
@@ -190,11 +199,8 @@ rule computeSASFlow:
         "results/csf_flow/{csf_flow_model}/csf_p.xdmf",
         "results/csf_flow/{csf_flow_model}/csf_vis_p.xdmf",
         "results/csf_flow/{csf_flow_model}/csf_p.h5",
-    params:
-        discr=lambda wildcards: getconfig(wildcards.csf_flow_model, "discretization"),
     shell:
-        "python scripts/sas_flow_{params.discr}.py configfiles/{wildcards.csf_flow_model}.yml"
-
+        "python scripts/sas_flow_Hdiv.py configfiles/{wildcards.csf_flow_model}.yml"
 
 rule AverageSASFlow2PVS:
     conda:"environment.yml"
