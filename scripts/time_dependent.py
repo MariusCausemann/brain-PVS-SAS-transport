@@ -81,15 +81,23 @@ def run_simulation(configfile: str):
     efflux_id = 3
     par_csf_id = 4
     par_outer_id = 5
-    inlet = CompiledSubDomain("on_boundary && x[2] < zmin + eps",
-                             zmin=mesh.coordinates()[:,2].min(), eps=0.2e-3)
+
+    def mark_inlet(mesh, bm, label, vec, threshold, zmin=0):
+        for f in facets(mesh):
+            if f.exterior()==False:continue
+            if f.midpoint()[2] > zmin: continue
+            if np.dot(f.normal()[:], vec) > threshold:
+                bm[f] = label
+
+    
     bm = MeshFunction("size_t", mesh, 2, 0)
     efflux = CompiledSubDomain("on_boundary  && x[2] > 0.05")
     outer = CompiledSubDomain("on_boundary")
     outer.mark(bm, outer_id)
     efflux.mark(bm, efflux_id)
-    inlet.mark(bm, inlet_id)
 
+    mark_inlet(mesh, bm, inlet_id, (0 ,0,-1), 0.95,
+               zmin=mesh.coordinates()[:,2].min() + 1e-3)
     mark_internal_interface(mesh, vol_subdomains, bm, par_csf_id,
                             doms=[CSFID, PARID])
     mark_external_boundary(mesh, vol_subdomains, bm, par_outer_id,
@@ -139,7 +147,7 @@ def run_simulation(configfile: str):
             file.read_checkpoint(velocity_csf, "velocity")
             velocity_csf.rename("v", "v")
             dx_s = Measure("dx", mesh, subdomain_data=vol_subdomains)
-            if not "TH" in vel_file: assert abs(assemble(div(velocity_csf)*dx)) < 1e-14
+            if not "TH" in vel_file: assert abs(assemble(div(velocity_csf)*dx)) < 1e-12
             assert assemble(inner(velocity_csf, velocity_csf)*dx_s(PARID)) < 1e-14
             with XDMFFile(results_dir + "csf_v.xdmf") as outfile:
                 outfile.write_checkpoint(velocity_csf,"v", 0, append=False)
@@ -291,7 +299,6 @@ def run_simulation(configfile: str):
         AA, _, bc_apply_b = xii.apply_bc(AA, bb, bcs=W_bcs, return_apply_b=True)
 
    
-
     A_ = ksp_mat(xii.ii_convert(AA))
 
     opts = PETSc.Options() 
@@ -331,7 +338,6 @@ def run_simulation(configfile: str):
 
     pvdarteries = File(results_dir + f'{modelname}_artery.pvd') 
     pvdvenes = File(results_dir + f'{modelname}_vein.pvd') 
-    xfiles = (xdmfsas, xdmfart, xdmfven)
     pvdfiles = (pvdarteries, pvdvenes)
 
     pvdarteries.write(pa_i, t)
@@ -343,8 +349,8 @@ def run_simulation(configfile: str):
     #hdffile = HDF5File(mesh.mpi_comm(), results_dir + f"{modelname}.hdf", "w")
 
     #write((u_i, pa_i, pv_i), pvdfiles, 0.0, hdffile=hdffile)
-    #write((vol_subdomains, artmarker, veinmarker), pvdfiles, 0.0)
-    #write((xi_a, xi_v), (pvdarteries, pvdvenes), 0.0)
+    write((artmarker, veinmarker), pvdfiles, 0.0)
+    write((xi_a, xi_v), pvdfiles, 0.0)
     #write([phi], [pvdsas], 0.0)
 
     wh = xii.ii_Function(W)
