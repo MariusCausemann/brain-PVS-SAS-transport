@@ -36,7 +36,7 @@ def binary_smoothing(img, footprint=skim.ball(1)):
 os.makedirs("mesh/T1/surfaces", exist_ok=True)
 #load white matter data 
 pad_width = 5
-seg = nibabel.load("results/freesurfer/T1_synthseg.nii.gz")
+seg = nibabel.load("data/T1_synthseg.nii.gz")
 img = np.pad(seg.get_fdata(), pad_width=pad_width)
 resolution = np.array(seg.header["pixdim"][1:4])
 origin = - np.array(resolution) * pad_width

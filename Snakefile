@@ -2,7 +2,11 @@ import numpy as np
 from scripts.plotting_utils import read_config
 from collections import defaultdict
 
-models = ["modelA","modelALowRes", "modelAHighRes"] #["modelA", "modelA2", "modelA3", "modelA4","modelABDM"]
+num_mumps_threads = 16
+mesh_refine_models = ["modelA","modelALowRes", "modelAHighRes"]
+time_refine_models = ["modelA", "modelAsmalldt", "modelAlargedt"]
+
+models =  mesh_refine_models + time_refine_models
 times = list(np.array([1, 6, 12, 24])*60*60)
 conctimes =  list(np.array([0, 1, 2, 3, 4, 6 , 12, 18, 24])*60*60)
 
@@ -27,7 +31,7 @@ def getconfig(model, key):
 rule all:
     input:
         "plots/comparisons/modelA_modelALowRes/modelA_modelALowRes_overview.png",
-        "plots/comparisons/modelA_modelAHighRes/modelA_modelAHighRes_overview.png",
+        #"plots/comparisons/modelA_modelAHighRes/modelA_modelAHighRes_overview.png",
         #"plots/comparisons/modelA_modelA3/modelA_modelA3_overview.png",
         #"plots/comparisons/modelA_modelA4/modelA_modelA4_overview.png",
         #"plots/comparisons/modelA_modelA3/modelA_modelA3_overview.png",
@@ -52,9 +56,9 @@ rule runSimuation:
         sas="results/{modelname}/{modelname}_sas.xdmf",
         art="results/{modelname}/{modelname}_artery.xdmf",
         ven="results/{modelname}/{modelname}_vein.xdmf",
-    threads: 4
+    threads: num_mumps_threads
     resources:
-        ncpuspertask=4
+        ncpuspertask=num_mumps_threads
     shell:
         "export OMP_NUM_THREADS={threads} && python scripts/time_dependent.py {input.config}"
 
@@ -161,7 +165,7 @@ rule segmentT1:
     input:
         "data/T1.nii.gz"
     output:
-        "results/freesurfer/T1_synthseg.nii.gz"
+        "data/T1_synthseg.nii.gz"
     shell:
         "scripts/synthseg.sh"
 
@@ -169,7 +173,7 @@ rule segmentT1:
 rule generateSurfaces:
     conda:"environment.yml"
     input:
-        "results/freesurfer/T1_synthseg.nii.gz"
+        "data/T1_synthseg.nii.gz"
     output:
         [f"mesh/T1/surfaces/{n}.ply" for n in ["LV", "parenchyma", "skull", "V34"]]
     shell:
@@ -180,7 +184,8 @@ rule generateSurfaces:
 rule generateMesh:
     conda:"environment.yml"
     input:
-        [f"mesh/T1/surfaces/{n}.ply" for n in ["LV", "parenchyma", "skull", "V34"]]
+        [f"mesh/T1/surfaces/{n}.ply" for n in ["LV", "parenchyma", "skull", "V34"]],
+        "configfiles/meshconfig/{meshname}.yml"
     output:
         "mesh/{meshname}/{meshname}.xdmf",
         "mesh/{meshname}/{meshname}.h5",
@@ -199,8 +204,11 @@ rule computeSASFlow:
         "results/csf_flow/{csf_flow_model}/csf_p.xdmf",
         "results/csf_flow/{csf_flow_model}/csf_vis_p.xdmf",
         "results/csf_flow/{csf_flow_model}/csf_p.h5",
+    threads: num_mumps_threads
+    resources:
+        ncpuspertask=num_mumps_threads
     shell:
-        "python scripts/sas_flow_Hdiv.py configfiles/{wildcards.csf_flow_model}.yml"
+        "export OMP_NUM_THREADS={threads} && python scripts/sas_flow_Hdiv.py configfiles/{wildcards.csf_flow_model}.yml"
 
 rule AverageSASFlow2PVS:
     conda:"environment.yml"
