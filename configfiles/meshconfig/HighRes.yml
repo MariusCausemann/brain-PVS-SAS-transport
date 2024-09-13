@@ -1,2 +1,2 @@
-epsilon: 0.001
-edge_length_r : 0.01
+epsilon: 0.0012
+edge_length_r : 0.0225
