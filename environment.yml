@@ -4,7 +4,6 @@ channels:
   - conda-forge
 dependencies:
   - fenics-dolfin=2019.2.0.dev
-  - openmpi<5 # ex3 segfaults with openmpi5
   - python=3.9    
   - numpy
   - numpy-indexed
@@ -21,6 +20,8 @@ dependencies:
   - pykdtree
   - bioconda::snakemake
   - libopenblas=*=*openmp*
+  - mumps-mpi>=5.7.3
+  - mpich
   - gcc<13 # fTetWild install via pip requires gcc<13
   - pip:
     - pyacvd
