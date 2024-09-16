@@ -8,20 +8,20 @@ def get_dispersion_enhancement(csf_pressure_file:str, outfile:str):
     mesh = Mesh()
     with XDMFFile(csf_pressure_file) as file:
         file.read(mesh)
-        DG = FunctionSpace(mesh, "DG", 0)
+        DG = FunctionSpace(mesh, "DG", 1)
         pressure_csf = Function(DG)
         file.read_checkpoint(pressure_csf, "pressure")
 
     V = FunctionSpace(mesh, "CG", 1)
-    p_cont = project(pressure_csf, V)
-    gradp = sqrt(inner(grad(p_cont), grad(p_cont)))
+    #p_cont = project(pressure_csf, V)
+    gradp = sqrt(inner(grad(pressure_csf), grad(pressure_csf)))
     rho = 993 # kg/m^3
     nu = 7e-7 # m^2/s
     omega = 2*np.pi
     h = 3e-3 / 2
     P = gradp /(rho*omega*nu/h)
     alpha = np.sqrt(h**2 * omega / nu)
-    R = project(P**2, DG)
+    R_unsmoothed = project(P**2, DG)
 
     u,v = TrialFunction(V), TestFunction(V)
     R = Function(V)
@@ -33,6 +33,7 @@ def get_dispersion_enhancement(csf_pressure_file:str, outfile:str):
 
     with XDMFFile(outfile) as file:
         file.write_checkpoint(R, "R")
+        file.write_checkpoint(R_unsmoothed, "R_unsmoothed", append=True)
 
 
 if __name__ == "__main__":
