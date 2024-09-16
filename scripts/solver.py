@@ -92,8 +92,9 @@ def volmarker_to_networkmarker(volm, netw, netw_shape, threshold=0.99):
         tagavgs[tag] = taga
 
     arr = np.vstack([tagavgs[t].vector()[:] for t in tags]).T
+    #from IPython import embed; embed()
     maxtag = arr.argmax(axis=1)
-    zerotag = arr.sum(axis=1) < threshold
+    zerotag = arr.max(axis=1) < threshold
     marker_arr = np.array(tags)[maxtag]
     marker_arr[zerotag] = 0
     netwmarker = MeshFunction("size_t", netw, 1, 0)
