@@ -11,6 +11,7 @@ from plotting_utils import read_config
 from IPython import embed
 from pathlib import Path
 import yaml
+from test_map_on_global_coords_shift import map_dg_on_global
 
 def directsolve(a, L, bcs, a_prec, W):
     wh = Function(W)
@@ -40,25 +41,6 @@ LV_INTERF_ID = 3
 SPINAL_OUTLET_IT = 4
 CSF_INTERF_ID = 5
 
-def map_on_global(uh, parentmesh, eps_digits=10):
-    # map the solution back on the whole domain
-    el = uh.function_space().ufl_element()
-    V = uh.function_space()
-    if el.family()=="Lagrange":
-        bdim = 1 if len(uh.ufl_shape)==0 else uh.ufl_shape[0]
-    if el.family()=="Brezzi-Douglas-Marini":
-        bdim = 1
-    if el.family()=='Discontinuous Lagrange' and el.degree()==0:
-        bdim = 1
-    V_glob   = FunctionSpace(parentmesh, el)
-    c_coords = np.round(V.tabulate_dof_coordinates()[::bdim,:], eps_digits)
-    p_coords = np.round(V_glob.tabulate_dof_coordinates()[::bdim,:], eps_digits)
-    idxmap = npi.indices(p_coords, c_coords, axis=0)
-    uh_global = Function(V_glob)
-    for i in range(bdim):
-        uh_global.vector()[idxmap*bdim + i] = uh.vector()[i::bdim]
-    return uh_global
-
 def get_normal_func(mesh):
     n = FacetNormal(mesh)
     V = VectorFunctionSpace(mesh, "CG", 1)
@@ -80,6 +62,8 @@ def compute_sas_flow(configfile : str, elm:str = 'BDM'):
     config = read_config(configfile)
     modelname = Path(configfile).stem
     meshname = config["mesh"]
+
+    order_k = 2
 
     results_dir = f"results/csf_flow/{modelname}/"
     os.makedirs(results_dir, exist_ok=True)
@@ -125,8 +109,8 @@ def compute_sas_flow(configfile : str, elm:str = 'BDM'):
 
     # Define function spaces for velocity and pressure
     cell = sas_outer.ufl_cell()  
-    Velm = FiniteElement('BDM', cell, 1)
-    Qelm = FiniteElement('Discontinuous Lagrange', cell, 0) 
+    Velm = FiniteElement('BDM', cell, order_k)
+    Qelm = FiniteElement('Discontinuous Lagrange', cell, order_k - 1) 
 
     W = FunctionSpace(sas_outer, Velm * Qelm)
 
@@ -218,7 +202,7 @@ def compute_sas_flow(configfile : str, elm:str = 'BDM'):
     wh = directsolve(a, L, bcs, a_prec, W)
     uh, ph = wh.split(deepcopy=True)[:]
     
-    uhdg = interpolate(uh, VectorFunctionSpace(sas_outer, "DG", 1))
+    uhdg = interpolate(uh, VectorFunctionSpace(sas_outer, "DG", order_k))
     assert np.isclose(assemble(div(uhdg)*div(uhdg)*dx), 0)
     with XDMFFile(f'{results_dir}/csf_vis_v.xdmf') as xdmf:
         xdmf.write_checkpoint(uhdg, "velocity")
@@ -230,9 +214,8 @@ def compute_sas_flow(configfile : str, elm:str = 'BDM'):
     assert np.isclose(assemble(inner(uh,-n)*ds(CSF_INTERF_ID)), config["tissue_inflow_rate"], rtol=0.05)
     assert np.isclose(assemble(inner(uh,-n)*ds(NO_SLIP_ID)), config["skull_inflow_rate"], rtol=0.05)
 
-    #uh_global = map_on_global(uh, sas)
-    uh.set_allow_extrapolation(True)
-    uh_global = interpolate(uh, FunctionSpace(sas, "BDM", 1))
+    uh_global = Function(VectorFunctionSpace(sas, "DG", order_k))
+    map_dg_on_global(uhdg, uh_global)
     dxglob = Measure("dx", sas, subdomain_data=label)
 
     #assert np.isclose(assemble(inner(uh_global, uh_global)*dxglob(PARID)), 0)
@@ -245,17 +228,14 @@ def compute_sas_flow(configfile : str, elm:str = 'BDM'):
 
     assert np.isclose(divu, 0)
 
-    csf_indicator = MeshFunction('size_t', sas, gdim, 0)
-    csf_indicator.array()[np.isin(label.array(), [CSFID, LVID, V34ID])] = 1
-    uh_global_dg = project(as_P0_function(csf_indicator) * uh_global,
-                                VectorFunctionSpace(sas, "DG", 1), solver_type="mumps")
-
     with XDMFFile(f'{results_dir}/csf_v.xdmf') as xdmf:
         xdmf.write(sas)
-        xdmf.write_checkpoint(uh_global_dg, "velocity", append=True)
+        xdmf.write_checkpoint(uh_global, "velocity", append=True)
 
+    ph_global_dg = Function(FunctionSpace(sas, "DG", order_k -1))
+    map_dg_on_global(ph, ph_global_dg)
     with XDMFFile(f'{results_dir}/csf_p.xdmf') as xdmf:
-        xdmf.write_checkpoint(map_on_global(ph, sas), "pressure")
+        xdmf.write_checkpoint(ph_global_dg, "pressure")
 
     assert np.isclose(divu, divu_global_csf)
     #assert np.isclose(assemble(inner(uh_global, uh_global)*dxglob(CSFNOFLOWID)), 0)
@@ -264,7 +244,7 @@ def compute_sas_flow(configfile : str, elm:str = 'BDM'):
 
     sas_vol = assemble(1*dx(domain=sas_outer))
     umean = assemble(sqrt(inner(uh, uh))*dx) / sas_vol
-    umag = project(sqrt(inner(uh, uh)), FunctionSpace(sas_outer, "CG", 1),
+    umag = project(sqrt(inner(uh, uh)), FunctionSpace(sas_outer, "CG", order_k),
                    solver_type="cg", preconditioner_type="hypre_amg")
     umax = norm(umag.vector(), 'linf') 
     metrics = dict(umean=umean, umax=umax, divu=divu, 
