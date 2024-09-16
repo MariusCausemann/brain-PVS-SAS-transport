@@ -1,68 +1,57 @@
 from fenics import *
 from xii import *
-import numpy_indexed as npi
 import numpy as np
-from IPython import embed
+import numpy_indexed as npi
 
-CSFID = 1
-PARID = 2
-LVID = 3
-V34ID = 4
-CSFNOFLOWID = 5
-
-def map_on_global(uh, parentmesh, eps_digits=12):
+def map_on_global(uh, uh_global):
     # map the solution back on the whole domain
-    el = uh.function_space().ufl_element()
+    childmesh = uh.function_space().mesh()
+    parentmesh = uh_global.function_space().mesh()
+    cell_map = childmesh.parent_entity_map[parentmesh.id()][childmesh.geometric_dimension()]
+    C = uh.function_space().tabulate_dof_coordinates()
+    P = uh_global.function_space().tabulate_dof_coordinates()
+    for child, parent in cell_map.items():
+        child_dofs = uh.function_space().dofmap().cell_dofs(child)
+        parent_dofs = uh_global.function_space().dofmap().cell_dofs(parent)
+        perm_map = npi.indices(C[child_dofs],P[parent_dofs], axis=0)
+        uh_global.vector().vec().array_w[parent_dofs] = uh.vector().vec().array_r[child_dofs][perm_map]
+        assert np.isclose(np.linalg.norm(C[child_dofs[perm_map]] - P[parent_dofs]) , 0)
+
+
+def map_on_global_vec(uh, parentmesh):
     V = uh.function_space()
-    if el.family()=="Lagrange":
-        bdim = 1 if len(uh.ufl_shape)==0 else uh.ufl_shape[0]
-    if el.family()=="Brezzi-Douglas-Marini":
-        bdim = 1
-    if el.family()=='Discontinuous Lagrange' and el.degree()==0:
-        bdim = 1
-    V_glob   = FunctionSpace(parentmesh, el)
-    c_coords = np.round(V.tabulate_dof_coordinates()[::bdim,:], eps_digits)
-    p_coords = np.round(V_glob.tabulate_dof_coordinates()[::bdim,:], eps_digits)
-    idxmap = npi.indices(p_coords, c_coords, axis=0)
-    uh_global = Function(V_glob)
-    for i in range(bdim):
-        uh_global.vector()[idxmap*bdim + i] = uh.vector()[i::bdim]
-    assert np.isclose(uh.vector().sum(), uh_global.vector().sum())
-    return uh_global
+    Vsubparent = FunctionSpace(mesh, V.sub(0).ufl_element())
+    uiglobs = [Function(Vsubparent) for v in V.split()]
 
-"""
+    for ui, uigl in zip(uh.split(deepcopy=True), uiglobs):
+        map_on_global(ui, uigl)
+    return as_vector(uiglobs)
 
-mesh = Mesh()
-with XDMFFile(f'mesh/T1/volmesh/mesh.xdmf') as f:
-    f.read(mesh)
-    gdim = mesh.geometric_dimension()
-    label = MeshFunction('size_t', mesh, gdim, 0)
-    f.read(label, 'label')
 
-emb = EmbeddedMesh(label, [CSFID,LVID,V34ID]) 
-"""
-mesh = UnitSquareMesh(4,4)
-left = CompiledSubDomain("x[0] <= 0.5")
-mf = MeshFunction("size_t", mesh, 2, 0)
-left.mark(mf, 1)
-emb = EmbeddedMesh(mf, 1) 
-
+mesh = UnitCubeMesh(20,20,20)
 gdim = mesh.geometric_dimension()
-CG2emb = FunctionSpace(emb, "BDM", 1)
-uh = interpolate(Expression(("sin(x[0]*pi)", "sin(x[1]*pi)"),degree=1), CG2emb)
-bc = DirichletBC(CG2emb, Constant([0]*gdim), "on_boundary")
-#bc.apply(uh.vector())
+mf = MeshFunction("size_t", mesh, gdim, 0)
+left = CompiledSubDomain("x[0] <= 0.5")
+left.mark(mf, 1)
+emb = EmbeddedMesh(mf, [1])
 
-uh_global = map_on_global(uh, mesh)
+f = Expression(["x[0]"]*gdim, degree=2)
 
-print(assemble(div(uh)*div(uh)*dx))
-print(assemble(div(uh_global)*div(uh_global)*dx))
+uh = project(f, VectorFunctionSpace(emb, "DG", 1))
 
-uhdg = interpolate(uh, VectorFunctionSpace(emb, "DG", 1))
+uh_global = map_on_global_vec(uh, mesh)
+
 with XDMFFile("uh.xdmf") as file:
-    file.write_checkpoint(uhdg, "uh")
+    file.write_checkpoint(uh, "uh")
 
-uh.set_allow_extrapolation(True)
-uh_global_dg = interpolate(uh, VectorFunctionSpace(mesh, "DG", 1))
-with XDMFFile("uh_gobal.xdmf") as file:
-    file.write_checkpoint(uh_global_dg, "uh_global")
+V = VectorFunctionSpace(mesh, "DG", 1)
+Vemb  = VectorFunctionSpace(emb, "DG", 1)
+with XDMFFile("uh_global.xdmf") as file:
+    file.write_checkpoint(project(uh_global, V), "uh")
+
+print(assemble(inner(f - uh, f-uh)*dx))
+
+dX = Measure('dx', domain=mesh, subdomain_data=mf)
+print(assemble(inner(f - uh_global, f-uh_global)*dX(1)))
+
+
