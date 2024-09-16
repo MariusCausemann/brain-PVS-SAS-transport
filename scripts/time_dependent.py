@@ -121,7 +121,7 @@ def run_simulation(configfile: str):
     if "arterial_velocity_file" in config.keys():
         vel_file = config["arterial_velocity_file"]
         with XDMFFile(vel_file) as file:
-            DG = VectorFunctionSpace(artery, "DG", 0)
+            DG = VectorFunctionSpace(artery, "DG", 1)
             velocity_a = Function(DG)
             file.read_checkpoint(velocity_a, "velocity")
         # make sure the velocity field is tangential to the network
@@ -142,12 +142,12 @@ def run_simulation(configfile: str):
                 print("Using CG3 velocity space")
                 vel_space = VectorFunctionSpace(mesh, "CG", 3)
             else:
-                vel_space = VectorFunctionSpace(mesh, "DG", 1)
+                vel_space = VectorFunctionSpace(mesh, "DG", 2)
             velocity_csf = Function(vel_space)
             file.read_checkpoint(velocity_csf, "velocity")
             velocity_csf.rename("v", "v")
             dx_s = Measure("dx", mesh, subdomain_data=vol_subdomains)
-            if not "TH" in vel_file: assert abs(assemble(div(velocity_csf)*dx)) < 1e-12
+            if not "TH" in vel_file: assert assemble(sqrt(div(velocity_csf)*div(velocity_csf))*dx) < 1e-12
             assert assemble(inner(velocity_csf, velocity_csf)*dx_s(PARID)) < 1e-14
             with XDMFFile(results_dir + "csf_v.xdmf") as outfile:
                 outfile.write_checkpoint(velocity_csf,"v", 0, append=False)
@@ -303,20 +303,11 @@ def run_simulation(configfile: str):
 
     opts = PETSc.Options() 
     opts.setValue('ksp_type', 'preonly')    
-    #opts.setValue('ksp_view', None)
-    #opts.setValue('ksp_view_eigenvalues', None)
-    #opts.setValue('ksp_converged_reason', None)
-    #opts.setValue('ksp_norm_type', 'unpreconditioned')
-    #opts.setValue('ksp_monitor_true_residual', None)
-    #opts.setValue('ksp_rtol', 1E-40)
-    #opts.setValue('ksp_atol', 1E-12)   # |AX-b| < 1E-
     opts.setValue('pc_type', 'lu')
     opts.setValue("pc_factor_mat_solver_type", "mumps")
     opts.setValue("mat_mumps_icntl_4", "3")
     opts.setValue("mat_mumps_icntl_35", 1)
     opts.setValue("mat_mumps_cntl_7",  1e-8)  # BLR eps
-
-    #opts.setValue('ksp_initial_guess_nonzero', 1)
 
     ksp = PETSc.KSP().create()
     ksp.setOperators(A_, A_)
@@ -388,7 +379,7 @@ def run_simulation(configfile: str):
         wh[1].rename("c", "c")
         wh[2].rename("c", "c")
 
-        for dom, v in zip(["csf", "ven", "art"], [u_i, pa_i, pv_i]):
+        for dom, v in zip(["csf", "art", "ven"], [u_i, pa_i, pv_i]):
             metrics[f"{dom}_min"].append(v.vector().min())
             metrics[f"{dom}_max"].append(v.vector().max())
 
