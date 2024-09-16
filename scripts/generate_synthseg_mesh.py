@@ -70,11 +70,12 @@ def generate_mesh(configfile : str):
             point_array, [("tetra", cell_array)], cell_data={"label": [marker.ravel()]}
         )
     mesh = pv.from_meshio(mesh).clean()
+    
+    # make sure all expected labels are actually there
+    assert np.isin([CSFID, PARID, LVID, V34ID,], mesh["label"]).all()
 
     # compute distance to interface for later refinement
-    parenchyma_surf = pv.read("mesh/T1/surfaces/parenchyma.ply")
-    dist = mesh.compute_implicit_distance(parenchyma_surf).ptc()
-    mesh["par_dist"] = dist["implicit_distance"]
+    parenchyma_surf = pv.read("mesh/T1/surfaces/parenchyma_incl_ventr.ply")
     os.makedirs(f"mesh/{meshname}/volmesh", exist_ok=True)
     pv.save_meshio(f"mesh/{meshname}/volmesh/mesh.xdmf", mesh)
 
@@ -87,9 +88,7 @@ def generate_mesh(configfile : str):
         f.read(sas)
         gdim = sas.geometric_dimension()
         label = df.MeshFunction('size_t', sas, gdim, 0)
-        par_dist = df.MeshFunction('size_t', sas, gdim, 0)
         f.read(label, 'label')
-        f.read(par_dist, 'par_dist')
 
     def refine_region(sas, label, labelids):
         mf = df.MeshFunction("bool", sas, 3, 0)
@@ -98,31 +97,66 @@ def generate_mesh(configfile : str):
         label = df.adapt(label, sas)
         return sas, label
 
-    def refine_sphere(sas, coords, radius, label, criterion=None):
+    def refine_sphere(sas, coords, radius, label, criterion=None, min_size=None):
         mf = df.MeshFunction("bool", sas, 3, 0)
         rm = df.CompiledSubDomain("(x[0] - c0)*(x[0] - c0) + (x[1] - c1)*(x[1] - c1) + (x[2] - c2)*(x[2] - c2) < r*r",
-                                r = 0.01, c0=coords[0],  c1=coords[1],  c2=coords[2])
+                                r = radius, c0=coords[0],  c1=coords[1],  c2=coords[2])
         rm.mark(mf, True)
         if criterion is not None:
             mf.array()[criterion==False] = False
+        if min_size is not None:
+            cd = df.CellDiameter(sas)
+            cd = df.project(cd, df.FunctionSpace(sas, "DG", 0), solver_type="cg", 
+                                                           preconditioner_type="jacobi")
+            mf.array()[cd.vector()[:] <= min_size] = False
+
         sas = df.refine(sas, mf)
         label = df.adapt(label, sas)
         return sas, label
 
-    coords = (0.0847, 0.0833, 0.001)
-    crit = abs(par_dist.array()[:]) < 0.002
-    sas, label = refine_sphere(sas, coords, 0.01, label, criterion=crit)
-    sas, label = refine_sphere(sas, coords, 0.01, label)
+    def get_surface_dist(mesh, surface):
+        DG = df.FunctionSpace(mesh, "DG", 0)
+        center_cloud = pv.PolyData(DG.tabulate_dof_coordinates())
+        dist = center_cloud.compute_implicit_distance(surface)
+        return dist["implicit_distance"]
+    
+    # refine V3 and V4
     sas, label = refine_region(sas, label, labelids=[V34ID])
 
     # refine AQ
-    coords = (0.0837, 0.08, 0.065) 
-    sas, label = refine_sphere(sas, coords, 0.007, label)
+    AQ_coords = (0.0837, 0.08, 0.065) 
+    #sas, label = refine_sphere(sas, AQ_coords, 0.007, label)
 
-    coords = (0.084, 0.11, 0.052)
-    sas, label = refine_sphere(sas, coords, 0.02, label)
+    # refine Par boundary
+    bottom_refine_coords = (0.0847, 0.11, 0.001)
+    for i in range(2):
+        crit = abs(get_surface_dist(sas, parenchyma_surf)) < 0.003
+        print(sas.num_cells())
+        sas, label = refine_sphere(sas, bottom_refine_coords, 0.08, label, 
+                                    criterion=crit, min_size=config["epsilon"] * 3)
+        print(sas.num_cells())
+        print("======================")
 
-    sas_outer = xii.EmbeddedMesh(label, [CSFID,LVID,V34ID]) 
+    # refine inlet area
+    inlet_coords = (0.0847, 0.0833, 0.001)
+    crit = abs(get_surface_dist(sas, parenchyma_surf)) < 0.01
+    sas, label = refine_sphere(sas, inlet_coords, 0.01, label, criterion=crit)
+
+    # refine interpeduncular
+    interpeduncular_coords = (0.084, 0.11, 0.052)
+    sas, label = refine_sphere(sas, interpeduncular_coords, 0.03, label,
+                                min_size=config["epsilon"] * 3)
+    for i in range(2):
+        dist = get_surface_dist(sas, parenchyma_surf)
+        crit = (dist > -0.002) & (dist < 0)
+        print(sas.num_cells())
+        sas, label = refine_sphere(sas, interpeduncular_coords, 0.03, label, 
+                                    criterion=crit, min_size=config["epsilon"]*3)
+        print(sas.num_cells())
+        print("======================")
+
+
+    sas_outer = xii.EmbeddedMesh(label, [CSFID,LVID,V34ID])
     cell_f = color_connected_components(sas_outer) 
 
     colors = df.MeshFunction('size_t', sas, gdim, 0)
