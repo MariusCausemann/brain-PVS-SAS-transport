@@ -69,7 +69,7 @@ rule computeDispersionField:
     output:
         csf_dispersion_file="results/csf_flow/{csf_flow_model}/R.xdmf",
     shell:
-        "python scripts/compute_dispersion_field.py {input.csf_pressure_file} {output.csf_dispersion_file}"
+        "xvfb-run -a python scripts/compute_dispersion_field.py {input.csf_pressure_file} {output.csf_dispersion_file}"
 
 rule computeFlowField:
     conda:"environment.yml"
