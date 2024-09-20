@@ -143,7 +143,7 @@ def compute_sas_flow(configfile : str, elm:str = 'BDM'):
 
     CellDiameter = CentroidDistance   # NOTE: also adjust the penalty parameter
 
-    penalty = Constant(10.0)
+    penalty = Constant(10.0*order_k)
     D = lambda v: sym(grad(v))
 
     def Stabilization(mesh, u, v, mu, penalty, consistent=True):
