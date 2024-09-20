@@ -71,8 +71,11 @@ def run_simulation(configfile: str):
     File(results_dir + "subdomains.pvd") << vol_subdomains
     artery_shape = xii.Circle(radius=artery_radii, degree=20,)
     vein_shape = xii.Circle(radius=vein_radii, degree=20)
-    artmarker = volmarker_to_networkmarker(vol_subdomains, artery, artery_shape)
-    veinmarker = volmarker_to_networkmarker(vol_subdomains, vein, vein_shape)
+    embed()
+    artmarker = volmarker_to_networkmarker(vol_subdomains, artery, artery_shape,
+                                         filename=results_dir + "arttagshares.pvd")
+    veinmarker = volmarker_to_networkmarker(vol_subdomains, vein, vein_shape,
+                                             filename=results_dir +  "ventagshares.pvd")
     artmarker.rename("marker", "time")
     veinmarker.rename("marker", "time")
     vol_subdomains.rename("marker", "time")
