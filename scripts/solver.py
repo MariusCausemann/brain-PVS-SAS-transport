@@ -77,28 +77,38 @@ def get_mesh(meshname):
     return sas, vol_subdomains
 
 
-def volmarker_to_networkmarker(volm, netw, netw_shape, threshold=0.99):
+def volmarker_to_networkmarker(volm, netw, netw_shape, threshold=0.99,
+                               filename=None):
     V1 = FunctionSpace(netw, "DG", 0)
     dx = Measure('dx', domain=netw)
     test = TestFunction(V1)
     hK = CellVolume(netw)
     tags = list(np.unique(volm.array()))
     tagavgs = {}
+    if filename is not None:
+        outfile = File(filename)
     for tag in tags:
         marker = pcws_constant(volm, {t:(1 if t==tag else 0) for t in tags})
         form = 1/hK*inner(xii.Average(marker, netw, netw_shape), test)*dx
         taga = Function(V1)
+        taga.rename(f"tag_{tag}", f"tag_{tag}")
         taga.vector().set_local(xii.ii_assemble(form))
         tagavgs[tag] = taga
+        if filename is not None:
+            outfile.write(taga, 0)
 
     arr = np.vstack([tagavgs[t].vector()[:] for t in tags]).T
-    #from IPython import embed; embed()
     maxtag = arr.argmax(axis=1)
     zerotag = arr.max(axis=1) < threshold
     marker_arr = np.array(tags)[maxtag]
     marker_arr[zerotag] = 0
     netwmarker = MeshFunction("size_t", netw, 1, 0)
     netwmarker.array()[:] = marker_arr
+    if filename is not None:
+        total = Function(V1)
+        total.vector().set_local(arr.sum(axis=1))
+        total.rename("tot", "tot")
+        outfile.write(total, 0)
     return netwmarker
 
 def pcws_constant(subdomains, values):
