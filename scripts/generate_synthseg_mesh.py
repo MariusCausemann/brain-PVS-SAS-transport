@@ -140,7 +140,10 @@ def generate_mesh(configfile : str):
     # refine inlet area
     inlet_coords = (0.0847, 0.0833, 0.001)
     crit = abs(get_surface_dist(sas, parenchyma_surf)) < 0.01
-    sas, label = refine_sphere(sas, inlet_coords, 0.01, label, criterion=crit)
+    for i in range(2):
+        crit = abs(get_surface_dist(sas, parenchyma_surf)) < 0.01
+        sas, label = refine_sphere(sas, inlet_coords, 0.01, label, criterion=crit,
+                                    min_size=config["epsilon"] * 2)
 
     # refine interpeduncular
     interpeduncular_coords = (0.084, 0.11, 0.052)
