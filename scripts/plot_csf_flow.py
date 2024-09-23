@@ -12,11 +12,11 @@ from compute_dispersion_field import alpha
 
 def from_k3d(colorlist):
     cm = np.array(colorlist).reshape(-1, 4)[:, 1:]
-    return matplotlib.colors.LinearSegmentedColormap.from_list("",cm)
+    return matplotlib.colors.LinearSegmentedColormap.from_list("", cm)
 
 
 cardiac_config = dict(pcmap="balance", vcmap="turbo")
-prod_config = dict(pcmap=from_k3d([1]*12 + pcm.Blue___Green___Orange), 
+prod_config = dict(pcmap=from_k3d([1]*4 + pcm.Blue___Green___Orange), 
 vcmap="inferno")
 
 def plot_csf_flow(dirname: str):
@@ -39,9 +39,9 @@ def plot_csf_flow(dirname: str):
     topology, cell_types, x = create_vtk_structures(V)
     grid = pv.UnstructuredGrid(topology, cell_types, x)
     grid["v"] = v.vector()[:].reshape(-1, 3)
-    grid["p"] = p.vector()[:]
+    grid["p"] = p.vector()[:] - p.vector().min()
     if "cardiac" in dirname:
-        grid["p"] *= alpha**2
+        grid["p"] *= (1 + alpha**2 / 8)
         config = cardiac_config
     else:
         config = prod_config
@@ -66,7 +66,7 @@ def plot_csf_flow(dirname: str):
                             position_y=0.08)
 
     pl = pv.Plotter(off_screen=True, window_size=(1600, 1600))
-    pl.add_mesh(grid.clip(), scalars="p", clim=[0, np.round(grid["p"].max(),2)],
+    pl.add_mesh(grid.clip(), scalars="p", clim=[0, np.round(grid["p"].max(),3)],
         cmap=config["pcmap"],
         scalar_bar_args=p_bar_args)
     vmax = np.round(np.linalg.norm(grid["v"], axis=1).max(), 3)
