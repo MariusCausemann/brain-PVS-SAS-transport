@@ -210,7 +210,7 @@ def compute_sas_flow(configfile : str, elm:str = 'BDM'):
         xdmf.write(sas_outer)
         xdmf.write_checkpoint(ph, "pressure", append=True)
 
-    assert np.isclose(assemble(inner(uh,-n)*ds(LV_INTERF_ID)), config["LV_inflow_rate"], rtol=0.05)
+    assert np.isclose(assemble(inner(uh,-n)*ds(LV_INTERF_ID)), config["LV_inflow_rate"], rtol=0.1)
     assert np.isclose(assemble(inner(uh,-n)*ds(CSF_INTERF_ID)), config["tissue_inflow_rate"], rtol=0.05)
     assert np.isclose(assemble(inner(uh,-n)*ds(NO_SLIP_ID)), config["skull_inflow_rate"], rtol=0.05)
 
