@@ -47,20 +47,21 @@ def get_dispersion_enhancement(csf_pressure_file:str, outfile:str):
         pressure_csf = Function(DG)
         file.read_checkpoint(pressure_csf, "pressure")
 
-    V = FunctionSpace(mesh, "CG", 1)
     #p_cont = project(pressure_csf, V)
     gradp = sqrt(inner(grad(pressure_csf), grad(pressure_csf)))
     P = gradp /(rho*omega*nu/h)
     if assume_unsteady:
-        P *= alpha**2 # scale pressure with womersley
-        R = P**2 / alpha**3
+        print(f"adjusting pressure by 1 + alpha**2 / 8 = {1 + alpha**2 / 8}")
+        P *= (1 + alpha**2 / 8) # scale pressure with womersley
+        R = P**2 / (alpha**3)
     else:
         R = P**2
     R_unsmoothed = project(R, DG)
 
+    V = FunctionSpace(mesh, "CG", 1)
     u,v = TrialFunction(V), TestFunction(V)
     a = (Constant(1e-4)*inner(grad(u), grad(v)) + Constant(1)*u*v)*dx
-    L = (R / alpha**3)*v*dx
+    L = R*v*dx
     R = Function(V)
     solve(a==L, R)
     R = interpolate(R, DG)
