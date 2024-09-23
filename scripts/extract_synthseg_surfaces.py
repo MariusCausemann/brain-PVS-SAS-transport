@@ -5,12 +5,13 @@ import skimage.morphology as skim
 import os
 import skimage
 import scipy.ndimage as ndi
-
+from itertools import combinations
 
 SYNTHSEG_V3 = 14
 SYNTHSEG_V4 = 15
 SYNTHSEG_LV = [4, 43]
-SYNTHSEG_VENTRICLE = [SYNTHSEG_V3, SYNTHSEG_V4] +  SYNTHSEG_LV
+SYNTHSEG_LV_INF = [5, 44]
+SYNTHSEG_VENTRICLE = [SYNTHSEG_V3, SYNTHSEG_V4] +  SYNTHSEG_LV + SYNTHSEG_LV_INF
 SYNTHSEG_CSF = [24]
 
 mm2m = 1e-3
@@ -32,6 +33,18 @@ def extract_surface(img, resolution=(1,1,1), origin=(0, 0, 0)):
 def binary_smoothing(img, footprint=skim.ball(1)):
     openend = skim.binary_opening(img, footprint=footprint)
     return skim.binary_closing(openend, footprint=footprint)
+
+def connect_by_line(m1, m2, footprint=skim.ball(1)):
+    # compute connection between V3 and V4:
+    pointa = get_closest_point(m1, m2)
+    pointb = get_closest_point(m2, m1)
+
+    # add a line between the shortest points to connect V3 and V4
+    line = np.array(skimage.draw.line_nd(pointa, pointb, endpoint=True))
+    conn = np.zeros(img.shape)
+    i,j,k = line
+    conn[i,j,k] = 1
+    return skim.binary_dilation(conn, footprint=footprint)
 
 os.makedirs("mesh/T1/surfaces", exist_ok=True)
 #load white matter data 
@@ -61,22 +74,26 @@ par_surf = par_surf.clip_closed_surface(normal=(0,0,1), origin=(0,0, 1))
 par_surf.compute_normals(inplace=True, flip_normals=False)
 pv.save_meshio("mesh/T1/surfaces/parenchyma.ply", par_surf.scale(mm2m))
 
-# compute connection between V3 and V4:
-V3 = np.isin(img, SYNTHSEG_V3)
-V4 = np.isin(img, SYNTHSEG_V4)
-pointa = get_closest_point(V3, V4)
-pointb = get_closest_point(V4, V3)
 
-# add a line between the shortest points to connect V3 and V4
-line = np.array(skimage.draw.line_nd(pointa, pointb, endpoint=True))
-conn = np.zeros(img.shape)
-i,j,k = line
-conn[i,j,k] = 1
-conn = skim.binary_dilation(conn, footprint=skim.ball(1))
+# make inferior lateral ventricle horns
+
+for LVINFID, LVID in zip(SYNTHSEG_LV_INF, SYNTHSEG_LV):
+    mask = img == LVINFID
+    hull = skim.convex_hull_image(mask)
+    mask = binary_smoothing(skim.binary_erosion(hull, skim.ball(1)) + 
+                            skim.binary_dilation(mask, skim.ball(1)),
+                            footprint=skim.ball(2))
+    img[mask] = LVID
+    surf = extract_surface(mask, resolution=resolution, origin=origin)
+    surf = surf.smooth_taubin(n_iter=20, pass_band=0.05)
+    pv.save_meshio(f"mesh/T1/surfaces/inf_{LVINFID}.ply", surf.scale(mm2m))
+
+# compute connection between V3 and V4:
+conn = connect_by_line(img == SYNTHSEG_V3, img==SYNTHSEG_V4)
 
 # compute ventricle surface
 ventricle_mask = np.isin(img, SYNTHSEG_VENTRICLE) + conn
-ventricle_mask = skim.binary_dilation(ventricle_mask, footprint=skim.ball(1))
+#ventricle_mask = skim.binary_dilation(ventricle_mask, footprint=skim.ball(1))
 ventricle_surf = extract_surface(ventricle_mask, resolution=resolution, origin=origin)
 ventricle_surf = ventricle_surf.smooth_taubin(n_iter=20, pass_band=0.05)
 ventricle_surf.compute_normals(inplace=True, flip_normals=False)
@@ -84,7 +101,9 @@ pv.save_meshio("mesh/T1/surfaces/ventricles.ply", ventricle_surf.scale(mm2m))
 
 # compute lateral ventricle surface
 LV_mask = np.isin(img, SYNTHSEG_LV)
-LV_mask = skim.binary_dilation(LV_mask, footprint=skim.ball(1))
+for LVID in SYNTHSEG_LV:
+    LV_mask += connect_by_line(img==LVID, img==SYNTHSEG_V3,footprint=skim.ball(2))
+#LV_mask = skim.binary_dilation(LV_mask, footprint=skim.ball(1))
 LV_mask = extract_surface(LV_mask, resolution=resolution, origin=origin)
 LV_mask = LV_mask.smooth_taubin(n_iter=20, pass_band=0.05)
 LV_mask.compute_normals(inplace=True, flip_normals=False)
