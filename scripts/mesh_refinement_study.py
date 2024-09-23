@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 from pathlib import Path
+from plotting_utils import time_str, set_plotting_defaults
+
 
 csf_flow_model = {"LowRes":"sas_flow_LowRes",
                 "standard":"sas_flow",
@@ -91,22 +93,24 @@ for v, models in zip(variants, [mesh_refinement_models, time_refinement_models])
     plt.savefig(f"plots/{v}/mesh_bars.png")
 
     # investigate undershoots
-
+    set_plotting_defaults()
+    linestyles = ["dotted", "dashed", "solid"]
     for dom in ["csf","art", "ven"]:
         plt.figure()
 
-        for m in models:
+        for m,ls  in zip(models, linestyles):
             tm = transport_model[m]
             tmconfig = read_config(f"configfiles/{tm}.yml")
             trmetrics = read_config(f"results/{tm}/{tm}_metrics.yml")
             dmax = trmetrics[f"{dom}_max"]
             dmin = trmetrics[f"{dom}_min"]
             times = np.arange(0, tmconfig["T"], tmconfig["dt"]) / (60*60)
-            plt.plot(times, dmax, label=f"max {m}")
-            plt.plot(times, dmin, label=f"min {m}")
+            plt.plot(times, dmax, label=f"max {m}", ls=ls, color="maroon")
+            plt.plot(times, dmin, label=f"min {m}", ls=ls, color="teal")
         plt.xlabel("time (h)")
         plt.ylabel("tracer concentration (mol/L)")
-        plt.legend()
+        plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol=3,
+                  columnspacing=0.7)
         plt.savefig(f"plots/{v}/{dom}_undershoots.png")
 
 
