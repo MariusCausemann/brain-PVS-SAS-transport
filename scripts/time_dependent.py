@@ -69,13 +69,19 @@ def run_simulation(configfile: str):
     assert np.allclose(np.unique(vol_subdomains.array()), [CSFID, PARID, LVID, V34ID, CSFNOFLOWID])
     vol_subdomains.array()[np.isin(vol_subdomains.array(), [LVID, V34ID, CSFNOFLOWID])] = CSFID
     File(results_dir + "subdomains.pvd") << vol_subdomains
+
     artery_shape = xii.Circle(radius=artery_radii, degree=20,)
     vein_shape = xii.Circle(radius=vein_radii, degree=20)
-    embed()
+    csf_par_weights = {PARID:0.01, CSFID:0.99}
     artmarker = volmarker_to_networkmarker(vol_subdomains, artery, artery_shape,
-                                         filename=results_dir + "arttagshares.pvd")
+                                         filename=results_dir + "arttagshares.pvd",
+                                         weights=csf_par_weights)
     veinmarker = volmarker_to_networkmarker(vol_subdomains, vein, vein_shape,
-                                             filename=results_dir +  "ventagshares.pvd")
+                                             filename=results_dir +  "ventagshares.pvd",
+                                             weights=csf_par_weights)
+
+    priority = xii.InterfaceResolution(subdomains=vol_subdomains,
+                                       resolve_conflicts={(CSFID, PARID): 4})
     artmarker.rename("marker", "time")
     veinmarker.rename("marker", "time")
     vol_subdomains.rename("marker", "time")
@@ -107,7 +113,7 @@ def run_simulation(configfile: str):
                            doms=[PARID])
     File(results_dir + "bm.pvd") << bm
 
-    xi_dict = {0:0, CSFID: pvs_csf_permability, 
+    xi_dict = {CSFID: pvs_csf_permability, 
                PARID: pvs_parenchyma_permability}
     phi_dict = {CSFID: 1,  PARID: ecs_share}
 
@@ -122,6 +128,7 @@ def run_simulation(configfile: str):
     Dv = Constant(venous_pvs_diffusion)
 
     if "arterial_velocity_file" in config.keys():
+        print("reading arterial PVS velocity from file...")
         vel_file = config["arterial_velocity_file"]
         with XDMFFile(vel_file) as file:
             DG = VectorFunctionSpace(artery, "DG", 1)
@@ -139,7 +146,6 @@ def run_simulation(configfile: str):
     if "csf_velocity_file" in config.keys():
         print("reading CSF velocity from file...")
         vel_file = config["csf_velocity_file"]
-
         with XDMFFile(vel_file) as file:
             if "TH" in vel_file:
                 print("Using CG3 velocity space")
@@ -194,10 +200,13 @@ def run_simulation(configfile: str):
     pv_i = interpolate(pv_o, Qv)
     # Things for restriction
     dx_a = Measure('dx', domain=artery)
-    ua, va = (xii.Average(x, artery, artery_shape) for x in (u, v))
+    ua, va = (xii.Average(x, artery, artery_shape, normalize=True,
+     resolve_interfaces=priority) for x in (u, v))
                                                
     dx_v = Measure('dx', domain=vein)
-    uv, vv = (xii.Average(x, vein, vein_shape) for x in (u, v)) 
+    uv, vv = (xii.Average(x, vein, vein_shape, normalize=True,
+     resolve_interfaces=priority) for x in (u, v)) 
+
     ds = Measure("ds", mesh, subdomain_data=bm)
     # tangent vector
     a = xii.block_form(W, 2)
