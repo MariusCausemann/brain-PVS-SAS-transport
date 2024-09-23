@@ -198,6 +198,7 @@ rule computeSASFlow:
     conda:"environment.yml"
     input:
         volmesh=lambda wildcards: getconfig(wildcards.csf_flow_model, "mesh"),
+        config="configfiles/{csf_flow_model}.yml",
     output:
         "results/csf_flow/{csf_flow_model}/csf_v.xdmf",
         "results/csf_flow/{csf_flow_model}/csf_v.h5",
