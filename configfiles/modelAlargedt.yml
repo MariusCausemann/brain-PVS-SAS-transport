@@ -1,5 +1,5 @@
 description : "model A (dt=120s)"
-dt : 90
+dt : 120
 T : 86400 # 1 day in seconds
 mesh : "mesh/standard/standard.xdmf"
 output_frequency : 10
