@@ -77,8 +77,8 @@ def get_mesh(meshname):
     return sas, vol_subdomains
 
 
-def volmarker_to_networkmarker(volm, netw, netw_shape, threshold=0.99,
-                               filename=None):
+def volmarker_to_networkmarker(volm, netw, netw_shape, threshold=0.0,
+                               weights=None, filename=None):
     V1 = FunctionSpace(netw, "DG", 0)
     dx = Measure('dx', domain=netw)
     test = TestFunction(V1)
@@ -96,10 +96,12 @@ def volmarker_to_networkmarker(volm, netw, netw_shape, threshold=0.99,
         tagavgs[tag] = taga
         if filename is not None:
             outfile.write(taga, 0)
+    
+    if weights is None: weights = {t:1 for t in tags}
 
-    arr = np.vstack([tagavgs[t].vector()[:] for t in tags]).T
+    arr = np.vstack([weights[t] * tagavgs[t].vector()[:] for t in tags]).T
     maxtag = arr.argmax(axis=1)
-    zerotag = arr.max(axis=1) < threshold
+    zerotag = arr.sum(axis=1) < threshold
     marker_arr = np.array(tags)[maxtag]
     marker_arr[zerotag] = 0
     netwmarker = MeshFunction("size_t", netw, 1, 0)
