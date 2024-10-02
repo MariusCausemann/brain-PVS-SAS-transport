@@ -1,9 +1,10 @@
-mesh : "mesh/LowRes/LowRes.xdmf"
-discretization : TH
+mesh : "mesh/LowRes/LowRes_outer.xdmf"
+discretization : BDM
+order : 2
 mu : 0.7e-3 
-R : 0 # 1e-5 Pa/(mm s) 
-LV_inflow_rate : 0.31e-6 # https://www.nature.com/articles/s41598-019-46055-5/tables/2
-tissue_inflow_rate : 0
-skull_inflow_rate : 8.0e-6 
-spinal_outflow_bc: "zeroneumann"
-noslip_max_z: 20 # npslip on the whole skull 
+no_slip_bcs : [1,2,3,4]
+resistance_bcs : []
+inflow_bcs : 
+ - [[1,2], "8.0e-6 / A"]
+ - [[3], "0.31e-6 / A" ]
+ - [[4], 0]
