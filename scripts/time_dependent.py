@@ -7,7 +7,7 @@ import numpy as np
 import typer
 from pathlib import Path
 from plotting_utils import read_config
-from sas_flow_TH import map_on_global
+from test_map_on_global_coords_shift import map_dg_on_global
 from IPython import embed
 import yaml
 
@@ -18,13 +18,28 @@ def write(sols, pvdfiles, t, hdffile=None):
         for s in sols:
             hdffile.write(s, s.name(), t)
 
-
-
 CSFID = 1
 PARID = 2
 LVID = 3
 V34ID = 4
 CSFNOFLOWID = 5
+
+UPPER_SKULL_ID = 1
+LOWER_SKULL_ID = 2
+LV_INTERF_ID = 3
+PIA_ID = 4
+SPINAL_CORD_ID = 5
+SPINAL_OUTLET_ID = 6
+CSF_NO_FLOW_CSF_ID = 7
+
+def get_subdomain_dofs(V, subdomains, subd_id):
+    dm = V.dofmap()
+    subd_dofs = np.unique(np.hstack(
+        [dm.cell_dofs(c.index()) for c in SubsetIterator(subdomains, subd_id)]))
+    return subd_dofs
+
+
+
 
 def run_simulation(configfile: str):
 
@@ -62,6 +77,10 @@ def run_simulation(configfile: str):
     area_artery  = np.pi*(artery_radii**2 - (artery_radii/pvs_ratio_artery)**2)
 
     mesh, vol_subdomains = get_mesh(meshname) 
+    bm = MeshFunction("size_t", mesh, 2, 0)
+    with XDMFFile(meshname.replace(".xdmf","_facets.xdmf")) as f:
+        f.read(bm, "f")
+    bm.array()[bm.array()[:]==CSF_NO_FLOW_CSF_ID] = 0
     gdim = mesh.geometric_dimension()
     
     label = MeshFunction('size_t', mesh, gdim, 0)
@@ -85,33 +104,6 @@ def run_simulation(configfile: str):
     artmarker.rename("marker", "time")
     veinmarker.rename("marker", "time")
     vol_subdomains.rename("marker", "time")
-    outer_id = 1
-    inlet_id = 2
-    efflux_id = 3
-    par_csf_id = 4
-    par_outer_id = 5
-
-    def mark_inlet(mesh, bm, label, vec, threshold, zmin=0):
-        for f in facets(mesh):
-            if f.exterior()==False:continue
-            if f.midpoint()[2] > zmin: continue
-            if np.dot(f.normal()[:], vec) > threshold:
-                bm[f] = label
-
-    
-    bm = MeshFunction("size_t", mesh, 2, 0)
-    efflux = CompiledSubDomain("on_boundary  && x[2] > 0.05")
-    outer = CompiledSubDomain("on_boundary")
-    outer.mark(bm, outer_id)
-    efflux.mark(bm, efflux_id)
-
-    mark_inlet(mesh, bm, inlet_id, (0 ,0,-1), 0.95,
-               zmin=mesh.coordinates()[:,2].min() + 1e-3)
-    mark_internal_interface(mesh, vol_subdomains, bm, par_csf_id,
-                            doms=[CSFID, PARID])
-    mark_external_boundary(mesh, vol_subdomains, bm, par_outer_id,
-                           doms=[PARID])
-    File(results_dir + "bm.pvd") << bm
 
     xi_dict = {CSFID: pvs_csf_permability, 
                PARID: pvs_parenchyma_permability}
@@ -146,37 +138,37 @@ def run_simulation(configfile: str):
     if "csf_velocity_file" in config.keys():
         print("reading CSF velocity from file...")
         vel_file = config["csf_velocity_file"]
-        with XDMFFile(vel_file) as file:
-            if "TH" in vel_file:
-                print("Using CG3 velocity space")
-                vel_space = VectorFunctionSpace(mesh, "CG", 3)
-            else:
-                vel_space = VectorFunctionSpace(mesh, "DG", 2)
-            velocity_csf = Function(vel_space)
-            file.read_checkpoint(velocity_csf, "velocity")
+        vel_mesh = Mesh()
+        with HDF5File(MPI.comm_world, vel_file,'r') as f:
+            f.read(vel_mesh, "mesh", False)
+            v_elem = eval(f.attributes("/velocity").to_dict()["signature"])
+            V = FunctionSpace(vel_mesh, v_elem)
+            velocity_csf = Function(V)
+            f.read(velocity_csf, "velocity")
+            velocity_csf = map_dg_on_global(velocity_csf, parentmesh=mesh)
             velocity_csf.rename("v", "v")
             dx_s = Measure("dx", mesh, subdomain_data=vol_subdomains)
-            if not "TH" in vel_file: assert assemble(sqrt(div(velocity_csf)*div(velocity_csf))*dx) < 1e-12
+            assert assemble(sqrt(div(velocity_csf)*div(velocity_csf))*dx) < 1e-10
             assert assemble(inner(velocity_csf, velocity_csf)*dx_s(PARID)) < 1e-14
             with XDMFFile(results_dir + "csf_v.xdmf") as outfile:
                 outfile.write_checkpoint(velocity_csf,"v", 0, append=False)
-
     else:
         velocity_csf = Constant([0]*gdim)
+
 
     if "csf_dispersion_file" in config.keys():
         print("reading CSF dispersion from file...")
         dispersion_file = config["csf_dispersion_file"]
         with XDMFFile(dispersion_file) as file:
             sm = xii.EmbeddedMesh(label, [CSFID, LVID, V34ID])
-            R = Function(FunctionSpace(sm, "DG", 0))
+            R = Function(FunctionSpace(sm, "DG", 1))
             file.read_checkpoint(R, "R")
         metrics["R_mean"] = assemble(R*dx) / assemble(1*dx(domain=sm))
         metrics["R_max"] = R.vector().max()
         metrics["R_min"] = R.vector().min()
-        R = map_on_global(R, mesh)
+        R = map_dg_on_global(R, parentmesh=mesh)
         Ds *= (1 + R)
-        
+
     velocity_v = Constant([0]*gdim)
 
     fa = Constant(0.0) 
@@ -233,7 +225,8 @@ def run_simulation(configfile: str):
         a_fac = (alpha/avg(h))*DF*dot(jump(u, n), jump(v, n))*dSi \
                 - dot(avg(grad(u))*DF, jump(v, n))*dSi \
                 - dot(jump(u, n), avg(grad(v)) * DF)*dSi \
-                + beta_csf_par*jump(u)*jump(v)*dS(par_csf_id)
+                + beta_csf_par*jump(u)*jump(v)*dS(PIA_ID) \
+                + beta_csf_par*jump(u)*jump(v)*dS(LV_INTERF_ID)
         
         a_vel = dot(dot(b("+"),n('+'))*avg(u), jump(v))*dSi \
             + (eta/2)*dot(abs(dot(b("+"),n('+')))*jump(u), jump(v))*dSi
@@ -254,10 +247,9 @@ def run_simulation(configfile: str):
 
         return beta*hK*inner(dot(vel, grad(u)), dot(vel, grad(v)))*dx5
 
-
     a[0][0] = phi*(1/dt)*inner(u,v)*dx \
             + a_dg_adv_diff(u,v) \
-            + beta*u*v*ds(efflux_id) \
+            + beta*u*v*ds(UPPER_SKULL_ID) \
             + xi_a*(perm_artery)*inner(ua, va)*dx_a \
             + xi_v*(perm_vein)*inner(uv, vv)*dx_v
 
@@ -296,15 +288,15 @@ def run_simulation(configfile: str):
             print(f"{dom} inlet boundary not configured, continuing...")
             continue
         expr_params = bc_conf.get("params", {})
-        area = assemble(1*ds_i[i](inlet_id))
+        area = assemble(1*ds_i[i](SPINAL_OUTLET_ID))
         expr = Expression(bc_conf["expr"], t=0, A=area, **expr_params, degree=1)
         expressions.append(expr)
         if bc_conf["type"] == "Dirichlet":
-            W_bcs[i].append(DirichletBC(W[i], expr, ds_i[i].subdomain_data(), inlet_id))
+            W_bcs[i].append(DirichletBC(W[i], expr, ds_i[i].subdomain_data(), SPINAL_OUTLET_ID))
             dbcflag = True
         if bc_conf["type"] == "Neumann":
             v = TestFunction(W[i])
-            L[i] += expr*v*ds_i[i](inlet_id)
+            L[i] += expr*v*ds_i[i](SPINAL_OUTLET_ID)
 
     AA, bb = map(xii.ii_assemble, (a, L))
     if dbcflag:
@@ -359,10 +351,13 @@ def run_simulation(configfile: str):
     wh = xii.ii_Function(W)
     x_ = A_.createVecLeft()
     i = 0
+    par_dofs = get_subdomain_dofs(V, vol_subdomains, PARID)
+    csf_dofs = get_subdomain_dofs(V, vol_subdomains, CSFID)
 
-    for dom in ["csf", "ven", "art"]:
+    for dom in ["par", "csf", "ven", "art"]:
         metrics[f"{dom}_min"] = [] 
         metrics[f"{dom}_max"] = [] 
+        metrics[f"{dom}_mean"] = [] 
 
     while t < T: 
         i += 1
@@ -391,9 +386,14 @@ def run_simulation(configfile: str):
         wh[1].rename("c", "c")
         wh[2].rename("c", "c")
 
-        for dom, v in zip(["csf", "art", "ven"], [u_i, pa_i, pv_i]):
-            metrics[f"{dom}_min"].append(v.vector().min())
-            metrics[f"{dom}_max"].append(v.vector().max())
+        for dom, v, dofs, dxd in zip(["par", "csf", "art", "ven"],
+                                [u_i, u_i, pa_i, pv_i],
+                                [par_dofs, csf_dofs, None, None],
+                                [dx_s(PARID), dx_s(CSFID), dx_a, dx_v]):
+            metrics[f"{dom}_min"].append(v.vector().get_local()[dofs].min())
+            metrics[f"{dom}_max"].append(v.vector().get_local()[dofs].max())
+            mean = assemble(v*dxd) / assemble(1*dxd)
+            metrics[f"{dom}_mean"].append(mean)
 
         if i%config["output_frequency"] == 0:
             #write(wh, pvdfiles, float(t), hdffile)
