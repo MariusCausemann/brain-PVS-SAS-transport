@@ -9,13 +9,13 @@ cluster-generic-submit-cmd:  module load mpich &&
     --time={resources.time}
     --cpus-per-task={resources.ncpuspertask}
 default-resources:
-  - partition=genoaxq,milanq,defq,fpgaq,dgx2q,hgx2q
+  - partition=genoaxq,milanq,dgx2q,hgx2q
   - mem="10G"
   - time="240:00"
   - ntasks=1
   - ncpuspertask=1
   - hint=nomultithread
-restart-times: 0
+restart-times: 2
 max-jobs-per-second: 10
 max-status-checks-per-second: 10
 local-cores: 5
