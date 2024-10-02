@@ -103,11 +103,12 @@ pv.save_meshio("mesh/T1/surfaces/ventricles.ply", ventricle_surf.scale(mm2m))
 LV_mask = np.isin(img, SYNTHSEG_LV)
 for LVID in SYNTHSEG_LV:
     LV_mask += connect_by_line(img==LVID, img==SYNTHSEG_V3,footprint=skim.ball(2))
-#LV_mask = skim.binary_dilation(LV_mask, footprint=skim.ball(1))
-LV_mask = extract_surface(LV_mask, resolution=resolution, origin=origin)
-LV_mask = LV_mask.smooth_taubin(n_iter=20, pass_band=0.05)
-LV_mask.compute_normals(inplace=True, flip_normals=False)
-pv.save_meshio("mesh/T1/surfaces/LV.ply", LV_mask.scale(mm2m))
+#LV_mask =binary_smoothing(LV_mask, footprint=skim.ball(1))
+LV_mask = skimage.filters.gaussian(LV_mask)
+LV_surf = extract_surface(LV_mask, resolution=resolution, origin=origin)
+LV_surf = LV_surf.smooth_taubin(n_iter=20, pass_band=0.05)
+LV_surf.compute_normals(inplace=True, flip_normals=False)
+pv.save_meshio("mesh/T1/surfaces/LV.ply", LV_surf.scale(mm2m))
 
 # compute V3 and V4 surface
 V34_mask = np.isin(img, [SYNTHSEG_V3, SYNTHSEG_V4]) + conn
