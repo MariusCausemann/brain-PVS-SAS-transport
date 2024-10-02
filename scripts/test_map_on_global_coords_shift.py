@@ -9,10 +9,17 @@ def map_kdtree(data_points, query_points):
     dist, idx = tree.query(query_points, k=1)
     return idx
 
-def map_dg_on_global(uh, uh_global):
+def get_global_space(uh, mesh):
+    el = uh.function_space().ufl_element()
+    return FunctionSpace(mesh, el)
+
+def map_dg_on_global(uh, uh_global=None, parentmesh=None):
     # map the solution back on the whole domain
     childmesh = uh.function_space().mesh()
-    parentmesh = uh_global.function_space().mesh()
+    if uh_global is not None:
+        parentmesh = uh_global.function_space().mesh()
+    elif parentmesh is not None:
+        uh_global = Function(get_global_space(uh, parentmesh))
     eldim = 1 if len(uh.ufl_shape)==0 else uh.ufl_shape[0]
     C = uh.function_space().tabulate_dof_coordinates()[::eldim,:]
     P = uh_global.function_space().tabulate_dof_coordinates()[::eldim,:]
@@ -29,7 +36,7 @@ def map_dg_on_global(uh, uh_global):
     idxmap = map_kdtree(P_shift, C_shift)
     for i in range(eldim):
         uh_global.vector()[idxmap*eldim + i] = uh.vector()[i::eldim]
-
+    return uh_global
 CSFID = 1
 PARID = 2
 LVID = 3
@@ -52,7 +59,8 @@ if __name__=="__main__":
     uh = interpolate(f, Vemb)
     uh_global = Function(V)
 
-    map_dg_on_global(uh, uh_global)
+    uh_global = map_dg_on_global(uh, uh_global)
+    uh_global = map_dg_on_global(uh, parentmesh=mesh)
 
     with XDMFFile("uh.xdmf") as file:
         file.write_checkpoint(uh, "uh")

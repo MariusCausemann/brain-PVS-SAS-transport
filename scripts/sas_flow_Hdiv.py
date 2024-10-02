@@ -4,16 +4,38 @@ import os
 import numpy as np
 from xii import *
 from petsc4py import PETSc
-import sympy as sp
 import typer
-import numpy_indexed as npi
 from plotting_utils import read_config
 from IPython import embed
 from pathlib import Path
 import yaml
-from test_map_on_global_coords_shift import map_dg_on_global
 
-def directsolve(a, L, bcs, a_prec, W):
+parameters['form_compiler']['cpp_optimize'] = True
+parameters['form_compiler']['optimize'] = True
+
+# NOTE: these are the jump operators from Krauss, Zikatonov paper.
+# Jump is just a difference and it preserves the rank 
+Jump = lambda arg: arg('+') - arg('-')
+# Average uses dot with normal and AGAIN MINUS; it reduces the rank
+Avg = lambda arg, n: Constant(0.5)*(dot(arg('+'), n('+')) - dot(arg('-'), n('-')))
+# Action of (1 - n x n)
+Tangent = lambda v, n: v - n*dot(v, n)   
+D = lambda v: sym(grad(v))
+
+def Stabilization(mesh, u, v, mu, penalty, consistent=True):
+    '''Displacement/Flux Stabilization from Krauss et al paper'''
+    n, hA = FacetNormal(mesh), avg(CellDiameter(mesh))
+    
+    if consistent:
+        return (-inner(Avg(mu*grad(u), n), Jump(Tangent(v, n)))*dS
+                -inner(Avg(mu*grad(v), n), Jump(Tangent(u, n)))*dS
+                + 2*mu*(penalty/hA)*inner(Jump(Tangent(u, n)), Jump(Tangent(v, n)))*dS)
+        
+    # For preconditioning
+    return 2*mu*(penalty/hA)*inner(Jump(Tangent(u, n)), Jump(Tangent(v, n)))*dS
+
+
+def directsolve(a, L, bcs, W):
     wh = Function(W)
     solve(a==L, wh, bcs=bcs, solver_parameters={"linear_solver":"mumps"})
     return wh
@@ -21,33 +43,27 @@ def directsolve(a, L, bcs, a_prec, W):
 PETScOptions.set("mat_mumps_icntl_4", 3)  # mumps verbosity
 #PETScOptions.set("mat_mumps_icntl_24", 1)  # null pivot detection
 PETScOptions.set("mat_mumps_icntl_35", 1)  # BLR feature
-PETScOptions.set("mat_mumps_cntl_7", 1e-8)  # BLR eps
-#PETScOptions.set("mat_mumps_icntl_32", 1)  # forward elimination during solve (ptentially useful, but not passed on by petsc)
+#PETScOptions.set("mat_mumps_cntl_7", 1e-8)  # BLR eps
 #PETScOptions.set("mat_mumps_icntl_22", 1)  # out-of-core to reduce memory
-#PETScOptions.set("mat_mumps_icntl_11", 1)  # error analysis
-#PETScOptions.set("mat_mumps_icntl_25", 2)  # turn on null space basis
-
-# domain IDs
-CSFID = 1
-PARID = 2
-LVID = 3
-V34ID = 4
-CSFNOFLOWID = 5
+#PETScOptions.set("mat_mumps_icntl_25", 2)  # turn on null space basis#
+PETScOptions.set("mat_mumps_icntl_28", 2)  # parallel ordering
 
 # interface/boundary ids
-EFFLUX_ID = 1
-NO_SLIP_ID = 2
+UPPER_SKULL_ID = 1
+LOWER_SKULL_ID = 2
 LV_INTERF_ID = 3
-SPINAL_OUTLET_IT = 4
-CSF_INTERF_ID = 5
+PIA_ID = 4
+SPINAL_CORD_ID = 5
+SPINAL_OUTLET_ID = 6
+CSF_NO_FLOW_CSF_ID = 7
 
-def get_normal_func(mesh):
+def get_normal_func(mesh, scale=Constant(1)):
     n = FacetNormal(mesh)
-    V = VectorFunctionSpace(mesh, "CG", 1)
+    V = VectorFunctionSpace(mesh, "DG", 1)
     u = TrialFunction(V)
     v = TestFunction(V)
     a = inner(u,v)*ds
-    l = inner(n, v)*ds
+    l = inner(scale*n, v)*ds
     A = assemble(a, keep_diagonal=True)
     L = assemble(l)
 
@@ -56,202 +72,178 @@ def get_normal_func(mesh):
     solve(A, nh.vector(), L, "cg", "jacobi")
     return nh
 
+def get_inflow_bcs(W, ds, inflow_bcs):
+    bcs = []
+    for bids, infl in inflow_bcs:
+        if infl == 0:
+            infl_func = Constant((0,0,0))
+        else:
+            area = 0
+            for bid in bids: area += assemble(1*ds(bid))
+            infl_func = get_normal_func(W.mesh(), 
+                scale=Expression(infl, A=area, degree=3))
+        for bid in bids:
+            bcs += [DirichletBC(W.sub(0), infl_func, 
+                                ds.subdomain_data(), bid)]
+    return bcs
 
-def compute_sas_flow(configfile : str, elm:str = 'BDM'):
-
-    config = read_config(configfile)
-    modelname = Path(configfile).stem
-    meshname = config["mesh"]
-
-    order_k = 2
-
-    results_dir = f"results/csf_flow/{modelname}/"
-    os.makedirs(results_dir, exist_ok=True)
-    # get mesh 
-    sas = Mesh()
-    with XDMFFile(meshname) as f:
-        f.read(sas)
-        gdim = sas.geometric_dimension()
-        label = MeshFunction('size_t', sas, gdim, 0)
-        f.read(label, 'label')
-
-    sas_outer = EmbeddedMesh(label, [CSFID,LVID,V34ID]) 
-
-    # create boundary markers 
-    boundary_markers = MeshFunction("size_t", sas, sas.topology().dim() - 1)
-    boundary_markers.set_all(0)
-
-    # Sub domain for efflux route (mark whole boundary of the full domain) 
-    efflux = CompiledSubDomain("on_boundary && x[2] > m", m=config["noslip_max_z"])
-    efflux.mark(boundary_markers, EFFLUX_ID)
+def get_BDM_problem(mesh, ds, order_k, mu, resistance_bcs, 
+                    no_slip_bcs, inflow_bcs):
     
-    # mark LV surface
-    mark_internal_interface(sas, label, boundary_markers, LV_INTERF_ID,
-                            doms=[LVID, PARID])
-    
-    mark_internal_interface(sas, label, boundary_markers, CSF_INTERF_ID,
-                            doms=[CSFID, PARID])
-    
-    # translate markers to the sas outer mesh 
-    boundary_markers_outer = MeshFunction("size_t", sas_outer, sas_outer.topology().dim() - 1, 0)
-    DomainBoundary().mark(boundary_markers_outer, NO_SLIP_ID)
-    sas_outer.translate_markers(boundary_markers,
-                                (EFFLUX_ID, LV_INTERF_ID, CSF_INTERF_ID),
-                                marker_f=boundary_markers_outer)
-
-    spinal_outlet = CompiledSubDomain("on_boundary && x[2] < zmin + eps",
-                                       zmin=sas.coordinates()[:,2].min(), eps=1e-3)
-    spinal_outlet.mark(boundary_markers_outer, SPINAL_OUTLET_IT)
-
-    File("fpp.pvd") << boundary_markers_outer
-
-    ds = Measure("ds", domain=sas_outer, subdomain_data=boundary_markers_outer)
-
-    # Define function spaces for velocity and pressure
-    cell = sas_outer.ufl_cell()  
+    cell = mesh.ufl_cell()  
     Velm = FiniteElement('BDM', cell, order_k)
-    Qelm = FiniteElement('Discontinuous Lagrange', cell, order_k - 1) 
+    Qelm = FiniteElement('Discontinuous Lagrange',
+                          cell, order_k  - 1) 
 
-    W = FunctionSpace(sas_outer, Velm * Qelm)
+    W = FunctionSpace(mesh, Velm * Qelm)
 
     u , p = TrialFunctions(W) 
     v , q = TestFunctions(W)
-    n = FacetNormal(sas_outer)
+    n = FacetNormal(mesh)
+    penalty = Constant(10*order_k)
+    CellDiameter = CentroidDistance
+    hF = CellDiameter(mesh)
+    mu = Constant(float(mu))
+    f = Constant([0]*mesh.geometric_dimension())
 
-    mu = Constant(config["mu"]) # units need to be checked 
-    R = Constant(config["R"]) # 1e-5 Pa/(mm s)
-    f = Constant([0]*gdim)
-
-    LV_surface_area = assemble(1*ds(LV_INTERF_ID))
-    PAR_surface_area = assemble(1*ds(CSF_INTERF_ID))
-    SK_surface_area = assemble(1*ds(NO_SLIP_ID))
-    g_LV = config["LV_inflow_rate"] / LV_surface_area
-    g_par = config["tissue_inflow_rate"] / PAR_surface_area
-    g_SK = config["skull_inflow_rate"] / SK_surface_area
-
-    a = (inner(2*mu*sym(grad(u)), sym(grad(v)))*dx - inner(p, div(v))*dx
-            -inner(q, div(u))*dx + inner(R*dot(u,n), dot(v,n))*ds(EFFLUX_ID)) 
-   
-    # NOTE: these are the jump operators from Krauss, Zikatonov paper.
-    # Jump is just a difference and it preserves the rank 
-    Jump = lambda arg: arg('+') - arg('-')
-    # Average uses dot with normal and AGAIN MINUS; it reduces the rank
-    Avg = lambda arg, n: Constant(0.5)*(dot(arg('+'), n('+')) - dot(arg('-'), n('-')))
-    # Action of (1 - n x n)
-    Tangent = lambda v, n: v - n*dot(v, n)    
-
-
-    CellDiameter = CentroidDistance   # NOTE: also adjust the penalty parameter
-
-    penalty = Constant(10.0*order_k)
-    D = lambda v: sym(grad(v))
-
-    def Stabilization(mesh, u, v, mu, penalty, consistent=True):
-        '''Displacement/Flux Stabilization from Krauss et al paper'''
-        n, hA = FacetNormal(mesh), avg(CellDiameter(mesh))
-        
-
-        if consistent:
-            return (-inner(Avg(2*mu*D(u), n), Jump(Tangent(v, n)))*dS
-                    -inner(Avg(2*mu*D(v), n), Jump(Tangent(u, n)))*dS
-                    + 2*mu*(penalty/hA)*inner(Jump(Tangent(u, n)), Jump(Tangent(v, n)))*dS)
-            
-        # For preconditioning
-        return 2*mu*(penalty/hA)*inner(Jump(Tangent(u, n)), Jump(Tangent(v, n)))*dS
-
-    hF = CellDiameter(sas_outer)
-
-    a += Stabilization(sas_outer, u,v, mu, penalty)
-
+    a = (inner(mu*grad(u), grad(v))*dx - inner(p, div(v))*dx
+        - inner(q, div(u))*dx)
+    
+    a += Stabilization(mesh, u,v, mu, penalty)
     L = inner(f, v)*dx
-    LV_inflow = get_normal_func(sas_outer)
-    LV_inflow.vector()[:] *= -g_LV
-    PAR_inflow = get_normal_func(sas_outer)
-    PAR_inflow.vector()[:] *= -g_par
-    SK_inflow = get_normal_func(sas_outer)
-    SK_inflow.vector()[:] *= -g_SK
 
+    for bid, R in resistance_bcs:
+        a += inner(Constant(float(R))*dot(u,n), dot(v,n))*ds(bid)
 
-    bcs = [
-           DirichletBC(W.sub(0), SK_inflow, ds.subdomain_data(), NO_SLIP_ID),
-           DirichletBC(W.sub(0), LV_inflow, ds.subdomain_data(), LV_INTERF_ID),
-           DirichletBC(W.sub(0), PAR_inflow, ds.subdomain_data(), CSF_INTERF_ID)
-           ]
-    
-    # add no-slip BC
-    for bid in [NO_SLIP_ID, LV_INTERF_ID, CSF_INTERF_ID]:
-        a += -inner(dot(2*mu*D(v), n), Tangent(u, n))*ds(bid) \
-            - inner(dot(2*mu*D(u), n), Tangent(v, n))*ds(bid) \
+    for bid in no_slip_bcs:
+        a += -inner(dot(mu*grad(v), n), Tangent(u, n))*ds(bid) \
+            - inner(dot(mu*grad(u), n), Tangent(v, n))*ds(bid) \
             + 2*mu*(penalty/hF)*inner(Tangent(u, n), Tangent(v, n))*ds(bid)
-        
+
+    bcs = get_inflow_bcs(W, ds, inflow_bcs)
     
+    return a, L, bcs, W
 
-    if config["spinal_outflow_bc"] == "noslip":
-        bcs += [DirichletBC(W.sub(0), Constant((0, 0, 0)), ds.subdomain_data(), SPINAL_OUTLET_IT)]
-        a += -inner(dot(2*mu*D(v), n), Tangent(u, n))*ds(SPINAL_OUTLET_IT) \
-            - inner(dot(2*mu*D(u), n), Tangent(v, n))*ds(SPINAL_OUTLET_IT) \
-                + 2*mu*(penalty/hF)*inner(Tangent(u, n), Tangent(v, n))*ds(SPINAL_OUTLET_IT)  
-    elif config["spinal_outflow_bc"] == "zeroneumann":
-        pass
-    else:
-        raise Exception("spinal bc must be one of {noslip,zeroneumann}")
+def get_TH_problem(mesh, ds, order_k, mu, resistance_bcs, 
+                    no_slip_bcs, inflow_bcs):
+    cell = mesh.ufl_cell()  
+    Velm = VectorElement('CG', cell, order_k)
+    Qelm = FiniteElement('CG', cell, order_k  - 1) 
 
-    a_prec = (inner(2*mu*grad(u), grad(v))*dx + inner(R*dot(u,n), dot(v,n))*ds(EFFLUX_ID)
-                    + (1/mu)*inner(p, q)*dx) 
+    W = FunctionSpace(mesh, Velm * Qelm)
 
-    wh = directsolve(a, L, bcs, a_prec, W)
+    u , p = TrialFunctions(W) 
+    v , q = TestFunctions(W)
+    n = FacetNormal(mesh)
+    mu = Constant(mu)
+    zero_vec = Constant([0]*mesh.geometric_dimension())
+
+    a = (inner(mu*grad(u), grad(v))*dx - inner(p, div(v))*dx
+        - inner(q, div(u))*dx)
+    L = inner(zero_vec, v)*dx
+
+    for bid, R in resistance_bcs:
+        a += inner(R*dot(u,n), dot(v,n))*ds(bid)
+
+    bcs = []
+    flatten = lambda l: [x for el in l for x in el]
+    inflow_bc_ids = flatten([bids for bids, infl in inflow_bcs])
+    for bid in set(no_slip_bcs) - set(inflow_bc_ids):
+        bcs += [DirichletBC(W.sub(0), zero_vec, 
+                            ds.subdomain_data(), bid)]
+    bcs += get_inflow_bcs(W, ds, inflow_bcs)
+    return a, L, bcs, W
+
+def compute_sas_flow(configfile : str):
+    config = read_config(configfile)
+    modelname = Path(configfile).stem
+    meshname = config["mesh"]
+    if config["discretization"] == "BDM": 
+        parameters["ghost_mode"] = "shared_facet"
+    order_k = config.get("order", 2)
+    results_dir = f"results/csf_flow/{modelname}/"
+    os.makedirs(results_dir, exist_ok=True)
+    # get mesh 
+    mesh = Mesh(MPI.comm_world)
+    with XDMFFile(meshname) as f:
+        f.read(mesh)
+        gdim = mesh.geometric_dimension()
+
+    bm = MeshFunction("size_t", mesh, 2, 0)
+    with XDMFFile(meshname.replace(".xdmf","_facets.xdmf")) as f:
+        f.read(bm, "f")
+    bm.array()[bm.array()[:]==CSF_NO_FLOW_CSF_ID] = PIA_ID
+    ds = Measure("ds", domain=mesh, subdomain_data=bm)
+
+    assert assemble(1*ds(0)) == 0
+    assert assemble(1*ds(CSF_NO_FLOW_CSF_ID)) == 0
+
+    if config["discretization"] == "BDM":
+        a, L, bcs, W = get_BDM_problem(mesh, ds, order_k, config["mu"],
+                                       config["resistance_bcs"],
+                                       config["no_slip_bcs"],
+                                       config["inflow_bcs"])
+    elif config["discretization"] == "TH":
+        a, L, bcs, W = get_TH_problem(mesh, ds, order_k, config["mu"], 
+                                      config["resistance_bcs"],
+                                      config["no_slip_bcs"], 
+                                      config["inflow_bcs"])
+    else: print("choose BDM or TH discretization!"); exit()
+
+    wh = directsolve(a, L, bcs, W)
     uh, ph = wh.split(deepcopy=True)[:]
     
-    uhdg = interpolate(uh, VectorFunctionSpace(sas_outer, "DG", order_k))
-    assert np.isclose(assemble(div(uhdg)*div(uhdg)*dx), 0)
-    with XDMFFile(f'{results_dir}/csf_vis_v.xdmf') as xdmf:
-        xdmf.write_checkpoint(uhdg, "velocity")
-    with XDMFFile(f'{results_dir}/csf_vis_p.xdmf') as xdmf:
-        xdmf.write(sas_outer)
-        xdmf.write_checkpoint(ph, "pressure", append=True)
-
-    assert np.isclose(assemble(inner(uh,-n)*ds(LV_INTERF_ID)), config["LV_inflow_rate"], rtol=0.1)
-    assert np.isclose(assemble(inner(uh,-n)*ds(CSF_INTERF_ID)), config["tissue_inflow_rate"], rtol=0.05)
-    assert np.isclose(assemble(inner(uh,-n)*ds(NO_SLIP_ID)), config["skull_inflow_rate"], rtol=0.05)
-
-    uh_global = Function(VectorFunctionSpace(sas, "DG", order_k))
-    map_dg_on_global(uhdg, uh_global)
-    dxglob = Measure("dx", sas, subdomain_data=label)
-
-    #assert np.isclose(assemble(inner(uh_global, uh_global)*dxglob(PARID)), 0)
-
-    divu_global_csf = assemble(div(uh_global)*div(uh_global)*dxglob(CSFID)) \
-                    + assemble(div(uh_global)*div(uh_global)*dxglob(LVID)) \
-                    + assemble(div(uh_global)*div(uh_global)*dxglob(V34ID))
-
-    divu = assemble(sqrt(div(uh)*div(uh))*dx)
-
-    assert np.isclose(divu, 0)
+    uhdg = interpolate(uh, VectorFunctionSpace(mesh, "DG", order_k))
+    if ph.ufl_element().family() == 'Discontinuous Lagrange':
+        assert np.isclose(assemble(div(uhdg)*div(uhdg)*dx), 0)
+    else:
+        ph = interpolate(ph, FunctionSpace(mesh, "DG", order_k - 1))
 
     with XDMFFile(f'{results_dir}/csf_v.xdmf') as xdmf:
-        xdmf.write(sas)
-        xdmf.write_checkpoint(uh_global, "velocity", append=True)
-
-    ph_global_dg = Function(FunctionSpace(sas, "DG", order_k -1))
-    map_dg_on_global(ph, ph_global_dg)
+        xdmf.write_checkpoint(uhdg, "velocity")
     with XDMFFile(f'{results_dir}/csf_p.xdmf') as xdmf:
-        xdmf.write_checkpoint(ph_global_dg, "pressure")
+        xdmf.write_checkpoint(ph, "pressure")
 
-    assert np.isclose(divu, divu_global_csf)
-    #assert np.isclose(assemble(inner(uh_global, uh_global)*dxglob(CSFNOFLOWID)), 0)
+    with HDF5File(MPI.comm_world, f'{results_dir}/flow.hdf','w') as f:
+        f.write(mesh, "mesh")
+        f.write(ph, "pressure")
+        f.write(uhdg, "velocity")
 
     # collect key metrics:
-
-    sas_vol = assemble(1*dx(domain=sas_outer))
+    sas_vol = assemble(1*dx(domain=mesh))
     umean = assemble(sqrt(inner(uh, uh))*dx) / sas_vol
-    umag = project(sqrt(inner(uh, uh)), FunctionSpace(sas_outer, "CG", order_k),
+    umag = project(sqrt(inner(uh, uh)), FunctionSpace(mesh, "CG", order_k),
                    solver_type="cg", preconditioner_type="hypre_amg")
     umax = norm(umag.vector(), 'linf') 
+    divu = assemble(sqrt(div(uhdg)*div(uhdg))*dx)
     metrics = dict(umean=umean, umax=umax, divu=divu, 
                    pmax=ph.vector().max(), pmin=ph.vector().min())
 
-    with open(f'{results_dir}/metrics.yml', 'w') as outfile:
-        yaml.dump(metrics, outfile, default_flow_style=False)
+    if MPI.comm_world.rank == 0:
+        with open(f'{results_dir}/metrics.yml', 'w') as outfile:
+            yaml.dump(metrics, outfile, default_flow_style=False)
+
+
+def pipetest():
+    mesh = UnitSquareMesh(10, 10)
+    walls = CompiledSubDomain("x[1] < DOLFIN_EPS || x[1] >= 1 - DOLFIN_EPS")
+    inlet = CompiledSubDomain("x[0] < DOLFIN_EPS")
+    bm = MeshFunction("size_t", mesh, 1, 0)
+    inlet.mark(bm, 1)
+    walls.mark(bm, 2)
+    ds = Measure("ds", mesh, subdomain_data=bm)
+    mu = 0.23
+    order_k = 2
+    a, L, bcs, W = get_BDM_problem(mesh, ds, order_k, mu, 
+                                    [],
+                                    [2], 
+                                    [[[1], "-pow(2*x[1]- 1, 2) + 1"], [[2], "0"]])
+
+    u,p = directsolve(a, L, bcs, W).split(deepcopy=True)
+    u = interpolate(u, VectorFunctionSpace(mesh, "DG", order_k))
+    from vtk_adapter import plot
+    plot(u, "p.png")
 
 if __name__ == "__main__":
     typer.run(compute_sas_flow)
+    #mms()
