@@ -10,13 +10,15 @@ import yaml
 
 def compute_avg_flow(csf_flow_model:  str):
 
-    sas = Mesh()
-    with XDMFFile(f'results/csf_flow/{csf_flow_model}/csf_v.xdmf') as f:
-        f.read(sas)
-        V = VectorFunctionSpace(sas, "DG", 2)
-        velocity_sas = Function(V)
-        f.read_checkpoint(velocity_sas, "velocity")
-    
+    mesh = Mesh()
+    filename = f"results/csf_flow/{csf_flow_model}/flow.hdf"
+    with HDF5File(MPI.comm_world, filename,'r') as f:
+        f.read(mesh, "mesh", False)
+        DG = VectorFunctionSpace(mesh, "DG", 2)
+        velocity_sas = Function(DG)
+        f.read(velocity_sas, "velocity")
+
+
     #cell = sas.ufl_cell()
     #VP1_elem = VectorElement('Lagrange', cell, 1)
     #VP1 = FunctionSpace(sas, VP1_elem)
