@@ -41,7 +41,7 @@ with XDMFFile(f'results/csf_flow/sas_flow/csf_v.xdmf') as f:
 
 sm = xii.EmbeddedMesh(label, [CSFID, LVID, V34ID])
 
-with XDMFFile(f'results/csf_flow/cardiac_sas_flow/csf_vis_p.xdmf') as f:
+with XDMFFile(f'results/csf_flow/cardiac_sas_flow/csf_p.xdmf') as f:
     V = FunctionSpace(sm, "CG", 2)
     p = Function(V)
     f.read_checkpoint(p, "pressure")
