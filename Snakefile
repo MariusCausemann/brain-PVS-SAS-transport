@@ -3,7 +3,7 @@ from scripts.plotting_utils import read_config
 from collections import defaultdict
 
 num_mumps_threads = 16
-mesh_refine_models = ["modelA","modelALowRes", "modelAHighRes"]
+mesh_refine_models = ["modelALowRes", "modelA", "modelAHighRes"]
 time_refine_models = ["modelA", "modelAsmalldt", "modelAlargedt"]
 
 models =  mesh_refine_models + time_refine_models
@@ -12,9 +12,8 @@ conctimes =  list(np.array([0, 1, 2, 3, 4, 6 , 12, 18, 24])*60*60)
 
 cmax = {"detail":defaultdict(lambda: 2,{"modelA_modelA4":2}),
         "overview":defaultdict(lambda: 2,{"modelA_modelA4":2}),
-        "isosurf":defaultdict(lambda: 10,{"modelA_modelA4":8}),        
-        
-}
+        "isosurf":defaultdict(lambda: 10,{"modelA_modelA4":8}),
+        }
 
 diffmax = {"detail":defaultdict(lambda: 0.1,{"modelA_modelA4":0.2}),
            "overview":defaultdict(lambda: 1,{"modelA_modelA4":1}),
@@ -30,7 +29,7 @@ def getconfig(model, key):
 
 rule all:
     input:
-        "plots/comparisons/modelA_modelALowRes/modelA_modelALowRes_overview.png",
+        #"plots/comparisons/modelA_modelALowRes/modelA_modelALowRes_overview.png",
         #"plots/comparisons/modelA_modelAHighRes/modelA_modelAHighRes_overview.png",
         #"plots/comparisons/modelA_modelA3/modelA_modelA3_overview.png",
         #"plots/comparisons/modelA_modelA4/modelA_modelA4_overview.png",
@@ -65,9 +64,11 @@ rule runSimuation:
 rule computeDispersionField:
     conda:"environment.yml"
     input:
-        csf_pressure_file="results/csf_flow/{csf_flow_model}/csf_vis_p.xdmf",
+        csf_pressure_file="results/csf_flow/{csf_flow_model}/flow.hdf",
+        bg="mesh/standard/standard.xdmf"
     output:
         csf_dispersion_file="results/csf_flow/{csf_flow_model}/R.xdmf",
+        csf_dispersion_plot="results/csf_flow/{csf_flow_model}/R.png",
     shell:
         "xvfb-run -a python scripts/compute_dispersion_field.py {input.csf_pressure_file} {output.csf_dispersion_file}"
 
@@ -187,11 +188,26 @@ rule generateMesh:
         [f"mesh/T1/surfaces/{n}.ply" for n in ["LV", "parenchyma", "skull", "V34"]],
         "configfiles/meshconfig/{meshname}.yml"
     output:
-        "mesh/{meshname}/{meshname}.xdmf",
-        "mesh/{meshname}/{meshname}.h5",
+        "mesh/{meshname}/volmesh/mesh.xdmf",
+    resources:
+        ncpuspertask=4
     shell:
         """
         python scripts/generate_synthseg_mesh.py configfiles/meshconfig/{wildcards.meshname}.yml
+        """
+
+rule markAndRefineMesh:
+    conda:"environment.yml"
+    input:
+        "mesh/{meshname}/volmesh/mesh.xdmf",
+    output:
+        "mesh/{meshname}/{meshname}.xdmf",
+        "mesh/{meshname}/{meshname}.h5",
+        "mesh/{meshname}/{meshname}_outer.xdmf",
+        "mesh/{meshname}/{meshname}_outer.h5",
+    shell:
+        """
+        python scripts/mark_and_refine_mesh.py configfiles/meshconfig/{wildcards.meshname}.yml
         """
 
 rule computeSASFlow:
@@ -200,22 +216,26 @@ rule computeSASFlow:
         volmesh=lambda wildcards: getconfig(wildcards.csf_flow_model, "mesh"),
         config="configfiles/{csf_flow_model}.yml",
     output:
+        "results/csf_flow/{csf_flow_model}/csf_p.xdmf",
+        "results/csf_flow/{csf_flow_model}/csf_p.h5",
         "results/csf_flow/{csf_flow_model}/csf_v.xdmf",
         "results/csf_flow/{csf_flow_model}/csf_v.h5",
-        "results/csf_flow/{csf_flow_model}/csf_p.xdmf",
-        "results/csf_flow/{csf_flow_model}/csf_vis_p.xdmf",
-        "results/csf_flow/{csf_flow_model}/csf_p.h5",
-    threads: num_mumps_threads
+        "results/csf_flow/{csf_flow_model}/flow.hdf",
+    threads: 4
     resources:
-        ncpuspertask=num_mumps_threads
+        ncpuspertask=64
     shell:
-        "export OMP_NUM_THREADS={threads} && python scripts/sas_flow_Hdiv.py configfiles/{wildcards.csf_flow_model}.yml"
+        """
+        export OMP_NUM_THREADS={threads} && \
+        mpiexec -n 16 python scripts/sas_flow_Hdiv.py \
+        configfiles/{wildcards.csf_flow_model}.yml && \
+        xvfb-run -a python3 scripts/plot_csf_flow.py results/csf_flow/{wildcards.csf_flow_model}
+        """
 
 rule AverageSASFlow2PVS:
     conda:"environment.yml"
     input:
-        "results/csf_flow/{csf_flow_model}/csf_v.xdmf",
-        "results/csf_flow/{csf_flow_model}/csf_v.h5",
+        "results/csf_flow/{csf_flow_model}/flow.hdf",
     output:
         'results/csf_flow/{csf_flow_model}/pvs_flow.xdmf',
         'results/csf_flow/{csf_flow_model}/pvs_flow.h5'
