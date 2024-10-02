@@ -97,7 +97,7 @@ def time_str(sec):
 
 def read_config(configfile):
     with open(configfile) as conf_file:
-        config = yaml.load(conf_file, Loader=yaml.FullLoader)
+        config = yaml.load(conf_file, Loader=yaml.UnsafeLoader)
     return config
 
 
