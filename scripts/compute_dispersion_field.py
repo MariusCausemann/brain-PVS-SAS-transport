@@ -41,11 +41,12 @@ def get_dispersion_enhancement(csf_pressure_file:str, outfile:str):
 
     assume_unsteady = True
     mesh = Mesh()
-    with XDMFFile(csf_pressure_file) as file:
-        file.read(mesh)
-        DG = FunctionSpace(mesh, "DG", 1)
+    with HDF5File(MPI.comm_world, csf_pressure_file,'r') as f:
+        f.read(mesh, "mesh", False)
+        p_elem = eval(f.attributes("/pressure").to_dict()["signature"])
+        DG = FunctionSpace(mesh, p_elem)
         pressure_csf = Function(DG)
-        file.read_checkpoint(pressure_csf, "pressure")
+        f.read(pressure_csf, "pressure")
 
     #p_cont = project(pressure_csf, V)
     gradp = sqrt(inner(grad(pressure_csf), grad(pressure_csf)))
@@ -56,16 +57,17 @@ def get_dispersion_enhancement(csf_pressure_file:str, outfile:str):
         R = P**2 / (alpha**3)
     else:
         R = P**2
-    R_unsmoothed = project(R, DG)
+    R_unsmoothed = project(R, DG, solver_type="cg", preconditioner_type="petsc_amg")
 
     V = FunctionSpace(mesh, "CG", 1)
     u,v = TrialFunction(V), TestFunction(V)
     a = (Constant(1e-4)*inner(grad(u), grad(v)) + Constant(1)*u*v)*dx
     L = R*v*dx
     R = Function(V)
-    solve(a==L, R)
-    R = interpolate(R, DG)
+    solve(a==L, R, solver_parameters={"linear_solver":"cg", "preconditioner":"petsc_amg"})
+    R = interpolate(R, FunctionSpace(mesh, "DG", 1))
     assert R.vector().min() > 0
+    print(f"R max: {R.vector().max()}")
 
     with XDMFFile(outfile) as file:
         file.write(mesh)
