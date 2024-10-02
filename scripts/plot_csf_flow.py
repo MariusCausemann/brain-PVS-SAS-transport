@@ -20,21 +20,19 @@ prod_config = dict(pcmap=from_k3d([1]*4 + pcm.Blue___Green___Orange),
 vcmap="inferno")
 
 def plot_csf_flow(dirname: str):
-    filename_v = f"{dirname}/csf_vis_v.xdmf"
-    filename_p = f"{dirname}/csf_vis_p.xdmf"
+    filename = f"{dirname}/flow.hdf"
 
     mesh = Mesh()
-    with XDMFFile(filename_p) as f:
-        f.read(mesh)
-        DG = FunctionSpace(mesh, "DG", 1)
-        p = Function(DG)
-        f.read_checkpoint(p, "pressure")
-        p = interpolate(p, FunctionSpace(mesh, "DG", 2))
-
-    with XDMFFile(filename_v) as f:
-        V = VectorFunctionSpace(mesh, "DG", 2)
-        v = Function(V)
-        f.read_checkpoint(v, "velocity")
+    with HDF5File(MPI.comm_world, filename,'r') as f:
+        f.read(mesh, "mesh", False)
+        p_elem = eval(f.attributes("/pressure").to_dict()["signature"])
+        v_elem = eval(f.attributes("/velocity").to_dict()["signature"])
+        DG = FunctionSpace(mesh, p_elem)
+        V = FunctionSpace(mesh, v_elem)
+        p, v = Function(DG), Function(V)
+        f.read(p, "pressure")
+        f.read(v, "velocity")
+    p = interpolate(p, FunctionSpace(mesh, "DG", v_elem.degree()))
 
     topology, cell_types, x = create_vtk_structures(V)
     grid = pv.UnstructuredGrid(topology, cell_types, x)
