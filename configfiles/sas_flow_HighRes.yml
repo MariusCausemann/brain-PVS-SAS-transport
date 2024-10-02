@@ -1,9 +1,8 @@
-mesh : "mesh/HighRes/HighRes.xdmf"
-discretization : Hdiv
+mesh : "mesh/HighRes/HighRes_outer.xdmf"
+discretization : BDM
 mu : 0.7e-3 
-R : 1e4 # 1e-5 Pa/(mm s) 
-LV_inflow_rate : 7.291666666666667e-09 # in m^3/s , equals  0.63 L / day
-tissue_inflow_rate : 0
-spinal_outflow_bc: "noslip"
-skull_inflow_rate : 0.0
-noslip_max_z: 0.05 # noslip on lower part of outer boundary
+no_slip_bcs : [1,2,3,4,6]
+resistance_bcs : [[1, 1e4]]
+inflow_bcs : 
+ - [[2,4,6], 0]
+ - [[3], "7.2916e-9 / A"] # in m^3/s , equals  0.63 L / day
