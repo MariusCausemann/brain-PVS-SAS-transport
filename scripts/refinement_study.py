@@ -7,7 +7,7 @@ import seaborn as sns
 import os
 from pathlib import Path
 from plotting_utils import time_str, set_plotting_defaults
-
+from compute_dispersion_field import alpha
 
 csf_flow_model = {"LowRes":"sas_flow_LowRes",
                 "standard":"sas_flow",
@@ -47,6 +47,7 @@ for v, models, refmodel in zip(variants, [mesh_refinement_models,
         #md.update(read_config(f"results/csf_flow/{csfm}/pvs_metrics.yml"))
         # get cardiac PVS flow stats
         cardiac_csf = read_config(f"results/csf_flow/cardiac_{csfm}/metrics.yml")
+        cardiac_csf["pmax"] *= (1 + alpha**2 / 8)
         md.update({f"cardiac_{k}":v for k,v in cardiac_csf.items()})
         # get mean concentrations
         md.update(read_config(f"results/{tm}/mean_concentrations.yml"))
@@ -112,21 +113,21 @@ for v, models, refmodel in zip(variants, [mesh_refinement_models,
     {"vars":["cardiac_pmax"],"varnames":[r"$\rm p_{max}$"],
      "ylabel":"Pa", "title":"cardiac CSF pressure"},
     {"vars":["umax"],"varnames":[r"$\rm u_{max}$"], 
-    "ylabel":"m/s", "title":"CSF velocity"},
+    "ylabel":"mm/s", "title":"CSF velocity", "scale":1e3,},
     {"vars":["cardiac_umax"],"varnames":[r"$\rm u_{max}$"], 
     "ylabel":"m/s", "title":"cardiac CSF velocity"},
     ]
 
     barplot_groups += [{"vars":[f"cmean_{dom}_{t}" for t in [10800, 21600,  43200, 86400]],
     "varnames":[f"{int(t/3600)} h" for t in [10800, 21600,  43200, 86400]], 
-    "ylabel":"mol/L", "title":f"mean {dom} concentration"} for
+    "ylabel":"mol/L", "title":f"mean concentration ({dom})"} for
      dom in ["CSF", "parenchyma", "PVS artery", "PVS vein"]]
 
     nfigs = len(barplot_groups)
     fig_width = [ 1  + int(len(bp["vars"]) / 4) for bp in barplot_groups]
 
     nrows, ncols = 4,4
-    fig = plt.figure(figsize=(8, 8))
+    fig = plt.figure(figsize=(7, 8))
     gs = plt.GridSpec(nrows, ncols, figure=fig)
     gs.update(wspace=0.9, hspace=0.9)
     sns.set_palette("crest", n_colors=len(df.columns))
@@ -143,12 +144,12 @@ for v, models, refmodel in zip(variants, [mesh_refinement_models,
         bars = subdf.plot(ax=ax, kind="bar", ylabel=bp["ylabel"],
                          legend=False, title=bp["title"], rot=30)
         ax.set_ylim(bottom=0)
-        ax.text(s=alphabet[i], x=-1.0, y=ax.get_ylim()[1]*1.25,fontweight="bold")
+        ax.text(s=alphabet[i], x=-1.0, y=ax.get_ylim()[1]*1.3,fontweight="bold")
         coli += w
     
     plt.figlegend(df.columns, loc = 'outside upper center', ncol=3, 
                  bbox_to_anchor=(0.5, 0.97), frameon=False)
-    plt.savefig(f"plots/{v}/{v}.png")
+    plt.savefig(f"plots/{v}/{v}.pdf")
 
     # investigate undershoots
     linestyles = ["dotted", "dashed", "solid"]
