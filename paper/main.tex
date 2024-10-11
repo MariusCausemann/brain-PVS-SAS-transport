@@ -116,8 +116,9 @@ Molecular transport in perivascular spaces (PVSs) is established as a key pathwa
   location. They remark that the variation in PVS area is larger
   between PVS segments than along a single PVS segment. The PVS area
   seems to increase with the vessel area, but an affine approximation
-  gives a poor fit. The peak distribution value of segmented PVS/lumen
-  area is $1.12$.
+  gives a poor fit, and from inspecting the distribution, the
+  relationship seems superlinear. The peak distribution value of
+  segmented PVS/lumen area is $1.12$.
   \item
     In terms of size, Bedussi et al.~\cite{bedussi2018paravascular} report a PVS width of $\approx$20$\mu$m surrounding surface arteries branching from the MCA (of diameters $45 \pm 7$ $\mu$m). 
   \item
@@ -682,29 +683,34 @@ We use the diffusion coefficient $D_{\rm gad}$ of Gadubutrol in free water in th
 
 
 \begin{table}
-\begin{center}
+  \begin{center}
   \begin{tabular}{ll|llllll|ll}
     \toprule
-    & Description & $R$ & $\xi_{\rm PVS-SAS}$, $\xi_{\rm PVS-PAR}$ & $\beta_{\rm efflux}$ & $D$ & $\hat{u}$ & $\mathbf{u}_{\rm SAS, PAR}$ & $g_{\rm influx}$ & $c_0$ \\
+    & Description & $R_1, R_2$ & $\xi_{\rm PVS-SAS}$ &  $\beta_{\rm efflux}$ & $D$ & $\hat{u}$ & $\mathbf{u}_{SAS}$ & $c_0$ \\
     \midrule
-    A & Baseline  & $R_2 = 2 R_1$ & $\xi$, $\tilde \xi$\cite{koch2023estimates} &  $10^{-4}$ mm$^2$/s\cite{hornkjol2022csf} & $D^{\rm gad}$\cite{sykova2008diffusion, valnes2020apparent}  & $\hat{u} = \hat{u}_{\rm prod}$ & $\mathbf{u}_{\rm SAS} = \mathbf{u}_{\rm prod}$, $\mathbf{u}_{\rm PAR} = 0$ & $> 0$ & 0 \\
-    B & PVS "sheaths" & $R_2 = 2 R_1$ & $0, 0.5 \xi, \xi, 2 \xi, 1000 \xi \approx \infty$, --\cite{koch2023estimates} & -- & --  &  --  & --  & -- & -- \\
-    C & Larger PVS & $R_2 = N R_1$ & -- & -- & --  &  --  & -- & -- & -- \\
-    D & PVS I & $R_2 = 2 R_1$ & $\xi$, -- & -- & --  &  $\hat{u} = \hat{u}_{\rm prod} + \uparrow$  & -- & -- & -- \\
-    E & PVS II & $R_2 = 2 R_1$ & $\xi$, -- & -- & --  &  $\hat{u} = \hat{u}_{\rm prod} + \uparrow\uparrow$  & -- & -- & -- \\
-    F & PVS III & $R_2 = 2 R_1$ & $\xi$, -- & -- & $10 D_{\rm PVS}$ &  $\hat{u} = \hat{u}_{\rm prod}$  & -- & -- & -- \\
-    G & Glymphatics & $R_2 = 2 R_1$ & $\xi$, -- & -- & \cite{sykova2008diffusion, valnes2020apparent} &  $\hat{u} = \hat{u}_{\rm prod} + \uparrow$  & $\mathbf{u}_{\rm PAR}$ > 0 & -- & -- \\
-    H & Sleep &  &  & &  &  &  & & \\
-    I & Pathology I &  &  & &  &  &  & & \\
-    J & Pathology II &  &  & &  &  &  & & \\
-    \midrule
-    X & Clearance & $R_2 = 2 R_1$ & $50\%$, $\xi$ & -- & $D^{\rm gad, \tau, A\beta}$  &  $\hat{u} = \hat{u}_{\rm prod}$  & -- & $0$ & $1$ \\
-    Y & (PVS) & $R_2 = 2 R_1$ & $50\%$, $\xi$ & -- & $D^{\rm gad, \tau, A\beta}$  &  $\hat{u} = \hat{u}_{\rm prod} + \uparrow$  & -- & -- & -- \\
-    Z & (Glymphatic) & $R_2 = 2 R_1$ & $50\%$, $\xi$ & -- & $D^{\rm gad, \tau, A\beta}$  &  $\hat{u} = \hat{u}_{\rm prod} + \uparrow$  & $\mathbf{u}_{\rm PAR}$ > 0 & -- & -- \\
+    A & PVS sheaths & $R_2 = x R_1$ & $0, 0.5 \xi, \xi, 2 \xi, 1000 \xi \approx \infty$ & $10^{-4}$ mm$^2$/s\cite{hornkjol2022csf} & $\alpha D^{\rm gad}$\cite{sykova2008diffusion, valnes2020apparent} & $\hat{u}_{\rm prod}$ & $\mathbf{u}_{\rm prod}$ & 0 \\ 
+    %C & Larger PVS & $R_2 = N R_1$ & -- & -- & --  &  --  & -- &  -- \\
+    B & PVS flow & -- & $\xi$ & -- & --  & $\hat{u}_{\rm prod} + \hat{u}_{\rm vaso}$  & -- & --  \\
+    C & Clearance & -- & -- & -- & $\alpha D^{\rm gad, \tau, A\beta}$  & $\hat{u}_{\rm prod}$ & -- & 1 \\
+    %E & PVS II & $R_2 = 2 R_1$ & $\xi$, -- & -- & --  &  $\hat{u} = \hat{u}_{\rm prod} + \uparrow\uparrow$  & -- & --  \\
+    %F & PVS III & $R_2 = 2 R_1$ & $\xi$, -- & -- & $10 D_{\rm PVS}$ &  $\hat{u} = \hat{u}_{\rm prod}$  & -- & --  \\
+    %G & Glymphatics & $R_2 = 2 R_1$ & $\xi$, -- & -- & \cite{sykova2008diffusion, valnes2020apparent} &  $\hat{u} = \hat{u}_{\rm prod} + \uparrow$  & $\mathbf{u}_{\rm PAR}$ > 0 & --  \\
     \bottomrule
     \end{tabular}
     \end{center}
-\caption{Overview of models (-- denotes as immediately above). Model A represents a baseline scenario with semi-permeable barriers between the PVS and SAS ($\xi_{\rm PVS-SAS} \approx 50\%$, \mer{we try to estimate this value by a bit of trial-and-error from the observations of timings of PVS-SAS and SAS from~\cite{eide2024functional}})~\cite{bedussi2017paravascular} and astrocytic endfeet forming barriers within the parenchyma~\cite{koch2023estimates}. $R_1$ and $R_2$ denotes the inner and outer radius of the PVS, with PVS width comparable to vascular diameter ($R_2 - R_1 \approx 2 R_1$)\cite{mestre2018flow} as a baseline. The extracranial solute efflux permeability $\beta_{\rm efflux}$ is uniformly distributed over the outer SAS boundary with a reasonable rate as baseline\cite{hornkjol2022csf, eide2021clinical, ringstad2024glymphatic}. At baseline, the effective diffusion coefficients $D^{\rm x}_{\rm SAS} = D^{\rm x}_{\rm PVS}$ of the SAS and PVS represent the free diffusion coefficient of Gadubutrol (${\rm x} = {\rm gad}$) in CSF (water), and $D^{\rm x}_{\rm PAR}$ the effective diffusion coefficient of human cortical tissue, all at body temperature. At baseline, we consider net flow due to CSF-production in the SAS (and PVS): $\mathbf{u}_{\rm SAS} > 0$ (and $\hat{u} > 0$), but no additional effects from perivascular pulsatility nor bulk flow in the parenchyma $\mathbf{u}_{\rm PAR} = 0$. Due to the timescale for human intracranial tracer transport (minutes to hours) compared to typical (cardiac, respiratory, slow vasomotion) human intracranial pulsatility (0.1 -- 1 Hz), we consider net (constant-in-time) flow fields only in subsequent model variations. Model B represents a PVS-SAS interface configuration with minimal or more permeable structural barriers~\cite{eide2024functional}, while Model C represents enlarged PVS. Models D, E, and F represent three perivascular pathway scenarios with more rapid flow in the PVS induced by vasomotion (PVS I)~\cite{gjerde2023directional} or a net fluid source in the PVS (1D Stokes flow)/net pressure difference between PVS inlets and outlets (PVS II), or with enhanced effective diffusion due to mixing (PVS III)~\cite{hornkjol2022csf, troyetsky2021dispersion, vinje2023human}, respectively. Model G attempts to represent a glymphatic--like convective flow within the parenchyma. \mer{Ideas could be:  (a) network induces arterial and venous sources in a Darcy porous media flow model (reflects the glymphatic hypothesis), (b) Croci-style \cite{croci2019uncertainty}, (c) \cite{vinje2023human}} Model H represents physiological alterations associated with sleep (lower CSF production, enhanced diffusion within the parenchyma, enhanced PVS pulsatility), while Models I--J represents variations associated with pathologies (e.g.~dementia, hypertension, angiopathies, CSF-disorders and/or others). Models X--Z represent version of the aforementioned scenarios but for studying metabolite clearance (instead of solute influx).}
+  \caption{Overview of models (-- denotes as immediately above). Each
+    PVS cross-section is modelled as a concentric annulus with inner
+    radius $R_1$ and outer radius $R_2$ and such that $R_2 = \alpha
+    R_1$ with $x \approx 2.0-3.0$ based on~\cite{bedussi2018paravascular, mestre2018flow, raicevic2023sizes}. Model A and its variations aims to
+    quantify the effect of PVS sheaths by varying the permeability
+    $\xi$ between the PVS and its surroundings. We consider a fixed
+    permeability $\xi_{\rm PVS-PAR}$ based
+    on~\cite{koch2023estimates}. \mer{The permeability between the PVS
+      and the SAS $\xi_{\rm PVS-SAS}$ must likely be estimated by a
+      bit of trial-error from the observations of timings of PVS-SAS
+      and SAS from~\cite{eide2024functional}.} \discuss{The extracranial solute efflux permeability $\beta_{\rm efflux}$ is uniformly distributed over the outer SAS boundary with a reasonable rate as baseline\cite{hornkjol2022csf, eide2021clinical, ringstad2024glymphatic}.} At baseline, the effective diffusion coefficients $D^{\rm x}_{\rm SAS} = D^{\rm x}_{\rm PVS}$ of the SAS and PVS represent the free diffusion coefficient of Gadubutrol (${\rm x} = {\rm gad}$) in CSF (water), and $D^{\rm x}_{\rm PAR}$ the effective diffusion coefficient of human cortical tissue, all at body temperature; weighted by a dispersion factor $\alpha$ (see Methods). At baseline, we consider net flow due to CSF-production in the SAS and PVS: $\mathbf{u}_{\rm SAS} > 0$ and $\hat{u} > 0$ (see Methods) but no bulk flow in the parenchyma $\mathbf{u}_{\rm PAR} = 0$. Due to the timescale for human intracranial tracer transport (minutes to hours) compared to typical (cardiac, respiratory, slow vasomotion) human intracranial pulsatility (0.1 -- 1 Hz), we consider net (constant-in-time) flow fields only in subsequent model variations (but see dispersion factor above).
+    Model B represents perivascular pathway scenarios with more rapid flow in the PVS induced by vasomotion (PVS I)~\cite{gjerde2023directional}.
+    Models C represents a version of the aforementioned scenarios but for studying metabolite clearance (instead of solute influx).}
 \label{tab:scenarios}
 \end{table}
 
