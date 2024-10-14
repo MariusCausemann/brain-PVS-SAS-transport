@@ -31,12 +31,12 @@ def map_dg_on_global(uh, uh_global=None, parentmesh=None):
     # shift coords towards the cell center
     C_shift = 0.5*(C + np.repeat(Cc, int(dofs_per_cell/eldim), axis=0))
     P_shift = 0.5*(P + np.repeat(Pc, int(dofs_per_cell/eldim), axis=0))
-
     #idxmap = npi.indices(np.round(P_shift, ndigits), np.round(C_shift, ndigits), axis=0)
     idxmap = map_kdtree(P_shift, C_shift)
     for i in range(eldim):
         uh_global.vector()[idxmap*eldim + i] = uh.vector()[i::eldim]
     return uh_global
+    
 CSFID = 1
 PARID = 2
 LVID = 3
