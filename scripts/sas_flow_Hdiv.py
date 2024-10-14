@@ -59,7 +59,7 @@ CSF_NO_FLOW_CSF_ID = 7
 
 def get_normal_func(mesh, scale=Constant(1)):
     n = FacetNormal(mesh)
-    V = VectorFunctionSpace(mesh, "DG", 1)
+    V = VectorFunctionSpace(mesh, "DG", 0)
     u = TrialFunction(V)
     v = TestFunction(V)
     a = inner(u,v)*ds
