@@ -89,8 +89,8 @@ def run_simulation(configfile: str):
     vol_subdomains.array()[np.isin(vol_subdomains.array(), [LVID, V34ID, CSFNOFLOWID])] = CSFID
     File(results_dir + "subdomains.pvd") << vol_subdomains
 
-    artery_shape = xii.Circle(radius=artery_radii, degree=20,)
-    vein_shape = xii.Circle(radius=vein_radii, degree=20)
+    artery_shape = xii.Circle(radius=artery_radii, degree=40, quad_rule='midpoint')
+    vein_shape = xii.Circle(radius=vein_radii, degree=40, quad_rule='midpoint')
     csf_par_weights = {PARID:0.01, CSFID:0.99}
     artmarker = volmarker_to_networkmarker(vol_subdomains, artery, artery_shape,
                                          filename=results_dir + "arttagshares.pvd",

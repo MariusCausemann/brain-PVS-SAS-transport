@@ -13,7 +13,7 @@ pvs_csf_permability: 2.6e-8 # 2.6e-8 Riseth, 2024 (MRI2FEM book)
 pvs_ratio_artery : 2
 pvs_ratio_venes: 2
 molecular_outflow_resistance : 1.0e-10 # 1e-4 mm^2/s 
-#arterial_velocity_file : "results/csf_flow/sas_flow_LowRes/pvs_flow.xdmf"
+arterial_velocity_file : "results/pvs_flow_prod/sas_flow_LowRes/pvs_flow.xdmf"
 csf_velocity_file : "results/csf_flow/sas_flow_LowRes/flow.hdf"
 csf_dispersion_file : "results/csf_flow/cardiac_sas_flow_LowRes/R.xdmf"
 pvs_ratio_artery : 2
