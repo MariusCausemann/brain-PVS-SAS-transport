@@ -102,7 +102,7 @@ def compare_concentrations(modelname:str, times:List[int]):
     DG0a = FunctionSpace(artery, "DG", 0)
     pvs_radii = Function(DG0a)
     pvs_radii.vector().set_local(pvs_ratio_artery*art_radii.vector().get_local())
-    pvs_shape = Circle(radius=pvs_radii, degree=20,)
+    pvs_shape = Circle(radius=pvs_radii, degree=40, quad_rule='midpoint')
     c_averages = [ii_project(Average(c, artery, pvs_shape), DG0a) for c in sas_conc]
     conc_jump = [project((cavg - cart), DG0a) for  cavg, cart in zip(c_averages, art_conc)]
     rel_conc_jump = [project(100*(cavg - cart)/(cavg  + 1e-16), DG0a) for cavg, cart in zip(c_averages, art_conc)]
