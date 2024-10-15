@@ -19,7 +19,7 @@ diffmax = {"detail":defaultdict(lambda: 0.1,{"modelA_modelA4":0.2}),
            "overview":defaultdict(lambda: 1,{"modelA_modelA4":1}),
            "isosurf":defaultdict(lambda: 1,{"modelA_modelA4":1}),          
 }
-types = ["overview"]
+types = ["overview", "isosurf"]
 
 # check for headless server here? https://github.com/pyvista/pyvista/blob/f872ffebc7f56b1ff03541e368935c3304fc5e33/pyvista/plotting/tools.py#L54
 # or try vtk osmesa build...
@@ -231,6 +231,18 @@ rule computeSASFlow:
         configfiles/{wildcards.csf_flow_model}.yml && \
         xvfb-run -a python3 scripts/plot_csf_flow.py results/csf_flow/{wildcards.csf_flow_model}
         """
+
+
+rule computePVSFlow:
+    conda:"environment.yml"
+    input:
+        "results/csf_flow/{csf_flow_model}/flow.hdf",
+    output:
+        'results/pvs_flow_prod/{csf_flow_model}/pvs_flow.xdmf',
+        'results/pvs_flow_prod/{csf_flow_model}/pvs_flow.h5'
+    shell:
+        "python scripts/pvs_flow_prod.py {wildcards.csf_flow_model}"
+
 
 rule AverageSASFlow2PVS:
     conda:"environment.yml"
