@@ -283,6 +283,27 @@ Cerebrospinal fluid flow
 
 \subsection*{The significance of low-resistance perivascular pathways}
 
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{0.33\textwidth}
+    \centering
+    \includegraphics[width = \linewidth]{paper/figures/arteries_labels_radius.png}
+    \end{subfigure}
+     \begin{subfigure}[b]{0.33\textwidth}
+    \centering
+    \includegraphics[width =  \linewidth]{paper/figures/arteries_labels_pressure.png}
+    \end{subfigure}
+     \begin{subfigure}[b]{0.33\textwidth}
+    \centering
+    \includegraphics[width =  \linewidth]{paper/figures/arteries_labels_velocity.png}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.33\textwidth}
+    \centering
+    \includegraphics[width =  \linewidth]{paper/figures/velocity_histo.png}
+    \end{subfigure}
+    \label{fig:enter-label}
+\end{figure}
+
 \begin{itemize}
 \item
   Perivascular flow and transport has been identified as a key
@@ -923,10 +944,10 @@ We recall the system of equations that we approximate. Find $(\bm u, p)$ such th
 \end{subequations}
 We follow \cite{hong2016robust} and approximate the velocity field $u$ and the pressure $p$ with the following finite element spaces. 
 \begin{align}
-\bm V_h  & = \{ \bm v  \in H(\mathrm{div}; \Omega_{\mathrm{CSF}}): \; \bm v \vert_{E} \in BDM_2 (E),  \; E \in \mathcal{E}_h; \;  \bm v \cdot \bm n = 0  \} \\ 
+\bm V_h  & = \{ \bm v  \in H(\mathrm{div}; \Omega_{\mathrm{CSF}}): \; \bm v \vert_{E} \in \mathbb{BDM}^2 (E),  \; E \in \mathcal{E}_h; \;  \bm v \cdot \bm n = 0  \} \\ 
 S_h  & = \{q \in L^2(\Omega):  \;  q \vert_E \in \mathbb{P}^1(E),  \; E \in \mathcal{E}_h \}. 
 \end{align}
-Here, $H(\mathrm{div};\Omega)$ is the space of $L^2$ vector fields with $L^2$ divergence,  $BDM_1$ is the Brezzi-Douglas--Marini element \cite{brezzi1987mixed} of order 1, and  $\bm n$ (resp. $\bm \tau$) is the unit outward normal (resp. tangent) vector.  
+Here, $H(\mathrm{div};\Omega)$ is the space of $L^2$ vector fields with $L^2$ divergence,  $\mathbb{BDM}^2$ is the Brezzi-Douglas--Marini element \cite{brezzi1987mixed} of order 2, and  $\bm n$ (resp. $\bm \tau$) is the unit outward normal (resp. tangent) vector.  
 Given any vector $\bm v$, the normal and tangential components on each facet  are denoted by 
 \[ 
 \bm v_n = (\bm v \cdot \bm n)\bm n , \quad \bm v_t = (\bm v - \bm v_n). 
@@ -935,13 +956,13 @@ Since $V_h \subset H(\mathrm{div}, \Omega_{\rm{CSF}})$, then $[\bm v_n] = 0 $ on
 \begin{multline}
 \mathcal{A}_h (\bm u, \bm v) = \sum_{E \in \mathcal{E}_h} \int_{E} \mu \nabla u : \nabla v - \sum_{
 F \in \mathcal{F}_{h,c} \cup \mathcal{F}_{\Gamma} 
-} \int_{F} \mu \{\nabla u\} \bm n_F [\bm v_t] 
+} \int_{F} \mu \{\nabla u\}\cdot \bm n_F \cdot [\bm v_t] 
 \\ - \sum_{
 F \in \mathcal{F}_{h,c} \cup \mathcal{F}_{\Gamma} 
-} \int_{F} \mu \{\nabla v\} \bm n_F [\bm u_t]
+} \int_{F} \mu \{\nabla v\}\cdot \bm n_F \cdot [\bm u_t]
 + \sum_{
 F \in \mathcal{F}_{h,c} \cup \mathcal{F}_{\Gamma} 
-} \frac{\sigma}{h} \int_{F} [\bm u_t ] [\bm v_t].   
+} \frac{\sigma}{h} \int_{F} [\bm u_t ] \cdot [\bm v_t].   
 \end{multline}
 The discretization for the CSF flow, is then to find $(\bm u_h, p_h) \in \bm V_h \times S_h$ such  that 
 \begin{align}
