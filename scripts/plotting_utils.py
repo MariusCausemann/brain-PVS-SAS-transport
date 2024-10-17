@@ -32,6 +32,8 @@ def get_result(modelname, domain, times):
         grid[f"{r.name()}_{t}"] = r.vector()[:]
     if domain == "sas":
         grid["label"] = label.array()[:]
+    else:
+        grid["radius"] = label.vector()[:]
     return grid
 
 def get_result_fenics(modelname, domain, times):
@@ -124,47 +126,57 @@ def clip_plot(csf, par, networks, filename, title, clim, cmap, cbar_title):
 
 def isosurf_plot(sas, networks, filename, title, clim, cmap, cbar_title):
     import pyvista as pv
-    n = 3
+    n = 5
     if clim is not None:
-        contours = sas.contour(np.linspace(clim[0] + clim[1]/n, clim[1], 3))
+        contours = sas.contour(np.linspace(clim[0] + clim[1]/n, clim[1], n))
     else:
         contours = sas.contour(n)
-    #embed()
+        
     pl = pv.Plotter(off_screen=True)
+    pl.add_mesh(sas.outline(), color="white")
     pl.add_mesh(contours, opacity=0.75, clim=clim, cmap=cmap, show_scalar_bar=False)
-    pl.add_mesh(sas.extract_surface(), opacity=0.3, clim=clim, cmap=cmap,
-                scalar_bar_args=dict(title=cbar_title, vertical=False,
-                                    height=0.1, width=0.6, position_x=0.2,
-                                    position_y=0.0, title_font_size=36,
-                                    label_font_size=32))
+    #pl.add_mesh(sas.extract_surface(), opacity=0.3, clim=clim, cmap=cmap,
+    #            scalar_bar_args=dict(title=cbar_title, vertical=False,
+    #                                height=0.1, width=0.6, position_x=0.2,
+    #                                position_y=0.0, title_font_size=36,
+    #                                label_font_size=32))
     for netw in networks:
-        pl.add_mesh(netw, cmap=cmap, clim=clim, show_scalar_bar=False,
+        if clim is None: clim = (0, contours.active_scalars.max())
+        netthres = netw.threshold(clim[1] / n)
+        pl.add_mesh(netthres, cmap=cmap, clim=clim, show_scalar_bar=False,
                     render_lines_as_tubes=True,line_width=5)
 
-    pl.camera_position = 'zx'
-    pl.camera.roll += 90
+    pl.camera_position = 'yz'
+    #pl.camera.roll += 90
     pl.camera.zoom(1.3)
     pl.add_title(title, font_size=12)
     return pl.screenshot(filename, transparent_background=False, return_img=True)
 
-def detail_plot(sas, networks, filename, center, clim, cmap, cbar_title):
+def detail_plot(sas, networks, objects, filename, center, normal, clim, cmap, cbar_title):
     import pyvista as pv
-    slice = sas.slice_orthogonal(x=center[0], y=center[1], z=center[2],
-                                  contour=False)
+    slice = sas.slice(origin=center, normal=normal)
     pl = pv.Plotter(off_screen=True)
-    pl.add_mesh(slice, cmap=cmap, clim=clim,
+    cmax = slice.active_scalars.max()
+    for obj in objects:
+        if "color" not in obj.array_names:
+            cmax = max(cmax, obj.active_scalars.max()) 
+    if clim is None: clim = (0, cmax)
+    pl.add_mesh(slice, cmap=cmap, clim=clim, show_scalar_bar=False,
                 scalar_bar_args=dict(title=cbar_title, vertical=False,
                                     height=0.1, width=0.6, position_x=0.2,
-                                    position_y=0.0, title_font_size=36,
-                                    label_font_size=32))
+                                    position_y=0.05, title_font_size=36,
+                                    label_font_size=32, color="grey"))
     for netw in networks:
         pl.add_mesh(netw, cmap=cmap, clim=clim, show_scalar_bar=False,
-                    render_lines_as_tubes=True,line_width=5)
+                    render_lines_as_tubes=True, line_width=20)
+    for obj in objects:
+        obj_args = dict(line_width=20, show_scalar_bar=False, cmap=cmap,)
+        obj_args.update(dict(obj.field_data))
+        pl.add_mesh(obj, clim=clim, **obj_args)
 
-    pl.camera_position = 'zx'
-    pl.camera.roll += 90
-    pl.camera.azimuth -= 40
-    pl.camera.elevation += 20
-    #pl.set_focus(center)
-    pl.camera.zoom(2)
-    return pl.screenshot(filename, transparent_background=True, return_img=True)
+    #pl.add_legend_scale()
+    #pl.add_axes()
+    #pl.enable_parallel_projection()
+    pl.camera_position = [center + normal, center, (0,0,1)]
+
+    return slice.active_scalars.max(), pl.screenshot(filename, transparent_background=True, return_img=True)

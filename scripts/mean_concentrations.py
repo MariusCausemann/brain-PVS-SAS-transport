@@ -12,13 +12,15 @@ from IPython import embed
 import pandas as pd
 from matplotlib.markers import MarkerStyle
 import yaml
+from branch_marking import color_branches
+from label_arteries import pointlabels
+from test_map_on_global_coords_shift import map_kdtree
 
 CSFID = 1
 PARID = 2
 LVID = 3
 V34ID = 4
 CSFNOFLOWID = 5
-
 
 def compare_concentrations(modelname:str, times:List[int]):
     sas_conc, subd_marker = get_result_fenics(modelname, "sas", times)
@@ -84,8 +86,6 @@ def compare_concentrations(modelname:str, times:List[int]):
     with open(f'results/{modelname}/mean_concentrations.yml', 'w') as outfile:
         yaml.dump(metrics, outfile, default_flow_style=False)
 
-    times = times[1:]
-
     def ii_project(f, V):
         u = TrialFunction(V)
         v = TestFunction(V)  
@@ -100,10 +100,47 @@ def compare_concentrations(modelname:str, times:List[int]):
 
     artery = art_radii.function_space().mesh()
     DG0a = FunctionSpace(artery, "DG", 0)
+    V = art_conc[0].function_space()
     pvs_radii = Function(DG0a)
     pvs_radii.vector().set_local(pvs_ratio_artery*art_radii.vector().get_local())
+    priority = InterfaceResolution(subdomains=subd_marker,
+                                       resolve_conflicts={(CSFID, PARID): 4})
     pvs_shape = Circle(radius=pvs_radii, degree=40, quad_rule='midpoint')
-    c_averages = [ii_project(Average(c, artery, pvs_shape), DG0a) for c in sas_conc]
+    c_averages = [ii_project(Average(c, artery, pvs_shape, 
+                                     normalize=True, resolve_interfaces=priority), V) for c in sas_conc]
+
+    segments, segids ,_ = color_branches(artery)
+    dxs = Measure("dx", artery, subdomain_data=segments)
+    points = np.array([c for n,c in pointlabels])
+    artlabels = [n for n,c in pointlabels]
+    cellidx = map_kdtree(DG0a.tabulate_dof_coordinates(), points)
+    artsegids = [int(segments.array()[i]) for i in cellidx]
+
+    seglengths = [assemble(1*dxs(si)) for si in artsegids]
+    conc_at_point, avg_conc_around_point= {}, {}
+    for n, si,l in zip(artlabels, artsegids, seglengths):
+        conc_at_point[n] = [assemble(c*dxs(si))/l for c in art_conc]
+        avg_conc_around_point[n] = [assemble(c*dxs(si))/l for c in c_averages]
+    artlabelsets = [["BA",],["ACA"], ["MCA1", "MCA2"], ["PCA1", "PCA2"], ["ICA1", "ICA2"]]
+
+    coldict = dict(zip(artlabels, sns.color_palette("dark", n_colors=len(artlabels))))
+    fig, axes = plt.subplots(1, len(artlabelsets), figsize=(12,4), constrained_layout=True)
+    for ax, al_set in zip(axes, artlabelsets):
+        for n in al_set:
+            col = coldict[n]
+            ax.plot(times / 3600, conc_at_point[n], color=col, label=n)
+            ax.plot(times / 3600, avg_conc_around_point[n], color=col, ls=":")
+            ax.fill_between(times / 3600, conc_at_point[n], avg_conc_around_point[n],
+                             alpha=0.2, color=col)
+        ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.1), ncol=2, 
+                  columnspacing=0.3, frameon=False)
+        ax.set_xlabel("time (h)")
+        ax.set_ylabel("concentration (mol/l)")
+    plt.savefig(f"plots/{modelname}/{modelname}_conc_at_label.png")
+
+
+    times, c_averages, art_conc = times[1:], c_averages[1:], art_conc[1:]
+
     conc_jump = [project((cavg - cart), DG0a) for  cavg, cart in zip(c_averages, art_conc)]
     rel_conc_jump = [project(100*(cavg - cart)/(cavg  + 1e-16), DG0a) for cavg, cart in zip(c_averages, art_conc)]
 
