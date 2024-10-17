@@ -2,17 +2,55 @@ from itertools import combinations
 import os.path
 import pylab
 import sys
+import pyvista as pv
 
 import networkx as nx
 import dolfin as df
 import numpy as np
 
-from solver import read_vtk_network
+#from solver import read_vtk_network
 
 import pvs_network_netflow as pnf
 
 # FIXME: Automate
 SUPPLY_NODES = [8065, 7173, 4085]
+
+def my_read_vtk_network(filename, rescale_mm2m=True):
+    """Read the VTK file given by filename, return a FEniCS 1D Mesh representing the network, a FEniCS MeshFunction (double) representing the radius of each vessel segment (defined over the mesh cells), and a FEniCS MeshFunction (size_t) defining the roots of the network (defined over the mesh vertices, roots are labelled by 2 or 1.) 
+
+    rescale_mm2m is set to True by default, in which case the information on file is rescaled by a factor 1.e-3. MER: This is error-prone, I suggest no rescaling behind the scenes.
+"""
+    print("Reading network mesh from %s" % filename)
+    netw = pv.read(filename)
+    if rescale_mm2m:
+        netw.points *= 1e-3 # scale to m
+    mesh = df.Mesh()
+    ed = df.MeshEditor()
+    ed.open(mesh, 'interval', 1, 3)
+    ed.init_vertices(netw.number_of_points)
+    cells = netw.cells.reshape((-1,3))
+    ed.init_cells(cells.shape[0])
+
+    for vid, v in enumerate(netw.points):
+        ed.add_vertex(vid, v)
+    for cid, c in enumerate(cells[:,1:]):
+        ed.add_cell(cid, c)
+    ed.close()
+
+    # Cell Function
+    radii = df.MeshFunction('double', mesh, 1, 0)
+    roots = df.MeshFunction('size_t', mesh, 0, 0)
+
+    roots.array()[:] = netw["root"]
+    netw = netw.point_data_to_cell_data()
+
+    if rescale_mm2m:
+        radii.array()[:] = netw["radius"] * 1e-3 # scale to m
+    else:
+        radii.array()[:] = netw["radius"]
+
+    print("... with %d nodes, %d edges" % (mesh.num_vertices(), mesh.num_cells()))
+    return mesh, radii, roots
 
 
 def mark_shortest_paths(mesh, G, roots, output, use_precomputed=False):
@@ -192,10 +230,19 @@ def add_branches(G, a0, a, a_, T, indices, radii, lengths, index_map,
         (e1, e2, e3) = [e for e in G.edges(a) if not a_ in e]
         assert (a == e1[0] and a == e2[0] and a == e3[0]), \
             "Assumption error in G traversal"
-
-        add_branches(G, a, e1[1], a, T, [], [], [], index_map, downstream)
-        add_branches(G, a, e2[1], a, T, [], [], [], index_map, downstream)
-        print("WARNING: Ignoring edge: (degree > 3) ", e3)
+        print("a ", a)
+        print("e1[0] = ", e1[1])
+        print("e2[0] = ", e2[1])
+        print("e3[0] = ", e3[1])
+        
+        if (a == 8103):
+            add_branches(G, a, 8201, a, T, [], [], [], index_map, downstream)
+            add_branches(G, a, 12073, a, T, [], [], [], index_map, downstream)
+            print("WARNING: Ignoring edge: (degree > 3) ", e2)
+        else:
+            add_branches(G, a, e1[1], a, T, [], [], [], index_map, downstream)
+            add_branches(G, a, e2[1], a, T, [], [], [], index_map, downstream)
+            print("WARNING: Ignoring edge: (degree > 3) ", e3)
         #add_branches(G, a, e3[1], a, T, [], [], [], index_map, downstream)
 
     if degree > 4:
@@ -330,7 +377,7 @@ def compute_subtrees(filename, output):
     
     # Read network information from file. Never rescale stuff behind
     # the scenes.
-    mesh, radii, _ = read_vtk_network(filename, rescale_mm2m=False)
+    mesh, radii, _ = my_read_vtk_network(filename, rescale_mm2m=False)
     mesh.init()
 
     # Convert mesh to weighted graph
@@ -384,7 +431,7 @@ def compute_pvs_flow(meshfile, output, args):
     roots = SUPPLY_NODES
 
     # Read mesh from file. Never rescale stuff behind the scenes.
-    mesh, radii, _ = read_vtk_network(meshfile, rescale_mm2m=False)
+    mesh, radii, _ = my_read_vtk_network(meshfile, rescale_mm2m=False)
     mesh.init()
     DG0 = df.FunctionSpace(mesh, "DG", 0)
 
@@ -484,7 +531,7 @@ def main(args):
         compute_subtrees(filename, output)
         print("")
         
-    compute_pvs_flow(filename, output, args)
+    #compute_pvs_flow(filename, output, args)
     
 if __name__ == '__main__':
 
@@ -493,7 +540,10 @@ if __name__ == '__main__':
     # image-based network
 
     # To run:
+    # $ mambda .... (FIXME) marie_environment.xml
     # $ mamba activate pvs_transport_env
+    # $ pip install git+https://github.com/MiroK/fenics_ii.git@ufl_legacy
+    # 
     # $ python3 peristalticflow.py --frequency 1.0 --wavelength 2000.0 --amplitude 0.01 --beta 3.0 --recompute # Cardiac
     # $ python3 peristalticflow.py --frequency 0.1 --wavelength 80.0 --amplitude 0.1 --beta 3.0 
     #
