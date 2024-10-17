@@ -15,6 +15,7 @@
 \usepackage{tikz}
 \usepackage{float}
 \usepackage{amsmath}
+\usepackage{siunitx}
 \usetikzlibrary{quotes}
 \usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,positioning,fit,petri}
 
@@ -73,6 +74,7 @@ larger species (larger distances) and larger molecules.
 
 \section*{Background}
 
+\mer{Point from Miro: Goriely and scaling from mice to men.}
 
 \begin{enumerate}
 \item
@@ -201,6 +203,12 @@ larger species (larger distances) and larger molecules.
   In the context of dispersion, see also~\cite{asgari2016glymphatic, keith2019dispersion, troyetsky2021dispersion}
 \item
   Wright et al~\cite{wright2024coupled} study the dynamics (waveforms over time) of human arterial blood flow (with resting-state fMRI) and perivascular CSF flow (with dynDWI, apparent diffusion coefficient (mm$^2$/s)). The waveforms seem coupled, with the arterial peak preceding the CSF peak by around 0.06 (of a cardiac cycle). The report ADC in the PVS on the order $2.5-5.5 \times 10^{-3}$ mm$^2$/s, with alterations in the coupling with age.
+\item
+  Boster and coauthors~\cite{boster2023artificial, toscano2024infeering} estimate perivascular flow parameters in mice via physics-informed neural networks (e.g.~pressure gradients, hydraulic resistances, shear stresses). Boster et al~\cite{boster2023artificial} estimate PVS pressure gradients on the order of $0.7-5 \times 10^{-4} \unit{Pa/\mu m}$\footnote{Note that 
+  \begin{equation}
+    1 \times 10^{-4} \, \unit{Pa/\mu m} = 1 \times 10^{2} \, \unit{Pa/m} \approx 100/133 \unit{mmHg/m} \approx 0.75 \unit{mmHg/m}
+  \end{equation}
+   }, downstream velocity component of $12.75 \pm 6.25 \unit{\mu m/s}. 
   \end{itemize}
 \end{enumerate}
 Cerebrospinal fluid flow
@@ -273,7 +281,7 @@ Cerebrospinal fluid flow
     \centering
     \includegraphics[width =  \linewidth]{figures/velocity_histo.png}
     \end{subfigure}
-    \label{fig:enter-label}
+    %\label{fig:enter-label}
     \label{fig:pvs}
   \caption{Results: Perivascular flow}
 \end{figure}
