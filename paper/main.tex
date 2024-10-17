@@ -64,7 +64,11 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\mer{MER: Target length: 5000 words, 4-6 figures.}
+
 \section*{Introduction}
+
 
 Molecular transport in perivascular spaces (PVSs) is established as a key pathway for human brain clearance and delivery. Previous studies indicate that molecules move rapidly in the subarachnoid space (SAS) and in PVSs surrounding pial arteries. Here, we aim to model and study this transport in a full pial perivascular and/or vascular network embedded in the SAS.  
 
@@ -236,7 +240,7 @@ Cerebrospinal fluid flow
 
 \subsection*{II: CSF flow}
 
-\mer{MER: @Marius: 2-3 sentences motivating the choice of production-induced flow and dispersion enhanced by pulsatility~\cite{ray2021quantitative}. 2-3 sentences summarizing what you computed. 4-6 sentences describing the flow and dispersion results.} \draft{\lipsum[1]}
+\mer{MER: @Marius: 2-3 sentences motivating the choice of production-induced flow and dispersion enhanced by pulsatility~\cite{ray2021quantitative}. 2-3 sentences summarizing what you computed. 4-6 sentences describing the flow and dispersion results.} \draft{\lipsum[1]} \Cref{fig:csf}
 \begin{figure}[h!]
 \centering 
 \begin{subfigure}[b]{0.33\textwidth}
@@ -258,6 +262,7 @@ Cerebrospinal fluid flow
     relevant boundaries; C) CSF flow induced by CSF production; D) CSF
     flow induced by peak arterial influx/peak volumetric influx of
     cardiac cycle; E) Computed dispersion factor.}}
+\label{fig:csf}
 \end{figure}  
 
 \subsection*{III: Perivascular flow}
@@ -284,8 +289,10 @@ Cerebrospinal fluid flow
     \end{subfigure}
     %\label{fig:enter-label}
     \label{fig:pvs}
-  \caption{Results: Perivascular flow}
+    \caption{\mer{MER: Put vasculature network illustration here. Many aspects actually. Marking of segments. Location relative to 3D. Radius etc. Marius will evaluate and suggest. Results: Group segments by logical order. For key arterial segments: average radius and length (can be moved to Supplementary if need be); pressure values; flow velocities; and then histograph with flow velocities for each mesh cell. Make sure to minorly note that ACA refers to a segment of the ACA and not the whole thing e.g.}}
 \end{figure}
+
+\Cref{fig:pvs}.
 
 \subsection*{Structural versus functional compartmentalization of perivascular spaces}
 
