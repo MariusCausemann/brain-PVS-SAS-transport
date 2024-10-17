@@ -11,20 +11,25 @@ This will create the environment 'pvs_transport_env'. Activate with:
 
 To use conda instead of mamba, replace mamba with conda in the above.
 
+Sidenote: to remove (for some reason or the other) your existing mamba environent, do
+
+`mamba env remove -n pvs_transport_env`
+
+
 #### Brain and vasculature imaging data 
 
 Image data were downloaded from Hodneland et al, PLOS Comp. Bio, 2023 (https://doi.org/10.1371/journal.pcbi.1007073) and placed under data/. These data include: 
 
-* White matter representation (mask): data/pcbi.1007073.s005.nii.gz
-* Gray matter representation (mask): data/pcbi.1007073.s006.nii.gz  
 * Arteries: data/pcbi.1007073.s007.nii.gz
 * Veins: data/pcbi.1007073.s008.nii.gz
 
-To have a quick look at the data, do e.g. the following (in Python) to plot a slice of the white matter data.
+In addition, we received additional T1 images from Erlend Hodneland, see data/T1_synthseg.nii.gz.
+
+To have a quick look at the data, do e.g. the following (in Python) to plot a slice of the T1 data (NB: untested since data update).
 ```
 import nibabel
 import matplotlib.pyplot as plt
-data = nibabel.load("data/pcbi.1007073.s005.nii.gz")
+data = nibabel.load("data/T1_synthseg.nii.gz")
 data.shape
 plt.imshow(data.get_fdata()[:, 100, :])
 plt.show()
