@@ -8,11 +8,11 @@ time_refine_models = ["modelA", "modelAsmalldt", "modelAlargedt"]
 
 models =  mesh_refine_models + time_refine_models
 times = list(np.array([1, 6, 12, 24])*60*60)
-conctimes =  list(np.array([0, 1, 2, 3, 4, 6 , 12, 18, 24])*60*60)
+conctimes =  list((np.array([0, 1/3, 2/3, 1, 4/3, 5/3, 2, 7/3, 8/3, 3, 4, 5, 6 ,9, 12, 15, 18, 21, 24])*60*60).astype(int))
 
-cmax = {"detail":defaultdict(lambda: 2,{"modelA_modelA4":2}),
-        "overview":defaultdict(lambda: 2,{"modelA_modelA4":2}),
-        "isosurf":defaultdict(lambda: 10,{"modelA_modelA4":8}),
+cmax = {"detail":defaultdict(lambda: 2, {"modelA_modelA4":2}),
+        "overview":defaultdict(lambda: 2, {"modelA_modelA4":2}),
+        "isosurf":defaultdict(lambda: 5, {"modelA_modelA4":8}),
         }
 
 diffmax = {"detail":defaultdict(lambda: 0.1,{"modelA_modelA4":0.2}),
@@ -30,7 +30,8 @@ def getconfig(model, key):
 rule all:
     input:
         #"plots/comparisons/modelA_modelALowRes/modelA_modelALowRes_overview.png",
-        #"plots/comparisons/modelA_modelAHighRes/modelA_modelAHighRes_overview.png",
+        "plots/comparisons/modelA_modelAHighRes/modelA_modelAHighRes_overview.png",
+        "plots/comparisons/modelA_modelAHighRes/modelA_modelAHighRes_isosurf.png",
         #"plots/comparisons/modelA_modelA3/modelA_modelA3_overview.png",
         #"plots/comparisons/modelA_modelA4/modelA_modelA4_overview.png",
         #"plots/comparisons/modelA_modelA3/modelA_modelA3_overview.png",
