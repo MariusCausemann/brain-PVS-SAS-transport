@@ -5,6 +5,7 @@ import typer
 from typing import Tuple
 from plotting_utils import get_result, time_str, clip_plot, detail_plot, isosurf_plot
 import yaml
+pv.global_theme.allow_empty_mesh = True
 
 CSFID = 1
 PARID = 2
@@ -12,7 +13,7 @@ LVID = 3
 V34ID = 4
 CSFNOFLOWID = 5
 
-def plot_model(modelname: str, t:int, type, cmax:float=None, filename:str=None):
+def plot_model(modelname: str, t:int, type:str, cmax:float=None, filename:str=None):
     plotdir = f"plots/{modelname}"
     os.makedirs(plotdir, exist_ok=True)
 
@@ -31,15 +32,13 @@ def plot_model(modelname: str, t:int, type, cmax:float=None, filename:str=None):
     
     if type=="isosurf":
         title = f"time: {time_str(t)} h"
-        sas = sas.cell_data_to_point_data()
-        sas[f"c_{t}"] *= (1 - (0.8*sas["label"]==PARID))
-        return isosurf_plot(sas, [art, ven], filename, title, clim=clim, cmap="matter",
+        csf = sas.extract_cells(np.isin(sas["label"], [CSFID, LVID, V34ID, CSFNOFLOWID]))
+        par = sas.extract_cells(sas["label"]==PARID)
+        #par[f"c_{t}"] *= 0.2
+        csf.merge(par, inplace=True, merge_points=False)
+        #sas[f"c_{t}"] *= (1 - (0.8*sas["label"]==PARID))
+        return isosurf_plot(sas, [art], filename, title, clim=clim, cmap="tempo",
                             cbar_title="concentration (mmol/l)")
     
-    elif type=="detail":
-        center = (0.2877, 0.17, 0.23)
-        return detail_plot(sas, [art, ven], filename, center, clim=clim, cmap="matter",
-                cbar_title="concentration (mmol/l)")
-
 if __name__ == "__main__":
     typer.run(plot_model)
