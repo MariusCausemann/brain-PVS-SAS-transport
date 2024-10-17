@@ -15,15 +15,12 @@ import pvs_network_netflow as pnf
 # FIXME: Automate
 SUPPLY_NODES = [8065, 7173, 4085]
 
-def my_read_vtk_network(filename, rescale_mm2m=True):
+def my_read_vtk_network(filename):
     """Read the VTK file given by filename, return a FEniCS 1D Mesh representing the network, a FEniCS MeshFunction (double) representing the radius of each vessel segment (defined over the mesh cells), and a FEniCS MeshFunction (size_t) defining the roots of the network (defined over the mesh vertices, roots are labelled by 2 or 1.) 
 
-    rescale_mm2m is set to True by default, in which case the information on file is rescaled by a factor 1.e-3. MER: This is error-prone, I suggest no rescaling behind the scenes.
 """
     print("Reading network mesh from %s" % filename)
     netw = pv.read(filename)
-    if rescale_mm2m:
-        netw.points *= 1e-3 # scale to m
     mesh = df.Mesh()
     ed = df.MeshEditor()
     ed.open(mesh, 'interval', 1, 3)
@@ -44,10 +41,7 @@ def my_read_vtk_network(filename, rescale_mm2m=True):
     roots.array()[:] = netw["root"]
     netw = netw.point_data_to_cell_data()
 
-    if rescale_mm2m:
-        radii.array()[:] = netw["radius"] * 1e-3 # scale to m
-    else:
-        radii.array()[:] = netw["radius"]
+    radii.array()[:] = netw["radius"]
 
     print("... with %d nodes, %d edges" % (mesh.num_vertices(), mesh.num_cells()))
     return mesh, radii, roots
@@ -101,7 +95,7 @@ def mark_shortest_paths(mesh, G, roots, output, use_precomputed=False):
         shortest = np.argmin(path_lengths)
         longest_shortest_path = max(min(path_lengths), longest_shortest_path)
         mf.array()[paths[shortest]] = labels[shortest]
-    print("Longest shortest path is %g (mm)" % longest_shortest_path)
+    print("Longest shortest path is %g (m)" % longest_shortest_path)
 
     # Check that all nodes have been marked
     if not np.all(mf.array()):
@@ -375,9 +369,8 @@ def compute_subtrees(filename, output):
     # Label the network supply nodes (FIXME: automate)
     supply_nodes = SUPPLY_NODES
     
-    # Read network information from file. Never rescale stuff behind
-    # the scenes.
-    mesh, radii, _ = my_read_vtk_network(filename, rescale_mm2m=False)
+    # Read network information from file
+    mesh, radii, _ = my_read_vtk_network(filename)
     mesh.init()
 
     # Convert mesh to weighted graph
@@ -430,12 +423,12 @@ def compute_pvs_flow(meshfile, output, args):
     # Label the network supply nodes (FIXME: automate)
     roots = SUPPLY_NODES
 
-    # Read mesh from file. Never rescale stuff behind the scenes.
-    mesh, radii, _ = my_read_vtk_network(meshfile, rescale_mm2m=False)
+    # Read mesh from file. 
+    mesh, radii, _ = my_read_vtk_network(meshfile)
     mesh.init()
     DG0 = df.FunctionSpace(mesh, "DG", 0)
 
-    print_stats("Vascular radii r_o", radii.array(), "mm")
+    print_stats("Vascular radii r_o", radii.array(), "m")
     
     # Note that the asymptotic estimate is is derived under the
     # assumption that when k L = 2 pi/lmbda L = O(1) i.e. when lmbda ~
@@ -444,11 +437,11 @@ def compute_pvs_flow(meshfile, output, args):
     # Specify the relative PVS width and other parameters
     beta = args.beta             # outer radius = beta*(inner radius)
     f = args.frequency           # Frequency
-    lmbda = args.wavelength      # Wave length (mm)
+    lmbda = args.wavelength      # Wave length (m)
     varepsilon = args.amplitude  # Relative wave amplitude
 
     omega = 2*np.pi*f      # Angular frequency (Hz)
-    k = 2*np.pi/lmbda      # Wave number (1/mm)
+    k = 2*np.pi/lmbda      # Wave number (1/m)
     
     Q = df.Function(DG0)
     u = df.Function(DG0)
@@ -491,11 +484,12 @@ def compute_pvs_flow(meshfile, output, args):
                 Q.vector()[i] = avg_Q_i
                 u.vector()[i] = avg_Q_i/area(i)
                 
-    print_stats("Vascular branch lengths L", np.array(Ls), "mm")            
+    print_stats("Vascular branch lengths L", np.array(Ls), "m")            
     print_stats("... k L", k*np.array(Ls), "AU, (k = %3.4g)" % k )
-    print_stats("<Q'_i>", Q.vector(), "mm^3/s")
-    print_stats("<u'_i>", u.vector(), "mm/s")
-    print_stats("<u'_i>", u.vector()*1.e3, "mum/s")
+    print_stats("<Q'_i>", Q.vector(), "m^3/s")
+    print_stats("<Q'_i>", Q.vector()*1.e9, "mm^3/s")
+    print_stats("<u'_i>", u.vector(), "m/s")
+    print_stats("<u'_i>", u.vector()*1.e3, "mm/s")
 
     fluxfile = os.path.join(output, "pvs_Q.xdmf")
     with df.XDMFFile(mesh.mpi_comm(), fluxfile) as xdmf:
@@ -531,7 +525,7 @@ def main(args):
         compute_subtrees(filename, output)
         print("")
         
-    #compute_pvs_flow(filename, output, args)
+    compute_pvs_flow(filename, output, args)
     
 if __name__ == '__main__':
 
@@ -555,9 +549,9 @@ if __name__ == '__main__':
     parser.add_argument('--recompute', action="store_true")
     parser.add_argument('--run-tests', action="store_true", help="Just run basic test.")
     parser.add_argument('--frequency', action="store", default=1.0, help="Vascular wave frequency (Hz)", type=float)
-    parser.add_argument('--wavelength', action="store", default=2000.0, help="Vascular wave wavelength (mm)", type=float)
+    parser.add_argument('--wavelength', action="store", default=2000.0, help="Vascular wave wavelength (m)", type=float)
     parser.add_argument('--amplitude', action="store", default=0.01, help="Vascular wave relative amplitude (relative to (inner) vascular radius)", type=float)
-    parser.add_argument('--beta', action="store", default=3.0, help="Ratio outer-to-inner vessel radio (PVS width + 1)", type=float)
+    parser.add_argument('--beta', action="store", default=2.0, help="Ratio outer-to-inner vessel radio (PVS width + 1)", type=float)
     parser.add_argument('--tag', action="store", default="tmp", help="Tag")
 
     args = parser.parse_args()
