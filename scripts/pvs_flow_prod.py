@@ -15,7 +15,11 @@ from matplotlib.ticker import PercentFormatter
 from label_arteries import pointlabels
 import pandas as pd
 import yaml
+from branch_marking import color_branches
 
+m2mm = 1e3
+m2mum = 1e6
+Pa2mPa = 1e3
 
 def map_pressure_on_network(p, pnet):
     idx = map_kdtree(p.function_space().tabulate_dof_coordinates(), 
@@ -116,9 +120,15 @@ def compute_pvs_flow(csf_flow_model:  str):
         xdmf.write(ph, t=0)
     
 
-    umag = uh_mag.vector()[:] *1e6
+    segments, segids ,_ = color_branches(mesh)
+    dxs = Measure("dx", mesh, subdomain_data=segments)
+
+
+    seglengths = np.array([assemble(1*dxs(si)) for si in segids])
+    assert (seglengths > 0).all()
+    umag = np.array([assemble(m2mum*uh_mag*dxs(si))/ l for si,l in zip(segids, seglengths)])
     umagabs = abs(umag)
-    uavg = np.average(umagabs)#, weights=grid["Length"])
+    uavg = np.average(umagabs, weights=seglengths)
     umax = umagabs.max()
     umed = np.median(umagabs)
 
@@ -127,7 +137,7 @@ def compute_pvs_flow(csf_flow_model:  str):
     fig, ax = plt.subplots()
     counts, bins, containers = plt.hist(umag, density=False, bins=50, histtype="bar",
             range=(-0.4, 0.6), edgecolor='black', linewidth=0.4, 
-                    weights=np.ones(len(umag)) / len(umag))
+                    weights=seglengths / seglengths.sum())
     for bar, ca in zip(containers, sns.color_palette("Purples_r", n_colors=20) + 
                                    sns.color_palette("Greens", n_colors=30)):
         bar.set_facecolor(ca)
@@ -142,27 +152,25 @@ def compute_pvs_flow(csf_flow_model:  str):
     ax.yaxis.set_major_formatter(PercentFormatter(1))
     plt.savefig(f"{results_dir}/velocity_histo.png")
 
-
-    cell_mf = Function(FunctionSpace(mesh, "DG", 0))
-    point_mf = Function(FunctionSpace(mesh, "CG", 1))
     points = np.array([c for n,c in pointlabels])
     cellidx = map_kdtree(FunctionSpace(mesh, "DG", 0).tabulate_dof_coordinates(),
                         points)
-    pointidx = map_kdtree(FunctionSpace(mesh, "CG", 1).tabulate_dof_coordinates(),
-                          points)
+
+
     artlabels = [n for n,c in pointlabels]
-    cell_mf.vector()[cellidx] = 1
-    point_mf.vector()[pointidx] = 1
-    File(f"{results_dir}/cell_mf.pvd") << cell_mf
-    File(f"{results_dir}/point_mf.pvd") << point_mf
+
+    artsegids = [int(segments.array()[i]) for i in cellidx]
 
     # plot pressure, velocity and radius at main arteries
-    pressures, velocities, radii = [], [], []
-    for ci, pi in zip(cellidx, pointidx):
-        pressures.append(ph.vector()[pi] * 1e3)
-        velocities.append(abs(uh_mag.vector()[ci]*1e6))
-        radii.append(artery_radii.array()[ci]*1e3)
-    df = pd.DataFrame({"p":pressures, "u":velocities, "loc":artlabels,
+    pressures, velocities, radii, lengths = [], [], [], []
+    for si in artsegids:
+        length = assemble(1*dxs(si))
+        assert length > 0
+        pressures.append(assemble(Pa2mPa*ph*dxs(si)) / length)
+        velocities.append(assemble(m2mum*uh_mag*dxs(si))/ length)
+        radii.append(assemble(m2mm*as_P0_function(artery_radii)*dxs(si))/ length)
+        lengths.append(length*m2mm)
+    df = pd.DataFrame({"p":pressures, "u":velocities, "loc":artlabels, "L":lengths,
                         "R":radii}).sort_values(by="loc")
 
     plt.figure()
@@ -182,6 +190,12 @@ def compute_pvs_flow(csf_flow_model:  str):
     ax.set_xlabel("")
     ax.set_ylabel("radius (mm)")
     plt.savefig(f"{results_dir}/arteries_labels_radius.png")
+
+    plt.figure()
+    ax = sns.barplot(df, x="loc", y="L", palette="blend:#7AB,#EDA")
+    ax.set_xlabel("")
+    ax.set_ylabel("segment length (mm)")
+    plt.savefig(f"{results_dir}/arteries_labels_length.png")
 
     length = assemble(1*dx(domain=mesh))
     umean = assemble(uh_mag*dx) / length
