@@ -35,9 +35,15 @@ plt.imshow(data.get_fdata()[:, 100, :])
 plt.show()
 ```
 
+#### Generating meshes from the image data ####
+
+The standard mesh resolution is available in the Git repository under
+mesh/standard.
+
+
 #### Generating surfaces, meshes and networks from the image data
 
-To generate surfaces, extract vessel networks and generate meshes, run:
+OBSOLETE INSTRUCTIONS: To generate surfaces, extract vessel networks and generate meshes, run:
 
 ```
 cd scripts
