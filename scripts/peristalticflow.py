@@ -12,7 +12,7 @@ from solver import read_vtk_network
 import pvs_network_netflow as pnf
 
 # FIXME: Automate
-SUPPLY_NODES = [3492, 8115, 6743]
+SUPPLY_NODES = [8065, 7173, 4085]
 
 
 def mark_shortest_paths(mesh, G, roots, output, use_precomputed=False):
