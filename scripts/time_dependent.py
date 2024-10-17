@@ -39,8 +39,6 @@ def get_subdomain_dofs(V, subdomains, subd_id):
     return subd_dofs
 
 
-
-
 def run_simulation(configfile: str):
 
     config = read_config(configfile)
@@ -91,7 +89,7 @@ def run_simulation(configfile: str):
 
     artery_shape = xii.Circle(radius=artery_radii, degree=40, quad_rule='midpoint')
     vein_shape = xii.Circle(radius=vein_radii, degree=40, quad_rule='midpoint')
-    csf_par_weights = {PARID:0.01, CSFID:0.99}
+    csf_par_weights = {PARID:0.2, CSFID:0.8}
     artmarker = volmarker_to_networkmarker(vol_subdomains, artery, artery_shape,
                                          filename=results_dir + "arttagshares.pvd",
                                          weights=csf_par_weights)
