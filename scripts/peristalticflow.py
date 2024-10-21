@@ -485,6 +485,7 @@ def compute_pvs_flow(meshfile, output, args):
                 u.vector()[i] = avg_Q_i/area(i)
                 
     print_stats("Vascular branch lengths L", np.array(Ls), "m")            
+    print_stats("Vascular branch lengths L", 1.e3*np.array(Ls), "mm")            
     print_stats("... k L", k*np.array(Ls), "AU, (k = %3.4g)" % k )
     print_stats("<Q'_i>", Q.vector(), "m^3/s")
     print_stats("<Q'_i>", Q.vector()*1.e9, "mm^3/s")
