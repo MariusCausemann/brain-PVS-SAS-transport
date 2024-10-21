@@ -490,6 +490,7 @@ def compute_pvs_flow(meshfile, output, args):
     print_stats("<Q'_i>", Q.vector()*1.e9, "mm^3/s")
     print_stats("<u'_i>", u.vector(), "m/s")
     print_stats("<u'_i>", u.vector()*1.e3, "mm/s")
+    print_stats("<u'_i>", u.vector()*1.e6, "mum/s")
 
     fluxfile = os.path.join(output, "pvs_Q.xdmf")
     with df.XDMFFile(mesh.mpi_comm(), fluxfile) as xdmf:
@@ -538,8 +539,8 @@ if __name__ == '__main__':
     # $ mamba activate pvs_transport_env
     # $ pip install git+https://github.com/MiroK/fenics_ii.git@ufl_legacy
     # 
-    # $ python3 peristalticflow.py --frequency 1.0 --wavelength 2000.0 --amplitude 0.01 --beta 3.0 --recompute # Cardiac
-    # $ python3 peristalticflow.py --frequency 0.1 --wavelength 80.0 --amplitude 0.1 --beta 3.0 
+    # $ python3 peristalticflow.py --frequency 1.0 --wavelength 2.0 --amplitude 0.01 --beta 2.0 --recompute # Cardiac ~1 Hz, 2m/s pulse wave speed
+    # $ python3 peristalticflow.py --frequency 0.1 --wavelength 0.02 --amplitude 0.1 --beta 2.0 # 
     #
     # --recompute is only needed upon first run)
     
@@ -549,7 +550,7 @@ if __name__ == '__main__':
     parser.add_argument('--recompute', action="store_true")
     parser.add_argument('--run-tests', action="store_true", help="Just run basic test.")
     parser.add_argument('--frequency', action="store", default=1.0, help="Vascular wave frequency (Hz)", type=float)
-    parser.add_argument('--wavelength', action="store", default=2000.0, help="Vascular wave wavelength (m)", type=float)
+    parser.add_argument('--wavelength', action="store", default=2.0, help="Vascular wave wavelength (m)", type=float)
     parser.add_argument('--amplitude', action="store", default=0.01, help="Vascular wave relative amplitude (relative to (inner) vascular radius)", type=float)
     parser.add_argument('--beta', action="store", default=2.0, help="Ratio outer-to-inner vessel radio (PVS width + 1)", type=float)
     parser.add_argument('--tag', action="store", default="tmp", help="Tag")
