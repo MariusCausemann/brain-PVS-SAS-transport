@@ -559,7 +559,7 @@ Here $\phi$ is the fluid volume fraction (or porosity) of the brain (where $\phi
 \end{cases} . 
 \]
 We refer to \Cref{tab:overview} for the values of the used parameters.
-In the above,  $|\Lambda^i \cap \Omega_{\rm{PAR}}|$ (resp.  $|\Lambda^i \cap \Omega_{\rm{csf}}|$) is nonzero whenever the surrounding PVS around the line $\Lambda^i$ intersects $\Omega_{\rm{PAR}}$ (resp. $\Omega_{\rm{csf}}$). If the surrounding PVS intersects both, then we set $\xi = \xi_{\mathrm{PVS}, \rm{PAR}}$ (resp $\xi_{\mathrm{PVS}, \rm{PAR}}$) if the PVS lies mostly ($80$ percent) in $\Omega_{\rm{PAR}}$ (resp. $\Omega_{\rm{PVS}}$) and the interaction with $\Omega_{\rm{PVS}}$ (resp. $\Omega_{\rm{PAR}}$ is ignored. 
+In the above,  $|\Lambda^i \cap \Omega_{\rm{PAR}}|$ (resp.  $|\Lambda^i \cap \Omega_{\rm{csf}}|$) is nonzero whenever the surrounding PVS around the line $\Lambda^i$ intersects $\Omega_{\rm{PAR}}$ (resp. $\Omega_{\rm{csf}}$). If the surrounding PVS intersects both, then we set $\xi = \xi_{\mathrm{PVS}, \rm{PAR}}$ (resp $\xi_{\mathrm{PVS}, \rm{CSF}}$) if the PVS lies mostly ($80$ percent) in $\Omega_{\rm{PAR}}$ (resp. $\Omega_{\rm{CSF}}$) and the interaction with $\Omega_{\rm{PVS}}$ (resp. $\Omega_{\rm{CSF}}$ is ignored. 
 
 Further, $P$ and $A$ are the perimeter and area of the PVS which can vary along the centerline network, respectively; and $f$ and $\hat{f}$ represent given sources of solute in $\Omega$ and $\Lambda$, respectively. Finally, we remark that $\hat u$ takes different values on each $\Lambda_i$.  Both $\Omega$ and $\Lambda$ are fixed in time here. Finally, we note that this version of the model assumes that there is no interaction between the inner perivascular boundary and the blood vessel. 
 
@@ -837,6 +837,8 @@ We use the diffusion coefficient $D_{\rm gad}$ of Gadubutrol in free water in th
 \subsection*{Limitations}
 
 \begin{itemize}
+\item 
+  Inaccuracies in vascular geometry representation - and consequences downstream for e.g. numerical integration.
 \item
   PVS geometry assumptions and approximations. Humans different from mice. Limitations in resolution.
 \item
