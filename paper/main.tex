@@ -738,23 +738,14 @@ is the cross-section area of the PVS segment ($A_i = \pi (R_2^i -
 R_1^i$)) and $\langle Q_i' \rangle$ is its mean flow rate. Two wall
 motion patterns are considered: \emph{cardiac} pulsations with $f =
 1.0$ (Hz), $\lambda = 2000$ (mm) and $\varepsilon = 1\%$, and very
-low-frequency \emph{vasomotion} with $f = 0.1$ (Hz), $\lambda = 80$
-(mm), and $\varepsilon = 10\%$. The corresponding net convective
+low-frequency \emph{vasomotion} with $f = 0.1$ (Hz), $\lambda = 20$
+(mm), and $\varepsilon = 10\%$. \mer{The corresponding net convective
 velocities (in the antegrade direction) are for \emph{vasomotion}:
 $9.345 \pm 6.695$ $\mu$m/s, range: $(-65.81, 63.96) \mu$m/s, and for
 \emph{cardiac}: $0.475 \pm 0.5115 \mu$m/s, range: $(- 3.825, 4.861)
 \mu$m/s, where negative velocities correspond to retrograde flow
-(\Cref{fig:pvs}\mer{X}). No perivascular fluid flow induced by wall
+(\Cref{fig:pvs}\mer{X}).} No perivascular fluid flow induced by wall
 motion is considered for the venous network.
-
-% python3 peristalticflow.py --frequency 0.1 --wavelength 80.0 --amplitude 0.1 --beta 3.0 --recompute
-% <Q'_i> (avg, std, min, max): 0.3775, 0.4485, -1.654, 3.387 (mm^3/s)
-% <u'_i> (avg, std, min, max): 0.009345, 0.006695, -0.06581, 0.06396 (mm/s)
-% <u'_i> (avg, std, min, max): 9.345, 6.695, -65.81, 63.96 (mum/s)
-%python3 peristalticflow.py --frequency 1.0 --wavelength 2000.0 --amplitude 0.01 --beta 3.0 --recompute
-%<Q'_i> (avg, std, min, max): 0.01933, 0.02733, -0.09614, 0.2203 (mm^3/s)
-%<u'_i> (avg, std, min, max): 0.000475, 0.0005115, -0.003825, 0.004861 (mm/s)
-%<u'_i> (avg, std, min, max): 0.475, 0.5115, -3.825, 4.861 (mum/s)
 
 \subsection*{Perivascular fluid flow induced by pressure gradients/fluid source}
 
@@ -919,38 +910,27 @@ The corresponding author is responsible for submitting a \href{http://www.nature
 \subsection{Estimating net perivascular flow induced by peristaltic waves}
 \label{sec:sup:peristalsis}
 
-We use the theoretical framework introduced by Gjerde et
-al.~\cite{gjerde2023directional} to compute an analytic estimate of
-the time-averaged (or \emph{net}) flow rates $\langle Q'_i \rangle$
-(mm$^3$/s) induced by peristaltic pumping in a perivascular network
-$\Lambda = \cup_i \Lambda_i$. The motion of the (inner) vascular wall
-is described by a periodic traveling (peristaltic) wave of relative amplitude $\varepsilon$, wave length $\lambda$ (mm) and frequency $f$, acting normal to the wall. By definition, the wave number is $k = 2 \pi/\lambda$ and the angular frequency is $\omega = 2 \pi f$. Each PVS segment $\Lambda_i$ has length $L_i$ with wave-relative length $\ell_i = k L$, baseline inner radius $r_{o_i}'$, fixed outer radius $r_{e_i}'$, and outer-to-inner ratio $\beta_i = r_{e_i}'/r_{o_i}'$ (see also \Cref{tab:pvs:parameters}). These geometric parameters and the assumption of annular cylindrical PVS segments yield hydraulic resistances $\mathcal{R}_{o, i}$ and additional characteristic parameters, see \cite{gjerde2023directional} for the complete definitions and schematics. Since the analytical estimate is derived
-under the assumption that $k L \approx \mathcal{O} 1)$~\cite{gjerde2023directional} and has been verified against numerical simulations for $k L$ of the order $10^{-1}-10^2$~\cite[Table I]{gjerde2023directional}, we consider it
-applicable for the wave lengths and vascular network data considered
-here in which $k L$ ranges from $0.003$ to $15.7$.
-%Vascular branch lengths L (avg, std, min, max) (mm): 26.91093675823157 30.884149011946235 1.0 200.32862451491792
-%... k L: (avg, std, min, max) 2.113580030521996 2.4256353912075688 0.07853981633974483 15.733773376995357 (k = 0.07853981633974483 ) # lmbda = 80 mm
-%... k L: (avg, std, min, max) 0.08454320122087983 0.09702541564830276 0.0031415926535897933 0.6293509350798143 (k = 0.0031415926535897933 ) # lmbda = 2000 mm
-% 
+We use the theoretical framework introduced by Gjerde et al.~\cite{gjerde2023directional} to compute an analytic estimate of the time-averaged (or \emph{net}) flow rates $\langle Q'_i \rangle$ (mm$^3$/s) induced by peristaltic pumping in a perivascular network$\Lambda = \cup_i \Lambda_i$. The motion of the (inner) vascular wall is described by a periodic traveling (peristaltic) wave of relative amplitude $\varepsilon$, wave length $\lambda$ (mm) and frequency $f$, acting normal to the wall. By definition, the wave number is $k = 2 \pi/\lambda$ and the angular frequency is $\omega = 2 \pi f$. Each PVS segment $\Lambda_i$ has length $L_i$ with wave-relative length $\ell_i = k L$, baseline inner radius $r_{o_i}'$, fixed outer radius $r_{e_i}'$, and outer-to-inner ratio $\beta_i = r_{e_i}'/r_{o_i}'$ (see also \Cref{tab:pvs:parameters}). These geometric parameters and the assumption of annular cylindrical PVS segments yield hydraulic resistances $\mathcal{R}_{o, i}$ and additional characteristic parameters, see \cite{gjerde2023directional} for the complete definitions and schematics. Since the analytical estimate is derived under the assumption that $k L \approx \mathcal{O} 1)$~\cite{gjerde2023directional} and has been verified against numerical simulations for $k L$ of the order $10^{-1}-10^2$~\cite[Table I]{gjerde2023directional}, we consider it applicable for the wave lengths and vascular network data considered here in which $k L$ ranges from \mer{$X$ to $Y$.}
+
 \begin{table}
   \small
   \begin{tabular}{llrc}
     \toprule
     Parameter & Description & Value(s)  & Ref.\\ 
     \midrule
-    Relative PVS size $\beta$ & $\beta = \beta_i = r_{e_i} / r_{o_i}$ & 3 & \cite{mestre2018flow} \\
+    Relative PVS size $\beta$ & $\beta = \beta_i = r_{e_i} / r_{o_i}$ & 2 & $\approx$\cite{eide2024functional} \\
     Wave frequency $f$ & Traveling wave frequency of vascular motion & $0.1-1.0$ Hz & \discuss{\cite{gjerde2023directional}} \\
-    Wave length $\lambda$ & Traveling wave length of vascular motion & $80-2000$ mm & \discuss{\cite{gjerde2023directional}} \\
+    Wave length $\lambda$ & Traveling wave length of vascular motion & $20-2000$ mm & \discuss{\cite{broggini2024long, gjerde2023directional}} \\
     Wave amplitude & Relative amplitude of inner wall motion & $1-10\%$ & \discuss{\cite{gjerde2023directional}} \\
-    Vascular radii $\{r_{o_i}\}$ & Vascular network radii data (avg $\pm$ std, $\min$, $\max$) & $1.22 \pm 0.35$, $1.0$, $3.0$  mm & \cite{hodneland2019new} \\
-    Vascular branch lengths $\{L_{i}\}$ & Path length between vasc. junctions (avg $\pm$ std, $\min$, $\max$) & $26.91 \pm 30.89$, $1.0$, $200.33$  mm & \discuss{--} \\
+    Vascular radii $\{r_{o_i}\}$ & Vascular network radii data (avg $\pm$ std, $\min$, $\max$) & $X$, $X$, $X$  mm & \cite{hodneland2019new} \\
+    Vascular branch lengths $\{L_{i}\}$ & Path length between vasc. junctions (avg $\pm$ std, $\min$, $\max$) & $X \pm Y$, $X$, $X$  mm & \discuss{--} \\
     \bottomrule
   \end{tabular}
   \caption{Perivascular flow induced by vascular wall motion: parameters and key data characteristics.}
   \label{tab:pvs:parameters}
 \end{table}
-% Vascular radii r_o (min, max, avg, std) (mm):  3.0 1.0 1.2189823238697475 0.3460254324721098
-% Vascular branch lengths L (avg, std, min, max) (mm): 26.91093675823157 30.884149011946235 1.0 200.32862451491792
+% Vascular radii r_o (min, max, avg, std) (mm):  ....
+% Vascular branch lengths L (avg, std, min, max) (mm): ...
 
 \input{tikz/fig_pvs_flow}
 This theoretical formalism~\cite{gjerde2023directional} is defined
