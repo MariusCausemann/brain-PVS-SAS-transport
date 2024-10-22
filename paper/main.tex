@@ -259,7 +259,7 @@ To simulate the production-driven flow, we impose an inflow of $630\,$ml/day acr
 Assessing the effect of cardiac-driven dispersion, we compute a steady CSF flow field at peak cranial blood volume during the cardiac cycle. We mimic resulting the reduced CSF space volume by imposing an inflow of $8\,$ml/s and $0.31\,$ml/s across the outer skull surface and the lateral ventricle surface and allowing free outflow into the spinal SAS. In addition, we upscale the obtained pressure field to account for the lack of pulsatile inertial effects in our model (see \ref{sec:dispersion_details}). In this scenario, we observe a pressure drop of $8.5\,$Pa between lateral ventricles and the spinal SAS and a maximum flow velocity of $0.29\,$m/s in the upper section of the spinal SAS.
 Finally, we estimate a spatially varying dispersion enhancement factor $R$ from cardiac-induced pulsatily by combining the computed pressure field with the theory of shear-augmented dispersion (see \Cref{sec:dispersion_details}). We find that cardiac-induced pulsatile CSF flow increases the effective diffusion by up to two orders of magnitude in the aqueduct and around the cisterna magna, but has little effect in most of the SAS ($R\approx 1$) (\Cref{fig:csf_flow_R}). 
 
-\mer{MER: @Marius: 2-3 sentences motivating the choice of production-induced flow and dispersion enhanced by pulsatility~\cite{ray2021quantitative}. 2-3 sentences summarizing what you computed. 4-6 sentences describing the flow and dispersion results.\Cref{fig:csf}}
+\mer{MER/MC: We should compare the peak and mean velocity from the CSF production to the numbers from \cite{hornkjol2022csf} (and others if there are any?) and pressure differences in the system to \cite{vinje2019respiratory}. 2 sentences here for now - to be moved to Discussion. And also 2 sentences on the dispersion field \cite{asgari2016glymphatic, sharp2019dispersion, hornkjol2022csf, ray2021quantitative} (others for dispersion in the SAS, Linninger?, Sweetman?).}
 
 \begin{figure}[h!]
 \centering 
@@ -503,7 +503,7 @@ $\Gamma_{\mathrm{skull}}$ facing the dura and skull and $\Gamma_{\rm SSAS}$ repr
 
 \mer{Is this up-to-date? @Rami checks sanity and numbers of paragraph.}
 
-We skeletonize the binary masks of the arteries and veins of the
+We skeletonize the binary masks of the arteries (and veins) of the
 Hodneland~\cite{hodneland2019new} data set using
 Kiminaro~\cite{william_silversmith_2021_5539913}, to obtain the
 centerline $\Lambda^i$ and radius $R_1^i$ of each detected vessel $i$,
@@ -1108,7 +1108,7 @@ Considering the mean tracer concentrations in the CSF, parenchyma and arterial a
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
      \includegraphics[width= 1 \linewidth]{figures/mesh_refinement_art_ven_mean.png}
-         \caption{Mean tracer concentration in PVSs around veins and arteries  under mesh refinement}
+         \caption{Mean tracer concentration in PVSs around (veins and) arteries  under mesh refinement}
     \end{subfigure}
     \caption{Mean tracer concentrations over the first 24\,h after injection on the CSF and parenchyma (a), and the arterial and venous PVS (b) computed on the LowRes, standard and HighRes meshes with a timestep of $dt=120$\,s.}
     \label{fig:mesh_convergence_concentrations}
@@ -1142,7 +1142,7 @@ Considering the mean tracer concentrations in the CSF, parenchyma and arterial a
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
      \includegraphics[width= 1\linewidth]{figures/time_refinement_art_ven_mean.png}
-         \caption{Mean tracer concentration in PVSs around veins and arteries under time step refinement}
+         \caption{Mean tracer concentration in PVSs around (veins and) arteries under time step refinement}
     \end{subfigure}
     \caption{Mean tracer concentrations over the first 24\,h after injection on the CSF and parenchyma (a), and the arterial and venous PVS (b) computed on the standard resolution mesh for timesteps $dt \in \{60, 120, 240 \}$\,s.}    \label{fig:time_convergence_concentrations}
 \end{figure}
