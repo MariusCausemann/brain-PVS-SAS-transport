@@ -251,9 +251,23 @@ Cerebrospinal fluid flow
 
 \subsection*{II: CSF flow}
 
-\mer{MER: @Marius: 2-3 sentences motivating the choice of production-induced flow and dispersion enhanced by pulsatility~\cite{ray2021quantitative}. 2-3 sentences summarizing what you computed. 4-6 sentences describing the flow and dispersion results.} \draft{\lipsum[1]} \Cref{fig:csf}
+Flow of CSF through the SAS and the ventricular system is a crucial driver of transport in the human brain environment. While cardiac- and respiratory induced oscillatory flow increases mixing, the production of CSF in the choroid plexus creates a steady advective flow within the CSF-filled spaces of the cranium \cite{hornkjol2022csf}. 
+We construct a 3D model of the SAS and the ventricular system (\Cref{fig:csf_flow_geom}) and compute CSF flow fields for two different scenarios: CSF production in the choroid plexus and CSF flow at peak volumetric blood influx of the cardiac cycle.
+
+To simulate the production-driven flow, we impose an inflow of $630\,$ml/day across the surface of the lateral ventricle and allow a resistive outflow across the upper convexity of the skull (\Cref{fig:csf_flow_geom}), leading to a total pressure drop of $35\,$mPa between the production and outflow sites. A maximum flow velocity of $2\,$mm/s is attained in the aqueduct (\Cref{fig:csf_flow_prod}) (\mar{add mean/max in the SAS}).
+
+Assessing the effect of cardiac-driven dispersion, we compute a steady CSF flow field at peak cranial blood volume during the cardiac cycle. We mimic resulting the reduced CSF space volume by imposing an inflow of $8\,$ml/s and $0.31\,$ml/s across the outer skull surface and the lateral ventricle surface and allowing free outflow into the spinal SAS. In addition, we upscale the obtained pressure field to account for the lack of pulsatile inertial effects in our model (see \ref{sec:dispersion_details}). In this scenario, we observe a pressure drop of $8.5\,$Pa between lateral ventricles and the spinal SAS and a maximum flow velocity of $0.29\,$m/s in the upper section of the spinal SAS.
+Finally, we estimate a spatially varying dispersion enhancement factor $R$ from cardiac-induced pulsatily by combining the computed pressure field with the theory of shear-augmented dispersion (see \Cref{sec:dispersion_details}). We find that cardiac-induced pulsatile CSF flow increases the effective diffusion by up to two orders of magnitude in the aqueduct and around the cisterna magna, but has little effect in most of the SAS ($R\approx 1$) (\Cref{fig:csf_flow_R}). 
+
+\mer{MER: @Marius: 2-3 sentences motivating the choice of production-induced flow and dispersion enhanced by pulsatility~\cite{ray2021quantitative}. 2-3 sentences summarizing what you computed. 4-6 sentences describing the flow and dispersion results.\Cref{fig:csf}}
+
 \begin{figure}[h!]
 \centering 
+\begin{subfigure}[b]{0.33\textwidth}
+\includegraphics[width = 1 \textwidth]{example-image-a}
+\caption{3D model of the SAS and ventricles}
+\label{fig:csf_flow_geom}
+\end{subfigure}
 \begin{subfigure}[b]{0.33\textwidth}
 \includegraphics[width = 1 \textwidth]{figures/csf_v.png}
 \caption{CSF flow from CSF production}
@@ -267,7 +281,7 @@ Cerebrospinal fluid flow
 \begin{subfigure}[b]{0.33\textwidth}
 \includegraphics[width = 1 \textwidth]{figures/R.png} 
 \caption{Dispersion enhancement factor $R$}
-\label{fig:visualize_R}
+\label{fig:csf_flow_R}
 \end{subfigure}
 \caption{\mer{A) Illustration of 3D-domains; (B) Illustration of
     relevant boundaries; C) CSF flow induced by CSF production; D) CSF
