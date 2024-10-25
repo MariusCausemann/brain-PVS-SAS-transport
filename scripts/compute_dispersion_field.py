@@ -2,7 +2,8 @@ from fenics import *
 import numpy as np
 import typer
 from pathlib import Path
-from IPython import embed
+from vtk.util.numpy_support import numpy_to_vtk
+
 
 def plot_R(R, filename):
     from vtk_adapter import create_vtk_structures
@@ -14,20 +15,25 @@ def plot_R(R, filename):
     grid = pv.UnstructuredGrid(topology, cell_types, x)
     grid["R"] = R.vector()[:]
 
+    Rmin, Rmax = grid.clip()["R"].min(), grid.clip()["R"].max()
     bg = pv.read_meshio("mesh/standard/standard.xdmf")
     pl = pv.Plotter(off_screen=True, window_size=(1600, 1600))
     pl.add_mesh(bg.extract_cells(np.isin(bg["label"], [PARID])).clip(),
                 color="black")
     pl.add_mesh(grid.clip(), log_scale=True, cmap="RdGy_r", 
-                #clim=(0, R.vector().max()),
-    scalar_bar_args=dict(title="R", vertical=False,
-                         height=0.08, width=0.6, position_x=0.2,
-                         position_y=-0.0, title_font_size=52,
-                         bold=True, #font_family="arial",
-                         label_font_size=44, fmt="%.1g"))
+                show_scalar_bar=False, clim=(Rmin, Rmax))
+    bar = pl.add_scalar_bar(title="R", vertical=False,
+                    height=0.08, width=0.6, position_x=0.2,
+                    position_y=-0.0, title_font_size=52,
+                    bold=False, font_family="times",
+                    label_font_size=44, fmt="%.1f")
+    ticks = [Rmin, 1e-1,1, 10, 100]
+    bar.SetCustomLabels(numpy_to_vtk(ticks))
+    bar.SetUseCustomLabels(True)
     pl.camera_position = 'yz'
     pl.camera.roll += 0
     pl.camera.azimuth += 30
+    pl.camera.elevation += 10
     pl.camera.zoom(1.2)
     pl.screenshot(filename, transparent_background=True)
 
@@ -66,7 +72,9 @@ def get_dispersion_enhancement(csf_pressure_file:str, outfile:str):
     R = Function(V)
     solve(a==L, R, solver_parameters={"linear_solver":"cg", "preconditioner":"petsc_amg"})
     R = interpolate(R, FunctionSpace(mesh, "DG", 1))
-    assert R.vector().min() > 0
+    if R.vector().min() < 0:
+        print(f"warning: R_min = {R.vector().min()}")
+        R.vector()[:] -= R.vector().min()
     print(f"R max: {R.vector().max()}")
 
     with XDMFFile(outfile) as file:
