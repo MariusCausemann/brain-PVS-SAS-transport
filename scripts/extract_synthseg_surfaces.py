@@ -113,10 +113,10 @@ pv.save_meshio("mesh/T1/surfaces/LV.ply", LV_surf.scale(mm2m))
 # compute V3 and V4 surface
 V34_mask = np.isin(img, [SYNTHSEG_V3, SYNTHSEG_V4]) + conn
 V34_mask = skim.binary_dilation(V34_mask, footprint=skim.ball(1))
-V34_mask = extract_surface(V34_mask, resolution=resolution, origin=origin)
-V34_mask = V34_mask.smooth_taubin(n_iter=20, pass_band=0.05)
-V34_mask.compute_normals(inplace=True, flip_normals=False)
-pv.save_meshio("mesh/T1/surfaces/V34.ply", V34_mask.scale(mm2m))
+V34_surf = extract_surface(V34_mask, resolution=resolution, origin=origin)
+V34_surf = V34_surf.smooth_taubin(n_iter=20, pass_band=0.05)
+V34_surf.compute_normals(inplace=True, flip_normals=False)
+pv.save_meshio("mesh/T1/surfaces/V34.ply", V34_surf.scale(mm2m))
 
 # compute a layer of parenchymal tissue around the ventricles
 # to get a watertight ventricular system and
@@ -143,3 +143,24 @@ par_surf = par_surf.smooth_taubin(n_iter=20, pass_band=0.05)
 par_surf = par_surf.clip_closed_surface(normal=(0,0,1), origin=(0,0, 1))
 par_surf.compute_normals(inplace=True, flip_normals=False)
 pv.save_meshio("mesh/T1/surfaces/parenchyma_incl_ventr.ply", par_surf.scale(mm2m))
+
+
+
+
+os.makedirs("mesh/T1/box_surfaces/", exist_ok=True)
+c = skull_surf.center_of_mass()*mm2m
+r = 0.1
+z = np.array([0,0,1])
+skull = pv.Box(skull_surf.bounds).scale(mm2m)
+par = pv.Sphere(r*0.6, center=c)
+LV = pv.Sphere(r*0.2, center=c)
+V34 = pv.Cylinder(c -0.4*r*z, direction=z, height=r*0.42, radius=0.06*r)
+
+for s,n in zip([V34, LV, par, skull],
+                ["V34", "LV", "parenchyma_incl_ventr", "skull"]):
+    pv.save_meshio(f"mesh/T1/box_surfaces/{n}.ply",s)
+
+l = pv.lines_from_points([c -r*z, c -0.5*r*z, c])
+l["radius"] = 0.01*np.ones(l.n_points)
+l["root"] = [2, 0, 1]
+l.save("mesh/networks/simple_line.vtk")
