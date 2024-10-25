@@ -7,15 +7,7 @@ from pvs_flow import pvs_flow_system
 from test_map_on_global_coords_shift import map_kdtree, map_dg_on_global
 from generate_synthseg_mesh import CSFID, V34ID, PARID, LVID, CSFNOFLOWID
 import typer
-from plotting_utils import read_config, set_plotting_defaults
-import seaborn as sns
-import pyvista as pv
-import matplotlib.pyplot as plt
-from matplotlib.ticker import PercentFormatter
-from label_arteries import pointlabels
-import pandas as pd
-import yaml
-from branch_marking import color_branches
+from plotting_utils import read_config
 
 m2mm = 1e3
 m2mum = 1e6
@@ -27,15 +19,12 @@ def map_pressure_on_network(p, pnet):
     pnet.vector()[:] = p.vector()[idx]
 
 
-def get_blood_flow_orientation(tau, radius_f, supply_nodes):
+def get_blood_flow_orientation(tau, radius_f, root_marker):
     mesh = tau.function_space().mesh()
     a, L, W = pvs_flow_system(radius_f, tau, 2, f=Constant(0))
 
-    supply_marker = MeshFunction("size_t", mesh, 0, 0)
-    supply_marker.array()[supply_nodes] = 1
-
     bcout = DirichletBC(W.sub(1), Constant(0), "on_boundary")
-    bcin = DirichletBC(W.sub(1), Constant(1), supply_marker, 1)
+    bcin = DirichletBC(W.sub(1), Constant(1), root_marker, 2)
 
     A, b = assemble_system(a, L, [bcout, bcin])
     wh = Function(W)
@@ -58,6 +47,7 @@ def compute_pvs_flow(csf_flow_model:  str):
     pmesh = Mesh()
     with HDF5File(MPI.comm_world, pressure_file,'r') as f:
         f.read(pmesh, "mesh", False)
+        print(f.attributes("/pressure").to_dict()["signature"])
         p_elem = eval(f.attributes("/pressure").to_dict()["signature"])
         DG = FunctionSpace(pmesh, p_elem)
         p = Function(DG)
@@ -89,8 +79,7 @@ def compute_pvs_flow(csf_flow_model:  str):
     # function on the network describing tangent to the edge. Orientation
     # is arbitrary as long same tau is used throught the code
     tau = xii.TangentCurve(mesh)
-    supply_nodes = [8065, 7173, 4085]
-    downstream = get_blood_flow_orientation(tau, radius_f, supply_nodes)
+    downstream = get_blood_flow_orientation(tau, radius_f, artery_roots)
 
     a, L, W = pvs_flow_system(radius_f, downstream*tau, radius_ratio, f=Constant(0))
 
@@ -113,96 +102,17 @@ def compute_pvs_flow(csf_flow_model:  str):
     ph.rename("p","p")
     pvs_flow_vec.rename("uh", "uh")
     os.makedirs(results_dir, exist_ok=True)
-    with XDMFFile(f'{results_dir}/pvs_flow.xdmf') as xdmf:
-        xdmf.write_checkpoint(pvs_flow_vec, "velocity")
+
+    with HDF5File(MPI.comm_world, f'{results_dir}/pvs_flow.hdf','w') as f:
+        f.write(mesh, "mesh")
+        f.write(pvs_flow_vec, "u")
+        f.write(uh_mag, "umag")
+        f.write(ph, "p")
+        f.write(radius_f, "radii")
+
     with XDMFFile(f'{results_dir}/pvs_flow_vis.xdmf') as xdmf:
         xdmf.write(pvs_flow_vec, t=0)
         xdmf.write(ph, t=0)
     
-
-    segments, segids ,_ = color_branches(mesh)
-    dxs = Measure("dx", mesh, subdomain_data=segments)
-
-
-    seglengths = np.array([assemble(1*dxs(si)) for si in segids])
-    assert (seglengths > 0).all()
-    umag = np.array([assemble(m2mum*uh_mag*dxs(si))/ l for si,l in zip(segids, seglengths)])
-    umagabs = abs(umag)
-    uavg = np.average(umagabs, weights=seglengths)
-    umax = umagabs.max()
-    umed = np.median(umagabs)
-
-    set_plotting_defaults()
-
-    fig, ax = plt.subplots()
-    counts, bins, containers = plt.hist(umag, density=False, bins=50, histtype="bar",
-            range=(-0.4, 0.6), edgecolor='black', linewidth=0.4, 
-                    weights=seglengths / seglengths.sum())
-    for bar, ca in zip(containers, sns.color_palette("Purples_r", n_colors=20) + 
-                                   sns.color_palette("Greens", n_colors=30)):
-        bar.set_facecolor(ca)
-    plt.axvline(uavg, color="black", linestyle=":", label=f"avg: {uavg:.2f} µm/s")
-    plt.axvline(umed, color="black", linestyle="-.", label=f"median: {umed:.2f} µm/s")
-    plt.axvline(umax, color="black", linestyle="--", label=f"max: {umax:.2f} µm/s")
-    plt.xlabel("PVS flow velocity (µm/s)")
-    plt.ylabel("frequency")
-    plt.tight_layout()
-    plt.xlim((-0.4, 0.6))
-    plt.legend(frameon=False)
-    ax.yaxis.set_major_formatter(PercentFormatter(1))
-    plt.savefig(f"{results_dir}/velocity_histo.png")
-
-    points = np.array([c for n,c in pointlabels])
-    cellidx = map_kdtree(FunctionSpace(mesh, "DG", 0).tabulate_dof_coordinates(),
-                        points)
-
-
-    artlabels = [n for n,c in pointlabels]
-
-    artsegids = [int(segments.array()[i]) for i in cellidx]
-
-    # plot pressure, velocity and radius at main arteries
-    pressures, velocities, radii, lengths = [], [], [], []
-    for si in artsegids:
-        length = assemble(1*dxs(si))
-        assert length > 0
-        pressures.append(assemble(Pa2mPa*ph*dxs(si)) / length)
-        velocities.append(assemble(m2mum*uh_mag*dxs(si))/ length)
-        radii.append(assemble(m2mm*as_P0_function(artery_radii)*dxs(si))/ length)
-        lengths.append(length*m2mm)
-    df = pd.DataFrame({"p":pressures, "u":velocities, "loc":artlabels, "L":lengths,
-                        "R":radii}).sort_values(by="loc")
-
-    plt.figure()
-    ax = sns.barplot(df, x="loc", y="p", palette="crest")
-    ax.set_xlabel("")
-    ax.set_ylabel("pressure (mPa)")
-    plt.savefig(f"{results_dir}/arteries_labels_pressure.png")
-
-    plt.figure()
-    ax = sns.barplot(df, x="loc", y="u", palette="flare")
-    ax.set_xlabel("")
-    ax.set_ylabel("flow velocity (μm/s)")
-    plt.savefig(f"{results_dir}/arteries_labels_velocity.png")
-
-    plt.figure()
-    ax = sns.barplot(df, x="loc", y="R", palette="blend:#7AB,#EDA")
-    ax.set_xlabel("")
-    ax.set_ylabel("radius (mm)")
-    plt.savefig(f"{results_dir}/arteries_labels_radius.png")
-
-    plt.figure()
-    ax = sns.barplot(df, x="loc", y="L", palette="blend:#7AB,#EDA")
-    ax.set_xlabel("")
-    ax.set_ylabel("segment length (mm)")
-    plt.savefig(f"{results_dir}/arteries_labels_length.png")
-
-    length = assemble(1*dx(domain=mesh))
-    umean = assemble(uh_mag*dx) / length
-    umax = norm(uh_mag.vector(), "linf")
-    metrics = dict(pvsumean=umean,pvsumax=umax)
-    with open(f'{results_dir}/pvs_metrics.yml', 'w') as outfile:
-        yaml.dump(metrics, outfile, default_flow_style=False)
-
 if __name__ == "__main__":
     typer.run(compute_pvs_flow)
