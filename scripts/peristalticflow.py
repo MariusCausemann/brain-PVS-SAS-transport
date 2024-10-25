@@ -12,9 +12,6 @@ import numpy as np
 
 import pvs_network_netflow as pnf
 
-# FIXME: Automate
-SUPPLY_NODES = [8065, 7173, 4085]
-
 def my_read_vtk_network(filename):
     """Read the VTK file given by filename, return a FEniCS 1D Mesh representing the network, a FEniCS MeshFunction (double) representing the radius of each vessel segment (defined over the mesh cells), and a FEniCS MeshFunction (size_t) defining the roots of the network (defined over the mesh vertices, roots are labelled by 2 or 1.) 
 
@@ -229,14 +226,10 @@ def add_branches(G, a0, a, a_, T, indices, radii, lengths, index_map,
         print("e2[0] = ", e2[1])
         print("e3[0] = ", e3[1])
         
-        if (a == 8103):
-            add_branches(G, a, 8201, a, T, [], [], [], index_map, downstream)
-            add_branches(G, a, 12073, a, T, [], [], [], index_map, downstream)
-            print("WARNING: Ignoring edge: (degree > 3) ", e2)
-        else:
-            add_branches(G, a, e1[1], a, T, [], [], [], index_map, downstream)
-            add_branches(G, a, e2[1], a, T, [], [], [], index_map, downstream)
-            print("WARNING: Ignoring edge: (degree > 3) ", e3)
+        
+        add_branches(G, a, e1[1], a, T, [], [], [], index_map, downstream)
+        add_branches(G, a, e2[1], a, T, [], [], [], index_map, downstream)
+        print("WARNING: Ignoring edge: (degree > 3) ", e3)
         #add_branches(G, a, e3[1], a, T, [], [], [], index_map, downstream)
 
     if degree > 4:
@@ -365,14 +358,11 @@ def extract_minimal_tree(G, mesh, i0, downstream=None):
     return T, cell_index_map, downstream
 
 def compute_subtrees(filename, output):
-
-    # Label the network supply nodes (FIXME: automate)
-    supply_nodes = SUPPLY_NODES
     
     # Read network information from file
-    mesh, radii, _ = my_read_vtk_network(filename)
+    mesh, radii, root_marker = my_read_vtk_network(filename)
     mesh.init()
-
+    supply_nodes = np.where(root_marker.array()[:]==2)[0]
     # Convert mesh to weighted graph
     G = mesh_to_weighted_graph(mesh, radii)
 
@@ -414,18 +404,21 @@ def dg0_to_mf(u):
     mf.array()[:] = u.vector().get_local()
     return mf
 
+def mf_to_dg(mf):
+    dg = df.Function(df.FunctionSpace( mf.mesh(), "DG", 0))
+    dg.vector()[:] = mf.array()[:]
+    return dg
+
 def print_stats(name, L, unit):
     print("%s (avg, std, min, max): %.4g, %.4g, %.4g, %.4g (%s)" %
           (name, np.average(L), np.std(L), L.min(), L.max(), unit))
 
 def compute_pvs_flow(meshfile, output, args):
 
-    # Label the network supply nodes (FIXME: automate)
-    roots = SUPPLY_NODES
-
     # Read mesh from file. 
-    mesh, radii, _ = my_read_vtk_network(meshfile)
+    mesh, radii, root_marker = my_read_vtk_network(meshfile)
     mesh.init()
+    roots = np.where(root_marker.array()[:]==2)[0]
     DG0 = df.FunctionSpace(mesh, "DG", 0)
 
     print_stats("Vascular radii r_o", radii.array(), "m")
@@ -510,15 +503,43 @@ def compute_pvs_flow(meshfile, output, args):
     with df.XDMFFile(mesh.mpi_comm(), ufile) as xdmf:
         print("Saving net velocity (as mf) to %s" % ufile)
         xdmf.write(dg0_to_mf(u))
-                
+
+    downstream = df.MeshFunction("double", mesh, 1, 0)
+    downstream_file = os.path.join(output, "downstream_map.xdmf")
+    tangent = df.Function(df.VectorFunctionSpace(mesh, "DG", 0))
+    for i,c in enumerate(df.cells(mesh)):
+        coords = np.array(c.get_vertex_coordinates()).reshape(2,3)
+        t = coords[1,:] - coords[0,:]
+        t /= np.linalg.norm(t)
+        tangent.vector()[3*i] = t[0]
+        tangent.vector()[3*i +1] = t[1]
+        tangent.vector()[3*i +2] = t[2]
+
+    with df.XDMFFile(mesh.mpi_comm(), downstream_file) as xdmf:
+        print(f"reading downstream from {downstream_file}")
+        xdmf.read(downstream)
+    u_directed = df.project(u*tangent*mf_to_dg(downstream), df.VectorFunctionSpace(mesh, "DG", 0))
+
+    udirfile = os.path.join(output, "pvs_u_directed.xdmf")
+    with df.XDMFFile(mesh.mpi_comm(), udirfile) as xdmf:
+        print("Saving net velocity (as mf) to %s" % udirfile)
+        xdmf.write(u_directed)
+
+    with df.HDF5File(df.MPI.comm_world, f'{output}/pvs_flow.hdf','w') as f:
+        f.write(mesh, "mesh")
+        f.write(u_directed, "u")
+        f.write(u, "umag")
+        f.write(mf_to_dg(radii), "radii")
+        f.write(df.Function(u.function_space()), "p")
+            
 def run_all_tests():
     test_graph_to_bifurcations()
 
 def main(args):
 
     # Define input network (.vtk) and output directory
-    filename = "../mesh/networks/arteries_smooth.vtk"
-    output = "../mesh/networks/arterial_trees"
+    filename = "mesh/networks/arteries_smooth.vtk"
+    output = args.output
 
     # Only need to compute subtree information once for each mesh
     if args.recompute:
@@ -552,7 +573,7 @@ if __name__ == '__main__':
     parser.add_argument('--wavelength', action="store", default=2000.0, help="Vascular wave wavelength (m)", type=float)
     parser.add_argument('--amplitude', action="store", default=0.01, help="Vascular wave relative amplitude (relative to (inner) vascular radius)", type=float)
     parser.add_argument('--beta', action="store", default=2.0, help="Ratio outer-to-inner vessel radio (PVS width + 1)", type=float)
-    parser.add_argument('--tag', action="store", default="tmp", help="Tag")
+    parser.add_argument('--output', action="store", default="tmp", help="output directory")
 
     args = parser.parse_args()
     if args.run_tests:
