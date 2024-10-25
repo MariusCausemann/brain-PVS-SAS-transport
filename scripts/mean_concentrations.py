@@ -121,11 +121,11 @@ def compare_concentrations(modelname:str, times:List[int]):
     for n, si,l in zip(artlabels, artsegids, seglengths):
         conc_at_point[n] = [assemble(c*dxs(si))/l for c in art_conc]
         avg_conc_around_point[n] = [assemble(c*dxs(si))/l for c in c_averages]
-    artlabelsets = [["BA",],["ACA"], ["MCA1", "MCA2"], ["PCA1", "PCA2"], ["ICA1", "ICA2"]]
+    artlabelsets = [["BA",],["ICA-L", "ICA-R"], ["MCA-L", "MCA-R"],["MCA2-L", "MCA2-R"], ["PCA-L", "PCA-R"], ["ACA"], ["PER-L", "PER-R"]]
 
     coldict = dict(zip(artlabels, sns.color_palette("dark", n_colors=len(artlabels))))
-    fig, axes = plt.subplots(1, len(artlabelsets), figsize=(12,4), constrained_layout=True)
-    for ax, al_set in zip(axes, artlabelsets):
+    fig, axes = plt.subplots(2, int(np.ceil(len(artlabelsets)/2)), figsize=(12,8), constrained_layout=True)
+    for ax, al_set in zip(axes.flatten(), artlabelsets):
         for n in al_set:
             col = coldict[n]
             ax.plot(times / 3600, conc_at_point[n], color=col, label=n)
