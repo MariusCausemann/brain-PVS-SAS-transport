@@ -65,7 +65,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\mer{MER: Target length: 5000 words, 4-6 figures.}
+\mer{MER: Target length: 5000 words, 4-6 figures: 600 words Intro. 1400 words Methods. 2000 words Results. 1000 words Discussion.}
 
 \section*{Introduction}
 
@@ -97,7 +97,9 @@ larger species (larger distances) and larger molecules.
     The architecture of perivascular spaces in and around the rat brain was also studied in detail by Thorne and colleagues~\cite{pizzo2018intrathecal, hannocks2018molecular}. Hannocks et al~\cite{hannocks2018molecular} characterize the molecular composition of different perivascular compartments. Pizzo et al~\cite{pizzo2018intrathecal} emphasizes the presence of stomata or pores present on the interface between blood vessels and the CSF in the subarachnoid space. Neither seem to quantitatively report on PVS widths.
   \item Mestre et al~\cite{mestre2022periarteriolar} study the properties of pial perivascular spaces in detail in mice, and in particular the structure and coverage of pial cells and pial layers surrounding leptomeningeal arteries (and arterioles). They report of pial cells forming sheaths for larger ($> 10000 \mu$m$^2$ cross-section lumen area) surface arteries and partially coverage for smaller surface arteries, with higher coverage in ventral SAS regions. They find that these pial layers do not form an impermeable barrier to small molecules. Importantly, they also study the pial coverage in aged and Alzheimer's model mice, and find significant and complex changes in these pial structures.
   \item
-    In humans, Eide and Ringstad investigate cerebrospinal fluid tracer transport in the human subarachnoid space after intrathecal injection~\cite{eide2024functional}. They observe tracer enrichment antegrade along the major cerebral arteries, and enrichment of the nearly cerebral cortex. They also consider variations in different patient cohorts and find impaired transport in iNPH patients with increased perivascular space size. They report of tracer enrichment in donut-shaped perivascular spaces. 
+    In humans, Eide and Ringstad investigate cerebrospinal fluid tracer transport in the human subarachnoid space after intrathecal injection~\cite{eide2024functional}. They observe tracer enrichment antegrade along the major cerebral arteries, and enrichment of the nearly cerebral cortex. They also consider variations in different patient cohorts and find impaired transport in iNPH patients with increased perivascular space size. They report of tracer enrichment in donut-shaped perivascular spaces. The timings here may be the best estimate of human PVS flow speeds. 
+  \item
+    Yamamoto et al~\cite{yamamoto2024perivascular} also report of contrast-enhancement in human PVS.
   \end{itemize}
 \item
   Shapes and sizes of the perivascular spaces\footnote{The area $A$ of
@@ -151,7 +153,7 @@ larger species (larger distances) and larger molecules.
   relationship seems superlinear. The peak distribution value of
   segmented PVS/lumen area is $1.12$.
   \item
-    In terms of size, Bedussi et al.~\cite{bedussi2018paravascular} report a PVS width of $\approx$20$\mu$m surrounding surface arteries branching from the MCA (of diameters $45 \pm 7$ $\mu$m). 
+    In terms of size, Bedussi et al.~\cite{bedussi2018paravascular} report a PVS width of $\approx$20$\mu$m surrounding surface arteries branching from the MCA (of diameters $45 \pm 7$ $\mu$m). Note that they include both data from mice and OCT data from humans. They report of human PVS size linearly related with the vessel size (and in the range 0.1--0.35 mm for vessels of diameter 0.1--0.5 mm).
   \item Vinje et al~\cite{vinje2021brain} and references therein illustrates the location and characteristics of human pial perivascular spaces, using human OCT data from the Bakker lab.
   \item Bollman et al~\cite{bollmann2022imaging} image the human pial vasculature at high resolution (7T), and report of pial arterial diameters in the range $50-280 \mu$m.
 \item
@@ -214,9 +216,18 @@ larger species (larger distances) and larger molecules.
   \end{equation}
    }, downstream velocity component of $12.75 \pm 6.25 \unit{\mu m/s}$. 
   \end{itemize}
+\item
+  Broggini et al~\cite{broggini2024long} describe long-wavelength travelling waves of vasomotion (0.1 Hz) in pial arterioles in mice. They find waves travelling in both directions, with waves exiting the surface of the cortex more often than chance (85 of 140 exit). ``The wavelength of the observed pial waves is long, typically 20 mm or twice the length of the mouse cortex (inset in Figure 4C).'', with relative amplitudes in the range 0.02--0.12 in pial arterioles.
+\item
+  Kedarasetti et al~\cite{kedarasetti2020functional} model functional hyperemia waves (aka stimulus-induced vasomotion, see also van Veluw et al~\cite{vanveluw2020vasomotion}). Note that the directionality of vasomotion is classically thought to be in the opposite direction of the blood flow.
+\item
+  Note that Gokina et al~\cite{gokina1996electrical} report of spontaneous rhythmic contraction in human pial arteries.
 \end{enumerate}
 Cerebrospinal fluid flow
 \begin{itemize}
+\item
+  Sweetman and Linninger~\cite{sweetman2011cerebrospinal} model the flow of cerebrospinal fluid in the cranial and spinal subarachnoid space of a healthy human driven by pulsatile displacement of the upper walls of the lateral ventricles representing volumetric changes of the vasculature, with model predictions in good agreement with clinical observations of CSF velocity magnitude and stroke volume. 
+\item Causemann et al.~\cite{causemann2022human}
 \item
   Vinje et al.~\cite{vinje2019respiratory} consider clinical measurements of intracranial pressure differences and human CSF-space geometries together with computational modelling to study CSF flow patterns in the aqueduct. They estimate the pressure gradient across the cerebral aqueduct resulting from a CSF production of 0.5L/day to be $0.009 \pm 0.006$ mmHg/m.
 \item Hornkjøl et al~\cite{hornkjol2022csf} model CSF flow and solute transport in the human SAS and brain parenchyma. 
@@ -240,9 +251,23 @@ Cerebrospinal fluid flow
 
 \subsection*{II: CSF flow}
 
-\mer{MER: @Marius: 2-3 sentences motivating the choice of production-induced flow and dispersion enhanced by pulsatility~\cite{ray2021quantitative}. 2-3 sentences summarizing what you computed. 4-6 sentences describing the flow and dispersion results.} \draft{\lipsum[1]} \Cref{fig:csf}
+Flow of CSF through the SAS and the ventricular system is a crucial driver of transport in the human brain environment. While cardiac- and respiratory induced oscillatory flow increases mixing, the production of CSF in the choroid plexus creates a steady advective flow within the CSF-filled spaces of the cranium \cite{hornkjol2022csf}. 
+We construct a 3D model of the SAS and the ventricular system (\Cref{fig:csf_flow_geom}) and compute CSF flow fields for two different scenarios: CSF production in the choroid plexus and CSF flow at peak volumetric blood influx of the cardiac cycle.
+
+To simulate the production-driven flow, we impose an inflow of $630\,$ml/day across the surface of the lateral ventricle and allow a resistive outflow across the upper convexity of the skull (\Cref{fig:csf_flow_geom}), leading to a total pressure drop of $35\,$mPa between the production and outflow sites. A maximum flow velocity of $2\,$mm/s is attained in the aqueduct (\Cref{fig:csf_flow_prod}) (\mar{add mean/max in the SAS}).
+
+Assessing the effect of cardiac-driven dispersion, we compute a steady CSF flow field at peak cranial blood volume during the cardiac cycle. We mimic resulting the reduced CSF space volume by imposing an inflow of $8\,$ml/s and $0.31\,$ml/s across the outer skull surface and the lateral ventricle surface and allowing free outflow into the spinal SAS. In addition, we upscale the obtained pressure field to account for the lack of pulsatile inertial effects in our model (see \ref{sec:dispersion_details}). In this scenario, we observe a pressure drop of $8.5\,$Pa between lateral ventricles and the spinal SAS and a maximum flow velocity of $0.29\,$m/s in the upper section of the spinal SAS.
+Finally, we estimate a spatially varying dispersion enhancement factor $R$ from cardiac-induced pulsatily by combining the computed pressure field with the theory of shear-augmented dispersion (see \Cref{sec:dispersion_details}). We find that cardiac-induced pulsatile CSF flow increases the effective diffusion by up to two orders of magnitude in the aqueduct and around the cisterna magna, but has little effect in most of the SAS ($R\approx 1$) (\Cref{fig:csf_flow_R}). 
+
+\mer{MER/MC: We should compare the peak and mean velocity from the CSF production to the numbers from \cite{hornkjol2022csf} (and others if there are any?) and pressure differences in the system to \cite{vinje2019respiratory}. 2 sentences here for now - to be moved to Discussion. And also 2 sentences on the dispersion field \cite{asgari2016glymphatic, sharp2019dispersion, hornkjol2022csf, ray2021quantitative} (others for dispersion in the SAS, Linninger?, Sweetman?).}
+
 \begin{figure}[h!]
 \centering 
+\begin{subfigure}[b]{0.33\textwidth}
+\includegraphics[width = 1 \textwidth]{example-image-a}
+\caption{3D model of the SAS and ventricles}
+\label{fig:csf_flow_geom}
+\end{subfigure}
 \begin{subfigure}[b]{0.33\textwidth}
 \includegraphics[width = 1 \textwidth]{figures/csf_v.png}
 \caption{CSF flow from CSF production}
@@ -256,7 +281,7 @@ Cerebrospinal fluid flow
 \begin{subfigure}[b]{0.33\textwidth}
 \includegraphics[width = 1 \textwidth]{figures/R.png} 
 \caption{Dispersion enhancement factor $R$}
-\label{fig:visualize_R}
+\label{fig:csf_flow_R}
 \end{subfigure}
 \caption{\mer{A) Illustration of 3D-domains; (B) Illustration of
     relevant boundaries; C) CSF flow induced by CSF production; D) CSF
@@ -316,6 +341,8 @@ Cerebrospinal fluid flow
 
 \subsection*{The significance of low-resistance perivascular pathways}
 
+\mer{MER: Remember to report on how much concentration enters into the brain?}
+
 \begin{itemize}
 \item
   Perivascular flow and transport has been identified as a key
@@ -360,6 +387,9 @@ Cerebrospinal fluid flow
 
 \draft{\lipsum[1]}
 
+\subsection*{Veins}
+
+\mer{MER: Just a placeholder. Disregard veins in the first sections.}
 
 
 \iffalse
@@ -473,7 +503,7 @@ $\Gamma_{\mathrm{skull}}$ facing the dura and skull and $\Gamma_{\rm SSAS}$ repr
 
 \mer{Is this up-to-date? @Rami checks sanity and numbers of paragraph.}
 
-We skeletonize the binary masks of the arteries and veins of the
+We skeletonize the binary masks of the arteries (and veins) of the
 Hodneland~\cite{hodneland2019new} data set using
 Kiminaro~\cite{william_silversmith_2021_5539913}, to obtain the
 centerline $\Lambda^i$ and radius $R_1^i$ of each detected vessel $i$,
@@ -559,7 +589,7 @@ Here $\phi$ is the fluid volume fraction (or porosity) of the brain (where $\phi
 \end{cases} . 
 \]
 We refer to \Cref{tab:overview} for the values of the used parameters.
-In the above,  $|\Lambda^i \cap \Omega_{\rm{PAR}}|$ (resp.  $|\Lambda^i \cap \Omega_{\rm{csf}}|$) is nonzero whenever the surrounding PVS around the line $\Lambda^i$ intersects $\Omega_{\rm{PAR}}$ (resp. $\Omega_{\rm{csf}}$). If the surrounding PVS intersects both, then we set $\xi = \xi_{\mathrm{PVS}, \rm{PAR}}$ (resp $\xi_{\mathrm{PVS}, \rm{PAR}}$) if the PVS lies mostly ($80$ percent) in $\Omega_{\rm{PAR}}$ (resp. $\Omega_{\rm{PVS}}$) and the interaction with $\Omega_{\rm{PVS}}$ (resp. $\Omega_{\rm{PAR}}$ is ignored. 
+In the above,  $|\Lambda^i \cap \Omega_{\rm{PAR}}|$ (resp.  $|\Lambda^i \cap \Omega_{\rm{csf}}|$) is nonzero whenever the surrounding PVS around the line $\Lambda^i$ intersects $\Omega_{\rm{PAR}}$ (resp. $\Omega_{\rm{csf}}$). If the surrounding PVS intersects both, then we set $\xi = \xi_{\mathrm{PVS}, \rm{PAR}}$ (resp $\xi_{\mathrm{PVS}, \rm{CSF}}$) if the PVS lies mostly ($80$ percent) in $\Omega_{\rm{PAR}}$ (resp. $\Omega_{\rm{CSF}}$) and the interaction with $\Omega_{\rm{PVS}}$ (resp. $\Omega_{\rm{CSF}}$ is ignored. 
 
 Further, $P$ and $A$ are the perimeter and area of the PVS which can vary along the centerline network, respectively; and $f$ and $\hat{f}$ represent given sources of solute in $\Omega$ and $\Lambda$, respectively. Finally, we remark that $\hat u$ takes different values on each $\Lambda_i$.  Both $\Omega$ and $\Lambda$ are fixed in time here. Finally, we note that this version of the model assumes that there is no interaction between the inner perivascular boundary and the blood vessel. 
 
@@ -708,23 +738,14 @@ is the cross-section area of the PVS segment ($A_i = \pi (R_2^i -
 R_1^i$)) and $\langle Q_i' \rangle$ is its mean flow rate. Two wall
 motion patterns are considered: \emph{cardiac} pulsations with $f =
 1.0$ (Hz), $\lambda = 2000$ (mm) and $\varepsilon = 1\%$, and very
-low-frequency \emph{vasomotion} with $f = 0.1$ (Hz), $\lambda = 80$
-(mm), and $\varepsilon = 10\%$. The corresponding net convective
+low-frequency \emph{vasomotion} with $f = 0.1$ (Hz), $\lambda = 20$
+(mm), and $\varepsilon = 10\%$. \mer{The corresponding net convective
 velocities (in the antegrade direction) are for \emph{vasomotion}:
 $9.345 \pm 6.695$ $\mu$m/s, range: $(-65.81, 63.96) \mu$m/s, and for
 \emph{cardiac}: $0.475 \pm 0.5115 \mu$m/s, range: $(- 3.825, 4.861)
 \mu$m/s, where negative velocities correspond to retrograde flow
-(\Cref{fig:pvs}\mer{X}). No perivascular fluid flow induced by wall
+(\Cref{fig:pvs}\mer{X}).} No perivascular fluid flow induced by wall
 motion is considered for the venous network.
-
-% python3 peristalticflow.py --frequency 0.1 --wavelength 80.0 --amplitude 0.1 --beta 3.0 --recompute
-% <Q'_i> (avg, std, min, max): 0.3775, 0.4485, -1.654, 3.387 (mm^3/s)
-% <u'_i> (avg, std, min, max): 0.009345, 0.006695, -0.06581, 0.06396 (mm/s)
-% <u'_i> (avg, std, min, max): 9.345, 6.695, -65.81, 63.96 (mum/s)
-%python3 peristalticflow.py --frequency 1.0 --wavelength 2000.0 --amplitude 0.01 --beta 3.0 --recompute
-%<Q'_i> (avg, std, min, max): 0.01933, 0.02733, -0.09614, 0.2203 (mm^3/s)
-%<u'_i> (avg, std, min, max): 0.000475, 0.0005115, -0.003825, 0.004861 (mm/s)
-%<u'_i> (avg, std, min, max): 0.475, 0.5115, -3.825, 4.861 (mum/s)
 
 \subsection*{Perivascular fluid flow induced by pressure gradients/fluid source}
 
@@ -837,6 +858,8 @@ We use the diffusion coefficient $D_{\rm gad}$ of Gadubutrol in free water in th
 \subsection*{Limitations}
 
 \begin{itemize}
+\item 
+  Inaccuracies in vascular geometry representation - and consequences downstream for e.g. numerical integration.
 \item
   PVS geometry assumptions and approximations. Humans different from mice. Limitations in resolution.
 \item
@@ -887,38 +910,27 @@ The corresponding author is responsible for submitting a \href{http://www.nature
 \subsection{Estimating net perivascular flow induced by peristaltic waves}
 \label{sec:sup:peristalsis}
 
-We use the theoretical framework introduced by Gjerde et
-al.~\cite{gjerde2023directional} to compute an analytic estimate of
-the time-averaged (or \emph{net}) flow rates $\langle Q'_i \rangle$
-(mm$^3$/s) induced by peristaltic pumping in a perivascular network
-$\Lambda = \cup_i \Lambda_i$. The motion of the (inner) vascular wall
-is described by a periodic traveling (peristaltic) wave of relative amplitude $\varepsilon$, wave length $\lambda$ (mm) and frequency $f$, acting normal to the wall. By definition, the wave number is $k = 2 \pi/\lambda$ and the angular frequency is $\omega = 2 \pi f$. Each PVS segment $\Lambda_i$ has length $L_i$ with wave-relative length $\ell_i = k L$, baseline inner radius $r_{o_i}'$, fixed outer radius $r_{e_i}'$, and outer-to-inner ratio $\beta_i = r_{e_i}'/r_{o_i}'$ (see also \Cref{tab:pvs:parameters}). These geometric parameters and the assumption of annular cylindrical PVS segments yield hydraulic resistances $\mathcal{R}_{o, i}$ and additional characteristic parameters, see \cite{gjerde2023directional} for the complete definitions and schematics. Since the analytical estimate is derived
-under the assumption that $k L \approx \mathcal{O} 1)$~\cite{gjerde2023directional} and has been verified against numerical simulations for $k L$ of the order $10^{-1}-10^2$~\cite[Table I]{gjerde2023directional}, we consider it
-applicable for the wave lengths and vascular network data considered
-here in which $k L$ ranges from $0.003$ to $15.7$.
-%Vascular branch lengths L (avg, std, min, max) (mm): 26.91093675823157 30.884149011946235 1.0 200.32862451491792
-%... k L: (avg, std, min, max) 2.113580030521996 2.4256353912075688 0.07853981633974483 15.733773376995357 (k = 0.07853981633974483 ) # lmbda = 80 mm
-%... k L: (avg, std, min, max) 0.08454320122087983 0.09702541564830276 0.0031415926535897933 0.6293509350798143 (k = 0.0031415926535897933 ) # lmbda = 2000 mm
-% 
+We use the theoretical framework introduced by Gjerde et al.~\cite{gjerde2023directional} to compute an analytic estimate of the time-averaged (or \emph{net}) flow rates $\langle Q'_i \rangle$ (mm$^3$/s) induced by peristaltic pumping in a perivascular network$\Lambda = \cup_i \Lambda_i$. The motion of the (inner) vascular wall is described by a periodic traveling (peristaltic) wave of relative amplitude $\varepsilon$, wave length $\lambda$ (mm) and frequency $f$, acting normal to the wall. By definition, the wave number is $k = 2 \pi/\lambda$ and the angular frequency is $\omega = 2 \pi f$. Each PVS segment $\Lambda_i$ has length $L_i$ with wave-relative length $\ell_i = k L$, baseline inner radius $r_{o_i}'$, fixed outer radius $r_{e_i}'$, and outer-to-inner ratio $\beta_i = r_{e_i}'/r_{o_i}'$ (see also \Cref{tab:pvs:parameters}). These geometric parameters and the assumption of annular cylindrical PVS segments yield hydraulic resistances $\mathcal{R}_{o, i}$ and additional characteristic parameters, see \cite{gjerde2023directional} for the complete definitions and schematics. Since the analytical estimate is derived under the assumption that $k L \approx \mathcal{O} 1)$~\cite{gjerde2023directional} and has been verified against numerical simulations for $k L$ of the order $10^{-1}-10^2$~\cite[Table I]{gjerde2023directional}, we consider it applicable for the wave lengths and vascular network data considered here in which $k L$ ranges from \mer{$X$ to $Y$.}
+
 \begin{table}
   \small
   \begin{tabular}{llrc}
     \toprule
     Parameter & Description & Value(s)  & Ref.\\ 
     \midrule
-    Relative PVS size $\beta$ & $\beta = \beta_i = r_{e_i} / r_{o_i}$ & 3 & \cite{mestre2018flow} \\
+    Relative PVS size $\beta$ & $\beta = \beta_i = r_{e_i} / r_{o_i}$ & 2 & $\approx$\cite{eide2024functional} \\
     Wave frequency $f$ & Traveling wave frequency of vascular motion & $0.1-1.0$ Hz & \discuss{\cite{gjerde2023directional}} \\
-    Wave length $\lambda$ & Traveling wave length of vascular motion & $80-2000$ mm & \discuss{\cite{gjerde2023directional}} \\
+    Wave length $\lambda$ & Traveling wave length of vascular motion & $20-2000$ mm & \discuss{\cite{broggini2024long, gjerde2023directional}} \\
     Wave amplitude & Relative amplitude of inner wall motion & $1-10\%$ & \discuss{\cite{gjerde2023directional}} \\
-    Vascular radii $\{r_{o_i}\}$ & Vascular network radii data (avg $\pm$ std, $\min$, $\max$) & $1.22 \pm 0.35$, $1.0$, $3.0$  mm & \cite{hodneland2019new} \\
-    Vascular branch lengths $\{L_{i}\}$ & Path length between vasc. junctions (avg $\pm$ std, $\min$, $\max$) & $26.91 \pm 30.89$, $1.0$, $200.33$  mm & \discuss{--} \\
+    Vascular radii $\{r_{o_i}\}$ & Vascular network radii data (avg $\pm$ std, $\min$, $\max$) & $X$, $X$, $X$  mm & \cite{hodneland2019new} \\
+    Vascular branch lengths $\{L_{i}\}$ & Path length between vasc. junctions (avg $\pm$ std, $\min$, $\max$) & $X \pm Y$, $X$, $X$  mm & \discuss{--} \\
     \bottomrule
   \end{tabular}
   \caption{Perivascular flow induced by vascular wall motion: parameters and key data characteristics.}
   \label{tab:pvs:parameters}
 \end{table}
-% Vascular radii r_o (min, max, avg, std) (mm):  3.0 1.0 1.2189823238697475 0.3460254324721098
-% Vascular branch lengths L (avg, std, min, max) (mm): 26.91093675823157 30.884149011946235 1.0 200.32862451491792
+% Vascular radii r_o (min, max, avg, std) (mm):  ....
+% Vascular branch lengths L (avg, std, min, max) (mm): ...
 
 \input{tikz/fig_pvs_flow}
 This theoretical formalism~\cite{gjerde2023directional} is defined
@@ -1076,7 +1088,7 @@ Considering the mean tracer concentrations in the CSF, parenchyma and arterial a
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
      \includegraphics[width= 1 \linewidth]{figures/mesh_refinement_art_ven_mean.png}
-         \caption{Mean tracer concentration in PVSs around veins and arteries  under mesh refinement}
+         \caption{Mean tracer concentration in PVSs around (veins and) arteries  under mesh refinement}
     \end{subfigure}
     \caption{Mean tracer concentrations over the first 24\,h after injection on the CSF and parenchyma (a), and the arterial and venous PVS (b) computed on the LowRes, standard and HighRes meshes with a timestep of $dt=120$\,s.}
     \label{fig:mesh_convergence_concentrations}
@@ -1110,7 +1122,7 @@ Considering the mean tracer concentrations in the CSF, parenchyma and arterial a
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
      \includegraphics[width= 1\linewidth]{figures/time_refinement_art_ven_mean.png}
-         \caption{Mean tracer concentration in PVSs around veins and arteries under time step refinement}
+         \caption{Mean tracer concentration in PVSs around (veins and) arteries under time step refinement}
     \end{subfigure}
     \caption{Mean tracer concentrations over the first 24\,h after injection on the CSF and parenchyma (a), and the arterial and venous PVS (b) computed on the standard resolution mesh for timesteps $dt \in \{60, 120, 240 \}$\,s.}    \label{fig:time_convergence_concentrations}
 \end{figure}
