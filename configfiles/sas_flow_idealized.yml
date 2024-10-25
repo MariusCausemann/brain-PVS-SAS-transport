@@ -1,0 +1,8 @@
+mesh : "mesh/idealized/idealized_outer.xdmf"
+discretization : BDM
+mu : 0.7e-3 
+no_slip_bcs : [1,2,3,4,6]
+resistance_bcs : [[1, 1.0e4]]
+inflow_bcs : 
+ - [[2,4,6], 0]
+ - [[3], "7.2916e-9 / A"] # in m^3/s , equals  0.63 L / day

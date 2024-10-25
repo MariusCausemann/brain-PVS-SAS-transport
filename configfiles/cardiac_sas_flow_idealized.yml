@@ -1,0 +1,10 @@
+mesh : "mesh/idealized/idealized_outer.xdmf"
+discretization : BDM
+order : 2
+mu : 0.7e-3 
+no_slip_bcs : [1,2,3,4]
+resistance_bcs : []
+inflow_bcs : 
+ - [[1,2], "8.0e-6 / A"]
+ - [[3], "0.31e-6 / A" ]
+ - [[4], 0]
