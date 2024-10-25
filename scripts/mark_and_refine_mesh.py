@@ -11,6 +11,8 @@ from pathlib import Path
 from plotting_utils import read_config
 import yaml
 from solver import mark_internal_interface, mark_external_boundary
+from test_map_on_global_coords_shift import map_kdtree
+
 CSFID = 1
 PARID = 2
 LVID = 3
@@ -231,11 +233,16 @@ def mark_and_refine(configfile : str):
 
     sas_outer = xii.EmbeddedMesh(label, [CSFID,LVID,V34ID])
     bm_outer = df.MeshFunction("size_t", sas_outer, 2, 0)
+    label_outer = df.MeshFunction("size_t", sas_outer, 3, 0)
     bm_ids = [UPPER_SKULL_ID,LOWER_SKULL_ID,LV_INTERF_ID,PIA_ID,
               SPINAL_CORD_ID, SPINAL_OUTLET_ID, CSF_NO_FLOW_CSF_ID]
     sas_outer.translate_markers(bm,bm_ids, marker_f=bm_outer)
+
+    idx = map_kdtree(df.FunctionSpace(label.mesh(), "DG", 0).tabulate_dof_coordinates(),
+                     df.FunctionSpace(sas_outer, "DG", 0).tabulate_dof_coordinates())
+    label_outer.array()[:] = label.array()[idx]
     with df.XDMFFile(f'mesh/{meshname}/{meshname}_outer.xdmf') as f:
-        f.write(sas_outer)
+        f.write(label_outer)
     with df.XDMFFile(f'mesh/{meshname}/{meshname}_outer_facets.xdmf') as f:
         f.write(bm_outer)
 
