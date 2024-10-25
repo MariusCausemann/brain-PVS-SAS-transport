@@ -40,8 +40,8 @@ def compare_models(modelname:str):
 
     subdomains = pv.read_meshio("mesh/standard/standard.xdmf")
     par = subdomains.extract_cells(subdomains["label"]==PARID).extract_surface()
-    par.compute_normals(inplace=True, cell_normals=False)
-
+    par.compute_normals(inplace=True, cell_normals=False, consistent_normals=True,
+                         non_manifold_traversal=False)
     sas = get_result(modelname, "sas", times)
     art = get_result(modelname, "artery", times)
 
@@ -58,14 +58,14 @@ def compare_models(modelname:str):
         vessel.add_field_data(name="color", array="red")
         pvs = pv.SolidSphere(center=fp1, direction=n, outer_radius=r*pvs_radius_ratio).slice(origin=fp1, normal=n)
         pvs_surf = pv.Sphere(center=fp2, radius=r*pvs_radius_ratio).slice(origin=fp2, normal=n)
-        pvs_surf.add_field_data(name="color", array="green")
+        pvs_surf.add_field_data(name="color", array="yellow")
         pvs_surf.add_field_data(name="line_width", array=5)
         par["n"] = get_tangent(par.point_data["Normals"], n)
         par["n"] /= np.linalg.norm(par["n"], axis=1, keepdims=True)
         pia = par.warp_by_vector("n", factor=2e-4).slice(origin=fp1, normal=n)
         pia_inner = par.warp_by_vector("n", factor=-2e-4).slice(origin=fp2, normal=n)
-        pia_inner.add_field_data(name="color", array="yellow")
-        pia.add_field_data(name="color", array="fuchsia")
+        pia_inner.add_field_data(name="color", array="salmon")
+        pia.add_field_data(name="color", array="cyan")
 
         slice = sas.slice(origin=p, normal=n).clip_surface(pv.Sphere(center=p, radius=np.linalg.norm(4e-2*n)/3))
         max_val_sas = [slice[f"c_{t}"].max() for t in times]
@@ -84,7 +84,7 @@ def compare_models(modelname:str):
             ax.axis('off')
             ax.imshow(img)
             norm = mpl.colors.Normalize(vmin=0, vmax=vmax)
-            cax = inset_axes(ax, "3%", "70%", loc=3, bbox_to_anchor=(1.05,0.15,1,1), 
+            cax = inset_axes(ax, width="3%", height="60%", loc=3, bbox_to_anchor=(1.09,0.2, 1,1), 
                  bbox_transform=ax.transAxes, borderpad=0.1)
 
             cb = plt.colorbar(mpl.cm.ScalarMappable(norm=norm, cmap=cmap),cax=cax, format="{x:.1f}",
@@ -102,7 +102,7 @@ def compare_models(modelname:str):
         
     for j,label in enumerate(artlabels):
         ax = grid.axes_row[j][0]
-        ax.text( -0.1, 0.5, label, va="center",
+        ax.text( -0.13, 0.5, label, va="center",
          transform=ax.transAxes, fontsize=12, rotation=90)
 
     #grid[0].cax.colorbar(mpl.cm.ScalarMappable(norm=norm, cmap=cmap),
