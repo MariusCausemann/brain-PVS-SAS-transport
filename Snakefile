@@ -5,8 +5,12 @@ from collections import defaultdict
 num_mumps_threads = 16
 mesh_refine_models = ["modelALowRes", "modelA", "modelAHighRes"]
 time_refine_models = ["modelA", "modelAsmalldt", "modelAlargedt"]
+model_variations = ["test","modelB", "modelAB", "modelABC", "modelAC", "modelABCrootOutflow"]
 
-models =  mesh_refine_models + time_refine_models
+model_comparisons = ["modelA_modelB", "modelA_modelAB", "modelA_modelAHighRes", 
+"modelAC_modelABC", "modelABC_modelABCrootOutflow"]
+
+models =  mesh_refine_models + time_refine_models + model_variations
 times = list(np.array([1, 6, 12, 24])*60*60)
 conctimes =  list((np.array([0, 1/3, 2/3, 1, 4/3, 5/3, 2, 7/3, 8/3, 3, 4, 5, 6 ,9, 12, 15, 18, 21, 24])*60*60).astype(int))
 
@@ -29,14 +33,7 @@ def getconfig(model, key):
 
 rule all:
     input:
-        #"plots/comparisons/modelA_modelALowRes/modelA_modelALowRes_overview.png",
-        "plots/comparisons/modelA_modelAHighRes/modelA_modelAHighRes_overview.png",
-        "plots/comparisons/modelA_modelAHighRes/modelA_modelAHighRes_isosurf.png",
-        #"plots/comparisons/modelA_modelA3/modelA_modelA3_overview.png",
-        #"plots/comparisons/modelA_modelA4/modelA_modelA4_overview.png",
-        #"plots/comparisons/modelA_modelA3/modelA_modelA3_overview.png",
-        #"plots/comparisons/modelB_modelE/modelB_modelE_isosurf.png",
-        #"plots/comparisons/modelA_modelB/modelA_modelB_detail.png",
+        expand("plots/comparisons/{c}/{c}_{type}.png",c=model_comparisons, type=types),
         expand("plots/{modelname}/{modelname}_tracer_vessel_dist.png", modelname=models),
         expand("plots/{modelname}/{modelname}_total_conc.png", modelname=models),
         expand("plots/{modelname}/{modelname}_{tp}_{t}.png", modelname=models, t=times, tp=types)
@@ -138,7 +135,8 @@ rule compareModels:
     shell:
         """
         xvfb-run -a python scripts/compare_models.py {wildcards.model1} {wildcards.model2} {wildcards.type} {params.cmax} {params.diffmax} {times} &&
-        xvfb-run -a python scripts/compare_models_horizontal.py {wildcards.model1} {wildcards.model2} {wildcards.type} {params.cmax} {times}
+        xvfb-run -a python scripts/compare_models_horizontal.py {wildcards.model1} {wildcards.model2} {wildcards.type} {params.cmax} {times} &&
+        python scripts/generate_comparison_barplots.py {wildcards.model1} {wildcards.model2}
         """
 
 rule analyzeTracerDist:
@@ -234,26 +232,43 @@ rule computeSASFlow:
         """
 
 
-rule computePVSFlow:
+rule computeProdPVSFlow:
     conda:"environment.yml"
     input:
         "results/csf_flow/{csf_flow_model}/flow.hdf",
     output:
-        'results/pvs_flow_prod/{csf_flow_model}/pvs_flow.xdmf',
-        'results/pvs_flow_prod/{csf_flow_model}/pvs_flow.h5'
+        hdf='results/pvs_flow_prod/{csf_flow_model}/pvs_flow.hdf',
+        plotputdir=directory("plots/pvs_flow_prod/{csf_flow_model}"),
     shell:
-        "python scripts/pvs_flow_prod.py {wildcards.csf_flow_model}"
+        """
+        python scripts/pvs_flow_prod.py {wildcards.csf_flow_model}
+        python scripts/evaluate_pvs_flow.py {output.hdf}
+        """
 
 
-rule AverageSASFlow2PVS:
+rule computePeristalticPVSFlow:
     conda:"environment.yml"
     input:
-        "results/csf_flow/{csf_flow_model}/flow.hdf",
+        "mesh/networks/arteries_smooth.vtk",
+        "configfiles/{pvs_flow_model}.yml",
     output:
-        'results/csf_flow/{csf_flow_model}/pvs_flow.xdmf',
-        'results/csf_flow/{csf_flow_model}/pvs_flow.h5'
+        hdf='results/pvs_flow_peristaltic/{pvs_flow_model}/pvs_flow.hdf',
+        outputdir=directory("results/pvs_flow_peristaltic/{pvs_flow_model}"),
+    params: 
+        frequency=lambda wildcards: getconfig(wildcards.pvs_flow_model, "frequency"),
+        amplitude=lambda wildcards: getconfig(wildcards.pvs_flow_model, "amplitude"),
+        wavelength=lambda wildcards: getconfig(wildcards.pvs_flow_model, "wavelength"),
+        beta=lambda wildcards: getconfig(wildcards.pvs_flow_model, "beta"),
     shell:
-        "python scripts/uhat_prod.py {wildcards.csf_flow_model}"
+        """python scripts/peristalticflow.py --recompute \
+         --frequency {params.frequency} \
+         --amplitude {params.amplitude} \
+         --wavelength {params.wavelength} \
+         --beta {params.beta} \
+         --output {output.outputdir} && \
+         python scripts/evaluate_pvs_flow.py {output.hdf}
+         """
+
 
 
 
