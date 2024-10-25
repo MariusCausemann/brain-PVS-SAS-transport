@@ -4,11 +4,14 @@
   <Domain>
     <Grid Name="mesh" GridType="Uniform">
       <Topology NumberOfElements="300381" TopologyType="Tetrahedron" NodesPerElement="4">
-        <DataItem Dimensions="300381 4" NumberType="UInt" Format="HDF">standard_outer.h5:/Mesh/mesh/topology</DataItem>
+        <DataItem Dimensions="300381 4" NumberType="UInt" Format="HDF">standard_outer.h5:/MeshFunction/0/mesh/topology</DataItem>
       </Topology>
       <Geometry GeometryType="XYZ">
-        <DataItem Dimensions="84098 3" Format="HDF">standard_outer.h5:/Mesh/mesh/geometry</DataItem>
+        <DataItem Dimensions="84098 3" Format="HDF">standard_outer.h5:/MeshFunction/0/mesh/geometry</DataItem>
       </Geometry>
+      <Attribute Name="f" AttributeType="Scalar" Center="Cell">
+        <DataItem Dimensions="300381 1" Format="HDF">standard_outer.h5:/MeshFunction/0/values</DataItem>
+      </Attribute>
     </Grid>
   </Domain>
 </Xdmf>
