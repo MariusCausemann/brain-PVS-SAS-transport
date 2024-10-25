@@ -14,18 +14,19 @@ LVID = 3
 V34ID = 4
 CSFNOFLOWID = 5
 
-csg_tree = {"operation":"union",
-            "right":
-                {"operation":"union",
-                 "left":"mesh/T1/surfaces/LV.ply",
-                 "right":"mesh/T1/surfaces/V34.ply",
-                },
-            "left":
-                {"operation":"union",
-                 "left":"mesh/T1/surfaces/skull.ply",
-                 "right":"mesh/T1/surfaces/parenchyma_incl_ventr.ply",
-                },
-            } 
+def get_csg_tree(folder):
+    return  {"operation":"union",
+                "right":
+                    {"operation":"union",
+                    "left":f"mesh/T1/{folder}/LV.ply",
+                    "right":f"mesh/T1/{folder}/V34.ply",
+                    },
+                "left":
+                    {"operation":"union",
+                    "left":f"mesh/T1/{folder}/skull.ply",
+                    "right":f"mesh/T1/{folder}/parenchyma_incl_ventr.ply",
+                    },
+                } 
 
 def generate_mesh(configfile : str):
 
@@ -35,7 +36,10 @@ def generate_mesh(configfile : str):
     tetra = wm.Tetrahedralizer(epsilon=config["epsilon"],
                                edge_length_r=config["edge_length_r"],
                                coarsen=True, max_threads=4, stop_quality=8)
-    
+    folder = "surfaces"
+    if config.get("cube", False): folder = "box_surfaces"
+    csg_tree = get_csg_tree(folder)
+
     tetra.load_csg_tree(json.dumps(csg_tree))
     tetra.tetrahedralize()
     point_array, cell_array, marker = tetra.get_tet_mesh()
