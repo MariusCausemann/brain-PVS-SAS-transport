@@ -56,11 +56,15 @@ def run_simulation(configfile: str):
     arterial_pvs_diffusion = config["arterial_pvs_diffusion"]
     venous_pvs_diffusion = config["venous_pvs_diffusion"]
     parenchyma_diffusion = config["parenchyma_diffusion"]
-    pvs_parenchyma_permability = config["pvs_parenchyma_permability"]
-    pvs_csf_permability = config["pvs_csf_permability"]
+    arterial_pvs_parenchyma_permability = config["arterial_pvs_parenchyma_permability"]
+    arterial_pvs_csf_permability = config["arterial_pvs_csf_permability"]
+    venous_pvs_parenchyma_permability = config["venous_pvs_parenchyma_permability"]
+    venous_pvs_csf_permability = config["venous_pvs_csf_permability"]
     pvs_ratio_venes = config["pvs_ratio_venes"]
     pvs_ratio_artery = config["pvs_ratio_artery"]
     beta = config["molecular_outflow_resistance"]
+    beta_csf_par = config["par_csf_permability"]
+    root_xi_factor = config["root_pvs_permability_factor"]
 
     vein, vein_radii, vein_roots = read_vtk_network("mesh/networks/venes_smooth.vtk", rescale_mm2m=False)
     vein_radii = as_P0_function(vein_radii)
@@ -103,33 +107,39 @@ def run_simulation(configfile: str):
     veinmarker.rename("marker", "time")
     vol_subdomains.rename("marker", "time")
 
-    xi_dict = {CSFID: pvs_csf_permability, 
-               PARID: pvs_parenchyma_permability}
+    art_xi_dict = {CSFID: arterial_pvs_csf_permability, 
+               PARID: arterial_pvs_parenchyma_permability}
+    ven_xi_dict = {CSFID: venous_pvs_csf_permability, 
+               PARID: venous_pvs_parenchyma_permability}
     phi_dict = {CSFID: 1,  PARID: ecs_share}
 
     phi = pcws_constant(vol_subdomains, phi_dict)
     Ds = pcws_constant(vol_subdomains, {CSFID: sas_diffusion,  # csf
                                         PARID: parenchyma_diffusion # parenchyma
                                         })
-    xi_a = pcws_constant(artmarker, xi_dict)
-    xi_v = pcws_constant(veinmarker, xi_dict)
+    art_xi_root = Function(FunctionSpace(artery, "CG", 1))
+    art_xi_root.vector()[:] = np.where(artery_roots.array()[:] > 0, root_xi_factor, 1)
+    xi_a = pcws_constant(artmarker, art_xi_dict)*art_xi_root
+    xi_v = pcws_constant(veinmarker, ven_xi_dict)
 
     Da = Constant(arterial_pvs_diffusion) 
     Dv = Constant(venous_pvs_diffusion)
 
     if "arterial_velocity_file" in config.keys():
-        print("reading arterial PVS velocity from file...")
-        vel_file = config["arterial_velocity_file"]
-        with XDMFFile(vel_file) as file:
-            DG = VectorFunctionSpace(artery, "DG", 1)
-            velocity_a = Function(DG)
-            file.read_checkpoint(velocity_a, "velocity")
-        # make sure the velocity field is tangential to the network
+        from evaluate_pvs_flow import sig_to_space
+        velocity_a = 0
+        for vel_file in config["arterial_velocity_file"]:
+            print(f"reading arterial PVS velocity from {vel_file}")
+            with HDF5File(MPI.comm_world, vel_file,'r') as f:
+                sig = f.attributes("/u").to_dict()["signature"]
+                velocity_a_func = Function(sig_to_space(sig, artery))
+                f.read(velocity_a_func, "u")
+            # make sure the velocity field is tangential to the network
+            velocity_a += velocity_a_func
         tau = xii.TangentCurve(artery)
         un = velocity_a - tau*inner(velocity_a, tau)
         assert assemble(inner(un,un)*dx) < 1e-16
         
-        File(results_dir + f'{modelname}_flux.pvd') << velocity_a
     else:
         velocity_a = Constant([0]*gdim)
 
@@ -203,7 +213,6 @@ def run_simulation(configfile: str):
 
     eta = 1.0 
     alpha = Constant(1e3)
-    beta_csf_par = Constant(3.8e-7)
 
     dx_s = Measure("dx", mesh, subdomain_data=vol_subdomains)
     dS = Measure("dS", mesh, subdomain_data=bm)
@@ -319,8 +328,6 @@ def run_simulation(configfile: str):
     u_i.rename("c", "c")
     pa_i.rename("c", "c")
     pv_i.rename("c", "c")
-    xi_a.rename("xi", "c")
-    xi_v.rename("xi", "c")
 
     xdmfsas = XDMFFile(results_dir + f'{modelname}_sas.xdmf') 
     xdmfart = XDMFFile(results_dir + f'{modelname}_artery.xdmf') 
@@ -343,7 +350,7 @@ def run_simulation(configfile: str):
 
     #write((u_i, pa_i, pv_i), pvdfiles, 0.0, hdffile=hdffile)
     write((artmarker, veinmarker), pvdfiles, 0.0)
-    write((xi_a, xi_v), pvdfiles, 0.0)
+    #write((xi_a, xi_v), pvdfiles, 0.0)
     #write([phi], [pvdsas], 0.0)
 
     wh = xii.ii_Function(W)
