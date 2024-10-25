@@ -8,40 +8,44 @@ import os
 from pathlib import Path
 from plotting_utils import time_str, set_plotting_defaults
 from compute_dispersion_field import alpha
+import typer
+from typing import List
 
 csf_flow_model = {"LowRes":"sas_flow_LowRes",
                 "standard":"sas_flow",
                 "HighRes":"sas_flow_HighRes",
                 "dt=240s":"sas_flow",
                 "dt=120s":"sas_flow",
-                "dt=60s":"sas_flow"}
+                "dt=60s":"sas_flow",
+                "vasomotion":"sas_flow"}
 
 transport_model = {"LowRes":"modelALowRes",
                 "standard":"modelA",
                 "HighRes":"modelAHighRes",
                 "dt=120s":"modelA",
                 "dt=240s":"modelAlargedt",
-                "dt=60s":"modelAsmalldt"}
+                "dt=60s":"modelAsmalldt",
+                "vasomotion":"modelAB"}
 
-mesh_refinement_models = ["LowRes", "standard", "HighRes"]
+mesh_refinement_models = ["standard", "vasomotion"]
 time_refinement_models = ["dt=240s", "dt=120s", "dt=60s"]
 variants = ["mesh_refinement", "time_refinement"]
 
-for v, models, refmodel in zip(variants, [mesh_refinement_models,
-     time_refinement_models],["standard", "dt=120s"]):
-    os.makedirs(f"plots/{v}/", exist_ok=True)
+def compare_models(models: List[str]):
+    v = "_".join(models)
+    os.makedirs(f"plots/comparisons/{v}/", exist_ok=True)
 
     results = dict()
     for m in models:
         md = dict()
-        tm = transport_model[m]
+        tm = m
         tmconfig = read_config(f"configfiles/{tm}.yml")
         actual_mesh = Path(tmconfig["mesh"])
         print(actual_mesh)
         # get mesh stats
         md.update(read_config(actual_mesh.with_suffix(".yml")))
         # get CSF flow stats
-        csfm = csf_flow_model[m]
+        csfm = tmconfig["csf_velocity_file"].split("/")[-2]
         md.update(read_config(f"results/csf_flow/{csfm}/metrics.yml"))
         # get PVS flow stats
         #md.update(read_config(f"results/csf_flow/{csfm}/pvs_metrics.yml"))
@@ -72,46 +76,23 @@ for v, models, refmodel in zip(variants, [mesh_refinement_models,
                             colLabels=dfstr.columns,
                             loc="center")
     fig.tight_layout()
-    fig.savefig(f"plots/{v}/table.png")
-
-
-    for m in models:
-        df[f"{m}_rel"] = df[m] / df[refmodel]
-
-    dfrel = df[[f"{m}_rel" for m in models]]
-
-    plt.figure()
-    dfrel = dfrel[~dfrel.index.isin(["rel_undershot_csf","rel_undershot_art", "rel_undershot_ven"])]
-    ax = dfrel.plot(kind="bar", figsize=(40,4), ylim=(0, 5))
-    pps = ax.containers[1]
-    for i, p, val in zip(range(len(pps)), pps, df[refmodel].values):
-        height = p.get_height()
-        ax.annotate('{0:6.2g}'.format(val),
-            xy=(p.get_x() + p.get_width() / 2, height),
-            xytext=(0, 3 + 2*(i%2)), # 3 points vertical offset
-            textcoords="offset points",
-            fontsize=6,
-            ha='center', va='bottom')
-
-    plt.tight_layout()
-    #plt.savefig(f"plots/{v}/mesh_bars.png")
+    fig.savefig(f"plots/comparisons/{v}/table.png")
 
     set_plotting_defaults()
-    df = df[models]
-    #from IPython import embed; embed()
+
     barplot_groups = [
     {"vars":["hmin", "hmax"],"varnames":[r"$\rm h_{min}$", r"$\rm h_{max}$"], 
-     "ylabel":"mm", "title":"cell size", "scale":1e3},
+    "ylabel":"mm", "title":"cell size", "scale":1e3},
     {"vars":["ncells", "npoints"],"varnames":["#cells", "#points"],
-     "ylabel":" # millon", "title":"number of cells", "scale":1e-6},
+    "ylabel":" # millon", "title":"number of cells", "scale":1e-6},
     {"vars":["Rmean"],"varnames":[r"$\rm R_{mean}$"],
-     "ylabel":"R", "title":"mean dispersion"},
+    "ylabel":"R", "title":"mean dispersion"},
     {"vars":["Rmax"],"varnames":[r"$\rm R_{max}$"],
-     "ylabel":"R", "title":"max dispersion"},
+    "ylabel":"R", "title":"max dispersion"},
     {"vars":["pmax"],"varnames":[r"$\rm p_{max}$"],
     "ylabel":"Pa", "title":"CSF pressure"},
     {"vars":["cardiac_pmax"],"varnames":[r"$\rm p_{max}$"],
-     "ylabel":"Pa", "title":"cardiac CSF pressure"},
+    "ylabel":"Pa", "title":"cardiac CSF pressure"},
     {"vars":["umax"],"varnames":[r"$\rm u_{max}$"], 
     "ylabel":"mm/s", "title":"CSF velocity", "scale":1e3,},
     {"vars":["cardiac_umax"],"varnames":[r"$\rm u_{max}$"], 
@@ -121,7 +102,7 @@ for v, models, refmodel in zip(variants, [mesh_refinement_models,
     barplot_groups += [{"vars":[f"cmean_{dom}_{t}" for t in [10800, 21600,  43200, 86400]],
     "varnames":[f"{int(t/3600)} h" for t in [10800, 21600,  43200, 86400]], 
     "ylabel":"mol/L", "title":f"mean concentration ({dom})"} for
-     dom in ["CSF", "parenchyma", "PVS artery", "PVS vein"]]
+    dom in ["CSF", "parenchyma", "PVS artery", "PVS vein"]]
 
     nfigs = len(barplot_groups)
     fig_width = [ 1  + int(len(bp["vars"]) / 4) for bp in barplot_groups]
@@ -142,14 +123,14 @@ for v, models, refmodel in zip(variants, [mesh_refinement_models,
         if coli + w > ncols: rowi += 1; coli = 0
         ax = fig.add_subplot(gs[rowi, coli:coli + w])
         bars = subdf.plot(ax=ax, kind="bar", ylabel=bp["ylabel"],
-                         legend=False, title=bp["title"], rot=30)
+                        legend=False, title=bp["title"], rot=30)
         ax.set_ylim(bottom=0)
         ax.text(s=alphabet[i], x=-1.0, y=ax.get_ylim()[1]*1.3,fontweight="bold")
         coli += w
     
     plt.figlegend(df.columns, loc = 'outside upper center', ncol=3, 
-                 bbox_to_anchor=(0.5, 0.97), frameon=False)
-    plt.savefig(f"plots/{v}/{v}.pdf")
+                bbox_to_anchor=(0.5, 0.97), frameon=False)
+    plt.savefig(f"plots/comparisons/{v}/{v}.pdf")
 
     # investigate undershoots
     linestyles = ["dotted", "dashed", "solid"]
@@ -157,7 +138,7 @@ for v, models, refmodel in zip(variants, [mesh_refinement_models,
         plt.figure()
 
         for m,ls  in zip(models, linestyles):
-            tm = transport_model[m]
+            tm = m
             tmconfig = read_config(f"configfiles/{tm}.yml")
             trmetrics = read_config(f"results/{tm}/{tm}_metrics.yml")
             dmax = trmetrics[f"{dom}_max"]
@@ -168,8 +149,8 @@ for v, models, refmodel in zip(variants, [mesh_refinement_models,
         plt.xlabel("time (h)")
         plt.ylabel("tracer concentration (mol/L)")
         plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol=3,
-                  columnspacing=0.7, frameon=False)
-        plt.savefig(f"plots/{v}/{dom}_minmax.png")
+                columnspacing=0.7, frameon=False)
+        plt.savefig(f"plots/comparisons/{v}/{dom}_minmax.png")
 
     ### plot tracer content
     for doms, colors in zip([["par", "csf"],["art", "ven"]],
@@ -177,7 +158,7 @@ for v, models, refmodel in zip(variants, [mesh_refinement_models,
         plt.figure()
         marker = ["s", "o", "D"]
         for i, (m, mark, ls) in enumerate(zip(models, marker, linestyles)):
-            tm = transport_model[m]
+            tm = m
             tmconfig = read_config(f"configfiles/{tm}.yml")
             trmetrics = read_config(f"results/{tm}/{tm}_metrics.yml")
             times = np.arange(0, tmconfig["T"], tmconfig["dt"]) / (60*60)
@@ -189,7 +170,11 @@ for v, models, refmodel in zip(variants, [mesh_refinement_models,
         plt.ylabel("tracer concentration (mol/L)")
         plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol=len(models),
                     columnspacing=0.7, frameon=False)
-        plt.savefig(f"plots/{v}/{v}_{'_'.join(doms)}_mean.png")
+        plt.savefig(f"plots/comparisons/{v}/{v}_{'_'.join(doms)}_mean.png")
+
+
+if __name__ == "__main__":
+    typer.run(compare_models)
 
 
 
