@@ -81,7 +81,7 @@ def get_inflow_bcs(W, ds, inflow_bcs):
             area = 0
             for bid in bids: area += assemble(1*ds(bid))
             infl_func = get_normal_func(W.mesh(), 
-                scale=Expression(infl, A=area, degree=3))
+                scale=-Expression(infl, A=area, degree=3))
         for bid in bids:
             bcs += [DirichletBC(W.sub(0), infl_func, 
                                 ds.subdomain_data(), bid)]
@@ -167,6 +167,8 @@ def compute_sas_flow(configfile : str):
     mesh = Mesh(MPI.comm_world)
     with XDMFFile(meshname) as f:
         f.read(mesh)
+        sm = MeshFunction("size_t", mesh, 3, 0)
+        f.read(sm, "f")
         gdim = mesh.geometric_dimension()
 
     bm = MeshFunction("size_t", mesh, 2, 0)
@@ -208,6 +210,7 @@ def compute_sas_flow(configfile : str):
         f.write(mesh, "mesh")
         f.write(ph, "pressure")
         f.write(uhdg, "velocity")
+        f.write(as_P0_function(sm), "label")
 
     # collect key metrics:
     sas_vol = assemble(1*dx(domain=mesh))
