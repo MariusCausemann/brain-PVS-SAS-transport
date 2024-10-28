@@ -277,12 +277,12 @@ Sharp et al used the theory of dispersive mixing to predict a dispersion enhance
 \begin{figure}[h!]
 \centering 
 \begin{subfigure}[b]{0.33\textwidth}
-\includegraphics[width = 1 \textwidth]{paper/figures/subdomains.png}
+\includegraphics[width = 1 \textwidth]{figures/subdomains.png}
 \caption{3D model of SAS and ventricles}
 \label{fig:csf_flow_geom}
 \end{subfigure}
 \begin{subfigure}[b]{0.33\textwidth}
-\includegraphics[width = 1 \textwidth]{paper/figures/boundaries.png}
+\includegraphics[width = 1 \textwidth]{figures/boundaries.png}
 \caption{boundaries of the CSF space}
 \label{fig:csf_flow_boundaries}
 \end{subfigure}
@@ -302,7 +302,7 @@ Sharp et al used the theory of dispersive mixing to predict a dispersion enhance
 \label{fig:csf_flow_R}
 \end{subfigure}
 \begin{subfigure}[b]{0.33\textwidth}
-\includegraphics[width = 1 \textwidth]{paper/figures/csf_velocity_histo.png} 
+\includegraphics[width = 1 \textwidth]{figures/csf_velocity_histo.png} 
 \caption{production-induced flow velocities}
 \label{fig:csf_flow_histo}
 \end{subfigure}
@@ -504,14 +504,13 @@ Effect of pia permeability (Model N-1)
 
 \subsection*{Brain parenchyma, SAS, and interface geometries}
 
-
 Hodneland et al~\cite{hodneland2019new} developed a method to image
 the brain's microvasculature based on time-of-flight (ToF) and
 quantitative susceptibility mapping (QSM) to identify arterial and
-venous networks.  We derive a detailed tetrahedral mesh of the
+venous networks. We derive a detailed tetrahedral mesh of the
 parenchyma and the surrounding CSF-filled spaces alongside a network
 representation of the vasculature from the anatomical data provided
-therein. 
+therein.
 
 First, we segment the structural T1 image using Synthseg \cite{billot2023robust,billot2023synthseg} to obtain masks of the parenchymal tissue and the CSF-filled spaces. In addition, we slightly modify the segmentation to ensure correct connectivity of the ventricular system. In particular, we elongate the aqueduct and enforce no communication between the ventricles and the surrounding CSF spaces except for the median aperture. After morphological smoothing of the segmented image, we extract surface representations of the outer SAS boundary, the pial membrane and the components of the ventricular system. From these surface representations, we create a tetrahedral mesh of both the parenchymal tissue and the CSF-filled spaces using the mesh generator fTetWild \cite{hu2020fast}. The resulting mesh consists of 153729 vertices and 851904 cells, which vary between $0.4$\,mm and $1.2$\,cm in cell diameter. The parenchyma has a total volume of $1386$\, ml, whereas the ventricles and the outer SAS contribute $28$\,ml and $277$\,ml to a total CSF volume of $305$\,ml, respectively. Note that the widely reported value of $150$\,ml of intracranial CSF volume is likely an underestimate. Recent estimates indicate that a value of $200$ to $300$\,ml is more accurate (see \cite{hladky2024regulation} and references therein).
 \mar{this could also go into results. Keep it here for the moment?} \mer{I suggest you place the ``note'' in the Discussion.}
@@ -835,8 +834,11 @@ We use the diffusion coefficient $D_{\rm gad}$ of Gadubutrol in free water in th
     \toprule
     & Description & $R_1, R_2$ & $\xi_{\rm PVS-SAS}$ &  $\beta_{\rm efflux}$ & $D$ & $\hat{u}$ & $\mathbf{u}_{SAS}$ & $c_0$ \\
     \midrule
-    A & PVS sheaths & $R_2 = \beta R_1$ & $0, 0.5 \xi, \xi, 2 \xi, 1000 \xi \approx \infty$ & $10^{-4}$ mm$^2$/s\cite{hornkjol2022csf} & $\alpha D^{\rm gad}$\cite{sykova2008diffusion, valnes2020apparent} & $\hat{u}_{\rm prod}$ & $\mathbf{u}_{\rm prod}$ & 0 \\ 
+    A & Baseline with sheaths & $R_2 = 2 R_1$ & $\xi$ & $10^{-4}$ mm$^2$/s\cite{hornkjol2022csf} & $\phi R D^{\rm gad}_{\rm eff}$\cite{sykova2008diffusion, valnes2020apparent} & $\hat{u}_{\rm prod} + \hat{u}_{\rm cardiac}$ & $\mathbf{u}_{\rm prod}$ & 0 \\ 
+    B1 & Shealth permeability & $R_2 = 2 R_1$ & $0, \xi, 10 \xi, 100 \xi, 1000 \xi$ & $10^{-4}$ mm$^2$/s\cite{hornkjol2022csf} & $\phi R D^{\rm gad}_{\rm eff}$\cite{sykova2008diffusion, valnes2020apparent} & $\hat{u}_{\rm prod} + \hat{u}_{\rm cardiac}$ & $\mathbf{u}_{\rm prod}$ & 0 \\ 
+    B2 & Shealth permeability & $R_2 = 2 R_1$ & $0, \xi, 10 \xi, 100 \xi, 1000 \xi$ & $10^{-4}$ mm$^2$/s\cite{hornkjol2022csf} & $\phi R D^{\rm gad}_{\rm eff}$\cite{sykova2008diffusion, valnes2020apparent} & $\hat{u}_{\rm prod} +  \hat{u}_{\rm cardiac} + \hat{u}_{\rm vaso}$ & $\mathbf{u}_{\rm prod}$ & 0 \\ 
     %C & Larger PVS & $R_2 = N R_1$ & -- & -- & --  &  --  & -- &  -- \\
+    C & Higher PVS flow & -- & $\xi$ & -- & --  & $\hat{u}_{\rm prod} +  \hat{u}_{\rm cardiac} + \hat{u}_{\rm vaso}$  & -- & --  \\
     AA & PVS size & $R_2 = x \beta R_1$ & $\xi$ & -- & -- & -- &  -- & 0 \\ 
     %C & Larger PVS & $R_2 = N R_1$ & -- & -- & --  &  --  & -- &  -- \\
     B & PVS flow & -- & $\xi$ & -- & --  & $\hat{u}_{\rm prod} + \hat{u}_{\rm vaso}$  & -- & --  \\
@@ -850,16 +852,38 @@ We use the diffusion coefficient $D_{\rm gad}$ of Gadubutrol in free water in th
   \caption{Overview of models (-- denotes as immediately above). Each
     PVS cross-section is modelled as a concentric annulus with inner
     radius $R_1$ and outer radius $R_2$ and such that $R_2 = \beta
-    R_1$ with $\beta \approx 2.0-3.0$ based on~\cite{bedussi2018paravascular, mestre2018flow, raicevic2023sizes}. Model A and its variations aims to
+    R_1$ with $\beta = 2.0$ based on~\cite{eide2024functional}. Let
+    $\xi = \dots$ denote the permeability estimated by Koch et
+    al.~\cite{koch2023estimates}. Model A and its variations aims to
     quantify the effect of PVS sheaths by varying the permeability
     $\xi$ between the PVS and its surroundings. We consider a fixed
     permeability $\xi_{\rm PVS-PAR}$ based
     on~\cite{koch2023estimates}. \mer{The permeability between the PVS
       and the SAS $\xi_{\rm PVS-SAS}$ must likely be estimated by a
       bit of trial-error from the observations of timings of PVS-SAS
-      and SAS from~\cite{eide2024functional}.} \discuss{The extracranial solute efflux permeability $\beta_{\rm efflux}$ is uniformly distributed over the outer SAS boundary with a reasonable rate as baseline\cite{hornkjol2022csf, eide2021clinical, ringstad2024glymphatic}.} At baseline, the effective diffusion coefficients $D^{\rm x}_{\rm SAS} = D^{\rm x}_{\rm PVS}$ of the SAS and PVS represent the free diffusion coefficient of Gadubutrol (${\rm x} = {\rm gad}$) in CSF (water), and $D^{\rm x}_{\rm PAR}$ the effective diffusion coefficient of human cortical tissue, all at body temperature; weighted by a dispersion factor $\alpha$ (see Methods). At baseline, we consider net flow due to CSF-production in the SAS and PVS: $\mathbf{u}_{\rm SAS} > 0$ and $\hat{u} > 0$ (see Methods) but no bulk flow in the parenchyma $\mathbf{u}_{\rm PAR} = 0$. Due to the timescale for human intracranial tracer transport (minutes to hours) compared to typical (cardiac, respiratory, slow vasomotion) human intracranial pulsatility (0.1 -- 1 Hz), we consider net (constant-in-time) flow fields only in subsequent model variations (but see dispersion factor above).
-    Model B represents perivascular pathway scenarios with more rapid flow in the PVS induced by vasomotion (PVS I)~\cite{gjerde2023directional}.
-    Models C represents a version of the aforementioned scenarios but for studying metabolite clearance (instead of solute influx).}
+      and SAS from~\cite{eide2024functional}.} \discuss{The
+      extracranial solute efflux permeability $\beta_{\rm efflux}$ is
+      uniformly distributed over the outer SAS boundary with a
+      reasonable rate as baseline\cite{hornkjol2022csf,
+        eide2021clinical, ringstad2024glymphatic}.} At baseline, the
+    effective diffusion coefficients $D^{\rm x}_{\rm SAS} = D^{\rm
+      x}_{\rm PVS}$ of the SAS and PVS represent the free diffusion
+    coefficient of Gadubutrol (${\rm x} = {\rm gad}$) in CSF (water),
+    and $D^{\rm x}_{\rm PAR}$ the effective diffusion coefficient of
+    human cortical tissue, all at body temperature; weighted by a
+    dispersion factor $\alpha$ (see Methods). At baseline, we consider
+    net flow due to CSF-production in the SAS and PVS:
+    $\mathbf{u}_{\rm SAS} > 0$ and $\hat{u} > 0$ (see Methods) but no
+    bulk flow in the parenchyma $\mathbf{u}_{\rm PAR} = 0$. Due to the
+    timescale for human intracranial tracer transport (minutes to
+    hours) compared to typical (cardiac, respiratory, slow vasomotion)
+    human intracranial pulsatility (0.1 -- 1 Hz), we consider net
+    (constant-in-time) flow fields only in subsequent model variations
+    (but see dispersion factor above).  Model B represents
+    perivascular pathway scenarios with more rapid flow in the PVS
+    induced by vasomotion (PVS I)~\cite{gjerde2023directional}.
+    Models C represents a version of the aforementioned scenarios but
+    for studying metabolite clearance (instead of solute influx).}
 \label{tab:scenarios}
 \end{table}
 
@@ -923,7 +947,6 @@ A.A. conceived the experiment(s),  A.A. and B.A. conducted the experiment(s), C.
 To include, in this order: \textbf{Accession codes} (where applicable); \textbf{Competing interests} (mandatory statement). 
 
 The corresponding author is responsible for submitting a \href{http://www.nature.com/srep/policies/index.html#competing}{competing interests statement} on behalf of all authors of the paper. This statement must be included in the submitted article file.
-
 
 \newpage
 \appendix
