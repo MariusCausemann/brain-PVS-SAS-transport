@@ -66,6 +66,7 @@
 
 \mer{MER: Target length: 5000 words, 4-6 figures: 600 words Intro. 1400 words Methods. 2000 words Results. 1000 words Discussion.}
 
+
 \section*{Introduction}
 
 
@@ -548,24 +549,55 @@ Effect of pia permeability (Model N-1)
 
 %\mer{MER: I recommend writing each (sub)section of Methods as a nearly stand-alone paragraph. Let's see if we can avoid subsubsections/paragraphs. If you need to add more detail than you think is appropriate, put it in a Supplementary Methods section in the Appendix.} 
 
-\subsection*{Brain parenchyma, SAS, and interface geometries}
 
-Hodneland et al~\cite{hodneland2019new} developed a method to image
-the brain's microvasculature based on time-of-flight (ToF) and
-quantitative susceptibility mapping (QSM) to identify arterial and
-venous networks. We derive a detailed tetrahedral mesh of the
-parenchyma and the surrounding CSF-filled spaces alongside a network
-representation of the vasculature from the anatomical data provided
-therein.
+\begin{figure}
+     \begin{subfigure}[b]{0.45\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/Brain-PVS-callouts.pdf}
+     \end{subfigure}
+     \hfill
+     \caption{a) Illustration of the different intracranial domains
+       considered with labels;}
+     \label{fig:intracranial_domains}
+\end{figure}
 
-First, we segment the structural T1 image using Synthseg \cite{billot2023robust,billot2023synthseg} to obtain masks of the parenchymal tissue and the CSF-filled spaces. In addition, we slightly modify the segmentation to ensure correct connectivity of the ventricular system. In particular, we elongate the aqueduct and enforce no communication between the ventricles and the surrounding CSF spaces except for the median aperture. After morphological smoothing of the segmented image, we extract surface representations of the outer SAS boundary, the pial membrane and the components of the ventricular system. From these surface representations, we create a tetrahedral mesh of both the parenchymal tissue and the CSF-filled spaces using the mesh generator fTetWild \cite{hu2020fast}. The resulting mesh consists of 153729 vertices and 851904 cells, which vary between $0.4$\,mm and $1.2$\,cm in cell diameter. The parenchyma has a total volume of $1386$\, ml, whereas the ventricles and the outer SAS contribute $28$\,ml and $277$\,ml to a total CSF volume of $305$\,ml, respectively. Note that the widely reported value of $150$\,ml of intracranial CSF volume is likely an underestimate. Recent estimates indicate that a value of $200$ to $300$\,ml is more accurate (see \cite{hladky2024regulation} and references therein).
-\mar{this could also go into results. Keep it here for the moment?} \mer{I suggest you place the ``note'' in the Discussion.}
+\subsection*{Intracranial geometries: the ventricular system, SAS, and brain parenchyma}
+
+%% Hodneland et al~\cite{hodneland2019new} developed a method to image
+%% the brain's microvasculature based on time-of-flight (ToF) and
+%% quantitative susceptibility mapping (QSM) to identify arterial and
+%% venous networks. We derive a detailed tetrahedral mesh of the
+%% parenchyma and the surrounding CSF-filled spaces alongside a network
+%% representation of the vasculature from the anatomical data provided
+%% therein.
+
+%% In addition, we slightly modify the segmentation to ensure correct connectivity of the ventricular system. In particular, we elongate the aqueduct and enforce no communication between the ventricles and the surrounding CSF spaces except for the median aperture.
+%% After morphological smoothing of the segmented image, we extract surface representations of the outer SAS boundary, the pial membrane and the components of the ventricular system.
+
+From T1-weighted MR images of a human subject~\cite{hodneland2019new},
+we first automatically segment the brain parenchyma and CSF spaces,
+including the ventricular system and SAS using
+Synthseg~\cite{billot2023robust,billot2023synthseg}. We next manually
+adjust the segmentation to represent the correct connections between
+CSF spaces (aqueduct, median aperture), smoothen, and finally extract
+surface representations of the outer (arachnoid) boundary, the pial
+membrane and other interfaces. Conforming to these surface and
+interface representations, we generate a tetrahedral mesh $\Omega$
+representing the complete intracranial volume as the union of the
+parenchyma $\Omega_{\rm PAR}$ and CSF spaces $\Omega_{\rm CSF}$
+(\Cref{fig:intracranial_domains}a), using fTetWild~\cite{hu2020fast}
+. The resulting computational mesh consists of $153\,729$ vertices and
+$851\,904$ mesh cells, which vary between $0.4$ mm and $1.2$ cm in
+mesh cell diameter. The parenchyma has a total volume of $1386$ ml,
+whereas the ventricles and the outer SAS contribute $28$ ml and $277$
+ml, respectively, to a total CSF volume of $305$ml, in agreement with
+recent estimates~\cite{hladky2024regulation}.
+
+%% Note that the widely reported value of $150$\,ml of intracranial CSF volume is likely an underestimate. Recent estimates indicate that a value of $200$ to $300$\,ml is more accurate (see \cite{hladky2024regulation} and references therein).
+%% \mar{this could also go into results. Keep it here for the moment?} \mer{I suggest you place the ``note'' in the Discussion.}
 
 
-The computational domain $\Omega$ is defined by the union of the CSF spaces $\Omega_{\rm CSF}$ and brain parenchyma $\Omega_{\rm PAR}$ (\Cref{fig:concept}). The thin pia membrane encloses the brain, and we hence denote the CSF-brain interface with $\Gamma_{\rm pia}$, except for the separately marked surface of the lateral ventricles $\Gamma_{\rm LV}$ (thus $\partial \Omega_{\rm CSF} \bigcap \partial \Omega_{\rm PAR} = \Gamma_{\rm LV} \cup \Gamma_{\rm Pia}$).
-
-We denote the different parts of the outer boundary of $\Omega_{\rm CSF}$ with
-$\Gamma_{\mathrm{skull}}$ facing the dura and skull and $\Gamma_{\rm SSAS}$ representing the lower interface towards the spinal subarachnoid space (SSAS). $\Gamma_{\mathrm{skull}}$ is further subdivided into its lower and upper parts: $\Gamma_{\mathrm{skull^l}}$ and $\Gamma_{\mathrm{skull^u}}$ (compare \Cref{fig:concept}). The boundary of the spinal cord is denoted by $\Gamma_{\rm{SC}}$, which is given by $\Gamma_{\rm{SC}} = \partial \Omega_{\rm PAR} \setminus \partial \Omega_{\rm CSF}$ .
+%% The computational domain $\Omega$ is defined by the union of the CSF spaces $\Omega_{\rm CSF}$ and brain parenchyma $\Omega_{\rm PAR}$ (\Cref{fig:concept}).
 
 \subsection*{Vascular and perivascular domains and networks}
 
@@ -594,31 +626,37 @@ cylinders of inner radius $R_1^i$ and outer radius $R_2^i = \beta R_1^i$ of widt
 
 \mer{MER/MC: How aobut dispersion in the PVS?}
 
-\begin{figure}
-     \centering
-     \begin{subfigure}[b]{0.45\textwidth}
-         \centering
-         \includegraphics[width=\textwidth]{figures/Brain-PVS-callouts.pdf}
-         \caption{Concept sketch}
-         \label{fig:y equals x}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{0.3\textwidth}
-         \centering
-         \includegraphics[width=\textwidth]{figures/geometry_concept.png}
-         \caption{The arterial (red) and venous (blue) networks (top left), the parenchyma and CSF space (top right), combined (bottom row)}
-         \label{fig:three sin x}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{0.24\textwidth}
-         \centering
-         \includegraphics[trim={4cm 0 4cm 0},clip,width=\textwidth]{figures/labeled_arteries.png}
-         \caption{The arterial network with the main cerebral arteries: internal carotid artery (ICA), middle cerebral artery (MCA), anterior cerebral artery (ACA) and posterior cerebral artery (PCA)}
-         \label{fig:five over x}
-     \end{subfigure}
-  \caption{@Marius: Starts adding parts of this. \mer{MER: Concept figure illustrating the compartments and story line. (A) Concept sketch of the SAS, PVS and the brain; (B) Visualization of geometry domains (brain, sas and vasculature; think about colors and associations; please don't make blood blue and water red e.g.) ; (C) Zoom-in/detail on vasculature, which are which arteries (ACA, MCA, PCA, CoW)  and veins (XXX); (D) Zoom-in 2 on vascular position versus SAS and brain; (E) Zoom-in 3 on where PVS ends; (F) Illustration of boundaries? (G) Concept illustration of the mathematical model (diffusion, convection, exchange, boundaries).}}
-\label{fig:concept}
-\end{figure}
+%% \begin{figure}
+%%      \centering
+%%      \begin{subfigure}[b]{0.45\textwidth}
+%%          \centering
+%%          \includegraphics[width=\textwidth]{figures/Brain-PVS-callouts.pdf}
+%%          \label{fig:intracranial_domains}
+%%      \end{subfigure}
+%%      \hfill
+%%      \begin{subfigure}[b]{0.3\textwidth}
+%%          \centering
+%%          \includegraphics[width=\textwidth]{figures/geometry_concept.png}
+%%          \caption{The arterial (red) and venous (blue) networks (top left), the parenchyma and CSF space (top right), combined (bottom row)}
+%%          \label{fig:three sin x}
+%%      \end{subfigure}
+%%      \hfill
+%%      \begin{subfigure}[b]{0.24\textwidth}
+%%          \centering
+%%          \includegraphics[trim={4cm 0 4cm 0},clip,width=\textwidth]{figures/labeled_arteries.png}
+%%          \caption{The arterial network with the main cerebral arteries: internal carotid artery (ICA), middle cerebral artery (MCA), anterior cerebral artery (ACA) and posterior cerebral artery (PCA)}
+%%          \label{fig:five over x}
+%%      \end{subfigure}
+%%      %\caption{@Marius: Starts adding parts of this. \mer{MER: Concept figure illustrating the compartments and story line. (A) Concept sketch of the SAS, PVS and the brain; (B) Visualization of geometry domains (brain, sas and vasculature; think about colors and associations; please don't make blood blue and water red e.g.) ; (C) Zoom-in/detail on vasculature, which are which arteries (ACA, MCA, PCA, CoW)  and veins (XXX); (D) Zoom-in 2 on vascular position versus SAS and brain; (E) Zoom-in 3 on where PVS ends; (F) Illustration of boundaries? (G) Concept illustration of the mathematical model (diffusion, convection, exchange, boundaries).}}
+%% \label{fig:concept}
+%% \end{figure}
+
+\subsection*{To be moved: notation and labels}
+The thin pia membrane encloses the brain, and we hence denote the CSF-brain interface with $\Gamma_{\rm pia}$, except for the separately marked surface of the lateral ventricles $\Gamma_{\rm LV}$ (thus $\partial \Omega_{\rm CSF} \bigcap \partial \Omega_{\rm PAR} = \Gamma_{\rm LV} \cup \Gamma_{\rm Pia}$).
+
+We denote the different parts of the outer boundary of $\Omega_{\rm CSF}$ with
+$\Gamma_{\mathrm{skull}}$ facing the dura and skull and $\Gamma_{\rm SSAS}$ representing the lower interface towards the spinal subarachnoid space (SSAS). $\Gamma_{\mathrm{skull}}$ is further subdivided into its lower and upper parts: $\Gamma_{\mathrm{skull^l}}$ and $\Gamma_{\mathrm{skull^u}}$ (compare \Cref{fig:concept}). The boundary of the spinal cord is denoted by $\Gamma_{\rm{SC}}$, which is given by $\Gamma_{\rm{SC}} = \partial \Omega_{\rm PAR} \setminus \partial \Omega_{\rm CSF}$ .
+
 
 \subsection*{Multi-dimensional intracranial transport equations}
 
