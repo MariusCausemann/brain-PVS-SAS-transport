@@ -24,10 +24,9 @@
 \captionsetup[subfigure]{justification=justified,singlelinecheck=false}
 
 \title{In-silico molecular transport in the human intracranial space}
-
-\author[1,x]{Rami Masri}
-\author[1,x]{Miroslav Kuchta}
 \author[1,x]{Marius Causemann}
+\author[1,x]{Miroslav Kuchta}
+\author[1,x]{Rami Masri}
 \author[1,*]{Marie E. Rognes}
 \affil[1]{Department of Numerical Analysis and Scientific Computing, Simula Research Laboratory, Oslo, Norway}
 \affil[x]{Author order to be discussed.}
@@ -277,6 +276,11 @@ Sharp et al used the theory of dispersive mixing to predict a dispersion enhance
 \begin{figure}[h!]
 \centering 
 \begin{subfigure}[b]{0.33\textwidth}
+\includegraphics[width = 1 \textwidth]{paper/figures/CSF flow & dispersion.png}
+\caption{Model illustration}
+\label{fig:csf_flow_geom}
+\end{subfigure}
+\begin{subfigure}[b]{0.33\textwidth}
 \includegraphics[width = 1 \textwidth]{figures/subdomains.png}
 \caption{3D model of SAS and ventricles}
 \label{fig:csf_flow_geom}
@@ -302,9 +306,19 @@ Sharp et al used the theory of dispersive mixing to predict a dispersion enhance
 \label{fig:csf_flow_R}
 \end{subfigure}
 \begin{subfigure}[b]{0.33\textwidth}
-\includegraphics[width = 1 \textwidth]{figures/csf_velocity_histo.png} 
+\includegraphics[width = 1 \textwidth]{paper/figures/prod_velocity_histo.png} 
 \caption{production-induced flow velocities}
-\label{fig:csf_flow_histo}
+\label{fig:csf_flow_histo_prod}
+\end{subfigure}
+\begin{subfigure}[b]{0.33\textwidth}
+\includegraphics[width = 1 \textwidth]{paper/figures/cardiac_velocity_histo.png} 
+\caption{cardiac-induced flow velocities}
+\label{fig:csf_flow_histo_cardiac}
+\end{subfigure}
+\begin{subfigure}[b]{0.33\textwidth}
+\includegraphics[width = 1 \textwidth]{paper/figures/R_histo.png} 
+\caption{dispersion enhancement factor $R$}
+\label{fig:csf_flow_histo_R}
 \end{subfigure}
 \caption{\mer{A) Illustration of 3D-domains; (B) Illustration of
     relevant boundaries; C) CSF flow induced by CSF production; D) CSF
@@ -578,6 +592,7 @@ radius $R_1^i$ surrounding the centerlines $\Lambda^i$. Moreover, we
 consider the surrounding perivascular spaces as the union of annular
 cylinders of inner radius $R_1^i$ and outer radius $R_2^i = \beta R_1^i$ of width $R_2^i - R_1^i = (\beta - 1) R_1^i$. Both the vasculature and perivasculature are thus defined relative to a common network of vessel segments.
 
+\mer{MER/MC: How aobut dispersion in the PVS?}
 
 \begin{figure}
      \centering
@@ -611,8 +626,8 @@ We model diffusion, convection and exchange of a solute in PVSs, in the surround
 and for an averaged solute concentration $\hat c$ in a 1D network of centerlines $\Lambda$ representing the PVS ($\hat c$ defined locally on each $\Lambda^i$), such that the following equations hold
 \begin{subequations}
 \begin{alignat}{2}
-  \partial_t (\phi c) - \nabla \cdot (D \nabla (\phi c) ) + \nabla \cdot (\bm u c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma & = f && \quad \quad \mathrm{in} \quad \Omega_{\rm CSF} \cup \Omega_{\rm{PAR}}, \label{eq:multi_transport_3d} \\ 
-  \partial_t (A  \hat c) - \partial_s(\hat D A \partial_s ( \hat c)) +\partial_s(A \hat u \hat c )  +  \xi P (\hat c - \overline{c})  &= A \hat f && \quad \quad \mathrm{in} \quad  \Lambda . \label{eq:multi_transport_1d}
+  \partial_t (\phi c) - \nabla \cdot (D \nabla (\phi c) ) + \nabla \cdot (\bm u c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma & = 0 && \quad \quad \mathrm{in} \quad \Omega_{\rm CSF} \cup \Omega_{\rm{PAR}}, \label{eq:multi_transport_3d} \\ 
+  \partial_t (A  \hat c) - \partial_s(\hat D A \partial_s ( \hat c)) +\partial_s(A \hat u \hat c )  +  \xi P (\hat c - \overline{c})  &= 0 && \quad \quad \mathrm{in} \quad  \Lambda . \label{eq:multi_transport_1d}
  \end{alignat}
 \end{subequations}
 The notation $\overline{c}$ denotes the lateral average of the concentration over the outer perivascular boundary \footnote{
@@ -643,9 +658,9 @@ Here $\phi$ is the fluid volume fraction (or porosity) of the brain (where $\phi
 \end{cases} . 
 \]
 We refer to \Cref{tab:overview} for the values of the used parameters.
-In the above,  $|\Lambda^i \cap \Omega_{\rm{PAR}}|$ (resp.  $|\Lambda^i \cap \Omega_{\rm{csf}}|$) is nonzero whenever the surrounding PVS around the line $\Lambda^i$ intersects $\Omega_{\rm{PAR}}$ (resp. $\Omega_{\rm{csf}}$). If the surrounding PVS intersects both, then we set $\xi = \xi_{\mathrm{PVS}, \rm{PAR}}$ (resp $\xi_{\mathrm{PVS}, \rm{CSF}}$) if the PVS lies mostly ($80$ percent) in $\Omega_{\rm{PAR}}$ (resp. $\Omega_{\rm{CSF}}$) and the interaction with $\Omega_{\rm{PVS}}$ (resp. $\Omega_{\rm{CSF}}$ is ignored. 
+In the above,  $|\Lambda^i \cap \Omega_{\rm{PAR}}|$ (resp.  $|\Lambda^i \cap \Omega_{\rm{csf}}|$) is nonzero whenever the surrounding PVS around the line $\Lambda^i$ intersects $\Omega_{\rm{PAR}}$ (resp. $\Omega_{\rm{csf}}$). If the surrounding PVS intersects both, then we set $\xi = \xi_{\mathrm{PVS}, \rm{PAR}}$ (resp $\xi_{\mathrm{PVS}, \rm{CSF}}$) if the PVS lies mostly ($80$ percent) in $\Omega_{\rm{PAR}}$ (resp. $\Omega_{\rm{CSF}}$) and the interaction with $\Omega_{\rm{PVS}}$ (resp. $\Omega_{\rm{CSF}}$ is ignored. Additionally, we increase the permeability $\xi$ by a factor of 100 at the PVS end nodes $\partial \Lambda^a$ to account for the transition from explicitly resolved PVSs to their unresolved continuation in the CSF-space and parenchyma.
 
-Further, $P$ and $A$ are the perimeter and area of the PVS which can vary along the centerline network, respectively; and $f$ and $\hat{f}$ represent given sources of solute in $\Omega$ and $\Lambda$, respectively. Finally, we remark that $\hat u$ takes different values on each $\Lambda_i$.  Both $\Omega$ and $\Lambda$ are fixed in time here. Finally, we note that this version of the model assumes that there is no interaction between the inner perivascular boundary and the blood vessel. 
+Further, $P$ and $A$ are the perimeter and area of the PVS which can vary along the centerline network, respectively.  Finally, we remark that $\hat u$ takes different values on each $\Lambda_i$.  Both $\Omega$ and $\Lambda$ are fixed in time and we assume constant-in- time radii (despite varying radii to drive peristaltic flow, see \cref{sec:sup:peristalsis}). Finally, we note that the model assumes that there is no interaction between the inner perivascular boundary and the blood vessel. 
 
 %\noindent \mer{MER: @Rami: I've added the $\phi$'s in this subsection. Please review and add convective terms in $\Omega$ and $\Lambda$.} \rami{done, maybe I include a more precise variational formulation in the appendix ? }
 \subsubsection*{Initial conditions}
@@ -734,9 +749,9 @@ We assume no significant convection in the brain $\Omega_{\rm PAR}$, and set $u 
 
 \mer{@Rami: Could you draft one paragraph here describing the essential bits of the numerical scheme? I recommend ``describing with words'' to reach relevant audiences. Refer to the Supplementary Methods for details. Mention theoretical expected convergence order.} 
 
-In this section, we provide a brief overview on the employed numerical discretization. We refer to \Cref{sec:details_numerical_method} for detailed expositions on the approximation. The numerical scheme for the CSF flow equations utilizes polynomial spaces that preserve the divergence free condition \eqref{eq:divergence_equation} on the discrete level \cite{hong2016robust}. This requirement is important for stability in the transport equation, see for example \cite{cesmelioglu2022compatible}. The spaces we used for the velocity are continuous along the normal direction; continuity of the tangential component is enforced via interior penalty approaches \cite{hong2016robust}.  If the true solution is smooth, then one expects optimal error convergence rates for the aforementioned methods.
+In this section, we provide a brief overview on the employed numerical discretization. We refer to \Cref{sec:details_numerical_method} for details. The numerical scheme for the CSF flow equations utilizes polynomial spaces that preserve the divergence free condition \eqref{eq:divergence_equation} on the discrete level \cite{hong2016robust}. This requirement is important for stability in the transport equation, see for example \cite{cesmelioglu2022compatible}. The spaces we used for the velocity are continuous along the normal direction; continuity of the tangential component is enforced via interior penalty approaches \cite{hong2016robust}.  If the exact solution of \eqref{eq:momnetum_equation}--\eqref{eq:divergence_equation} is smooth, then one expects optimal error convergence rates for this approximation. 
 
-For the 3D transport problem, we use the interior penalty discontinuous Galerkin (DG) method with weighted averages and upwinding for the convection term \cite{ern2009discontinuous}.  We remark that the choice of DG is necessary here since  continuous Galerkin methods even when supplemented with streamline upwind stabilization are completely unstable. For the 1D transport problem, we use continuous Galerkin spaces defined over the entire network with additional streamline upwind Petrov–Galerkin stabilization when the 1D velocity is non--zero.  DG methods for the coupled 3D--1D problem have been recently analyzed  where convergence of the method for the elliptic case is established \cite{masri2024discontinuous}. While the analysis is for DG methods for both the 3D and the 1D problem, we expect similar arguments to hold here. However, note that the 3D--1D coupling induces a singularity in the 3D solution and one can only expect suboptimal error rates near the 1D network. In subdomains excluding the 1D lines, almost optimal rates can be expected for both DG methods \cite{masri2023discontinuous} and CG methods \cite{koppl2016local}.  Extension of the convergence to convection--diffusion problems is an interesting future research direction. 
+For the 3D transport problem, we use the interior penalty discontinuous Galerkin (DG) method with weighted averages and upwinding for the convection term \cite{ern2009discontinuous}.  We remark that the choice of DG in the 3D domain is necessary here since  continuous Galerkin methods even when supplemented with artificial diffusion stabilization terms were unstable in our experiments. For the 1D transport problem, we use continuous Galerkin spaces defined over the entire network with additional artificial diffusion silization when the 1D velocity is non--zero.  DG methods for the coupled 3D--1D problem have been recently analyzed  where convergence of the method for the elliptic case is established \cite{masri2024discontinuous}. While the analysis is for DG methods for both the 3D and the 1D problem, we expect similar arguments to hold here. However, note that the 3D--1D coupling induces a singularity in the 3D solution and one can only expect suboptimal error rates near the 1D network. In subdomains excluding the 1D lines, almost optimal rates can be expected for both DG methods \cite{masri2023discontinuous} and CG methods \cite{koppl2016local}.  Extension of the convergence analysis to convection--diffusion problems is an interesting future research direction. 
  
 
 \subsection*{Implementation and numerical verification}
@@ -841,11 +856,10 @@ We use the diffusion coefficient $D_{\rm gad}$ of Gadubutrol in free water in th
          extracellular space volume fraction& $\phi$& 0.2& - &\cite{nicholson1981ion} \\
          PVS-parenchyma permeability&  $\xi_{PVS,P}$ & $3.8\cdot 10^{-7}$  & m/s & \cite{koch2023estimates} \\
          PVS-CSF permeability&  $\xi_{PVS,CSF}$& tbd & m/s & \\
-        PVS-CSF permeability (basal cisterns)&  $\xi_{PVS,CSF-BC}$& tbd & m/s & \\ 
+         CSF-parenchyma permeability&  $\xi_{CSF,PAR}$& $2.6 \cdot 10^{-8}$ & m/s & \cite{riseth2025twocompartment} \\
          \midrule
-         Spinal solute influx rate & $g_{\mathrm{influx}}$ & $\max(0, a(T_0 - t))$  & mm$^2$/s & \cite{hornkjol2022csf} \\
-         Spinal solute influx time & $T_0$ & $2.24$  & h & \cite{hornkjol2022csf} \\
-         Spinal solute influx coefficient & $a$ & tbd  & mmol/m$^{2}$ & \cite{hornkjol2022csf} \\
+         total spinal solute influx & $m_{\rm tot}$  & $0.5$ & mmol  & \cite{eide2024functional} \\
+         Spinal solute influx peak time & $T_{\rm max}$ & $1$  & h & \\
          solute efflux resistance & $\beta$  & $10^{-4}$ & mm$^2$/s & \cite{hornkjol2022csf} \\
          \midrule
          CSF production rate & $g_{\mathrm{CSF}}$ & $0.63$  & l/day & \cite{nilsson1992circadian} \\
@@ -1073,7 +1087,8 @@ The discretization for the CSF flow, is then to find $(\bm u_h, p_h) \in \bm V_h
 \mathcal{A}_h(u_h, v_h)  + \sum_{F \in \mathcal{F}_{\Gamma_{\mathrm{skull}}}} \int_{F} R_0 (\bm u_h \cdot \bm n) (\bm v_h \cdot \bm n) - \int_{\Omega} \nabla \cdot \bm v_h \, p_h  & = 0, \quad \forall \bm v_h \in \bm V_h   \\ 
 (\nabla \cdot \bm u_h , q_h ) & = 0, \quad \forall q_h \in S_h.
 \end{align}
-
+\subsubsection{PVS flow} 
+\rami{write it the scheme}
 \subsubsection{Solute transport} For the 3D concentration, we use broken polynomial spaces and interior penalty discontinuous Galerkin (DG) methods with upwinding in order to capture the sharp boundary layers.  For DG, we utilize the discrete space 
 \begin{equation}
 V_h^k = \{v_h \in L^2(\Omega): \;  v_h \vert_E \in \mathbb{P}^k(E), \; E \in \mathcal{T}_h\}.
