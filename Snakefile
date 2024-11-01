@@ -5,25 +5,29 @@ from collections import defaultdict
 num_mumps_threads = 16
 mesh_refine_models = ["modelALowRes", "modelA", "modelAHighRes"]
 time_refine_models = ["modelA", "modelAsmalldt", "modelAlargedt"]
-model_variations = ["test","modelB", "modelAB", "modelABC", "modelAC", "modelABCrootOutflow"]
+model_variations = ["modelA" ,"modelB1-10", "modelB1-100", "modelB1-1000",
+                    "modelB2-1", "modelB2-10", "modelB2-100", "modelB2-1000"]
 
-model_comparisons = ["modelA_modelB", "modelA_modelAB", "modelA_modelAHighRes", 
-"modelAC_modelABC", "modelABC_modelABCrootOutflow"]
+model_comparisons = ["modelA_modelB1-10","modelA_modelB1-100", "modelA_modelB1-1000",
+                    "modelA_modelB2-1", "modelA_modelB2-10", "modelA_modelB2-100",
+                     "modelA_modelB2-1000" ]
 
 models =  mesh_refine_models + time_refine_models + model_variations
-times = list(np.array([1, 6, 12, 24])*60*60)
+times = list(np.array([1, 3, 6, 12, 24])*60*60)
 conctimes =  list((np.array([0, 1/3, 2/3, 1, 4/3, 5/3, 2, 7/3, 8/3, 3, 4, 5, 6 ,9, 12, 15, 18, 21, 24])*60*60).astype(int))
 
 cmax = {"detail":defaultdict(lambda: 2, {"modelA_modelA4":2}),
         "overview":defaultdict(lambda: 2, {"modelA_modelA4":2}),
         "isosurf":defaultdict(lambda: 5, {"modelA_modelA4":8}),
+        "timesurf":defaultdict(lambda: 1, {"modelA_modelA4":1}),
         }
 
 diffmax = {"detail":defaultdict(lambda: 0.1,{"modelA_modelA4":0.2}),
            "overview":defaultdict(lambda: 1,{"modelA_modelA4":1}),
-           "isosurf":defaultdict(lambda: 1,{"modelA_modelA4":1}),          
+           "isosurf":defaultdict(lambda: 1,{"modelA_modelA4":1}),  
+           "timesurf":defaultdict(lambda: 1, {"modelA_modelA4":1}),        
 }
-types = ["overview", "isosurf"]
+types = ["overview", "isosurf", "timesurf"]
 
 # check for headless server here? https://github.com/pyvista/pyvista/blob/f872ffebc7f56b1ff03541e368935c3304fc5e33/pyvista/plotting/tools.py#L54
 # or try vtk osmesa build...
@@ -36,7 +40,10 @@ rule all:
         expand("plots/comparisons/{c}/{c}_{type}.png",c=model_comparisons, type=types),
         expand("plots/{modelname}/{modelname}_tracer_vessel_dist.png", modelname=models),
         expand("plots/{modelname}/{modelname}_total_conc.png", modelname=models),
-        expand("plots/{modelname}/{modelname}_{tp}_{t}.png", modelname=models, t=times, tp=types)
+        "plots/pvs_flow_prod/sas_flow/",
+        "plots/pvs_flow_peristaltic/vasomotion/",
+        "plots/pvs_flow_peristaltic/cardiac_pvs_oscillation/",
+        #expand("plots/{modelname}/{modelname}_{tp}_{t}.png", modelname=models, t=times, tp=types)
 
 
 rule runSimuation:
@@ -126,7 +133,9 @@ rule compareModels:
         ven1="results/{model1}/{model1}_vein.xdmf",
         sas2="results/{model2}/{model2}_sas.xdmf",
         art2="results/{model2}/{model2}_artery.xdmf",
-        ven2="results/{model2}/{model2}_vein.xdmf"
+        ven2="results/{model2}/{model2}_vein.xdmf",
+        metrics_yaml1="results/{model1}/mean_concentrations.yml",
+        metrics_yaml2="results/{model2}/mean_concentrations.yml",
     output:
         plot="plots/comparisons/{model1}_{model2}/{model1}_{model2}_{type}.png"
     params:
@@ -157,9 +166,10 @@ rule totalTracer:
         art="results/{modelname}/{modelname}_artery.xdmf",
         ven="results/{modelname}/{modelname}_vein.xdmf",
     output:
-        plot="plots/{modelname}/{modelname}_total_conc.png"
+        plot="plots/{modelname}/{modelname}_total_conc.png",
+        metrics_yaml="results/{modelname}/mean_concentrations.yml",
     shell:
-        "xvfb-run -a python scripts/mean_concentrations.py {wildcards.modelname} {conctimes}"
+        "xvfb-run -a python scripts/mean_concentrations.py {wildcards.modelname}"
 
 rule segmentT1:
     input:
@@ -238,7 +248,7 @@ rule computeProdPVSFlow:
         "results/csf_flow/{csf_flow_model}/flow.hdf",
     output:
         hdf='results/pvs_flow_prod/{csf_flow_model}/pvs_flow.hdf',
-        plotputdir=directory("plots/pvs_flow_prod/{csf_flow_model}"),
+        outputdir=directory("results/pvs_flow_prod/{csf_flow_model}"),
     shell:
         """
         python scripts/pvs_flow_prod.py {wildcards.csf_flow_model}
@@ -268,6 +278,18 @@ rule computePeristalticPVSFlow:
          --output {output.outputdir} && \
          python scripts/evaluate_pvs_flow.py {output.hdf}
          """
+
+rule evaluatePVSFlow:
+    conda:"environment.yml"
+    input:
+        hdf='results/{flow_type}/{pvs_flow_model}/pvs_flow.hdf',
+    output:
+        directory("plots/{flow_type}/{pvs_flow_model}/")
+    shell:
+        "python scripts/evaluate_pvs_flow.py {input.hdf}"
+
+
+
 
 
 
