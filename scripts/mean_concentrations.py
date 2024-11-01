@@ -22,11 +22,13 @@ LVID = 3
 V34ID = 4
 CSFNOFLOWID = 5
 
-def compare_concentrations(modelname:str, times:List[int]):
+def compare_concentrations(modelname:str):
+    config = read_config(f"configfiles/{modelname}.yml")
+    dt , T= config["dt"], config["T"]
+    times = np.arange(0, T + dt, 3*dt*config["output_frequency"])
     sas_conc, subd_marker = get_result_fenics(modelname, "sas", times)
     art_conc, art_radii = get_result_fenics(modelname, "artery", times)
     ven_conc, ven_radii = get_result_fenics(modelname, "vein", times)
-    config = read_config(f"configfiles/{modelname}.yml")
     pvs_ratio_artery = config["pvs_ratio_artery"]
     pvs_ratio_vein = config["pvs_ratio_venes"]
     subd_marker.array()[np.isin(subd_marker.array(),[LVID, V34ID, CSFNOFLOWID])] = CSFID
@@ -47,9 +49,7 @@ def compare_concentrations(modelname:str, times:List[int]):
     art_tot = np.array([assemble(area_artery*c*dxa) for c in art_conc])
     ven_tot = np.array([assemble(area_vein*c*dxv) for c in ven_conc])
     tot = par_tot + csf_tot + art_tot + ven_tot
-    times = np.array(times)
-    dt , T= config["dt"], config["T"]
-    alltimes = np.arange(0, times[-1], dt)
+
     #inflow = np.cumsum([k*max(0.0, t0 - t) for t in alltimes]) * dt
     set_plotting_defaults()
     sns.set_palette("magma_r", n_colors=4)
@@ -106,9 +106,13 @@ def compare_concentrations(modelname:str, times:List[int]):
     priority = InterfaceResolution(subdomains=subd_marker,
                                        resolve_conflicts={(CSFID, PARID): 4})
     pvs_shape = Circle(radius=pvs_radii, degree=40, quad_rule='midpoint')
+    proximity_dist = 2e-3
+    nearby_shape = Circle(radius=project(pvs_radii + proximity_dist, DG0a), degree=40, quad_rule='midpoint')
     c_averages = [ii_project(Average(c, artery, pvs_shape, 
-                                     normalize=True, resolve_interfaces=priority), V) for c in sas_conc]
-
+                                     normalize=True), V) for c in sas_conc]
+    nearby_averages = [ii_project(Average(c, artery, nearby_shape, 
+                                     normalize=True), V) for c in sas_conc]
+    
     segments, segids ,_ = color_branches(artery)
     dxs = Measure("dx", artery, subdomain_data=segments)
     points = np.array([c for n,c in pointlabels])
@@ -117,29 +121,62 @@ def compare_concentrations(modelname:str, times:List[int]):
     artsegids = [int(segments.array()[i]) for i in cellidx]
 
     seglengths = [assemble(1*dxs(si)) for si in artsegids]
-    conc_at_point, avg_conc_around_point= {}, {}
+    conc_at_point, avg_conc_around_point, avg_conc_nearby_point= {}, {}, {}
     for n, si,l in zip(artlabels, artsegids, seglengths):
         conc_at_point[n] = [assemble(c*dxs(si))/l for c in art_conc]
         avg_conc_around_point[n] = [assemble(c*dxs(si))/l for c in c_averages]
-    artlabelsets = [["BA",],["ICA-L", "ICA-R"], ["MCA-L", "MCA-R"],["MCA2-L", "MCA2-R"], ["PCA-L", "PCA-R"], ["ACA"], ["PER-L", "PER-R"]]
-
+        avg_conc_nearby_point[n] = [assemble(c*dxs(si))/l for c in nearby_averages]
+    artlabelsets = [["BA",],["ICA-L", "ICA-R"], ["MCA-L", "MCA-R"],["MCA2-L", "MCA2-R"], 
+                    ["ACA-A1-L", "ACA-A1-R"], ["ACA-A2", "ACA-A3"],
+                    ["PCA-L", "PCA-R"], ["PER-L", "PER-R"]]
     coldict = dict(zip(artlabels, sns.color_palette("dark", n_colors=len(artlabels))))
-    fig, axes = plt.subplots(2, int(np.ceil(len(artlabelsets)/2)), figsize=(12,8), constrained_layout=True)
+    fig, axes = plt.subplots(2, int(np.ceil(len(artlabelsets)/2)), figsize=(14,8), constrained_layout=True)
     for ax, al_set in zip(axes.flatten(), artlabelsets):
+        peaks, lags, ftas = [],[],[]
         for n in al_set:
             col = coldict[n]
-            ax.plot(times / 3600, conc_at_point[n], color=col, label=n)
-            ax.plot(times / 3600, avg_conc_around_point[n], color=col, ls=":")
+            h1 = ax.plot(times / 3600, conc_at_point[n], color=col, label=n)
+            h2 = ax.plot(times / 3600, avg_conc_around_point[n], color=col, ls="dashed")
+            h3 = ax.plot(times / 3600, avg_conc_nearby_point[n], color=col, ls="dotted")
             ax.fill_between(times / 3600, conc_at_point[n], avg_conc_around_point[n],
                              alpha=0.2, color=col)
+            ax.fill_between(times / 3600, avg_conc_around_point[n], avg_conc_nearby_point[n],
+                             alpha=0.1, color=col)
+            pvs_peak = times[np.argmax(conc_at_point[n])]
+            avg_peak = times[np.argmax(avg_conc_around_point[n])]
+            lag = avg_peak - pvs_peak
+        
+            fta = times[np.where(np.array(conc_at_point[n]) > 0.1)[0][0]]
+            #ax.axvline(fta/3600,ls="-", ymax=0.2, color=col)
+            peaks.append(pvs_peak); lags.append(lag), ftas.append(fta)
+        format_secs = lambda s: "{:1.0f}:{:02.0f}".format(*divmod(abs(s)/60, 60))
+        #format_secs = lambda s: f"{s/60} min"
+        nl = chr(10)
+        text = (f"peak: {'/ ' + (chr(10)).join(format_secs(p) for p in peaks)} h" + nl +
+                f"Δt: {nl.join(('+' if l>-60 else '-') + format_secs(l) for l in lags)} h" + nl +
+                f"FTA: {nl.join(format_secs(p) for p in ftas)} h")
+        x_text = 1 if np.mean(peaks) < T/2 else 0.4
+        ax.set_xlim((0, 12))
+        ax.text(x_text + (max(peaks) > 10*60*60)*0.05, 0.9,
+                text, transform=ax.transAxes, horizontalalignment='right',
+                verticalalignment="top")
+
         ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.1), ncol=2, 
                   columnspacing=0.3, frameon=False)
         ax.set_xlabel("time (h)")
         ax.set_ylabel("concentration (mol/l)")
-    plt.savefig(f"plots/{modelname}/{modelname}_conc_at_label.png")
+    plt.figlegend(handles =[h1[0], h2[0], h3[0]],
+                  labels=["PVS", "outer PVS boundary", 
+                          f"PVS proximity (R + {int(proximity_dist*1e3)} mm)"],
+                  loc='lower center', #facecolor="white", 
+                  edgecolor="black", frameon=False,
+                  ncols=3, bbox_to_anchor=(0.5, 0.98))
+    plt.savefig(f"plots/{modelname}/{modelname}_conc_at_label.png",
+                bbox_inches='tight')
 
-
-    times, c_averages, art_conc = times[1:], c_averages[1:], art_conc[1:]
+    timespoints = np.array([1,3,6,12,24])*3600
+    timeidx = np.where(np.isin(times, timespoints))[0]
+    times, c_averages, art_conc = times[timeidx], [c_averages[i] for i in timeidx], [art_conc[i] for i in timeidx]
 
     conc_jump = [project((cavg - cart), DG0a) for  cavg, cart in zip(c_averages, art_conc)]
     rel_conc_jump = [project(100*(cavg - cart)/(cavg  + 1e-16), DG0a) for cavg, cart in zip(c_averages, art_conc)]
