@@ -7,7 +7,7 @@ import numpy as np
 import typer
 from pathlib import Path
 from plotting_utils import read_config
-from test_map_on_global_coords_shift import map_dg_on_global
+from test_map_on_global_coords_shift import map_dg_on_global, map_kdtree
 from IPython import embed
 import yaml
 
@@ -118,8 +118,10 @@ def run_simulation(configfile: str):
                                         PARID: parenchyma_diffusion # parenchyma
                                         })
     art_xi_root = Function(FunctionSpace(artery, "CG", 1))
-    art_xi_root.vector()[:] = np.where(artery_roots.array()[:] > 0, root_xi_factor, 1)
-    xi_a = pcws_constant(artmarker, art_xi_dict)*art_xi_root
+    idx = map_kdtree(artery.coordinates(), FunctionSpace(artery, "CG", 1).tabulate_dof_coordinates())
+    art_xi_root.vector()[:] = np.where(artery_roots.array()[:] > 0, root_xi_factor, 1)[idx]
+    xi_a = pcws_constant(artmarker, art_xi_dict)
+    xi_a.vector()[:] *= interpolate(art_xi_root, xi_a.function_space()).vector()[:]
     xi_v = pcws_constant(veinmarker, ven_xi_dict)
 
     Da = Constant(arterial_pvs_diffusion) 
@@ -328,6 +330,7 @@ def run_simulation(configfile: str):
     u_i.rename("c", "c")
     pa_i.rename("c", "c")
     pv_i.rename("c", "c")
+    xi_a.rename("xi_a", "xi_a")
 
     xdmfsas = XDMFFile(results_dir + f'{modelname}_sas.xdmf') 
     xdmfart = XDMFFile(results_dir + f'{modelname}_artery.xdmf') 
@@ -350,7 +353,7 @@ def run_simulation(configfile: str):
 
     #write((u_i, pa_i, pv_i), pvdfiles, 0.0, hdffile=hdffile)
     write((artmarker, veinmarker), pvdfiles, 0.0)
-    #write((xi_a, xi_v), pvdfiles, 0.0)
+    write((xi_a, xi_v), pvdfiles, 0.0)
     #write([phi], [pvdsas], 0.0)
 
     wh = xii.ii_Function(W)
