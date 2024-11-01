@@ -576,7 +576,7 @@ Effect of pia permeability (Model N-1)
 
 From T1-weighted MR images of a human subject~\cite{hodneland2019new},
 we first automatically segment the brain parenchyma and CSF spaces,
-including the ventricular system and SAS using
+including the ventricular system and SAS, using
 Synthseg~\cite{billot2023robust,billot2023synthseg}. We next manually
 adjust the segmentation to represent the correct connections between
 CSF spaces (aqueduct, median aperture), smoothen, and finally extract
@@ -596,25 +596,32 @@ recent estimates~\cite{hladky2024regulation}.
 %% Note that the widely reported value of $150$\,ml of intracranial CSF volume is likely an underestimate. Recent estimates indicate that a value of $200$ to $300$\,ml is more accurate (see \cite{hladky2024regulation} and references therein).
 %% \mar{this could also go into results. Keep it here for the moment?} \mer{I suggest you place the ``note'' in the Discussion.}
 
-
 %% The computational domain $\Omega$ is defined by the union of the CSF spaces $\Omega_{\rm CSF}$ and brain parenchyma $\Omega_{\rm PAR}$ (\Cref{fig:concept}).
 
-\mer{MER: Stopped here.}
+\subsection*{Vascular and perivascular networks}
 
-\subsection*{Vascular and perivascular domains and networks}
+To extract a compatible model representation of surface arteries and
+arterioles, we use Kiminaro~\cite{william_silversmith_2021_5539913} to
+skeletonize time-of-flight angiography images from the same human
+subject~\cite{hodneland2019new}. Each vessel segment $i$ is then
+represented by its centerline $\Lambda^i$ and a radius $R_1^i$. 
 
-\mer{Is this up-to-date? @Rami checks sanity and numbers of paragraph.}
+\mer{MER: WIP here.}
 
-We skeletonize the binary masks of the arteries (and veins) of the
-Hodneland~\cite{hodneland2019new} data set using
-Kiminaro~\cite{william_silversmith_2021_5539913}, to obtain the
-centerline $\Lambda^i$ and radius $R_1^i$ of each detected vessel $i$,
-and the vessel connections. The resulting vascular networks are
-further smoothened using a spline interpolation technique, and
-represented as graphs with nodes connected by edges. The arterial
-network contains 11862 nodes (and 11861 edges), while the venous
-network contains 21883 nodes (and 21882 edges); with no cycles in
-either network. Nodes connected to only one edge (i.e.~with graph
+%% We skeletonize the binary masks of the arteries (and veins) of the
+%% Hodneland~\cite{hodneland2019new} data set using
+%% Kiminaro~\cite{william_silversmith_2021_5539913}, to obtain the
+%% centerline $\Lambda^i$ and radius $R_1^i$ of each detected vessel $i$,
+%% and the vessel connections. The resulting vascular networks are
+%% further smoothened using a spline interpolation technique, and
+%% represented as graphs with nodes connected by edges. 
+
+%The resulting vascular networks are further smoothened using a spline
+%interpolation technique
+
+The arterial network contains 11862 nodes (and 11861 edges), while the
+venous network contains 21883 nodes (and 21882 edges); with no cycles
+in either network. Nodes connected to only one edge (i.e.~with graph
 degree 1) are labeled terminal nodes. For the arterial network, we
 identify 3 of the terminal nodes, representing \mer{the two internal
   carotid arteries and the basilar artery}, as root nodes
@@ -624,7 +631,10 @@ domain defined by the connected centerlines by $\Lambda$. The vascular
 domain is then represented as the union of cylindrical vessels of
 radius $R_1^i$ surrounding the centerlines $\Lambda^i$. Moreover, we
 consider the surrounding perivascular spaces as the union of annular
-cylinders of inner radius $R_1^i$ and outer radius $R_2^i = \beta R_1^i$ of width $R_2^i - R_1^i = (\beta - 1) R_1^i$. Both the vasculature and perivasculature are thus defined relative to a common network of vessel segments.
+cylinders of inner radius $R_1^i$ and outer radius $R_2^i = \beta
+R_1^i$ of width $R_2^i - R_1^i = (\beta - 1) R_1^i$. Both the
+vasculature and perivasculature are thus defined relative to a common
+network of vessel segments.
 
 \mer{MER/MC: How aobut dispersion in the PVS?}
 
