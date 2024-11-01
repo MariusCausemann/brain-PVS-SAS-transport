@@ -772,65 +772,33 @@ The obtained pressure field only account for viscous forces, albeit cardiac indu
 Further assuming unsteady dispersion, we follow Sharp et al \cite{keith2019dispersion} and calculate the enhancement factor $R$ from the non-dimensionalized pressure gradient $dP=\frac{|\nabla p|}{\omega \mu / h}$ as $R\approx dP^2 / \alpha^3$. Combining the computed pressure gradient with this scaling law yields a pointwise approximation of the dispersion factor. Finally, we account for the non-local nature of the dispersion mechanism by applying a smoothing technique to obtain a spatially varying, but locally averaged diffusion enhancement factor $R$ (see the visualization in \cref{fig:visualize_R} and \cref{sec:dispersion_details} for additional details).
 
 
-\subsection*{Cerebrospinal fluid flow in the perivascular spaces}
-\label{sec:csf_pvs}
-We obtain the fluid velocity $\hat u = \hat u_{\rm prod}$  in \eqref{eq:multi_transport_1d} by averaging the tangential component of $\bm u_{\mathrm{sas}}$ locally on each centerline $\Lambda_i$. Precisely, for all $i$ we compute 
-\begin{equation}
-\hat u_{\rm {prod}}(s) = \frac{1}{A(s)} \int_{\Theta(s)} \bm u \cdot \bm \tau_i, \quad \mathrm{in} \,\,  \Lambda_i.   
-\end{equation}
- In the above $\bm u$ evaluates to $\bm u_{\rm{sas}}$ on $\Omega_{\rm CSF}$ and to zero otherwise, $\bm \tau_i$ is the tangent vector determined by the centerline $\Lambda_i$, $\Theta(s)$ is the cross-section of the PVS point at point $s$ and  $A$ is the area of this cross-section. \rami{to place a visualization here too }
-
 \subsection*{Fluid flow within the parenchyma}
 \label{sec:csf_brain}
 
 We assume no significant convection in the brain $\Omega_{\rm PAR}$, and set $u = u_{\rm PAR} = 0$ there as a first approximation. 
 
-\subsection*{Numerical approximation of multi-dimensional transport and CSF flow}
+\subsection*{Perivascular fluid flow induced by pressure gradients}
 
-\mer{@Rami: Could you draft one paragraph here describing the essential bits of the numerical scheme? I recommend ``describing with words'' to reach relevant audiences. Refer to the Supplementary Methods for details. Mention theoretical expected convergence order.} 
+The production of CSF in the choroid plexus generates a small, but consistent pressure gradient within the intracranial space. To compute the resulting CSF flow within the PVS, we solve 1D Darcy equations in the PVS network. The unknowns are the averaged PVS velocity, $u_{\rm pvs} = \langle u_{v,s} \rangle$, and the cross-section pressure $p_{\rm pvs} $ (assumed to be constant in each cross-section). The system is given by  \cite{daversin2022geometrically, gjerde2024directional} 
+\begin{alignat}{2}
+A \,  u_{\rm pvs}   + \frac{\kappa}{\mu} \, A \, \partial_{s} p_{\rm pvs} & = 0, &&  \quad \rm in  \,\, \Lambda  \\ 
+-\partial_s (A \, u_{\rm pvs}) & = f, && \quad \rm in  \,\, \Lambda .  
+\end{alignat} 
+In the above, $A$ is the area of the PVS, $\mu$ is the dynamic viscosity, and $\kappa$ is derived from the assumption of Poiseuille
+flow in the annular cross-section of the PVS \cite{daversin2022geometrically,tithof2022network}: 
+\begin{equation}
+\kappa = \frac18 \left( R_2^2 + R_1^2 - \frac{1}{\ln(R_2/R_1)} (R_2^2- R_1^2) \right). 
+\end{equation}
+On bifurcations, conservation of fluxes is enforced weakly and continuity of the pressure is enforced strongly (in the choice of the finite element spaces). 
 
-In this section, we provide a brief overview on the employed numerical discretization. We refer to \Cref{sec:details_numerical_method} for details. The numerical scheme for the CSF flow equations utilizes polynomial spaces that preserve the divergence free condition \eqref{eq:divergence_equation} on the discrete level \cite{hong2016robust}. This requirement is important for stability in the transport equation, see for example \cite{cesmelioglu2022compatible}. The spaces we used for the velocity are continuous along the normal direction; continuity of the tangential component is enforced via interior penalty approaches \cite{hong2016robust}.  If the exact solution of \eqref{eq:momnetum_equation}--\eqref{eq:divergence_equation} is smooth, then one expects optimal error convergence rates for this approximation. 
+Since the pressure gradient the caused by the steady production-driven CSF flow (see \cref{sec:csf_fluid_vel}), we impose the precomputed fluid pressure $p_{\rm CSF}$ on the networks root nodes:
 
-For the 3D transport problem, we use the interior penalty discontinuous Galerkin (DG) method with weighted averages and upwinding for the convection term \cite{ern2009discontinuous}.  We remark that the choice of DG in the 3D domain is necessary here since  continuous Galerkin methods even when supplemented with artificial diffusion stabilization terms were unstable in our experiments. For the 1D transport problem, we use continuous Galerkin spaces defined over the entire network with additional artificial diffusion silization when the 1D velocity is non--zero.  DG methods for the coupled 3D--1D problem have been recently analyzed  where convergence of the method for the elliptic case is established \cite{masri2024discontinuous}. While the analysis is for DG methods for both the 3D and the 1D problem, we expect similar arguments to hold here. However, note that the 3D--1D coupling induces a singularity in the 3D solution and one can only expect suboptimal error rates near the 1D network. In subdomains excluding the 1D lines, almost optimal rates can be expected for both DG methods \cite{masri2023discontinuous} and CG methods \cite{koppl2016local}.  Extension of the convergence analysis to convection--diffusion problems is an interesting future research direction. 
- 
+\begin{equation}
+    p_{\rm PVS} = p_{\rm CSF} \quad \text{ on } \Lambda^{\rm out}
+\end{equation}
 
-\subsection*{Implementation and numerical verification}
+In case that the root does not lie within the CSF-space but the parenchyma, the CSF pressure is not yet computed. For that reason, we apply a simple extension technique to map the CSF pressure field into $\Omega_{\rm PAR}$. In particular, we solve a Laplace equation on $\Omega_{\rm PAR}$ with the CSF pressure on the Pial membrane ($\Gamma_{\rm Pia}$) as a boundary condition.
 
-\mer{@Miro: 2-3 sentences on the implementation.}
-
-\mer{We need to demonstrate that our ``quantities are converged'', meaning we have a feel for how accurate our results are in practice (e.g.$\pm$ 1\%, 10\%, 100\%, 1000\%). Refer to the Supplementary table for a numerical verification table (quantities of interest versus mesh and time refinement for pure diffusion and one case with convection). Not on top of list of priorities, but not on bottom either.} 
-
-\begin{enumerate}
-\item
-  Examine ``practical convergence'' of the CSF flow field. Three
-  different meshes. \mer{@Marius.} Ideas for things to compute: Max
-    flow. Div u.
-\item
-  Stokes flow fields on different meshes - averaged over the network -
-  PVS advective velocity. (Tests averaging procedure and effect of
-  meshsize in flow field).
-\item
-  Examine convergence of the transport equations. Each mesh, compute
-  flow (as above), compute concentrations. Compare quantities of
-  interest. Max relative undershoot. Total amount of tracer in the
-  PVS, SAS, parenchyma over time.
-\item
-  (Optional in paper (but good to do for our sake): Unit cube with
-  convergence for the transport equation. )
-\end{enumerate}
-
-\mer{MER: Stop here for now - base model first.}
-
-%\subsection*{Perivascular fluid flow}
-
-%In the perivascular network, we set an average axial velocity $u_{\rm
-%  pvs} = \langle u_{v, s} \rangle$ of $18.7$ $\mu$m/s as reported by
-%Mestre et al.~\cite{mestre2018flow} in mouse perivascular spaces under
-%normal physiological conditions. We may also consider a reduced
-%perivascular velocity corresponding to hypertension in model
-%variations.
-
-\mer{MER: This we will probably have to condense. Move the detailed explanation to Supplementary Methods?}
 
 \subsection*{Perivascular fluid flow induced by vascular wall motion}
 
@@ -856,32 +824,15 @@ $9.345 \pm 6.695$ $\mu$m/s, range: $(-65.81, 63.96) \mu$m/s, and for
 (\Cref{fig:pvs}\mer{X}).} No perivascular fluid flow induced by wall
 motion is considered for the venous network.
 
-\subsection*{Perivascular fluid flow induced by pressure gradients/fluid source}
 
-We solve 1D Darcy equations in the vessel network. The unknowns are the averaged PVS velocity, $u_{\rm pvs} = \langle u_{v,s} \rangle$, and the cross-section pressure $p_{\rm pvs} $ (assumed to be constant in each cross-section). The system is given by  \cite{daversin2022geometrically, gjerde2024directional} 
-\begin{alignat}{2}
-A \,  u_{\rm pvs}   + \frac{\kappa}{\mu} \, A \, \partial_{s} p_{\rm pvs} & = 0, &&  \quad \rm in  \,\, \Lambda  \\ 
--\partial_s (A \, u_{\rm pvs}) & = f, && \quad \rm in  \,\, \Lambda .  
-\end{alignat} 
-In the above, $A$ is the area of the PVS, $\mu$ is the dynamic viscosity, and $\kappa$ is derived from the assumption of Poiseuille
-flow in the annular cross-section of the PVS \cite{daversin2022geometrically,tithof2022network}: 
-\begin{equation}
-\kappa = \frac18 \left( R_2^2 + R_1^2 - \frac{1}{\ln(R_2/R_1)} (R_2^2- R_1^2) \right). 
-\end{equation}
-On bifurcations, conservation of fluxes is enforced weakly and continuity of the pressure is enforced strongly (in the choice of the finite element spaces). 
+\subsection*{Numerical approximation of multi-dimensional transport and CSF flow}
 
-\subsubsection*{Case 1} We prescribe zero Dirichlet boundary conditions for the pressure, and vary $f$ \rami{include the reasoning behind having this $f$ as a source or sink term, and include the value that we opted for} to obtain a flow field with a similar magnitude to what is commonly reported in the literature.  
+\mer{@Rami: Could you draft one paragraph here describing the essential bits of the numerical scheme? I recommend ``describing with words'' to reach relevant audiences. Refer to the Supplementary Methods for details. Mention theoretical expected convergence order.} 
 
-\subsection*{Case 2} We prescribe a Robin type boundary condition on the outlet nodes. In particular, we set 
-\begin{equation}
-A  u_{\rm pvs} =  - \frac{\kappa}{ \mu} A\, \partial_s p_{\rm pvs} = \alpha (p_{\rm pvs} - p_0), \quad  \rm on \,\,\, \partial \Lambda^{\rm out} 
-\end{equation}
-On $\partial \Lambda^{\rm in}$, we prescribe homogeneous Dirichlet data for the pressure (\rami{does this make sense?}). 
-\rami{to be completed }
+In this section, we provide a brief overview on the employed numerical discretization. We refer to \Cref{sec:details_numerical_method} for details. The numerical scheme for the CSF flow equations utilizes polynomial spaces that preserve the divergence free condition \eqref{eq:divergence_equation} on the discrete level \cite{hong2016robust}. This requirement is important for stability in the transport equation, see for example \cite{cesmelioglu2022compatible}. The spaces we used for the velocity are continuous along the normal direction; continuity of the tangential component is enforced via interior penalty approaches \cite{hong2016robust}.  If the exact solution of \eqref{eq:momnetum_equation}--\eqref{eq:divergence_equation} is smooth, then one expects optimal error convergence rates for this approximation. 
 
-\mer{MER: Add reference/compare with~\cite{vinje2019respiratory} for the CSF pressure drop in the ventricular system, SAS and PVS.}
-
-
+For the 3D transport problem, we use the interior penalty discontinuous Galerkin (DG) method with weighted averages and upwinding for the convection term \cite{ern2009discontinuous}.  We remark that the choice of DG in the 3D domain is necessary here since  continuous Galerkin methods even when supplemented with artificial diffusion stabilization terms were unstable in our experiments. For the 1D transport problem, we use continuous Galerkin spaces defined over the entire network with additional artificial diffusion silization when the 1D velocity is non--zero.  DG methods for the coupled 3D--1D problem have been recently analyzed  where convergence of the method for the elliptic case is established \cite{masri2024discontinuous}. While the analysis is for DG methods for both the 3D and the 1D problem, we expect similar arguments to hold here. However, note that the 3D--1D coupling induces a singularity in the 3D solution and one can only expect suboptimal error rates near the 1D network. In subdomains excluding the 1D lines, almost optimal rates can be expected for both DG methods \cite{masri2023discontinuous} and CG methods \cite{koppl2016local}.  Extension of the convergence analysis to convection--diffusion problems is an interesting future research direction. 
+ 
 \subsection*{Parameter values and model scenarios}
 We use the diffusion coefficient $D_{\rm gad}$ of Gadubutrol in free water in the SAS and PVS, and effective diffusion coefficient of Gadubutrol $D_{\rm PAR}$ -- accounting for the extracellular space (ECS) porosity $\phi$ and the ECS tortuosity $\lambda$ but ignoring anisotropy  -- in the brain parenchyma~\cite{hornkjol2022csf}. 
 \begin{table}
@@ -1128,7 +1079,51 @@ The discretization for the CSF flow, is then to find $(\bm u_h, p_h) \in \bm V_h
 (\nabla \cdot \bm u_h , q_h ) & = 0, \quad \forall q_h \in S_h.
 \end{align}
 \subsubsection{PVS flow} 
-\rami{write it the scheme}
+
+
+Recall that we compute pressure-driven flow within the PVS by solving a 1D Darcy equations in the PVS network. The unknowns are the averaged PVS velocity, $u_{\rm pvs} = \langle u_{v,s} \rangle$, and the cross-section pressure $p_{\rm pvs} $ (assumed to be constant in each cross-section). The system is given by  \cite{daversin2022geometrically, 
+gjerde2024directional} 
+
+\begin{alignat}{2}
+A \,  u_{\rm pvs}   + \frac{\kappa}{\mu} \, A \, \partial_{s} p_{\rm pvs} & = 0, &&  \quad \rm in  \,\, \Lambda  \\ 
+-\partial_s (A \, u_{\rm pvs}) & = f, && \quad \rm in  \,\, \Lambda .  
+\end{alignat} 
+
+where $A$ is the area of the PVS, $\mu$ is the dynamic viscosity, and $\kappa$ is derived from the assumption of Poiseuille flow in the annular cross-section of the PVS  \cite{daversin2022geometrically,tithof2022network}: 
+\begin{equation}
+\kappa = \frac18 \left( R_2^2 + R_1^2 - \frac{1}{\ln(R_2/R_1)} (R_2^2- R_1^2) \right). 
+\end{equation}
+
+As boundary conditions, we impose the precomputed fluid pressure $p_{\rm CSF}$ on the networks root nodes:
+
+\begin{equation}
+    p_{\rm PVS} = p_{\rm CSF} \quad \text{ on } \Lambda^{\rm out}
+\end{equation}
+
+In case that the root does not lie within the CSF-space but the parenchyma, the CSF pressure is not yet computed. For that reason, we apply a simple extension technique to map the CSF pressure field into $\Omega_{\rm PAR}$.
+In particular, we solve the Laplace equation
+\begin{equation}
+    - \Delta p = 0; \quad p = p_{\rm CSF} \text{ on } \Gamma_{\rm Pia}
+\end{equation}
+to obtain the extension of $p_{\rm CSF}$ onto $\Omega_{\rm PAR}$.
+
+To enforce conservation of flux and continuity of pressure on bifurcation points, we approximate the velocity with a piecewise discontinuous polynomials and the pressure with continuous piecewise polynomials, respectively. The finite element spaces thus are:
+
+\begin{align}
+   V_h^{\rm PVS} = \{v_h \in L^2(\Lambda): v_h \vert_{\Lambda_i} \in
+   \mathbb{P}^{k -1}(\Lambda_i)\} \text{ and }
+   Q_h^{\rm PVS} = \{ q_h \in C^0(\Lambda),  q_h \vert_{\Lambda^i} \in \mathbb{P}^k(\Lambda_i), q_h \vert_{\Gamma_{\rm Pia}} = p_{\rm CSF} \}
+\end{align}
+
+The weak form reads: Find $(u_{\rm PVS}, p_{\rm PVS}) \in V_h^{\rm PVS} \times Q_h^{\rm PVS}$ such that
+
+\begin{align}
+(A u_{\rm PVS}, v) + \left(v, \frac{A \kappa}{\mu} \nabla p_{\rm PVS} \cdot \tau \right) &= 0 \quad \forall v \in V_h^{\rm PVS} \\
+(A u_{\rm PVS} , \nabla q \cdot \tau) &= 0 \quad  \forall q \in  Q_h^{\rm PVS}
+\end{align}
+
+where $\tau$ is the tangent vector of the network. We employ the lowest order discretization and set $k=0$.
+
 \subsubsection{Solute transport} For the 3D concentration, we use broken polynomial spaces and interior penalty discontinuous Galerkin (DG) methods with upwinding in order to capture the sharp boundary layers.  For DG, we utilize the discrete space 
 \begin{equation}
 V_h^k = \{v_h \in L^2(\Omega): \;  v_h \vert_E \in \mathbb{P}^k(E), \; E \in \mathcal{T}_h\}.
