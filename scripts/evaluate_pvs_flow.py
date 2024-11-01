@@ -39,8 +39,9 @@ def compute_pvs_flow(pvs_flow_file):
         p, uh_mag, artery_radii = map(Function, [p_space, umag_space, r_space])
         for u,n in zip([p, uh_mag, artery_radii], ["p", "umag", "radii"]):
             f.read(u, n)
-
-    plot_dir = f"plots/{'/'.join(pvs_flow_file.split('/')[1:-1])}"
+    modelstr = pvs_flow_file.split('/')[1:-1]
+    model = modelstr[-1]
+    plot_dir = f"plots/{'/'.join(modelstr)}"
     os.makedirs(plot_dir, exist_ok=True)
     segments, segids ,_ = color_branches(mesh)
     dxs = Measure("dx", mesh, subdomain_data=segments)
@@ -60,7 +61,7 @@ def compute_pvs_flow(pvs_flow_file):
         uavg = np.average(uvals, weights=lengths)
         umax = abs(uvals).max()
         umed = np.median(abs(uvals))
-        range = np.round(minmax(uvals, percentile=95), 1)
+        range = np.round(minmax([uvals], percentile=99.9), 1)
         nbins = 50
         fig, ax = plt.subplots()
         counts, bins, containers = plt.hist(uvals, density=False, bins=nbins, histtype="bar",
@@ -74,15 +75,15 @@ def compute_pvs_flow(pvs_flow_file):
                                                        n_colors=int(pos_share * nbins))):
             bar.set_facecolor(ca)
         plt.axvline(uavg, color="black", linestyle=":", label=f"avg: {uavg:.2f} µm/s")
-        plt.axvline(umed, color="black", linestyle="-.", label=f"median: {umed:.2f} µm/s")
+        #plt.axvline(umed, color="black", linestyle="-.", label=f"median: {umed:.2f} µm/s")
         plt.axvline(umax, color="black", linestyle="--", label=f"max: {umax:.2f} µm/s")
         plt.xlabel("PVS flow velocity (µm/s)")
         plt.ylabel("frequency")
         plt.tight_layout()
-        #plt.xlim(range)
+        plt.xlim(range)
         plt.legend(frameon=False)
         ax.yaxis.set_major_formatter(PercentFormatter(1))
-        plt.savefig(f"{plot_dir}/velocity_histo_{variant}.png")
+        plt.savefig(f"{plot_dir}/{model}_velocity_histo_{variant}.png")
 
     points = np.array([c for n,c in pointlabels])
     cellidx = map_kdtree(FunctionSpace(mesh, "DG", 0).tabulate_dof_coordinates(),
@@ -107,25 +108,29 @@ def compute_pvs_flow(pvs_flow_file):
     ax = sns.barplot(df, x="loc", y="p", palette="crest")
     ax.set_xlabel("")
     ax.set_ylabel("pressure (mPa)")
-    plt.savefig(f"{plot_dir}/arteries_labels_pressure.png")
+    plt.xticks(rotation=45); plt.tight_layout()
+    plt.savefig(f"{plot_dir}/{model}_arteries_labels_pressure.png")
 
     plt.figure()
     ax = sns.barplot(df, x="loc", y="u", palette="flare")
     ax.set_xlabel("")
     ax.set_ylabel("flow velocity (μm/s)")
-    plt.savefig(f"{plot_dir}/arteries_labels_velocity.png")
+    plt.xticks(rotation=45);plt.tight_layout()
+    plt.savefig(f"{plot_dir}/{model}_arteries_labels_velocity.png")
 
     plt.figure()
     ax = sns.barplot(df, x="loc", y="R", palette="blend:#7AB,#EDA")
     ax.set_xlabel("")
     ax.set_ylabel("radius (mm)")
-    plt.savefig(f"{plot_dir}/arteries_labels_radius.png")
+    plt.xticks(rotation=45);plt.tight_layout()
+    plt.savefig(f"{plot_dir}/{model}_arteries_labels_radius.png")
 
     plt.figure()
     ax = sns.barplot(df, x="loc", y="L", palette="blend:#7AB,#EDA")
     ax.set_xlabel("")
     ax.set_ylabel("segment length (mm)")
-    plt.savefig(f"{plot_dir}/arteries_labels_length.png")
+    plt.xticks(rotation=45);plt.tight_layout()
+    plt.savefig(f"{plot_dir}/{model}_arteries_labels_length.png")
 
     length = assemble(1*dx(domain=mesh))
     umean = assemble(uh_mag*dx) / length
