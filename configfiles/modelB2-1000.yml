@@ -1,4 +1,4 @@
-description : "vasomotion"
+description : "model A"
 dt : 120
 T : 86400 # 1 day in seconds
 mesh : "mesh/standard/standard.xdmf"
@@ -9,17 +9,17 @@ arterial_pvs_diffusion : 3.8e-10
 venous_pvs_diffusion : 3.8e-10
 parenchyma_diffusion : 1.2e-10
 arterial_pvs_parenchyma_permability : 3.8e-7 #3.8e-7 # = C_M * D_f wit C_M = 1e3 as in https://fluidsbarrierscns.biomedcentral.com/articles/10.1186/s12987-023-00421-8
-arterial_pvs_csf_permability: 3.8e-7
+arterial_pvs_csf_permability: 3.8e-4
 venous_pvs_parenchyma_permability : 0.0
 venous_pvs_csf_permability: 0.0
 par_csf_permability: 2.6e-8 # Riseth, 2024 (MRI2FEM book)
-root_pvs_permability_factor : 1.0
+root_pvs_permability_factor : 100.0
 pvs_ratio_artery : 2
 pvs_ratio_venes: 2
 molecular_outflow_resistance : 1.0e-10 # 1e-4 mm^2/s 
 arterial_velocity_file : ["results/pvs_flow_prod/sas_flow/pvs_flow.hdf",
                           "results/pvs_flow_peristaltic/cardiac_pvs_oscillation/pvs_flow.hdf",
-                          ]
+                          "results/pvs_flow_peristaltic/vasomotion/pvs_flow.hdf"]
 csf_velocity_file : "results/csf_flow/sas_flow/flow.hdf"
 csf_dispersion_file : "results/csf_flow/cardiac_sas_flow/R.xdmf"
 boundary_conditions:
