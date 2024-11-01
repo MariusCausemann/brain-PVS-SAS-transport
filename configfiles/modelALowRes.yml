@@ -2,7 +2,7 @@ description : "model A (low Res)"
 dt : 120
 T : 86400 # 1 day in seconds
 mesh : "mesh/LowRes/LowRes.xdmf"
-output_frequency : 10
+output_frequency : 2
 ecs_share : 0.2
 sas_diffusion : 3.8e-10 # Valnes 2020, https://www.nature.com/articles/s41598-020-66042-5
 arterial_pvs_diffusion : 3.8e-10
@@ -13,11 +13,12 @@ arterial_pvs_csf_permability: 3.8e-7
 venous_pvs_parenchyma_permability : 0.0
 venous_pvs_csf_permability: 0.0
 par_csf_permability: 2.6e-8 # Riseth, 2024 (MRI2FEM book)
-root_pvs_permability_factor : 1.0
+root_pvs_permability_factor : 100.0
 pvs_ratio_artery : 2
 pvs_ratio_venes: 2
 molecular_outflow_resistance : 1.0e-10 # 1e-4 mm^2/s 
-arterial_velocity_file : ["results/pvs_flow_prod/sas_flow_LowRes/pvs_flow.hdf"]
+arterial_velocity_file : ["results/pvs_flow_prod/sas_flow_LowRes/pvs_flow.hdf",
+                          "results/pvs_flow_peristaltic/cardiac_pvs_oscillation/pvs_flow.hdf"]
 csf_velocity_file : "results/csf_flow/sas_flow_LowRes/flow.hdf"
 csf_dispersion_file : "results/csf_flow/cardiac_sas_flow_LowRes/R.xdmf"
 boundary_conditions:
