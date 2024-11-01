@@ -3,6 +3,44 @@ import numpy as np
 import typer
 from pathlib import Path
 from vtk.util.numpy_support import numpy_to_vtk
+from plot_subdomains import get_camera
+from plotting_utils import set_plotting_defaults
+from generate_synthseg_mesh import CSFID, LVID, V34ID
+import matplotlib.pyplot as plt
+import seaborn as sns
+from matplotlib.ticker import PercentFormatter
+
+def R_histo(sm, R, filename):
+    set_plotting_defaults()
+    DG0 = sm.function_space()
+    cellvol = assemble(TestFunction(DG0)*dx)
+    ids = [CSFID, LVID, V34ID]
+    indices = [sm.vector()[:]==i for i in ids]  
+    fig, axes = plt.subplots(ncols=3, figsize=(7,3))
+    nbins = 20
+    colors = sns.color_palette("crest", n_colors=3)
+    for ax, name, idx, col in zip(axes, ["SAS", "LV", "V3 & V4"], indices, colors):
+        Rvals = R.vector()[idx]
+        xlims = (0, np.percentile(Rvals, 80))
+        bins = np.logspace(start=np.log10(1e-1), stop=np.log10(200), num=nbins)
+        n, bins,_ = ax.hist(Rvals, bins=bins, weights=cellvol[idx] / cellvol[idx].sum(),
+                color=col, alpha=0.7, label=name)
+        ax.set_xscale("log")
+        mean = np.average(Rvals, weights=cellvol[idx])
+        ax.axvline(mean, 
+                   color="black",ymax=0.6, label=f"{mean:.1f} \n (mean)")
+        #ax.axvline(np.max(Rvals), ls="dotted",
+        #           color="black",ymax=0.6, label=f"{max(Rvals):.1f}")
+        ax.set_xlabel(f"R")
+        ax.set_ylabel("frequency")
+        ax.set_xticks([0.1, 1, 10, 100])
+        plt.tight_layout()
+        #ax.set_xlim(xlims)
+        ax.set_ylim((0, max(n)*1.5))
+        ax.legend(frameon=False, loc="lower left", alignment="right",
+                  borderaxespad=0, handlelength=1.3, bbox_to_anchor=[0.2, 0.7])
+        ax.yaxis.set_major_formatter(PercentFormatter(1, decimals=0))
+    plt.savefig(filename, bbox_inches='tight')
 
 
 def plot_R(R, filename):
@@ -30,11 +68,7 @@ def plot_R(R, filename):
     ticks = [Rmin, 1e-1,1, 10, 100]
     bar.SetCustomLabels(numpy_to_vtk(ticks))
     bar.SetUseCustomLabels(True)
-    pl.camera_position = 'yz'
-    pl.camera.roll += 0
-    pl.camera.azimuth += 30
-    pl.camera.elevation += 10
-    pl.camera.zoom(1.2)
+    pl.camera = get_camera(bg)
     pl.screenshot(filename, transparent_background=True)
 
 rho = 993 # kg/m^3
@@ -53,6 +87,9 @@ def get_dispersion_enhancement(csf_pressure_file:str, outfile:str):
         DG = FunctionSpace(mesh, p_elem)
         pressure_csf = Function(DG)
         f.read(pressure_csf, "pressure")
+        DG0 = FunctionSpace(mesh, "DG", 0)
+        sm = Function(DG0)
+        f.read(sm, "label")
 
     #p_cont = project(pressure_csf, V)
     gradp = sqrt(inner(grad(pressure_csf), grad(pressure_csf)))
@@ -76,6 +113,8 @@ def get_dispersion_enhancement(csf_pressure_file:str, outfile:str):
         print(f"warning: R_min = {R.vector().min()}")
         R.vector()[:] -= R.vector().min()
     print(f"R max: {R.vector().max()}")
+
+    R_histo(sm, interpolate(R, DG0), Path(outfile).parent / "R_histo.png")
 
     with XDMFFile(outfile) as file:
         file.write(mesh)
