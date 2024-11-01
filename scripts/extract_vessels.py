@@ -179,44 +179,46 @@ def smooth_coords(netw):
 scale = 1.5
 const = 3.0
 
-os.makedirs("mesh/networks", exist_ok=True)
-os.makedirs("plots", exist_ok=True)
 
-files = ["data/pcbi.1007073.s007.nii.gz", "data/pcbi.1007073.s008.nii.gz"]
-names = ["arteries", "venes"]
-nroots = [3, 50]
+if __name__=="__main__":
+    os.makedirs("mesh/networks", exist_ok=True)
+    os.makedirs("plots", exist_ok=True)
 
-for file, name, nr in zip(files, names, nroots):
-    data = nibabel.load(file)
-    resolution = data.header["pixdim"][1:4]
-    print(f"resolution: {resolution}")
-    img = data.get_fdata().astype(int)
-    skel = skeletonize(img, resolution)
-    if name=="arteries":
-        skel = skel.crop(Bbox([0, 0, 37], img.shape))
-    G = as_networkx(skel, nroots=nr)
-    orig_netw = nx_to_pv(G)
-    orig_netw["radius"] *= mm2m
-    orig_netw.scale(mm2m, inplace=True)
-    remove_duplicate_cells(orig_netw)
-    orig_netw.save(f"mesh/networks/{name}.vtk")
-    splines = get_splines(orig_netw, point_ratio=3)
-    lines = [pv.lines_from_points(spl.points) for spl in splines]
-    for l, spl in zip(lines, splines):
-        l["radius"] = spl["radius"]
-        l["root"] = spl["root"]
-    mean_radius = [l["radius"].mean() for l in lines]
-    order_by_radius = np.flip(np.argsort(mean_radius))
-    smooth_netw = pv.merge([lines[i] for i in order_by_radius],
-                            merge_points=True).cast_to_unstructured_grid()
-    for i in range(3):
-        smooth_radius(smooth_netw)
-    for i in range(3):
-        smooth_coords(smooth_netw)
-    smooth_netw.save(f"mesh/networks/{name}_smooth.vtk")
-    netw_tubes = get_tubes(smooth_netw)
-    netw_tubes.save(f"mesh/networks/{name}_tubes.vtk")
-    print(smooth_netw.n_points)
-    #netw_tubes.plot(off_screen=True, screenshot=f"plots/{name}_network.png", zoom=1.6)
-    #plot_radii([s for s in splines if s.number_of_points > 4], f"../plots/{name}_arc_radii.png")
+    files = ["data/pcbi.1007073.s007.nii.gz", "data/pcbi.1007073.s008.nii.gz"]
+    names = ["arteries", "venes"]
+    nroots = [3, 50]
+
+    for file, name, nr in zip(files, names, nroots):
+        data = nibabel.load(file)
+        resolution = data.header["pixdim"][1:4]
+        print(f"resolution: {resolution}")
+        img = data.get_fdata().astype(int)
+        skel = skeletonize(img, resolution)
+        if name=="arteries":
+            skel = skel.crop(Bbox([0, 0, 37], img.shape))
+        G = as_networkx(skel, nroots=nr)
+        orig_netw = nx_to_pv(G)
+        orig_netw["radius"] *= mm2m
+        orig_netw.scale(mm2m, inplace=True)
+        remove_duplicate_cells(orig_netw)
+        orig_netw.save(f"mesh/networks/{name}.vtk")
+        splines = get_splines(orig_netw, point_ratio=3)
+        lines = [pv.lines_from_points(spl.points) for spl in splines]
+        for l, spl in zip(lines, splines):
+            l["radius"] = spl["radius"]
+            l["root"] = spl["root"]
+        mean_radius = [l["radius"].mean() for l in lines]
+        order_by_radius = np.flip(np.argsort(mean_radius))
+        smooth_netw = pv.merge([lines[i] for i in order_by_radius],
+                                merge_points=True).cast_to_unstructured_grid()
+        for i in range(3):
+            smooth_radius(smooth_netw)
+        for i in range(3):
+            smooth_coords(smooth_netw)
+        smooth_netw.save(f"mesh/networks/{name}_smooth.vtk")
+        netw_tubes = get_tubes(smooth_netw)
+        netw_tubes.save(f"mesh/networks/{name}_tubes.vtk")
+        print(smooth_netw.n_points)
+        #netw_tubes.plot(off_screen=True, screenshot=f"plots/{name}_network.png", zoom=1.6)
+        #plot_radii([s for s in splines if s.number_of_points > 4], f"../plots/{name}_arc_radii.png")
 
