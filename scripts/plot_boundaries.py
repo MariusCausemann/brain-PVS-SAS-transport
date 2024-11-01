@@ -5,6 +5,7 @@ LOWER_SKULL_ID, UPPER_SKULL_ID, SPINAL_CORD_ID)
 import seaborn as sns
 import numpy as np
 from cmap import Colormap
+from plot_subdomains import get_camera
 
 grid = pv.read_meshio("mesh/standard/standard_facets.xdmf")
 dirname = "plots/meshplots/"
@@ -37,15 +38,7 @@ for i, (n, bid) in enumerate(bds.items()):
     meshes.append(m)
 
 
-pl = pv.Plotter(off_screen=True, window_size=(1600, 1600))
-pl.add_mesh(grid.clip())
-pl.camera_position = 'yz'
-pl.camera.roll += 0
-pl.camera.azimuth += 30
-#pl.camera.elevation += 10
-pl.camera.zoom(1.2)
-camera = pl.camera.copy()
-
+camera = get_camera(grid)
 
 pl = pv.Plotter(off_screen=True, window_size=(1600, 1600))
 pl.add_mesh(pv.merge(meshes), scalars="l", show_scalar_bar=True, 

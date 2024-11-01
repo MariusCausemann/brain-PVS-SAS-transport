@@ -3,6 +3,8 @@ import yaml
 import collections
 from typing import List
 from IPython import embed
+from cmap import Colormap
+from tqdm import tqdm
 
 def set_plotting_defaults():
     import seaborn as sns
@@ -53,8 +55,9 @@ def get_result_fenics(modelname, domain, times):
         mesh, radii, _ = read_vtk_network("mesh/networks/venes_smooth.vtk", rescale_mm2m=False)
         V = FunctionSpace(mesh, "CG", 1)
     results = []
+    print(f"reading results from {modelname} at")
     with XDMFFile(filename) as f:
-        for t in times:
+        for t in tqdm(times):
             i = np.where(alltimes==t)[0][0]
             c = Function(V)
             c.rename("c","c")
@@ -90,8 +93,6 @@ def compute_diff_ranges(modela:str, modelb:str, times: List[int],percentile=95):
 
     return ranges
 
-
-
 def time_str(sec):
     m, s = divmod(sec, 60)
     h, m = divmod(m, 60)
@@ -105,6 +106,8 @@ def read_config(configfile):
 
 def clip_plot(csf, par, networks, filename, title, clim, cmap, cbar_title):
     import pyvista as pv
+    from extract_vessels import get_tubes
+
     csf_clipped = csf.clip(normal="y")
     par_clipped = par.clip(normal="y")
     pl = pv.Plotter(off_screen=True)
@@ -115,7 +118,7 @@ def clip_plot(csf, par, networks, filename, title, clim, cmap, cbar_title):
                                     label_font_size=32))
     pl.add_mesh(par_clipped, cmap=cmap, clim=clim, show_scalar_bar=False)
     for netw in networks:
-        pl.add_mesh(netw, cmap=cmap, clim=clim, show_scalar_bar=False,
+        pl.add_mesh(get_tubes(netw), cmap=cmap, clim=clim, show_scalar_bar=False,
                     render_lines_as_tubes=True,line_width=5)
 
     pl.camera_position = 'zx'
@@ -124,8 +127,9 @@ def clip_plot(csf, par, networks, filename, title, clim, cmap, cbar_title):
     pl.add_title(title, font_size=12)
     return pl.screenshot(filename, transparent_background=True, return_img=True)
 
-def isosurf_plot(sas, networks, filename, title, clim, cmap, cbar_title):
+def isosurf_plot(sas, networks, bg, filename, title, clim, cmap, cbar_title):
     import pyvista as pv
+    from extract_vessels import get_tubes
     n = 5
     if clim is not None:
         contours = sas.contour(np.linspace(clim[0] + clim[1]/n, clim[1], n))
@@ -133,7 +137,7 @@ def isosurf_plot(sas, networks, filename, title, clim, cmap, cbar_title):
         contours = sas.contour(n)
         
     pl = pv.Plotter(off_screen=True)
-    pl.add_mesh(sas.outline(), color="white")
+    pl.add_mesh(bg, color="gray", opacity=0.1)
     pl.add_mesh(contours, opacity=0.75, clim=clim, cmap=cmap, show_scalar_bar=False)
     #pl.add_mesh(sas.extract_surface(), opacity=0.3, clim=clim, cmap=cmap,
     #            scalar_bar_args=dict(title=cbar_title, vertical=False,
@@ -143,14 +147,46 @@ def isosurf_plot(sas, networks, filename, title, clim, cmap, cbar_title):
     for netw in networks:
         if clim is None: clim = (0, contours.active_scalars.max())
         netthres = netw.threshold(clim[1] / n)
-        pl.add_mesh(netthres, cmap=cmap, clim=clim, show_scalar_bar=False,
-                    render_lines_as_tubes=True,line_width=5)
+        if netthres.n_points > 2:
+            pl.add_mesh(get_tubes(netthres), cmap=cmap, clim=clim,
+                         show_scalar_bar=False)
 
     pl.camera_position = 'yz'
     #pl.camera.roll += 90
     pl.camera.zoom(1.3)
     pl.add_title(title, font_size=12)
     return pl.screenshot(filename, transparent_background=False, return_img=True)
+
+def timesurf_plot(sas, networks, bg, times, current_time, filename, 
+                  title, clim, cmap):
+    import pyvista as pv
+    from extract_vessels import get_tubes
+    pl = pv.Plotter(off_screen=True)
+    pl.add_mesh(bg, cmap="gray", show_scalar_bar=False)#, opacity=0.1, color="gray")
+    colors = list(Colormap(cmap).iter_colors(len(times)))
+    for t,col in zip(times, colors):
+        if t > current_time: break
+        thres = sas.threshold(clim[1], scalars=f"c_{t}")
+        if thres.n_points > 0:
+            pl.add_mesh(thres, opacity=0.5, color=col.rgba8, 
+                        show_scalar_bar=False)
+
+    for netw in networks:
+        pl.add_mesh(get_tubes(netw), color="black", opacity=0.2)
+        for t,col in zip(times, colors):
+            print(t, current_time)
+            if t > current_time: break
+            netthres = netw.threshold(clim[1], scalars=f"c_{t}")
+            if netthres.n_points > 2:
+                pl.add_mesh(get_tubes(netthres), color=col.rgba8, 
+                            show_scalar_bar=False)
+
+    pl.camera_position = 'yz'
+    #pl.camera.roll += 90
+    pl.camera.zoom(1.3)
+    pl.add_title(title, font_size=12)
+    return pl.screenshot(filename, transparent_background=False, return_img=True)
+
 
 def detail_plot(sas, networks, objects, filename, center, normal, clim, cmap, cbar_title):
     import pyvista as pv
