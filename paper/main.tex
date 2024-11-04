@@ -23,7 +23,7 @@
 
 \captionsetup[subfigure]{justification=justified,singlelinecheck=false}
 
-\title{A digital twin for molecular transport in human intracranial space}
+\title{A digital twin for molecular enrichment of the human intracranial space}
 \author[1,x]{Marius Causemann}
 \author[1,x]{Miroslav Kuchta}
 \author[1,x]{Rami Masri}
@@ -383,8 +383,8 @@ Sharp et al used the theory of dispersive mixing to predict a dispersion enhance
     \includegraphics[width =  \linewidth]{figures/sas_flow_arteries_labels_pressure.png}
     \end{subfigure}
     %\label{fig:enter-label}
-    \label{fig:pvs}
     \caption{\mer{MER: Put vasculature network illustration here. Many aspects actually. Marking of segments. Location relative to 3D. Radius etc. Marius will evaluate and suggest. Results: Group segments by logical order. For key arterial segments: average radius and length (can be moved to Supplementary if need be); pressure values; flow velocities; and then histograph with flow velocities for each mesh cell. Make sure to minorly note that ACA refers to a segment of the ACA and not the whole thing e.g.}}
+    \label{fig:pvs}
 \end{figure}
 
 \Cref{fig:pvs}.
@@ -587,7 +587,7 @@ Effect of pia permeability (Model N-1)
      \label{fig:intracranial_domains}
 \end{figure}
 
-\subsection*{Intracranial geometries: the ventricular system, SAS, and brain parenchyma}
+\subsection*{Intracranial compartments: the ventricular system and SAS, brain parenchyma, and perivascular spaces}
 
 %% Hodneland et al~\cite{hodneland2019new} developed a method to image
 %% the brain's microvasculature based on time-of-flight (ToF) and
@@ -624,45 +624,25 @@ recent estimates~\cite{hladky2024regulation}.
 
 %% The computational domain $\Omega$ is defined by the union of the CSF spaces $\Omega_{\rm CSF}$ and brain parenchyma $\Omega_{\rm PAR}$ (\Cref{fig:concept}).
 
-\subsection*{Vascular and perivascular networks}
+%\subsection*{Perivascular networks}
 
-To extract a compatible model representation of surface arteries and
-arterioles, we use Kiminaro~\cite{william_silversmith_2021_5539913} to
-skeletonize time-of-flight angiography images from the same human
-subject~\cite{hodneland2019new}. Each vessel segment $i$ is then
-represented by its centerline $\Lambda^i$ and a radius $R_1^i$. 
-
-\mer{MER: WIP here.}
-
-%% We skeletonize the binary masks of the arteries (and veins) of the
-%% Hodneland~\cite{hodneland2019new} data set using
-%% Kiminaro~\cite{william_silversmith_2021_5539913}, to obtain the
-%% centerline $\Lambda^i$ and radius $R_1^i$ of each detected vessel $i$,
-%% and the vessel connections. The resulting vascular networks are
-%% further smoothened using a spline interpolation technique, and
-%% represented as graphs with nodes connected by edges. 
-
-%The resulting vascular networks are further smoothened using a spline
-%interpolation technique
-
-The arterial network contains 11862 nodes (and 11861 edges), while the
-venous network contains 21883 nodes (and 21882 edges); with no cycles
-in either network. Nodes connected to only one edge (i.e.~with graph
-degree 1) are labeled terminal nodes. For the arterial network, we
-identify 3 of the terminal nodes, representing \mer{the two internal
-  carotid arteries and the basilar artery}, as root nodes
-(\Cref{fig:concept}) and label the other terminal nodes as leaf
-nodes. \mer{Range of lengths of the networks paths.} We denote the
-domain defined by the connected centerlines by $\Lambda$. The vascular
-domain is then represented as the union of cylindrical vessels of
-radius $R_1^i$ surrounding the centerlines $\Lambda^i$. Moreover, we
-consider the surrounding perivascular spaces as the union of annular
-cylinders of inner radius $R_1^i$ and outer radius $R_2^i = \beta
-R_1^i$ of width $R_2^i - R_1^i = (\beta - 1) R_1^i$. Both the
-vasculature and perivasculature are thus defined relative to a common
-network of vessel segments.
-
-\mer{MER/MC: How aobut dispersion in the PVS?}
+To represent the surface network of periarterial spaces, we use
+Kiminaro~\cite{william_silversmith_2021_5539913} to skeletonize
+time-of-flight angiography images from the same human
+subject~\cite{hodneland2019new}. This technique yields a network of
+one-dimensional curves, each indicating the centerline of a blood
+vessel segment $\Lambda^i$ and labelled with its lumen radius $R_1^i$
+(\Cref{fig:pvs}a). To represent an annular PVS surrounding each
+vessel, we also assign an outer PVS radius $R_2^i > R_1^i$ for each
+$i$. The resulting network graph consists of $12\,708$ edges connected
+at $12\,562$ inner nodes and with $147$ end nodes, and associated
+domain is denoted by $\Lambda = \cup_i \Lambda^i$. We identify three
+of end nodes -- corresponding to the two internal carotid arteries
+(ICAs) and the basilar artery (BA) -- as root nodes, and designate the
+other ends as leaf nodes (\Cref{fig:pvs}).
+%% The resulting vascular networks are further smoothened using a
+%% spline interpolation technique, and represented as graphs with
+%% nodes connected by edges.
 
 %% \begin{figure}
 %%      \centering
@@ -689,14 +669,11 @@ network of vessel segments.
 %% \label{fig:concept}
 %% \end{figure}
 
-\subsection*{To be moved: notation and labels}
-The thin pia membrane encloses the brain, and we hence denote the CSF-brain interface with $\Gamma_{\rm pia}$, except for the separately marked surface of the lateral ventricles $\Gamma_{\rm LV}$ (thus $\partial \Omega_{\rm CSF} \bigcap \partial \Omega_{\rm PAR} = \Gamma_{\rm LV} \cup \Gamma_{\rm Pia}$).
-
-We denote the different parts of the outer boundary of $\Omega_{\rm CSF}$ with
-$\Gamma_{\mathrm{skull}}$ facing the dura and skull and $\Gamma_{\rm SSAS}$ representing the lower interface towards the spinal subarachnoid space (SSAS). $\Gamma_{\mathrm{skull}}$ is further subdivided into its lower and upper parts: $\Gamma_{\mathrm{skull^l}}$ and $\Gamma_{\mathrm{skull^u}}$ (compare \Cref{fig:concept}). The boundary of the spinal cord is denoted by $\Gamma_{\rm{SC}}$, which is given by $\Gamma_{\rm{SC}} = \partial \Omega_{\rm PAR} \setminus \partial \Omega_{\rm CSF}$ .
+\subsection*{Transport equations in the intracranial compartments}
 
 
-\subsection*{Multi-dimensional intracranial transport equations}
+\mer{MER/MC: How aobut dispersion in the PVS?}
+
 
 We model diffusion, convection and exchange of a solute in PVSs, in the surrounding SAS and in the brain parenchyma (Fig.~\ref{fig:concept}) via a comprehensive multi-dimensional transport model~\cite{masri2023modelling} over a timescale of minutes to hours. More specifically, we solve for a solute concentration $c$ defined locally in each subdomain $c = c_{\rm{csf}}$ in $\Omega_{\rm{csf}}$ and $c =c_{\rm{PAR}}$ in $\Omega_{\rm{PAR}} $, 
 and for an averaged solute concentration $\hat c$ in a 1D network of centerlines $\Lambda$ representing the PVS ($\hat c$ defined locally on each $\Lambda^i$), such that the following equations hold
@@ -737,6 +714,23 @@ We refer to \Cref{tab:overview} for the values of the used parameters.
 In the above,  $|\Lambda^i \cap \Omega_{\rm{PAR}}|$ (resp.  $|\Lambda^i \cap \Omega_{\rm{csf}}|$) is nonzero whenever the surrounding PVS around the line $\Lambda^i$ intersects $\Omega_{\rm{PAR}}$ (resp. $\Omega_{\rm{csf}}$). If the surrounding PVS intersects both, then we set $\xi = \xi_{\mathrm{PVS}, \rm{PAR}}$ (resp $\xi_{\mathrm{PVS}, \rm{CSF}}$) if the PVS lies mostly ($80$ percent) in $\Omega_{\rm{PAR}}$ (resp. $\Omega_{\rm{CSF}}$) and the interaction with $\Omega_{\rm{PVS}}$ (resp. $\Omega_{\rm{CSF}}$ is ignored. Additionally, we increase the permeability $\xi$ by a factor of 100 at the PVS end nodes $\partial \Lambda^a$ to account for the transition from explicitly resolved PVSs to their unresolved continuation in the CSF-space and parenchyma.
 
 Further, $P$ and $A$ are the perimeter and area of the PVS which can vary along the centerline network, respectively.  Finally, we remark that $\hat u$ takes different values on each $\Lambda_i$.  Both $\Omega$ and $\Lambda$ are fixed in time and we assume constant-in- time radii (despite varying radii to drive peristaltic flow, see \cref{sec:sup:peristalsis}). Finally, we note that the model assumes that there is no interaction between the inner perivascular boundary and the blood vessel. 
+
+\paragraph*{To be moved: notation and labels}
+The thin pia membrane encloses the brain, and we hence denote the CSF-brain interface with $\Gamma_{\rm pia}$, except for the separately marked surface of the lateral ventricles $\Gamma_{\rm LV}$ (thus $\partial \Omega_{\rm CSF} \bigcap \partial \Omega_{\rm PAR} = \Gamma_{\rm LV} \cup \Gamma_{\rm Pia}$).
+
+We denote the different parts of the outer boundary of $\Omega_{\rm CSF}$ with
+$\Gamma_{\mathrm{skull}}$ facing the dura and skull and $\Gamma_{\rm SSAS}$ representing the lower interface towards the spinal subarachnoid space (SSAS). $\Gamma_{\mathrm{skull}}$ is further subdivided into its lower and upper parts: $\Gamma_{\mathrm{skull^l}}$ and $\Gamma_{\mathrm{skull^u}}$ (compare \Cref{fig:concept}). The boundary of the spinal cord is denoted by $\Gamma_{\rm{SC}}$, which is given by $\Gamma_{\rm{SC}} = \partial \Omega_{\rm PAR} \setminus \partial \Omega_{\rm CSF}$ .
+
+We denote the domain defined by the connected centerlines by
+$\Lambda$.The vascular domain is then represented as the union of
+cylindrical vessels of radius $R_1^i$ surrounding the centerlines
+$\Lambda^i$. Moreover, we consider the surrounding perivascular spaces
+as the union of annular cylinders of inner radius $R_1^i$ and outer
+radius $R_2^i = \beta R_1^i$ of width $R_2^i - R_1^i = (\beta - 1)
+R_1^i$. 
+
+
+
 
 %\noindent \mer{MER: @Rami: I've added the $\phi$'s in this subsection. Please review and add convective terms in $\Omega$ and $\Lambda$.} \rami{done, maybe I include a more precise variational formulation in the appendix ? }
 \subsubsection*{Initial conditions}
