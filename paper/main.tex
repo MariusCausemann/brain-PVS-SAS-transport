@@ -23,7 +23,7 @@
 
 \captionsetup[subfigure]{justification=justified,singlelinecheck=false}
 
-\title{A digital twin for molecular enrichment of the human intracranial space}
+\title{In-silico molecular enrichment and clearance of the human intracranial space}
 \author[1,x]{Marius Causemann}
 \author[1,x]{Miroslav Kuchta}
 \author[1,x]{Rami Masri}
@@ -218,7 +218,7 @@ larger species (larger distances) and larger molecules.
    }, downstream velocity component of $12.75 \pm 6.25 \unit{\mu m/s}$. 
   \end{itemize}
 \item
-  Broggini et al~\cite{broggini2024long} describe long-wavelength travelling waves of vasomotion (0.1 Hz) in pial arterioles in mice. They find waves travelling in both directions, with waves exiting the surface of the cortex more often than chance (85 of 140 exit). ``The wavelength of the observed pial waves is long, typically 20 mm or twice the length of the mouse cortex (inset in Figure 4C).'', with relative amplitudes in the range 0.02--0.12 in pial arterioles.
+  Broggini et al~\cite{broggini2024long} describe long-wavelength traveling waves of vasomotion (0.1 Hz) in pial arterioles in mice. They find waves traveling in both directions, with waves exiting the surface of the cortex more often than chance (85 of 140 exit). ``The wavelength of the observed pial waves is long, typically 20 mm or twice the length of the mouse cortex (inset in Figure 4C).'', with relative amplitudes in the range 0.02--0.12 in pial arterioles.
 \item
   Kedarasetti et al~\cite{kedarasetti2020functional} model functional hyperemia waves (aka stimulus-induced vasomotion, see also van Veluw et al~\cite{vanveluw2020vasomotion}). Note that the directionality of vasomotion is classically thought to be in the opposite direction of the blood flow.
 \item
@@ -237,6 +237,31 @@ Cerebrospinal fluid flow
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Results}
 
+\begin{enumerate}
+\item
+  A digital twin for molecular enrichment and clearance in human intracranial spaces
+\item
+  The role of PVS sheaths and permeability
+\item
+  The role of PVS flow speed
+\item
+  Clearance 
+\item
+  Clearance from the parenchyma - with and without low pressure veins
+\end{enumerate}
+
+\begin{figure}
+     \begin{subfigure}[b]{0.45\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/Brain-PVS-callouts.pdf}
+     \end{subfigure}
+     \hfill
+     \caption{a) Illustration of the different intracranial domains
+       considered with labels;}
+     \label{fig:intracranial_domains}
+\end{figure}
+
+
 \subsection*{High-fidelity in-silico predictions of intracranial solute transport and exchange}
 
 \begin{itemize}
@@ -250,6 +275,8 @@ Cerebrospinal fluid flow
 
 \draft{\lipsum[1]}
 
+
+
 \subsection*{II: CSF flow}
 
 Flow of CSF through the SAS and the ventricular system is a crucial driver of transport in the human brain environment. While cardiac- and respiratory induced oscillatory flow increases mixing, the production of CSF in the choroid plexus creates a steady advective flow within the CSF-filled spaces of the cranium \cite{hornkjol2022csf}. 
@@ -258,7 +285,7 @@ We construct a 3D model of the SAS and the ventricular system (\Cref{fig:csf_flo
 To simulate the production-driven flow, we impose an inflow of $630\,$ml/day \cite{nilsson1992circadian} across the surface of the lateral ventricle and allow a resistive outflow across the upper convexity of the skull (see \Cref{fig:csf_flow_geom}), leading to a total pressure drop of $35\,$mPa between the production and outflow sites. A maximum flow velocity of $2\,$mm/s is attained in the aqueduct (\Cref{fig:csf_flow_prod}), while the mean velocity in the SAS is $4.4\,\mu$m/s.
 
 Assessing the effect of cardiac-driven dispersion, we compute a steady CSF flow field at peak cranial blood volume during the cardiac cycle. We mimic resulting the reduced CSF space volume by imposing an inflow of $8\,$ml/s and $0.31\,$ml/s across the outer skull surface and the lateral ventricle surface and allowing free outflow into the spinal SAS. In addition, we upscale the obtained pressure field to account for the lack of pulsatile inertial effects in our model (see \ref{sec:dispersion_details}). In this scenario, we observe a pressure drop of $8.5\,$Pa between lateral ventricles and the spinal SAS and a maximum flow velocity of $0.29\,$m/s at the craniocervical junction.
-Finally, we estimate a spatially varying dispersion enhancement factor $R$ from cardiac-induced pulsatily by combining the computed pressure field with the theory of shear-augmented dispersion (see \Cref{sec:dispersion_details}). We find that cardiac-induced pulsatile CSF flow increases the effective diffusion by up to two orders of magnitude in the aqueduct and around the cisterna magna, but has little effect in most of the SAS ($R < 1$) (\Cref{fig:csf_flow_R}). 
+Finally, we estimate a spatially varying dispersion enhancement factor $R$ from cardiac-induced pulsatility by combining the computed pressure field with the theory of shear-augmented dispersion (see \Cref{sec:dispersion_details}). We find that cardiac-induced pulsatile CSF flow increases the effective diffusion by up to two orders of magnitude in the aqueduct and around the cisterna magna, but has little effect in most of the SAS ($R < 1$) (\Cref{fig:csf_flow_R}). 
 
 \mer{MER/MC: We should compare the peak and mean velocity from the CSF production to the numbers from \cite{hornkjol2022csf} (and others if there are any?) and pressure differences in the system to \cite{vinje2019respiratory}. 2 sentences here for now - to be moved to Discussion. And also 2 sentences on the dispersion field \cite{asgari2016glymphatic, keith2019dispersion, hornkjol2022csf, ray2021quantitative} (others for dispersion in the SAS, Linninger?, Sweetman?).}
 
@@ -576,17 +603,6 @@ Effect of pia permeability (Model N-1)
 
 %\mer{MER: I recommend writing each (sub)section of Methods as a nearly stand-alone paragraph. Let's see if we can avoid subsubsections/paragraphs. If you need to add more detail than you think is appropriate, put it in a Supplementary Methods section in the Appendix.} 
 
-\begin{figure}
-     \begin{subfigure}[b]{0.45\textwidth}
-         \centering
-         \includegraphics[width=\textwidth]{figures/Brain-PVS-callouts.pdf}
-     \end{subfigure}
-     \hfill
-     \caption{a) Illustration of the different intracranial domains
-       considered with labels;}
-     \label{fig:intracranial_domains}
-\end{figure}
-
 \subsection*{Intracranial compartments: ventricular system, SAS, and brain parenchyma}
 
 From T1-weighted MR images of a human subject~\cite{hodneland2019new},
@@ -599,14 +615,14 @@ surface representations of the outer (arachnoid) boundary, the pial
 membrane and other interfaces. Conforming to these surface and
 interface representations, we generate a tetrahedral mesh $\Omega$
 representing the complete intracranial volume as the union of the
-parenchyma $\Omega_{\rm PAR}$ and CSF spaces $\Omega_{\rm CSF}$
-(\Cref{fig:intracranial_domains}a), using fTetWild~\cite{hu2020fast}
-. The resulting computational mesh consists of $153\,729$ vertices and
-$851\,904$ mesh cells, which vary between $0.4$ mm and $1.2$ cm in
-mesh cell diameter. The parenchyma has a total volume of $1386$ ml,
-whereas the ventricles and the outer SAS contribute $28$ ml and $277$
-ml, respectively, to a total CSF volume of $305$ml, in agreement with
-recent estimates~\cite{hladky2024regulation}.
+parenchyma $\Omega_{\rm PAR}$ and CSF spaces $\Omega_{\rm CSF}$, using
+fTetWild~\cite{hu2020fast}. The resulting computational mesh consists
+of $153\,729$ vertices and $851\,904$ mesh cells, which vary between
+$0.4$ mm and $1.2$ cm in mesh cell diameter. The parenchyma has a
+total volume of $1386$ ml, whereas the ventricles and the outer SAS
+contribute $28$ ml and $277$ ml, respectively, to a total CSF volume
+of $305$ml, in agreement with recent
+estimates~\cite{hladky2024regulation}.
 
 %% In addition, we slightly modify the segmentation to ensure correct
 %% connectivity of the ventricular system. In particular, we elongate
@@ -629,19 +645,19 @@ skeletonize time-of-flight angiography (ToF) and quantitative
 susceptibility mapping (QSM) images from the same human
 subject~\cite{hodneland2019new}. This technique yields networks of
 one-dimensional curves, each curve $\Lambda^i$ indicating the
-centerline of a blood vessel segment and labelled with its lumen
-radius $R_1^i$. To represent annular PVSs, we also assign an outer PVS
-radius $R_2^i > R_1^i$ for each segment $i$. The resulting
-periarterial network graph consists of $12\,708$ edges connected at
-$12\,562$ inner nodes and with $147$ end nodes, and the associated
-domain is denoted by $\Lambda_a$. We identify three of the end nodes
--- corresponding to the two internal carotid arteries (ICAs) and the
-basilar artery (BA) -- as root nodes, and designate the other ends as
-leaf nodes. The resulting perivenous network graph consists of
-$\fixme{N}$ edges connected at $\fixme{N}$ inner nodes and with
-$\fixme{N}$ end nodes, and the associated domain is denoted by
-$\Lambda_v$.
-
+centerline of a blood vessel segment and labeled with its lumen radius
+$R_1^i$. To represent annular PVSs, we also assign an outer PVS radius
+$R_2^i > R_1^i$ for each segment $i$. The resulting periarterial
+network graph consists of $12\,708$ edges connected at $12\,562$ inner
+nodes and with $147$ end nodes, and the associated domain is denoted
+by $\Lambda_a$. We identify three of the end nodes -- corresponding to
+the two internal carotid arteries (ICAs) and the basilar artery (BA)
+-- as root nodes, and designate the other ends as leaf nodes. The
+resulting perivenous network graph consists of $\fixme{N}$ edges
+connected at $\fixme{N}$ inner nodes and with $\fixme{N}$ end nodes,
+and the associated domain is denoted by $\Lambda_v$. Finally, we
+denote the outer surface of the union of the annular proxy domains
+surrounding $\Lambda_a, \Lambda_v$ by $\Gamma_a, \Gamma_v$.
 
 %% The resulting vascular networks are further smoothened using a
 %% spline interpolation technique, and represented as graphs with
@@ -649,14 +665,42 @@ $\Lambda_v$.
 
 \subsection*{Intracranial transport equations}
 
-We model diffusion, convection and exchange of a solute in PVSs, in the surrounding SAS and in the brain parenchyma (Fig.~\ref{fig:concept}) via a comprehensive multi-dimensional transport model~\cite{masri2023modelling} over a timescale of minutes to hours. More specifically, we solve for a solute concentration $c$ defined locally in each subdomain $c = c_{\rm{csf}}$ in $\Omega_{\rm{csf}}$ and $c =c_{\rm{PAR}}$ in $\Omega_{\rm{PAR}} $, 
-and for an averaged solute concentration $\hat c$ in a 1D network of centerlines $\Lambda$ representing the PVS ($\hat c$ defined locally on each $\Lambda^i$), such that the following equations hold
+We model diffusion, convection, and exchange of a molecular solute in
+the PVSs $\Lambda_a$ and $\Lambda_v$, in the CSF spaces $\Omega_{\rm
+  CSF}$ and in the brain parenchyma $\Omega_{\rm PAR}$ via a
+mixed-dimensional transport model~\cite{masri2023modelling} over a
+timescale of minutes to hours. Specifically, for $t > 0$, we solve for
+a concentration $c = c(x, t)$ in the 3D intracranial compartments ($x
+\in \Omega_{\rm CSF} \cup \Omega_{\rm PAR}$) and for a cross-section
+averaged concentration $\hat{c} = \hat{c}(s, t)$ in the periarterial
+and perivenous networks ($s \in \Lambda_a, s \in \Lambda_v$) such that
+the following equations hold:
 \begin{subequations}
 \begin{alignat}{2}
-  \partial_t (\phi c) - \nabla \cdot (D \nabla (\phi c) ) + \nabla \cdot (\bm u c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma & = 0 && \quad \quad \mathrm{in} \quad \Omega_{\rm CSF} \cup \Omega_{\rm{PAR}}, \label{eq:multi_transport_3d} \\ 
-  \partial_t (A  \hat c) - \partial_s(\hat D A \partial_s ( \hat c)) +\partial_s(A \hat u \hat c )  +  \xi P (\hat c - \overline{c})  &= 0 && \quad \quad \mathrm{in} \quad  \Lambda . \label{eq:multi_transport_1d}
- \end{alignat}
-\end{subequations}
+  \partial_t (\phi c) - \nabla \cdot (D \nabla (\phi c) ) + \nabla \cdot (\bm u c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma & = 0 && \quad \quad \mathrm{in} \quad \Omega_{\rm CSF} \cup \Omega_{\rm{PAR}},
+  \label{eq:multi_transport_3d}
+  \\ 
+  \partial_t (A  \hat c) - \partial_s(\hat D A \partial_s ( \hat c)) +\partial_s(A \hat u \hat c )  +  \xi P (\hat c - \overline{c})  &= 0 && \quad \quad \mathrm{in} \quad  \Lambda_a, \Lambda_v .
+  \label{eq:multi_transport_1d}
+ \end{alignat}%
+\label{eq:multi_transport}%
+\end{subequations}%
+In~\eqref{eq:multi_transport}, $\phi$ is the porosity, $D$ and
+$\hat{D}$ are effective diffusion coefficients, and $\bm u$ and
+$\hat{u}$ are fluid velocities, all of the respective compartments; $P
+= 2 \pi R_2$ is the perimeter and $A = \pi (R_2^2 - R_1^2)$ the area
+of the PVS cross-sections, $\delta_{\Gamma}$ is the Dirac delta
+function concentrated on the interface $\Gamma = \Gamma_a \cup
+\Gamma_v$ and $\xi$ is a permeability allowing for transfer and
+exchange over the interface $\Gamma$ between the PVS and their
+surroundings. See \Cref{sec:details_numerical_method} and the
+reference~\cite{masri2023modelling} for more details.
+
+\subsection*{Model and material parameters}
+
+Here $\phi$ is the fluid volume fraction (or porosity) of the brain (where $\phi \ll 1$), of the SAS (where $\phi = 1$) and of the PVS (where $0 \ll \phi \leq 1$); $D$ is the effective diffusion coefficient of the relevant solute in the respective media~\cite{sykova2008diffusion} which takes different values over the SAS and brain,  $\bm u$ and $\hat u$ are convective velocity fields in $\Omega$ and $\Lambda$ respectively, and $\xi$ is a transfer coefficient across the PVS-CSF and the PVS-Brain interface
+
+
 The notation $\overline{c}$ denotes the lateral average of the concentration over the outer perivascular boundary \footnote{
 The lateral average is defined as 
 \[ \overline{c}(s) = \frac{1}{A(s)} \int_{\Theta(s)} c ,\]
@@ -687,7 +731,7 @@ Here $\phi$ is the fluid volume fraction (or porosity) of the brain (where $\phi
 We refer to \Cref{tab:overview} for the values of the used parameters.
 In the above,  $|\Lambda^i \cap \Omega_{\rm{PAR}}|$ (resp.  $|\Lambda^i \cap \Omega_{\rm{csf}}|$) is nonzero whenever the surrounding PVS around the line $\Lambda^i$ intersects $\Omega_{\rm{PAR}}$ (resp. $\Omega_{\rm{csf}}$). If the surrounding PVS intersects both, then we set $\xi = \xi_{\mathrm{PVS}, \rm{PAR}}$ (resp $\xi_{\mathrm{PVS}, \rm{CSF}}$) if the PVS lies mostly ($80$ percent) in $\Omega_{\rm{PAR}}$ (resp. $\Omega_{\rm{CSF}}$) and the interaction with $\Omega_{\rm{PVS}}$ (resp. $\Omega_{\rm{CSF}}$ is ignored. Additionally, we increase the permeability $\xi$ by a factor of 100 at the PVS end nodes $\partial \Lambda^a$ to account for the transition from explicitly resolved PVSs to their unresolved continuation in the CSF-space and parenchyma.
 
-\mer{MER/MC: How aobut dispersion in the PVS?}
+\mer{MER/MC: How about dispersion in the PVS?}
 
 
 Further, $P$ and $A$ are the perimeter and area of the PVS which can vary along the centerline network, respectively.  Finally, we remark that $\hat u$ takes different values on each $\Lambda_i$.  Both $\Omega$ and $\Lambda$ are fixed in time and we assume constant-in- time radii (despite varying radii to drive peristaltic flow, see \cref{sec:sup:peristalsis}). Finally, we note that the model assumes that there is no interaction between the inner perivascular boundary and the blood vessel. 
@@ -945,6 +989,7 @@ We use the diffusion coefficient $D_{\rm gad}$ of Gadubutrol in free water in th
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
 \section*{Discussion}
 
 \subsection*{Limitations}
