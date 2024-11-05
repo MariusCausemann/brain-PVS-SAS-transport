@@ -752,11 +752,12 @@ We consider non-zero convection in the CSF space $u_{\rm CSF} \not = 0$ in \eqre
  \nabla \cdot  \bm u_{\mathrm{CSF}} & = 0 \quad && \mathrm{in} \,\,   \Omega_{\rm CSF}, \label{eq:divergence_equation}  \\ 
 \mu \nabla \bm u_{\mathrm{CSF}} \cdot \bm{n} -  p \bm n  &  = -R_0 ( \bm u \cdot \bm n ) \bm n\,\,   && \mathrm{on}  \label{eq:efflux_condition} \,\, \Gamma_{\mathrm{skull^u}}, \\ 
 \bm u_{\mathrm{CSF}} & = 0 && \mathrm{on} \,\, \Gamma_{\rm{pia}} \cup \Gamma_{\mathrm{skull^l}} \Gamma_{\rm{SSAS}}  \\
-\bm u_{\mathrm{CSF}} \cdot \bm n & = u_{\rm in} / |\Gamma_{\rm LV}| && \mathrm{on} \,\, \Gamma_{\rm{LV}} .  
+\bm u_{\mathrm{CSF}} \cdot \bm n & = \frac{1}{ |\Gamma_{\rm LV}|}  u_{\rm in}, \quad \bm u \cdot \bm \tau = 0 \quad && \mathrm{on} \,\, \Gamma_{\rm{LV}} .  
 \end{alignat}
 \end{subequations}
 
-Here, $\bm n$ denotes the unit outward normal to the boundary, $\mu$ is the CSF viscosity, and $u_{\rm in}$ is the steady CSF flow across the lateral ventricle wall. Condition \eqref{eq:efflux_condition} models an efflux site with positive resistance $R_0 \geq 0$. The Stokes system is solved with the finite element software $FEniCS$, stored and then subsequently read for all the relevant solute transport simulations. See Figure~\ref{fig:csf_flow_cardiac} for a streamline visualization of the obtained velocity profile and \Cref{sec:details_numerical_method} for details on the numerical algorithm employed.
+Here, $\bm n$ denotes the unit outward normal to the boundary, $\mu$ is the CSF viscosity, and $\bm u_{\rm in}$ is the steady CSF flow across the lateral ventricle wall, see \Cref{tab:pvs:parameters}.
+Condition \eqref{eq:efflux_condition} models an efflux site with positive resistance $R_0 \geq 0$. The Stokes system is solved with the finite element software $FEniCS$, stored and then subsequently read for all the relevant solute transport simulations. See Figure~\ref{fig:csf_flow_cardiac} for a streamline visualization of the obtained velocity profile and \Cref{sec:details_numerical_method} for details on the numerical algorithm employed.
 
 
 
@@ -859,7 +860,7 @@ We use the diffusion coefficient $D_{\rm gad}$ of Gadubutrol in free water in th
          Spinal solute influx peak time & $T_{\rm max}$ & $1$  & h & \\
          solute efflux resistance & $\beta$  & $10^{-4}$ & mm$^2$/s & \cite{hornkjol2022csf} \\
          \midrule
-         CSF production rate & $g_{\mathrm{CSF}}$ & $0.63$  & l/day & \cite{nilsson1992circadian} \\
+         CSF production rate & $u_{\mathrm{in}}$ & $0.63$  & l/day & \cite{nilsson1992circadian} \\
          CSF viscosity & $\mu$ & $0.7$  & mPa$ \cdot $s & \cite{bloomfield1998effects} \\ 
         CSF outflow resistance & $R_0$ & $10^{-5}$  & Pa/(mm$\cdot$s) & \cite{hornkjol2022csf} \\ 
         \bottomrule
@@ -1052,14 +1053,14 @@ We recall the system of equations that we approximate. Find $(\bm u, p)$ such th
     \begin{alignat}{2}
  - \mu \Delta \bm u + \nabla p & =  \bm 0 \quad && \mathrm{in} \,\,  \Omega_{\rm CSF}, \label{eq:momnetum_equation}  \\ 
  \nabla \cdot  \bm u & = 0 \quad && \mathrm{in} \,\,   \Omega_{\rm CSF}, \label{eq:divergence_equation}  \\ 
-\mu \nabla \bm u \cdot \bm{n} -  p \bm n  &  = -R_0 ( \bm u \cdot \bm n ) \bm n\,\,   && \mathrm{on}  \label{eq:efflux_condition} \,\, \Gamma_{\mathrm{skull^u}}, \\ 
+\mu \nabla \bm u \cdot \bm{n} -  p \bm n  &  = -R_0 ( \bm u \cdot \bm n ) \bm n, \,\,  \quad \bm u \cdot \bm \tau = 0 \quad  && \mathrm{on}  \label{eq:efflux_condition} \,\, \Gamma_{\mathrm{skull^u}}, \\ 
 \bm u & = 0 && \mathrm{on} \,\, \Gamma_{\rm{pia}} \cup \Gamma_{\mathrm{skull^l}} \cup \Gamma_{\rm{SSAS}} \\
-\bm u \cdot  \bm n   =  \bm u_{\mathrm{in}} \cdot \bm n , & \; \; \bm u \cdot \bm \tau  = 0  && \mathrm{on} \;  \Gamma_{\mathrm{LV}},
+\bm u \cdot  \bm n   =  \frac{1}{|\Gamma_{\mathrm{LV}}|} u_{\mathrm{in}}  , & \; \; \bm u \cdot \bm \tau  = 0  && \mathrm{on} \;  \Gamma_{\mathrm{LV}},
 \end{alignat}
 \end{subequations}
 We follow \cite{hong2016robust} and approximate the velocity field $u$ and the pressure $p$ with the following finite element spaces. 
 \begin{align}
-\bm V_h  & = \{ \bm v  \in H(\mathrm{div}; \Omega_{\mathrm{CSF}}): \; \bm v \vert_{E} \in \mathbb{BDM}^2 (E),  \; E \in \mathcal{E}_h; \;  \bm v \cdot \bm n = 0  \} \\ 
+\bm V_h  & = \{ \bm v  \in H(\mathrm{div}; \Omega_{\mathrm{CSF}}): \; \bm v \vert_{E} \in \mathbb{BDM}^2 (E),  \; E \in \mathcal{E}_h; \;  \bm v \cdot \bm n = 0 \text{ on } \Gamma_{\rm{pia}} \cup \Gamma_{\mathrm{skull^l}} \cup \Gamma_{\rm{SSAS}}, \;\; \bm v \cdot \bm n = \frac{1}{|\Gamma_{\mathrm{LV}}|} u_{\mathrm{in}} \text{ on } \Gamma_{\mathrm{LV}} \} \\ 
 S_h  & = \{q \in L^2(\Omega):  \;  q \vert_E \in \mathbb{P}^1(E),  \; E \in \mathcal{E}_h \}. 
 \end{align}
 Here, $H(\mathrm{div};\Omega)$ is the space of $L^2$ vector fields with $L^2$ divergence,  $\mathbb{BDM}^2$ is the Brezzi-Douglas--Marini element \cite{brezzi1987mixed} of order 2, and  $\bm n$ (resp. $\bm \tau$) is the unit outward normal (resp. tangent) vector.  
@@ -1067,7 +1068,7 @@ Given any vector $\bm v$, the normal and tangential components on each facet  ar
 \[ 
 \bm v_n = (\bm v \cdot \bm n)\bm n , \quad \bm v_t = (\bm v - \bm v_n). 
 \]
-Since $V_h \subset H(\mathrm{div}, \Omega_{\rm{CSF}})$, then $[\bm v_n] = 0 $ on $\mathcal{F}_{h,c}$. Continuity in the tangential component is enforced weakly via interior penalization. For notational simplicity, denote by $\mathcal{F}_{\Gamma} =\mathcal{F}_{\Gamma_{\mathrm{pia}}} \cup \mathcal{F}_{\Gamma_{\mathrm{SSAS}}}  \cup \mathcal{F}_{\Gamma_{\mathrm{LV}}} $. Define the form 
+Since $V_h \subset H(\mathrm{div}, \Omega_{\rm{CSF}})$, then $[\bm v_n] = 0 $ on $\mathcal{F}_{h,c}$. Continuity in the tangential component is enforced weakly via interior penalization. For notational simplicity, denote by $\mathcal{F}_{\Gamma}$ the facets lying on $\Gamma_{\rm{pia}} \cup \Gamma_{\mathrm{skull}} \cup \Gamma_{\rm{SSAS}} \cup \Gamma_{\mathrm{LV}}$. Define the form 
 \begin{multline}
 \mathcal{A}_h (\bm u, \bm v) = \sum_{E \in \mathcal{E}_h} \int_{E} \mu \nabla u : \nabla v - \sum_{
 F \in \mathcal{F}_{h,c} \cup \mathcal{F}_{\Gamma} 
@@ -1077,9 +1078,9 @@ F \in \mathcal{F}_{h,c} \cup \mathcal{F}_{\Gamma}
 } \int_{F} \mu \{\nabla v\}\cdot \bm n_F \cdot [\bm u_t]
 + \sum_{
 F \in \mathcal{F}_{h,c} \cup \mathcal{F}_{\Gamma} 
-} \frac{\sigma}{h} \int_{F} [\bm u_t ] \cdot [\bm v_t].   
+} \frac{\sigma \mu}{h} \int_{F} [\bm u_t ] \cdot [\bm v_t].   
 \end{multline}
-The discretization for the CSF flow, is then to find $(\bm u_h, p_h) \in \bm V_h \times S_h$ such  that 
+We set $\sigma =20$. The discretization for the CSF flow, is then to find $(\bm u_h, p_h) \in \bm V_h \times S_h$ such  that 
 \begin{align}
 \mathcal{A}_h(u_h, v_h)  + \sum_{F \in \mathcal{F}_{\Gamma_{\mathrm{skull}}}} \int_{F} R_0 (\bm u_h \cdot \bm n) (\bm v_h \cdot \bm n) - \int_{\Omega} \nabla \cdot \bm v_h \, p_h  & = 0, \quad \forall \bm v_h \in \bm V_h   \\ 
 (\nabla \cdot \bm u_h , q_h ) & = 0, \quad \forall q_h \in S_h.
@@ -1124,8 +1125,8 @@ To enforce conservation of flux and continuity of pressure on bifurcation points
 The weak form reads: Find $(u_{\rm PVS}, p_{\rm PVS}) \in V_h^{\rm PVS} \times Q_h^{\rm PVS}$ such that
 
 \begin{align}
-(A u_{\rm PVS}, v) + \left(v, \frac{A \kappa}{\mu} \nabla p_{\rm PVS} \cdot \tau \right) &= 0 \quad \forall v \in V_h^{\rm PVS} \\
-(A u_{\rm PVS} , \nabla q \cdot \tau) &= 0 \quad  \forall q \in  Q_h^{\rm PVS}
+(A u_{\rm PVS}, v) + \left(v, \frac{A \kappa}{\mu} \partial_s p_{\rm PVS}  \right) &= 0 \quad \forall v \in V_h^{\rm PVS} \\
+(A u_{\rm PVS} , \partial_s q ) &= 0 \quad  \forall q \in  Q_h^{\rm PVS}
 \end{align}
 
 where $\tau$ is the tangent vector of the network. We employ the lowest order discretization and set $k=0$.
