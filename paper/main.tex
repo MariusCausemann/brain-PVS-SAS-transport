@@ -36,6 +36,7 @@
 \newcommand{\mer}[1]{\textcolor{magenta}{#1}}
 \newcommand{\mar}[1]{\textcolor{violet}{#1}}
 \newcommand{\discuss}[1]{\textcolor{red}{#1}}
+\newcommand{\fixme}[1]{\textcolor{red}{#1}}
 \newcommand{\draft}[1]{\textcolor{gray}{#1}}
 \newcommand{\brain}{\Omega_{\rm{PAR}}} 
 \newcommand{\sas}{\Omega_{\rm CSF}}
@@ -586,15 +587,7 @@ Effect of pia permeability (Model N-1)
      \label{fig:intracranial_domains}
 \end{figure}
 
-\subsection*{Intracranial compartments: the ventricular system and SAS, brain parenchyma, and perivascular spaces}
-
-%% In addition, we slightly modify the segmentation to ensure correct
-%% connectivity of the ventricular system. In particular, we elongate
-%% the aqueduct and enforce no communication between the ventricles
-%% and the surrounding CSF spaces except for the median aperture.
-%% After morphological smoothing of the segmented image, we extract
-%% surface representations of the outer SAS boundary, the pial
-%% membrane and the components of the ventricular system.
+\subsection*{Intracranial compartments: ventricular system, SAS, and brain parenchyma}
 
 From T1-weighted MR images of a human subject~\cite{hodneland2019new},
 we first automatically segment the brain parenchyma and CSF spaces,
@@ -615,33 +608,41 @@ whereas the ventricles and the outer SAS contribute $28$ ml and $277$
 ml, respectively, to a total CSF volume of $305$ml, in agreement with
 recent estimates~\cite{hladky2024regulation}.
 
+%% In addition, we slightly modify the segmentation to ensure correct
+%% connectivity of the ventricular system. In particular, we elongate
+%% the aqueduct and enforce no communication between the ventricles
+%% and the surrounding CSF spaces except for the median aperture.
+%% After morphological smoothing of the segmented image, we extract
+%% surface representations of the outer SAS boundary, the pial
+%% membrane and the components of the ventricular system.
+
 %% Note that the widely reported value of $150$\,ml of intracranial
 %% CSF volume is likely an underestimate. Recent estimates indicate
 %% that a value of $200$ to $300$\,ml is more accurate (see
 %% \cite{hladky2024regulation} and references therein
 
-%% Data for veins:
-%% Hodneland et al~\cite{hodneland2019new} developed a method to image
-%% the brain's microvasculature based on time-of-flight (ToF) and
-%% quantitative susceptibility mapping (QSM) to identify arterial and
-%% venous networks. 
+\subsection*{Periarterial and perivenous networks}
 
-%\subsection*{Perivascular networks}
+To represent surface networks of periarterial and perivenous spaces,
+we use Kiminaro~\cite{william_silversmith_2021_5539913} to separately
+skeletonize time-of-flight angiography (ToF) and quantitative
+susceptibility mapping (QSM) images from the same human
+subject~\cite{hodneland2019new}. This technique yields networks of
+one-dimensional curves, each curve $\Lambda^i$ indicating the
+centerline of a blood vessel segment and labelled with its lumen
+radius $R_1^i$. To represent annular PVSs, we also assign an outer PVS
+radius $R_2^i > R_1^i$ for each segment $i$. The resulting
+periarterial network graph consists of $12\,708$ edges connected at
+$12\,562$ inner nodes and with $147$ end nodes, and the associated
+domain is denoted by $\Lambda_a$. We identify three of the end nodes
+-- corresponding to the two internal carotid arteries (ICAs) and the
+basilar artery (BA) -- as root nodes, and designate the other ends as
+leaf nodes. The resulting perivenous network graph consists of
+$\fixme{N}$ edges connected at $\fixme{N}$ inner nodes and with
+$\fixme{N}$ end nodes, and the associated domain is denoted by
+$\Lambda_v$.
 
-To represent the surface network of periarterial spaces, we use
-Kiminaro~\cite{william_silversmith_2021_5539913} to skeletonize
-time-of-flight angiography images from the same human
-subject~\cite{hodneland2019new}. This technique yields a network of
-one-dimensional curves, each indicating the centerline of a blood
-vessel segment $\Lambda^i$ and labelled with its lumen radius $R_1^i$
-(\Cref{fig:pvs}a). To represent an annular PVS surrounding each
-vessel, we also assign an outer PVS radius $R_2^i > R_1^i$ for each
-$i$. The resulting network graph consists of $12\,708$ edges connected
-at $12\,562$ inner nodes and with $147$ end nodes, and associated
-domain is denoted by $\Lambda = \cup_i \Lambda^i$. We identify three
-of end nodes -- corresponding to the two internal carotid arteries
-(ICAs) and the basilar artery (BA) -- as root nodes, and designate the
-other ends as leaf nodes (\Cref{fig:pvs}).
+
 %% The resulting vascular networks are further smoothened using a
 %% spline interpolation technique, and represented as graphs with
 %% nodes connected by edges.
