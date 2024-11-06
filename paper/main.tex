@@ -1175,7 +1175,7 @@ The weak form reads: Find $(u_{\rm PVS}, p_{\rm PVS}) \in V_h^{\rm PVS} \times Q
 (A u_{\rm PVS} , \partial_s q ) &= 0 \quad  \forall q \in  Q_h^{\rm PVS}
 \end{align}
 
-where $\tau$ is the tangent vector of the network. We employ the lowest order discretization and set $k=0$.
+where $\tau$ is the tangent vector of the network. Here we employ the lowest order discretization and set $k=1$. For discussion of stability of the discrete model we refer to \cite{gjerde2024directional}. 
 
 \subsubsection{Solute transport} For the 3D concentration, we use broken polynomial spaces and interior penalty discontinuous Galerkin (DG) methods with upwinding in order to capture the sharp boundary layers.  For DG, we utilize the discrete space 
 \begin{equation}
