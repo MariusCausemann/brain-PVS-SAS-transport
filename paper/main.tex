@@ -611,10 +611,10 @@ From T1-weighted MR images of a human subject~\cite{hodneland2019new},
 we first automatically segment the brain parenchyma and CSF spaces,
 including the ventricular system and SAS, using
 Synthseg~\cite{billot2023robust,billot2023synthseg}. We next manually
-adjust the segmentation to represent the correct connections between
-CSF spaces (aqueduct, median aperture), smoothen, and finally extract
-surface representations of the outer (arachnoid) boundary, the pial
-membrane and other interfaces. Conforming to these surface and
+adjust the segmentation to accurately represent the connections
+between CSF spaces (aqueduct, median aperture), smoothen, and finally
+extract surface representations of the outer (arachnoid) boundary, the
+pial membrane and other interfaces. Conforming to these surface and
 interface representations, we generate a tetrahedral mesh $\Omega$
 representing the complete intracranial volume as the union of the
 parenchyma $\Omega_{\rm PAR}$ and CSF spaces $\Omega_{\rm CSF}$, using
@@ -639,7 +639,7 @@ estimates~\cite{hladky2024regulation}.
 %% that a value of $200$ to $300$\,ml is more accurate (see
 %% \cite{hladky2024regulation} and references therein
 
-\subsection*{Periarterial and perivenous networks}
+\subsection*{Periarterial and perivenous spaces}
 
 To represent surface networks of periarterial and perivenous spaces,
 we use Kiminaro~\cite{william_silversmith_2021_5539913} to separately
@@ -648,18 +648,19 @@ susceptibility mapping (QSM) images from the same human
 subject~\cite{hodneland2019new}. This technique yields networks of
 one-dimensional curves, each curve $\Lambda^i$ indicating the
 centerline of a blood vessel segment and labeled with its lumen radius
-$R_1^i$. To represent annular PVSs, we also assign an outer PVS radius
-$R_2^i > R_1^i$ for each segment $i$. The resulting periarterial
-network graph consists of $12\,708$ edges connected at $12\,562$ inner
-nodes and with $147$ end nodes, and the associated domain is denoted
-by $\Lambda_a$. We identify three of the end nodes -- corresponding to
+$R_1^i$. We also assign an outer radius $R_2^i > R_1^i$ to each
+segment $i$, form the annular cylinder ensheathing $\Lambda^i$ and
+define the union of these as the PVS. The periarterial network graph
+consists of $12\,708$ edges connected at $12\,562$ inner nodes and
+with $147$ end nodes, and the associated domain is denoted by
+$\Lambda_a$. We identify three of the end nodes -- corresponding to
 the two internal carotid arteries (ICAs) and the basilar artery (BA)
 -- as root nodes, and designate the other ends as leaf nodes. The
 resulting perivenous network graph consists of $\fixme{N}$ edges
 connected at $\fixme{N}$ inner nodes and with $\fixme{N}$ end nodes,
-and the associated domain is denoted by $\Lambda_v$. Finally, we
-denote the outer surface of the union of the annular proxy domains
-surrounding $\Lambda_a, \Lambda_v$ by $\Gamma_a, \Gamma_v$.
+and the associated domain is denoted by $\Lambda_v$. Finally, we label
+the outer surface of the PVS associated with $\Lambda_a$ and
+$\Lambda_v$, by $\Gamma_a$ and $\Gamma_v$ respectively.
 
 %% The resulting vascular networks are further smoothened using a
 %% spline interpolation technique, and represented as graphs with
@@ -668,18 +669,18 @@ surrounding $\Lambda_a, \Lambda_v$ by $\Gamma_a, \Gamma_v$.
 \subsection*{Intracranial transport equations}
 
 We model diffusion, convection, and exchange of a molecular solute in
-the PVSs $\Lambda_a$ and $\Lambda_v$, in the CSF spaces $\Omega_{\rm
-  CSF}$ and in the brain parenchyma $\Omega_{\rm PAR}$ via a
-mixed-dimensional transport model~\cite{masri2023modelling} over a
+the PVS networks $\Lambda_a$ and $\Lambda_v$, in the CSF spaces
+$\Omega_{\rm CSF}$ and in the brain parenchyma $\Omega_{\rm PAR}$ via
+a mixed-dimensional transport model~\cite{masri2023modelling} over a
 timescale of minutes to hours. Specifically, for $t > 0$, we solve for
 a concentration $c = c(x, t)$ in the 3D intracranial compartments ($x
-\in \Omega_{\rm CSF} \cup \Omega_{\rm PAR}$) and for a cross-section
+\in \Omega_{\rm CSF}, x \in \Omega_{\rm PAR}$) and for a cross-section
 averaged concentration $\hat{c} = \hat{c}(s, t)$ in the periarterial
 and perivenous networks ($s \in \Lambda_a, s \in \Lambda_v$) such that
 the following equations hold:
 \begin{subequations}
 \begin{alignat}{2}
-  \partial_t (\phi c) - \nabla \cdot (D \nabla (\phi c) ) + \nabla \cdot (\bm u c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma & = 0 && \quad \quad \mathrm{in} \quad \Omega_{\rm CSF} \cup \Omega_{\rm{PAR}},
+  \partial_t (\phi c) - \nabla \cdot (D \nabla (\phi c) ) + \nabla \cdot (\bm u c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma & = 0 && \quad \quad \mathrm{in} \quad \Omega_{\rm CSF}, \Omega_{\rm{PAR}},
   \label{eq:multi_transport_3d}
   \\ 
   \partial_t (A  \hat c) - \partial_s(\hat D A \partial_s ( \hat c)) +\partial_s(A \hat u \hat c )  +  \xi P (\hat c - \overline{c})  &= 0 && \quad \quad \mathrm{in} \quad  \Lambda_a, \Lambda_v .
@@ -687,110 +688,102 @@ the following equations hold:
  \end{alignat}%
 \label{eq:multi_transport}%
 \end{subequations}%
-In~\eqref{eq:multi_transport}, $\phi$ is the porosity, $D$ and
-$\hat{D}$ are effective diffusion coefficients, and $\bm u$ and
-$\hat{u}$ are fluid velocities, all of the respective compartments; $P
-= 2 \pi R_2$ is the perimeter and $A = \pi (R_2^2 - R_1^2)$ the area
-of the PVS cross-sections, $\delta_{\Gamma}$ is the Dirac delta
-function concentrated on the interface $\Gamma = \Gamma_a \cup
-\Gamma_v$ and $\xi$ is a permeability allowing for transfer and
-exchange over the interface $\Gamma$ between the PVS and their
-surroundings. See \Cref{sec:details_numerical_method} and the
-reference~\cite{masri2023modelling} for more details.
+In~\eqref{eq:multi_transport}, $0 < \phi \leqslant 1$ is the fluid
+volume fraction, $D$ and $\hat{D}$ are effective diffusion
+coefficients, and $\bm u$ and $\hat{u}$ are fluid velocities, all
+defined in the respective compartments; $P = 2 \pi R_2$ is the
+perimeter and $A = \pi (R_2^2 - R_1^2)$ the area of the PVS
+cross-sections, $\delta_{\Gamma}$ is the Dirac delta function
+concentrated on the interfaces $\Gamma_a, \Gamma_v$, the overlined
+$\overline{c}$ denotes the average of $c$ over cross-sections of
+$\Gamma_a, \Gamma_v$, and $\xi$ is a permeability allowing for
+transfer/exchange over the interfaces $\Gamma_a, \Gamma_v$ between the
+periarterial and perivenous networks and their surroundings.
+Moreover, we model the pia membrane as a semi-permeable membrane with
+permeability cofficient $\beta_{\rm pia}$. For a complete description
+of the mathematical model, see \Cref{sec:more_maths}.
+
+\subsection*{Intracranial influx after intrathecal injection}
+To represent molecular influx into the intracranial compartments
+following intrathecal injection, without modelling the spinal
+compartment explicitly, we prescribe a time-dependent molecular influx
+over the interface towards the spinal compartment with the condition
+$(D \nabla c - \bm u c ) \cdot \bm{n} = g_{\mathrm{influx}}$ on
+$\Gamma_{\mathrm{SSAS}}$. We set
+\begin{equation}
+  g_\mathrm{influx}(t) = \frac{m_{\rm tot}}{T_{\rm max}^2 |\Gamma_{\rm SSAS}|} \max(0, T_{\rm max} - |t - T_{\rm max}|)
+\end{equation}
+which expresses a hat-shaped influx function with a peak at $T_{\rm max}$ and a total tracer injection of $m_{\rm tot}$.
+
+\subsection*{Molecular clearance from the intracranial space and perivascular network ends}
+%\subsection*{Boundary conditions: extracranial efflux and perivascular parenchymal influx}
+
+We model molecular clearance, via e.g.~meningeal lymphatics, along the
+upper, outer (arachnoid) boundary (\Cref{fig:intracranial_domains}),
+proportional to the concentration in the SAS with a rate constant
+$\beta_{\rm exit}$. We set a no-flux condition at the end nodes of the
+perivascular networks, not allowing for direct molecular clearance
+there.
 
 \subsection*{Model and material parameters}
 
-Here $\phi$ is the fluid volume fraction (or porosity) of the brain (where $\phi \ll 1$), of the SAS (where $\phi = 1$) and of the PVS (where $0 \ll \phi \leq 1$); $D$ is the effective diffusion coefficient of the relevant solute in the respective media~\cite{sykova2008diffusion} which takes different values over the SAS and brain,  $\bm u$ and $\hat u$ are convective velocity fields in $\Omega$ and $\Lambda$ respectively, and $\xi$ is a transfer coefficient across the PVS-CSF and the PVS-Brain interface
+Model and material parameters are summarized in \Cref{tab:parameters}.
+We assume that the porosity equals the extracellular space volume
+fraction $\phi = \phi_{\rm PAR}$ within the parenchyma and $\phi = 1$
+elsewhere. In influx scenarios, we model the concentration of
+Gadubutrol with effective diffusion coefficient equal to that of
+Gadubutrol in free water in the PVS networks: $\hat{D} = D^{\rm Gad}$;
+weighted by a dispersion factor $R$ in the CSF spaces:
+$D|_{\Omega_{\rm CSF}} = ( 1 + R) D^{\rm Gad}$; and modulated by the
+porosity and tortuousity ($\lambda = 1.78$) in the parenchyma:
+$D|_{\Omega_{\rm PAR}} = D^{\rm Gad}_{\rm PAR}$. We set $\xi$
+depending on whether the PVS segment is fully embedded within the CSF
+spaces ($\xi = \xi_{\rm CSF}$) or parenchyma ($\xi = \xi_{\rm EF}$),
+or neither (\Cref{sec:more_maths}). Additionally, we increase the
+permeability $\xi$ ($100\times$) near the leaf nodes of $\Lambda_a$ to
+account for the transition from explicitly resolved PVSs to their
+unresolved continuation in the CSF spaces and parenchyma.
 
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ll|ccc}
+      \toprule
+      Parameter& Symbol & Value & Unit& Reference\\
+      \midrule
+      Extracellular space volume fraction & $\phi_{\rm PAR}$ & 0.2 & -- & \cite{nicholson1981ion} \\
+      Free diffusion coefficient, Gadubutrol & $D^{\rm Gad}$ & $3.8 \times 10^{-4}$& $\text{mm}^2/\text{s}$ & \cite{valnes2020apparent}\\
+      Parenchymal diffusion coefficient, Gadubutrol & $D^{\rm Gad}_{\rm PAR}$ & $1.2 \times 10^{-4}$ & $\text{mm}^2/\text{s}$  & \cite{hornkjol2022csf} \\
+      Permeability coefficient, pia & $\beta_{\rm pia}$ & $2.6 \cdot 10^{-8}$ & m/s & \cite{riseth2025twocompartment} \\
+      Dispersion factor, CSF spaces & $R$ & $\dagger$ & -- & $\ast$ \\
+      Permeability coefficient, endfoot sheath & $\xi_{\rm EF}$ & $3.8\cdot 10^{-7}$  & m/s & \cite{koch2023estimates} \\
+      Molecular efflux rate & $\beta_{\rm exit}$ & $10^{-4}$ & mm$^2$/s & \cite{hornkjol2022csf} \\
+      Total molecular volume & $m_{\rm tot}$ & $0.5$ & mmol & \cite{eide2024functional} \\
+      Molecular influx, time-to-peak & $T_{\rm max}$ & $1$ & h & \fixme{$\ast$} \\
+      %\midrule
+      %PVS-CSF permeability&  $\xi_{PVS,CSF}$& tbd & m/s & \\
+      \midrule
+      \midrule
+      CSF production rate & $u_{\mathrm{in}}$ & $0.63$  & l/day & \cite{nilsson1992circadian} \\
+      CSF viscosity & $\mu$ & $0.7$  & mPa$ \cdot $s & \cite{bloomfield1998effects} \\ 
+      CSF outflow resistance & $R_0$ & $10^{-5}$  & Pa/(mm$\cdot$s) & \cite{hornkjol2022csf} \\ 
+      \bottomrule
+    \end{tabular}
+  \end{center}
+  \caption{Model parameters. $\dagger$/$\ast$ denotes computed/estimated within this work.}
+  \label{tab:parameters}
+\end{table}
 
-The notation $\overline{c}$ denotes the lateral average of the concentration over the outer perivascular boundary \footnote{
-The lateral average is defined as 
-\[ \overline{c}(s) = \frac{1}{A(s)} \int_{\Theta(s)} c ,\]
-where $\Theta(s)$ is a cross-section of the PVS at the point on $\bm{\lambda}(s)$ on $\Lambda$ where $\bm \lambda$ is a given parameterization of $\Lambda$ and $A(s)$ is the area of $\Theta(s)$. 
-}. The (Dirac delta) term $\delta_\Gamma$ is a source term concentrated on the outer boundary of the PVS (the union of the annular domains surrounding $\Lambda^i$) that models the solute exchange between the PVSs and their surroundings \footnote{The term $\delta_{\Gamma}$ is given for any function $v$, see \Cref{sec:details_numerical_method} for more details
-\[\xi  (\overline{c} - \hat c ) \delta_\Gamma (v) 
-= \int_{\Lambda} P \xi ( \overline{c} - \hat c ) \overline{v} 
-\]
-}.  
-Here $\phi$ is the fluid volume fraction (or porosity) of the brain (where $\phi \ll 1$), of the SAS (where $\phi = 1$) and of the PVS (where $0 \ll \phi \leq 1$); $D$ is the effective diffusion coefficient of the relevant solute in the respective media~\cite{sykova2008diffusion} which takes different values over the SAS and brain,  $\bm u$ and $\hat u$ are convective velocity fields in $\Omega$ and $\Lambda$ respectively, and $\xi$ is a transfer coefficient across the PVS-CSF and the PVS-Brain interface
-\[
-\phi =  \begin{cases}
-    1  & \mathrm{in} \;  \Omega_{\rm{csf}} \\ 
-    \phi_{\rm{PAR}} & \mathrm{in} \; \Omega_{\rm{PAR}} 
-    \end{cases}, \; 
- D= \begin{cases}
-    D_{\rm{csf}} & \mathrm{in} \;  \Omega_{\rm{csf}} \\ 
-    D_{\rm{PAR}} (1+ R) & \mathrm{in} \; \Omega_{\rm{PAR}} \end{cases}, \; 
-    \quad \bm u  = \begin{cases}
-    \bm{u}_{\rm{csf}} & \mathrm{in} \; \Omega_{\rm{csf}} \\ 
-    \bm{u}_{\rm{PAR}} & \mathrm{in} \; \Omega_{\rm{PAR}} 
-\end{cases}, \; 
-\xi = \begin{cases}
- \xi_{\rm{PVS}, \rm{PAR}} & \mathrm{if} |\Lambda^i \cap \Omega_{\rm{PAR}}| \neq 0 \\ 
-  \xi_{\rm{PVS}, \rm{csf}} & \mathrm{if} |\Lambda^i \cap \Omega_{\rm{csf}}| \neq 0
-\end{cases} . 
-\]
-We refer to \Cref{tab:overview} for the values of the used parameters.
-In the above,  $|\Lambda^i \cap \Omega_{\rm{PAR}}|$ (resp.  $|\Lambda^i \cap \Omega_{\rm{csf}}|$) is nonzero whenever the surrounding PVS around the line $\Lambda^i$ intersects $\Omega_{\rm{PAR}}$ (resp. $\Omega_{\rm{csf}}$). If the surrounding PVS intersects both, then we set $\xi = \xi_{\mathrm{PVS}, \rm{PAR}}$ (resp $\xi_{\mathrm{PVS}, \rm{CSF}}$) if the PVS lies mostly ($80$ percent) in $\Omega_{\rm{PAR}}$ (resp. $\Omega_{\rm{CSF}}$) and the interaction with $\Omega_{\rm{PVS}}$ (resp. $\Omega_{\rm{CSF}}$ is ignored. Additionally, we increase the permeability $\xi$ by a factor of 100 at the PVS end nodes $\partial \Lambda^a$ to account for the transition from explicitly resolved PVSs to their unresolved continuation in the CSF-space and parenchyma.
+\subsection*{Initial conditions}
 
-\mer{MER/MC: How about dispersion in the PVS?}
+We set the initial concentrations $c_0, \hat{c}_0$ in the
+three-dimensional domain $\Omega$ and networks $\Lambda_a, \Lambda_v$
+to be zero for all influx scenarios. For parenchymal
+clearance scenarios, we set $c_0 = 1, \hat{c}_0 = 0$.
 
+\mer{MER: Stopped here.}
 
-Further, $P$ and $A$ are the perimeter and area of the PVS which can vary along the centerline network, respectively.  Finally, we remark that $\hat u$ takes different values on each $\Lambda_i$.  Both $\Omega$ and $\Lambda$ are fixed in time and we assume constant-in- time radii (despite varying radii to drive peristaltic flow, see \cref{sec:sup:peristalsis}). Finally, we note that the model assumes that there is no interaction between the inner perivascular boundary and the blood vessel. 
-
-\paragraph*{To be moved: notation and labels}
-The thin pia membrane encloses the brain, and we hence denote the CSF-brain interface with $\Gamma_{\rm pia}$, except for the separately marked surface of the lateral ventricles $\Gamma_{\rm LV}$ (thus $\partial \Omega_{\rm CSF} \bigcap \partial \Omega_{\rm PAR} = \Gamma_{\rm LV} \cup \Gamma_{\rm Pia}$).
-
-We denote the different parts of the outer boundary of $\Omega_{\rm CSF}$ with
-$\Gamma_{\mathrm{skull}}$ facing the dura and skull and $\Gamma_{\rm SSAS}$ representing the lower interface towards the spinal subarachnoid space (SSAS). $\Gamma_{\mathrm{skull}}$ is further subdivided into its lower and upper parts: $\Gamma_{\mathrm{skull^l}}$ and $\Gamma_{\mathrm{skull^u}}$ (compare \Cref{fig:concept}). The boundary of the spinal cord is denoted by $\Gamma_{\rm{SC}}$, which is given by $\Gamma_{\rm{SC}} = \partial \Omega_{\rm PAR} \setminus \partial \Omega_{\rm CSF}$ .
-
-We denote the domain defined by the connected centerlines by
-$\Lambda$.The vascular domain is then represented as the union of
-cylindrical vessels of radius $R_1^i$ surrounding the centerlines
-$\Lambda^i$. Moreover, we consider the surrounding perivascular spaces
-as the union of annular cylinders of inner radius $R_1^i$ and outer
-radius $R_2^i = \beta R_1^i$ of width $R_2^i - R_1^i = (\beta - 1)
-R_1^i$. 
-
-
-
-
-%\noindent \mer{MER: @Rami: I've added the $\phi$'s in this subsection. Please review and add convective terms in $\Omega$ and $\Lambda$.} \rami{done, maybe I include a more precise variational formulation in the appendix ? }
-\subsubsection*{Initial conditions}
-
-We set the initial concentrations $c_0, \hat{c}_0$ in the three-dimensional domain $\Omega$ and network $\Lambda$ to be zero for all influx scenarios (Models A--\draft{X-1}). For modelling clearance (Model \draft{X}), we set $c_0 = 1, \hat{c}_0 = 0$.
-
-\subsubsection*{Boundary conditions: extracranial efflux and perivascular parenchymal influx}
-On the interface $\Gamma_{\mathrm{pia}}$ between the CSF and brain, we prescribe the following condition modeling a semi--permeable pial interface 
-\begin{alignat}{2}
-(-D \nabla (\phi c_{\rm{PAR}}) + \bm u_{\rm{PAR}} c_{\rm{PAR} }) \cdot \bm{n}_{\rm{PAR}} &= - (- D \nabla c_{\rm{CSF}} + \bm u_{\rm{CSF}} c_{\rm{CSF}} ) \cdot \bm{n}_{\rm{PAR}} &&  \quad  \mathrm{on} \quad \pia \cup \Gamma_{\mathrm{LV}} ,  \\  
-(-D \nabla ( c_{\rm{PAR}}) + \bm u_{\rm{PAR}} c_{\rm{PAR} }) \cdot \bm{n}_{\rm{PAR}} & = \beta_{\rm{pia}} (c_{\rm PAR} - c_{\mathrm{CSF}}) &&  \quad  \mathrm{on} \quad  \pia \cup \Gamma_{\mathrm{LV}} .  
-\end{alignat} 
-Here, $\beta_{\mathrm{pia}}$ is a permeability constant between the brain and the CSF: On $\Gamma_{\mathrm{skull}}$, the interface towards the dura and skull (\Cref{fig:concept}), we consider a constant uptake (or efflux) rate, represented by the boundary condition 
-\begin{alignat}{2}
-(- D \nabla ( c_{\mathrm{CSF}}) + \bm u_{\mathrm{CSF}} c_{\mathrm{CSF}}) \cdot \bm{n}   & = \beta c_{\mathrm{CSF}}  && \quad \mathrm{on} \quad \Gamma_{\mathrm{skull}^{\rm u}},\\ 
-(-D \nabla c_{\rm CSF} + \bm u c_{\rm CSF}) \cdot \bm{n} & =  0   &&  \quad  \mathrm{on} \quad \Gamma_{\rm skull^{l}} , 
-\end{alignat}
-where $\beta$ represents a molecular outflow resistance. Here, we take $\beta = 10^{-4} \,\, \mathrm{mm}^2/\mathrm{s}$\cite{hornkjol2022csf}.
-\mer{Marius says that this $\beta$ makes the solute accumulate. Maybe we want to modify this parameter.}
-
-Modelling an intrathecal injection, we prescribe a time-dependent solute influx rate on the interface towards the spinal compartment $\Gamma_{\mathrm{SSAS}}$
-with the condition 
-\begin{alignat}{2}
-    (D \nabla  c_{\mathrm{csf}} - \bm u_{\mathrm{csf}}c_{\mathrm{csf}} ) \cdot \bm{n}_{\spinal} & = g_{\mathrm{influx}} &&   \quad  \mathrm{on} \quad \spinal  \end{alignat}
-Here, we set
-\begin{equation}
-g_\mathrm{influx}(t) = \frac{m_{\rm tot}}{T_{\rm max}^2 |\Gamma_{\rm SSAS}|} \max(0, T_{\rm max} - |t - T_{\rm max}|)
-\end{equation}
-which results in a triangular inflow function with a peak at $T_{\rm max} = 3600\,$s and a total tracer injection of $m_{\rm tot} = 0.5$\,mM.
-
-For the perivascular network, the boundary nodes are collected into $\partial \Lambda$. We assume no tracer outflow on all boundary nodes and prescribe a homogeneous Neumann condition: 
-\begin{equation}
-    \hat D A \partial_s (\phi \hat c) - A \hat u \hat c  = 0 \quad \mathrm{on} \quad \partial \Lambda. 
-\end{equation}
-For bifurcation nodes, we impose flux conservation and continuity of the concentration $\hat c$. We refer to \eqref{eq:flux_conservation} in \Cref{sec:details_numerical_method} for more details. 
-
-\subsection{Cerebrospinal fluid flow in the subarachnoid space} \label{sec:csf_fluid_vel}
+\subsection*{Cerebrospinal fluid flow in the subarachnoid space}
+\label{sec:csf_fluid_vel}
 
 We consider non-zero convection in the CSF space $u_{\rm CSF} \not = 0$ in \eqref{eq:multi_transport_3d} resulting from steady state CSF production.  Recall that $\Omega_{\mathrm{CSF}}$ represents the CSF space and that $\Gamma_{\mathrm{skull^{u/l}}}$ and $\Gamma_{\mathrm{pia}}$, $\Gamma_{\mathrm{LV}}$ represent the boundaries facing the upper and lower parts of the dura, the pia and the lateral ventricles, respectively.  Assuming CSF production in the choroid plexus located at the lateral ventricle wall, we solve the  steady state Stokes equations for the velocity and the pressure $(\bm u_{\mathrm{CSF}}, p_{\mathrm{CSF}})$ in the CSF domain: 
 \begin{subequations}
@@ -805,6 +798,31 @@ We consider non-zero convection in the CSF space $u_{\rm CSF} \not = 0$ in \eqre
 
 Here, $\bm n$ denotes the unit outward normal to the boundary, $\mu$ is the CSF viscosity, and $\bm u_{\rm in}$ is the steady CSF flow across the lateral ventricle wall, see \Cref{tab:pvs:parameters}.
 Condition \eqref{eq:efflux_condition} models an efflux site with positive resistance $R_0 \geq 0$. The Stokes system is solved with the finite element software $FEniCS$, stored and then subsequently read for all the relevant solute transport simulations. See Figure~\ref{fig:csf_flow_cardiac} for a streamline visualization of the obtained velocity profile and \Cref{sec:details_numerical_method} for details on the numerical algorithm employed.
+
+We do not explicitly model convection within the brain parenchyma $\Omega_{\rm PAR}$, and thus set ${\bm u} = {\bm u}_{\rm PAR} = 0$ there. 
+
+\subsection*{Notation and left-overs}
+
+\paragraph*{To be moved: notation and labels}
+The thin pia membrane encloses the brain, and we hence denote the CSF-brain interface with $\Gamma_{\rm pia}$, except for the separately marked surface of the lateral ventricles $\Gamma_{\rm LV}$ (thus $\partial \Omega_{\rm CSF} \bigcap \partial \Omega_{\rm PAR} = \Gamma_{\rm LV} \cup \Gamma_{\rm Pia}$).
+
+We denote the different parts of the outer boundary of $\Omega_{\rm
+  CSF}$ with $\Gamma_{\mathrm{skull}}$ facing the dura and skull and
+$\Gamma_{\rm SSAS}$ representing the lower interface towards the
+spinal subarachnoid space (SSAS). $\Gamma_{\mathrm{skull}}$ is further
+subdivided into its lower and upper parts: $\Gamma_{\mathrm{skull^l}}$
+and $\Gamma_{\mathrm{skull^u}}$ (compare \Cref{fig:concept}). The
+boundary of the spinal cord is denoted by $\Gamma_{\rm{SC}}$, which is
+given by $\Gamma_{\rm{SC}} = \partial \Omega_{\rm PAR} \setminus
+\partial \Omega_{\rm CSF}$ .
+
+%% We denote the domain defined by the connected centerlines by
+%% $\Lambda$.The vascular domain is then represented as the union of
+%% cylindrical vessels of radius $R_1^i$ surrounding the centerlines
+%% $\Lambda^i$. Moreover, we consider the surrounding perivascular spaces
+%% as the union of annular cylinders of inner radius $R_1^i$ and outer
+%% radius $R_2^i = \beta R_1^i$ of width $R_2^i - R_1^i = (\beta - 1)
+%% R_1^i$. 
 
 
 
@@ -826,10 +844,6 @@ The obtained pressure field only account for viscous forces, albeit cardiac indu
 Further assuming unsteady dispersion, we follow Sharp et al \cite{keith2019dispersion} and calculate the enhancement factor $R$ from the non-dimensionalized pressure gradient $dP=\frac{|\nabla p|}{\omega \mu / h}$ as $R\approx dP^2 / \alpha^3$. Combining the computed pressure gradient with this scaling law yields a pointwise approximation of the dispersion factor. Finally, we account for the non-local nature of the dispersion mechanism by applying a smoothing technique to obtain a spatially varying, but locally averaged diffusion enhancement factor $R$ (see the visualization in \cref{fig:visualize_R} and \cref{sec:dispersion_details} for additional details).
 
 
-\subsection*{Fluid flow within the parenchyma}
-\label{sec:csf_brain}
-
-We assume no significant convection in the brain $\Omega_{\rm PAR}$, and set $u = u_{\rm PAR} = 0$ there as a first approximation. 
 
 \subsection*{Perivascular fluid flow induced by pressure gradients}
 
@@ -887,36 +901,6 @@ In this section, we provide a brief overview on the employed numerical discretiz
 
 For the 3D transport problem, we use the interior penalty discontinuous Galerkin (DG) method with weighted averages and upwinding for the convection term \cite{ern2009discontinuous}.  We remark that the choice of DG in the 3D domain is necessary here since  continuous Galerkin methods even when supplemented with artificial diffusion stabilization terms were unstable in our experiments. For the 1D transport problem, we use continuous Galerkin spaces defined over the entire network with additional artificial diffusion silization when the 1D velocity is non--zero.  DG methods for the coupled 3D--1D problem have been recently analyzed  where convergence of the method for the elliptic case is established \cite{masri2024discontinuous}. While the analysis is for DG methods for both the 3D and the 1D problem, we expect similar arguments to hold here. However, note that the 3D--1D coupling induces a singularity in the 3D solution and one can only expect suboptimal error rates near the 1D network. In subdomains excluding the 1D lines, almost optimal rates can be expected for both DG methods \cite{masri2023discontinuous} and CG methods \cite{koppl2016local}.  Extension of the convergence analysis to convection--diffusion problems is an interesting future research direction. 
  
-\subsection*{Parameter values and model scenarios}
-We use the diffusion coefficient $D_{\rm gad}$ of Gadubutrol in free water in the SAS and PVS, and effective diffusion coefficient of Gadubutrol $D_{\rm PAR}$ -- accounting for the extracellular space (ECS) porosity $\phi$ and the ECS tortuosity $\lambda$ but ignoring anisotropy  -- in the brain parenchyma~\cite{hornkjol2022csf}. 
-\begin{table}
-  \begin{center}
-    \begin{tabular}{ll|ccc}
-      \toprule
-      Parameter& Symbol & Value & Unit& Reference\\
-      \midrule
-         parenchyma eff. diffusion&  $d_p$&  $1.2 \times 10^{-4}$& $\text{mm}^2/\text{s}$  & \cite{valnes2020apparent}\\
-         CSF eff. diffusion&  $d_{CSF}$&  $3.8 \times 10^{-4}$& $\text{mm}^2/\text{s}$ & \cite{valnes2020apparent}\\
-         PVS eff. diffusion&  $d_{PVS}$&  $3.8 \times 10^{-4}$& $\text{mm}^2/\text{s}$ & \cite{valnes2020apparent}\\
-         extracellular space volume fraction& $\phi$& 0.2& - &\cite{nicholson1981ion} \\
-         PVS-parenchyma permeability&  $\xi_{PVS,P}$ & $3.8\cdot 10^{-7}$  & m/s & \cite{koch2023estimates} \\
-         PVS-CSF permeability&  $\xi_{PVS,CSF}$& tbd & m/s & \\
-         CSF-parenchyma permeability&  $\xi_{CSF,PAR}$& $2.6 \cdot 10^{-8}$ & m/s & \cite{riseth2025twocompartment} \\
-         \midrule
-         total spinal solute influx & $m_{\rm tot}$  & $0.5$ & mmol  & \cite{eide2024functional} \\
-         Spinal solute influx peak time & $T_{\rm max}$ & $1$  & h & \\
-         solute efflux resistance & $\beta$  & $10^{-4}$ & mm$^2$/s & \cite{hornkjol2022csf} \\
-         \midrule
-         CSF production rate & $u_{\mathrm{in}}$ & $0.63$  & l/day & \cite{nilsson1992circadian} \\
-         CSF viscosity & $\mu$ & $0.7$  & mPa$ \cdot $s & \cite{bloomfield1998effects} \\ 
-        CSF outflow resistance & $R_0$ & $10^{-5}$  & Pa/(mm$\cdot$s) & \cite{hornkjol2022csf} \\ 
-        \bottomrule
-    \end{tabular}
-  \end{center}
-  \caption{Overview of physiological parameters and model variations. 
-  }
-  \label{tab:overview}
-\end{table}
 
 
 \begin{table}
@@ -981,15 +965,6 @@ We use the diffusion coefficient $D_{\rm gad}$ of Gadubutrol in free water in th
 
 \mer{To be edited, just moved here:} We will consider different values for the SAS-PVS permeability $\xi$, including $\xi = 0$ (sealed PVS), $\xi \approx \infty$ (PVS continuous with SAS), as well as reasonable intermediate values. We will ignore PVS-blood exchange, and thus only model the perivascular concentration at the network level (in addition to the SAS/brain concentration in the surroundings).  
 
-\subsection*{Quantities of interest}
-
-\begin{itemize}
-    \item Snapshots (e.g. coronal plane) of concentration at relevant times (15 min, 30 min, 1h, 2h, ...) 
-    \item Total amount of tracer in the PVS, SAS and parenchyma
-     \item Time to reach a threshold (e.g. 30\%) in different "places"
-\end{itemize}
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 \section*{Discussion}
@@ -997,6 +972,8 @@ We use the diffusion coefficient $D_{\rm gad}$ of Gadubutrol in free water in th
 \subsection*{Limitations}
 
 \begin{itemize}
+\item
+  \mer{MER/MC: How about dispersion in the PVS?}
 \item 
   Inaccuracies in vascular geometry representation - and consequences downstream for e.g. numerical integration.
 \item
@@ -1044,6 +1021,69 @@ The corresponding author is responsible for submitting a \href{http://www.nature
 \appendix
 
 \section{Supplementary methods}
+
+\subsection{Mathematical definitions and further model specifications}
+\label{sec:more_maths}
+
+In this section, we describe the mathematical model~\eqref{eq:multi_transport} and associated conditions in further detail.
+
+At bifurcation nodes in $\Gamma_a, \Gamma_v$, we impose flux conservation and continuity of the concentration $\hat c$. We refer to \eqref{eq:flux_conservation} in \Cref{sec:details_numerical_method} for more details. For the perivascular network, the boundary nodes are collected into $\partial \Lambda$. We assume no tracer outflow on all boundary nodes and prescribe a homogeneous Neumann condition: 
+\begin{equation}
+    \hat D A \partial_s (\phi \hat c) - A \hat u \hat c  = 0 \quad \mathrm{on} \quad \partial \Lambda. 
+\end{equation}
+
+Here $\phi$ is the fluid volume fraction (or porosity) of the brain (where $\phi \ll 1$), of the SAS (where $\phi = 1$) and of the PVS (where $0 \ll \phi \leq 1$); $D$ is the effective diffusion coefficient of the relevant solute in the respective media~\cite{sykova2008diffusion} which takes different values over the SAS and brain,  $\bm u$ and $\hat u$ are convective velocity fields in $\Omega$ and $\Lambda$ respectively, and $\xi$ is a transfer coefficient across the PVS-CSF and the PVS-Brain interface
+
+The notation $\overline{c}$ denotes the lateral average of the concentration over the outer perivascular boundary \footnote{
+The lateral average is defined as 
+\[ \overline{c}(s) = \frac{1}{A(s)} \int_{\Theta(s)} c ,\]
+where $\Theta(s)$ is a cross-section of the PVS at the point on $\bm{\lambda}(s)$ on $\Lambda$ where $\bm \lambda$ is a given parameterization of $\Lambda$ and $A(s)$ is the area of $\Theta(s)$. 
+}. The (Dirac delta) term $\delta_\Gamma$ is a source term concentrated on the outer boundary of the PVS (the union of the annular domains surrounding $\Lambda^i$) that models the solute exchange between the PVSs and their surroundings \footnote{The term $\delta_{\Gamma}$ is given for any function $v$, see \Cref{sec:details_numerical_method} for more details
+\[\xi  (\overline{c} - \hat c ) \delta_\Gamma (v) 
+= \int_{\Lambda} P \xi ( \overline{c} - \hat c ) \overline{v} 
+\]
+}.  
+
+\[
+%\phi =  \begin{cases}
+%   1  & \mathrm{in} \;  \Omega_{\rm{csf}} \\ 
+%   \phi_{\rm{PAR}} & \mathrm{in} \; \Omega_{\rm{PAR}} 
+%   \end{cases}, \; 
+%D= \begin{cases}
+%   D_{\rm{csf}} & \mathrm{in} \;  \Omega_{\rm{csf}} \\ 
+%   D_{\rm{PAR}} (1+ R) & \mathrm{in} \; \Omega_{\rm{PAR}} \end{cases}, \; 
+%   \quad \bm u  = \begin{cases}
+%   \bm{u}_{\rm{csf}} & \mathrm{in} \; \Omega_{\rm{csf}} \\ 
+%   \bm{u}_{\rm{PAR}} & \mathrm{in} \; \Omega_{\rm{PAR}} 
+%\end{cases}, \; 
+\xi = \begin{cases}
+\xi_{\rm{PVS}, \rm{PAR}} & \mathrm{if} |\Lambda^i \cap \Omega_{\rm{PAR}}| \neq 0 \\ 
+ \xi_{\rm{PVS}, \rm{csf}} & \mathrm{if} |\Lambda^i \cap \Omega_{\rm{csf}}| \neq 0
+\end{cases} . 
+\]
+In the above,  $|\Lambda^i \cap \Omega_{\rm{PAR}}|$ (resp. $|\Lambda^i \cap \Omega_{\rm{csf}}|$) is nonzero whenever the surrounding PVS around the line $\Lambda^i$ intersects $\Omega_{\rm{PAR}}$ (resp. $\Omega_{\rm{csf}}$). If the surrounding PVS intersects both, then we set $\xi = \xi_{\mathrm{PVS}, \rm{PAR}}$ (resp $\xi_{\mathrm{PVS}, \rm{CSF}}$) if the PVS lies mostly ($80$ percent) in $\Omega_{\rm{PAR}}$ (resp. $\Omega_{\rm{CSF}}$) and the interaction with $\Omega_{\rm{PVS}}$ (resp. $\Omega_{\rm{CSF}}$ is ignored. 
+
+Further, $P$ and $A$ are the perimeter and area of the PVS which can vary along the centerline network, respectively.  Finally, we remark that $\hat u$ takes different values on each $\Lambda_i$.  Both $\Omega$ and $\Lambda$ are fixed in time and we assume constant-in- time radii (despite varying radii to drive peristaltic flow, see \cref{sec:sup:peristalsis}). Finally, we note that the model assumes that there is no interaction between the inner perivascular boundary and the blood vessel. 
+
+
+\subsubsection{Interface conditions}
+On the interface $\Gamma_{\mathrm{pia}}$ between the CSF and brain, we prescribe the following condition modeling a semi--permeable pial interface 
+\begin{alignat}{2}
+(-D \nabla (\phi c_{\rm{PAR}}) + \bm u_{\rm{PAR}} c_{\rm{PAR} }) \cdot \bm{n}_{\rm{PAR}} &= - (- D \nabla c_{\rm{CSF}} + \bm u_{\rm{CSF}} c_{\rm{CSF}} ) \cdot \bm{n}_{\rm{PAR}} &&  \quad  \mathrm{on} \quad \pia \cup \Gamma_{\mathrm{LV}} ,  \\  
+(-D \nabla ( c_{\rm{PAR}}) + \bm u_{\rm{PAR}} c_{\rm{PAR} }) \cdot \bm{n}_{\rm{PAR}} & = \beta_{\rm{pia}} (c_{\rm PAR} - c_{\mathrm{CSF}}) &&  \quad  \mathrm{on} \quad  \pia \cup \Gamma_{\mathrm{LV}} .  
+\end{alignat} 
+Here, $\beta_{\mathrm{pia}}$ is a permeability constant between the brain and the CSF:
+
+\subsubsection{Boundary conditions}
+On $\Gamma_{\mathrm{skull}}$, the interface towards the dura and skull (\Cref{fig:concept}), we consider a constant uptake (or efflux) rate, represented by the boundary condition 
+\begin{alignat}{2}
+(- D \nabla ( c_{\mathrm{CSF}}) + \bm u_{\mathrm{CSF}} c_{\mathrm{CSF}}) \cdot \bm{n}   & = \beta c_{\mathrm{CSF}}  && \quad \mathrm{on} \quad \Gamma_{\mathrm{skull}^{\rm u}},\\ 
+(-D \nabla c_{\rm CSF} + \bm u c_{\rm CSF}) \cdot \bm{n} & =  0   &&  \quad  \mathrm{on} \quad \Gamma_{\rm skull^{l}} , 
+\end{alignat}
+where $\beta$ represents a molecular outflow resistance. Here, we take $\beta = 10^{-4} \,\, \mathrm{mm}^2/\mathrm{s}$\cite{hornkjol2022csf}.
+
+
+
 
 \subsection{Estimating net perivascular flow induced by peristaltic waves}
 \label{sec:sup:peristalsis}
