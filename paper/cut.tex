@@ -1,3 +1,17 @@
+We consider non-zero convection in the CSF space $u_{\rm CSF} \not = 0$ in \eqref{eq:multi_transport_3d} resulting from steady state CSF production.  Recall that $\Omega_{\mathrm{CSF}}$ represents the CSF space and that $\Gamma_{\mathrm{skull^{u/l}}}$ and $\Gamma_{\mathrm{pia}}$, $\Gamma_{\mathrm{LV}}$ represent the boundaries facing the upper and lower parts of the dura, the pia and the lateral ventricles, respectively.  Assuming CSF production in the choroid plexus located at the lateral ventricle wall, we solve the  steady state Stokes equations for the velocity and the pressure $(\bm u_{\mathrm{CSF}}, p_{\mathrm{CSF}})$ in the CSF domain: 
+\begin{subequations}
+    \begin{alignat}{2}
+ - \mu \Delta \bm u_{\mathrm{CSF}} + \nabla p_{\rm{CSF}} & =  0 \quad && \mathrm{in} \,\,  \Omega_{\rm CSF}, \label{eq:momnetum_equation}  \\ 
+ \nabla \cdot  \bm u_{\mathrm{CSF}} & = 0 \quad && \mathrm{in} \,\,   \Omega_{\rm CSF}, \label{eq:divergence_equation}  \\ 
+\mu \nabla \bm u_{\mathrm{CSF}} \cdot \bm{n} -  p \bm n  &  = -R_0 ( \bm u \cdot \bm n ) \bm n\,\,   && \mathrm{on}  \label{eq:efflux_condition} \,\, \Gamma_{\mathrm{skull^u}}, \\ 
+\bm u_{\mathrm{CSF}} & = 0 && \mathrm{on} \,\, \Gamma_{\rm{pia}} \cup \Gamma_{\mathrm{skull^l}} \Gamma_{\rm{SSAS}}  \\
+\bm u_{\mathrm{CSF}} \cdot \bm n & = \frac{1}{ |\Gamma_{\rm LV}|}  u_{\rm in}, \quad \bm u \cdot \bm \tau = 0 \quad && \mathrm{on} \,\, \Gamma_{\rm{LV}} .  
+\end{alignat}
+\end{subequations}
+
+Here, $\bm n$ denotes the unit outward normal to the boundary, $\mu$ is the CSF viscosity, and $\bm u_{\rm in}$ is the steady CSF flow across the lateral ventricle wall, see \Cref{tab:pvs:parameters}.
+Condition \eqref{eq:efflux_condition} models an efflux site with positive resistance $R_0 \geq 0$. The Stokes system is solved with the finite element software $FEniCS$, stored and then subsequently read for all the relevant solute transport simulations. See Figure~\ref{fig:csf_flow_cardiac} for a streamline visualization of the obtained velocity profile and \Cref{sec:details_numerical_method} for details on the numerical algorithm employed.
+
 %% \begin{figure}
 %%      \centering
 %%      \begin{subfigure}[b]{0.45\textwidth}
