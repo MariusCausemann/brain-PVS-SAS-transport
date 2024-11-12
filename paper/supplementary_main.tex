@@ -8,26 +8,24 @@ models and numerical approximations considered.
 
 \subsubsection{Notation}
 
-In terms of domains, interfaces and boundaries, we consider the
-parenchyma $\Omega_{\rm PAR} \subset \R^3$ and CSF spaces $\Omega_{\rm
-  CSF} \subset \R^3$ with $\Omega = \Omega_{\rm PAR} \cup \Omega_{\rm
-  CSF}$. The interface between the parenchyma and CSF spaces is
-decomposed
-
-\subsection*{Notation and left-overs}
-
-\paragraph*{To be moved: notation and labels}
-The thin pia membrane encloses the brain, and we hence denote the CSF-brain interface with $\Gamma_{\rm pia}$, except for the separately marked surface of the lateral ventricles $\Gamma_{\rm LV}$ (thus $\partial \Omega_{\rm CSF} \bigcap \partial \Omega_{\rm PAR} = \Gamma_{\rm LV} \cup \Gamma_{\rm Pia}$).
-
-We denote the different parts of the outer boundary of $\Omega_{\rm
-  CSF}$ with $\Gamma_{\mathrm{skull}}$ facing the dura and skull and
-$\Gamma_{\rm SSAS}$ representing the lower interface towards the
-spinal subarachnoid space (SSAS). $\Gamma_{\mathrm{skull}}$ is further
-subdivided into its lower and upper parts: $\Gamma_{\mathrm{skull^l}}$
-and $\Gamma_{\mathrm{skull^u}}$ (compare \Cref{fig:concept}). The
-boundary of the spinal cord is denoted by $\Gamma_{\rm{SC}}$, which is
-given by $\Gamma_{\rm{SC}} = \partial \Omega_{\rm PAR} \setminus
-\partial \Omega_{\rm CSF}$ .
+In terms of geometrical domains, we consider the parenchyma
+$\Omega_{\rm PAR} \subset \R^3$ and CSF spaces $\Omega_{\rm CSF}
+\subset \R^3$ with $\Omega = \Omega_{\rm PAR} \cup \Omega_{\rm CSF}$
+(see also \Cref{fig:intracranial_domains}). The interface between the
+parenchyma and CSF spaces is given by $\partial \Omega_{\rm PAR} \cap
+\partial \Omega_{\rm CSF}$ and we separate it as two parts: the
+surface of the lateral ventricles $\Gamma_{\rm LV}$ and the remaining
+pial interface $\Gamma_{\rm pia}$ (thus $\partial \Omega_{\rm CSF}
+\bigcap \partial \Omega_{\rm PAR} = \Gamma_{\rm LV} \cup \Gamma_{\rm
+  pia}$). The remaining, outer, boundary of $\Omega_{\rm CSF}$ is
+again separated into two parts: $\Gamma_{\rm SSAS}$ represents the
+lower interface towards the spinal subarachnoid space (SSAS), while
+$\Gamma_{\rm AM}$ is the outer interface towards the arachnoid and
+dura membranes. $\Gamma_{\rm AM}$ is further subdivided into its lower
+and upper parts: $\Gamma_{\rm AM-L}$ and $\Gamma_{\rm AM-U}$. The
+boundary of the spinal cord is denoted by $\Gamma_{\rm{SC}}$ and given
+by $\Gamma_{\rm{SC}} = \partial \Omega_{\rm PAR} \setminus \partial
+\Omega_{\rm CSF}$ .
 
 %% We denote the domain defined by the connected centerlines by
 %% $\Lambda$.The vascular domain is then represented as the union of
