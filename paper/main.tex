@@ -44,7 +44,8 @@
 \newcommand{\spinal}{\Gamma_{\rm SAS}}
 \newcommand{\skull}{\Gamma_{\rm{skull}}}
 \newcommand{\gin}{g_{\rm{influx}}}
- % Hello darkness my old friend. I've come to talk with you again. 
+
+\newcommand{\R}{\mathbb{R}}
 
 %\affil[+]{these authors contributed equally to this work}
 
@@ -241,9 +242,12 @@ Cerebrospinal fluid flow
 \item
   ``A digital twin'' for molecular enrichment and clearance in human intracranial spaces
 \item
-  ``The role'' of PVS sheaths and permeability
+  CSF flow, the role of production versus no/cardiac/respiratory
+  dispersive effects on tracer trajectories, flow bifurcation.
 \item
   ``The role'' of PVS flow speed
+\item
+  ``The role'' of PVS sheaths and permeability
 \item
   ``The role'' of PVS size versus pathologies $R_2 = 3 R_1$ instead of $R_2 = 2 R_1$?
 \item
@@ -436,9 +440,6 @@ Sharp et al used the theory of dispersive mixing to predict a dispersion enhance
 \item
   Compare Model A variations \Cref{tab:scenarios}).
 \end{itemize}
-
-\draft{\lipsum[1]}
-
 \begin{figure}
 \begin{subfigure}{0.5 \linewidth}
     \centering
@@ -468,7 +469,6 @@ Sharp et al used the theory of dispersive mixing to predict a dispersion enhance
 \subsection*{The significance of low-resistance perivascular pathways}
 
 \mer{MER: Remember to report on how much concentration enters into the brain?}
-
 \begin{itemize}
 \item
   Perivascular flow and transport has been identified as a key
@@ -481,12 +481,8 @@ Sharp et al used the theory of dispersive mixing to predict a dispersion enhance
   Do solutes move from PVS to the SAS, or both along the PVS and along the SAS?
 \end{itemize}
 
-\draft{\lipsum[1]}
 
 \subsection*{Clearance and the brain's waterscape}
-
-\draft{\lipsum[1]}
-
 \begin{itemize}
 \item 
   Modelling metabolite clearance rather than solute influx (Model
@@ -502,24 +498,20 @@ Sharp et al used the theory of dispersive mixing to predict a dispersion enhance
   Sleep is known to affect a number of the transport characteristics including: increased extracellular volume fraction, altered vascular pulsatility and a-forteriori perivascular flow and mixing, reduced CSF production, reduced glymphatic transport.
 \end{itemize}
 
-\draft{\lipsum[1]}
 
 \subsection*{Influx and clearance in pathologies}
-
 \begin{itemize}
 \item
   A number of neurological and neurodegenerative disorders yield mechanical changes in the intracranial environment (increased arterial stiffness, cerebral arterial angiopathies, perivascular flow changes due to hypertension, altered CSF flow patterns, altered diffusion properties in cancer, BBB leakage). One key clinical aspect is increased PVS width in e.g. iNPH. 
 \end{itemize}
 
-\draft{\lipsum[1]}
 
 \subsection*{Veins}
-
 \mer{MER: Just a placeholder. Disregard veins in the first sections.}
 
-
-\iffalse
 \newpage
+
+\mer{MER: Old, revisit to see if we have forgotten any of these interesting ideas.}
 \subsection*{Effect of interfaces (interface permeability)}
 
 \begin{itemize}
@@ -528,10 +520,6 @@ Sharp et al used the theory of dispersive mixing to predict a dispersion enhance
     With altered interface permeabilities in the PVS (Model 1), and or in the parenchyma (Model 2) 
     \end{itemize}
 
-\begin{figure}
-    \caption{}
-    \label{fig:1}
-\end{figure}
 
 \subsection*{Effect of convection}
 \begin{itemize}
@@ -557,19 +545,9 @@ Sharp et al used the theory of dispersive mixing to predict a dispersion enhance
 
 Leakage to the blood, some sink/non-zero permeability for the PVS-blood (BBB) interface (Model N).
 
-\begin{figure}
-    \caption{}
-    \label{fig:3}
-\end{figure}
-
 \subsection*{Effect of pia}
   
 Effect of pia permeability (Model N-1)    
-
-\begin{figure}
-    \caption{}
-    \label{fig:4}
-\end{figure}
 
 \begin{figure}
      \centering
@@ -596,8 +574,6 @@ Effect of pia permeability (Model N-1)
         \caption{Total tracer amount in parenchyma, CSF, arterial PVS and venous PVS}
         \label{fig:three graphs}
 \end{figure}
-
-\fi
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -859,30 +835,6 @@ three-dimensional domain $\Omega$ and networks $\Lambda_a, \Lambda_v$
 to be zero for all influx scenarios. For parenchymal
 clearance scenarios, we set $c_0 = 1, \hat{c}_0 = 0$.
 
-\subsection*{Notation and left-overs}
-
-\paragraph*{To be moved: notation and labels}
-The thin pia membrane encloses the brain, and we hence denote the CSF-brain interface with $\Gamma_{\rm pia}$, except for the separately marked surface of the lateral ventricles $\Gamma_{\rm LV}$ (thus $\partial \Omega_{\rm CSF} \bigcap \partial \Omega_{\rm PAR} = \Gamma_{\rm LV} \cup \Gamma_{\rm Pia}$).
-
-We denote the different parts of the outer boundary of $\Omega_{\rm
-  CSF}$ with $\Gamma_{\mathrm{skull}}$ facing the dura and skull and
-$\Gamma_{\rm SSAS}$ representing the lower interface towards the
-spinal subarachnoid space (SSAS). $\Gamma_{\mathrm{skull}}$ is further
-subdivided into its lower and upper parts: $\Gamma_{\mathrm{skull^l}}$
-and $\Gamma_{\mathrm{skull^u}}$ (compare \Cref{fig:concept}). The
-boundary of the spinal cord is denoted by $\Gamma_{\rm{SC}}$, which is
-given by $\Gamma_{\rm{SC}} = \partial \Omega_{\rm PAR} \setminus
-\partial \Omega_{\rm CSF}$ .
-
-%% We denote the domain defined by the connected centerlines by
-%% $\Lambda$.The vascular domain is then represented as the union of
-%% cylindrical vessels of radius $R_1^i$ surrounding the centerlines
-%% $\Lambda^i$. Moreover, we consider the surrounding perivascular spaces
-%% as the union of annular cylinders of inner radius $R_1^i$ and outer
-%% radius $R_2^i = \beta R_1^i$ of width $R_2^i - R_1^i = (\beta - 1)
-%% R_1^i$. 
-
-
 \subsection*{Numerical approximation of multi-dimensional transport and CSF flow}
 
 \mer{@Rami: Could you draft one paragraph here describing the essential bits of the numerical scheme? I recommend ``describing with words'' to reach relevant audiences. Refer to the Supplementary Methods for details. Mention theoretical expected convergence order.} 
@@ -1009,6 +961,6 @@ The corresponding author is responsible for submitting a \href{http://www.nature
 
 \newpage
 \appendix
-
 \input{supplementary_main.tex}
+
 \end{document}
