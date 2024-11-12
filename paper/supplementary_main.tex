@@ -6,44 +6,95 @@ models and numerical approximations considered.
 \subsection{Mathematical models and definitions}
 \label{sec:more_maths}
 
+
 \subsubsection{Notation}
 
 In terms of geometrical domains, we consider the parenchyma
 $\Omega_{\rm PAR} \subset \R^3$ and CSF spaces $\Omega_{\rm CSF}
 \subset \R^3$ with $\Omega = \Omega_{\rm PAR} \cup \Omega_{\rm CSF}$
-(see also \Cref{fig:intracranial_domains}). The interface between the
-parenchyma and CSF spaces is given by $\partial \Omega_{\rm PAR} \cap
-\partial \Omega_{\rm CSF}$ and we separate it as two parts: the
-surface of the lateral ventricles $\Gamma_{\rm LV}$ and the remaining
-pial interface $\Gamma_{\rm pia}$ (thus $\partial \Omega_{\rm CSF}
-\bigcap \partial \Omega_{\rm PAR} = \Gamma_{\rm LV} \cup \Gamma_{\rm
-  pia}$). The remaining, outer, boundary of $\Omega_{\rm CSF}$ is
-again separated into two parts: $\Gamma_{\rm SSAS}$ represents the
-lower interface towards the spinal subarachnoid space (SSAS), while
-$\Gamma_{\rm AM}$ is the outer interface towards the arachnoid and
-dura membranes. $\Gamma_{\rm AM}$ is further subdivided into its lower
-and upper parts: $\Gamma_{\rm AM-L}$ and $\Gamma_{\rm AM-U}$. The
-boundary of the spinal cord is denoted by $\Gamma_{\rm{SC}}$ and given
-by $\Gamma_{\rm{SC}} = \partial \Omega_{\rm PAR} \setminus \partial
-\Omega_{\rm CSF}$ .
+(see also \Cref{fig:intracranial_domains}). The coordinates in these
+3D domains is given by $x$. The interface between the parenchyma and
+CSF spaces is given by $\partial \Omega_{\rm PAR} \cap \partial
+\Omega_{\rm CSF}$ and we separate it as two parts: the surface of the
+lateral ventricles $\Gamma_{\rm LV}$ and the remaining pial interface
+$\Gamma_{\rm pia}$ (thus $\partial \Omega_{\rm CSF} \bigcap \partial
+\Omega_{\rm PAR} = \Gamma_{\rm LV} \cup \Gamma_{\rm pia}$). The
+remaining, outer, boundary of $\Omega_{\rm CSF}$ is again separated
+into two parts: $\Gamma_{\rm SSAS}$ represents the lower interface
+towards the spinal subarachnoid space (SSAS), while $\Gamma_{\rm AM}$
+is the outer interface towards the arachnoid and dura
+membranes. $\Gamma_{\rm AM}$ is further subdivided into its lower and
+upper parts: $\Gamma_{\rm AM-L}$ and $\Gamma_{\rm AM-U}$. The boundary
+of the spinal cord is denoted by $\Gamma_{\rm{SC}}$ and given by
+$\Gamma_{\rm{SC}} = \partial \Omega_{\rm PAR} \setminus \partial
+\Omega_{\rm CSF}$.
 
-%% We denote the domain defined by the connected centerlines by
-%% $\Lambda$.The vascular domain is then represented as the union of
-%% cylindrical vessels of radius $R_1^i$ surrounding the centerlines
-%% $\Lambda^i$. Moreover, we consider the surrounding perivascular spaces
-%% as the union of annular cylinders of inner radius $R_1^i$ and outer
-%% radius $R_2^i = \beta R_1^i$ of width $R_2^i - R_1^i = (\beta - 1)
-%% R_1^i$. 
 
+In addition, we consider two sets of perivascular networks represented
+as graphs: a periarterial network $\Lambda_a$ represented by the
+(connected) centerlines $\Lambda^i_{(a)}$ of the arterial tree, and a
+perivenous network $\Lambda_v$ corresponding to the centerlines
+$\Lambda^i_{(v)}$ of the veins. Recall that we represent the vascular
+domains as the union of cylindrical vessels of radius $R_1^i$
+surrounding the centerlines $\Lambda^i$. Moreover, we consider the
+surrounding perivascular spaces as the union of annular cylinders
+$\Omega^i$ of inner radius $R_1^i$ and outer radius $R_2^i > R_1^i$
+and thus of width $R_2^i - R_1^i$. We denote the outer lateral surface
+of the periarterial and perivenous spaces by $\Gamma_a$ and $\Gamma_v$, respectively. We
+omit the subscript $a$ or $v$ when referring to any such network,
+vessel segment or perivascular outer surface. We assume that $\Gamma$
+is parametrized by the coordinate $s$, and with a minor abuse of
+notation, simply write $s \in \Lambda$ to represent the point ${\bm
+  \lambda}(s)$ on $\Lambda$ corresponding to $s$.
 
 \subsubsection{Solute transport and exchange in intracranial domains (3D) and perivascular networks (1D)}
 
-In this section, we describe the mathematical model~\eqref{eq:multi_transport} and associated conditions in further detail.
-
-Recall that the 3D concentration $c$ is defined locally in each subdomain of $\Omega$ and satisfies
+In this section, we describe the mathematical
+model~\eqref{eq:multi_transport}, the associated definitions,
+interface and boundary conditions in further detail. We refer to the
+main text for explicit parameter values and give the general, abstract
+form here. Recall that we model a concentration field $c = c(x, t)$
+for $x \in \Omega$, $t > 0$ defined in $\Omega_{\rm PAR}$ and
+$\Omega_{\rm CSF}$ separately. In each of these domains, $c$ satisfies
 \begin{equation}
-     \partial_t (\phi c) - \nabla \cdot (D \nabla (\phi c) ) + \nabla \cdot (\bm u c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma = f \quad \quad \mathrm{in} \quad \Omega_{\rm CSF} \cup \Omega_{\rm{PAR}}.  \label{eq:3d_pde}
+  \partial_t (\phi c) - \nabla \cdot (D \nabla (\phi c) ) + \nabla \cdot (\bm u c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma = f \quad \quad \mathrm{in} \quad \Omega_{\rm CSF}, \Omega_{\rm{PAR}}.
+  \label{eq:3d_pde}
 \end{equation}
+In~\eqref{eq:3d_pde}, $\phi$ is the fluid volume fraction (also known as the porosity) defined in the parenchyma ($\phi \ll 1$ in $\Omega_{\rm PAR}$) and in the CSF spaces ($\phi = 1$ in $\Omega_{\rm CSF}$). In the parenchyma, $\phi$ represents the extracellular space volume fraction. Moreover, $D$ is the effective diffusion coefficient of the relevant solute in the respective media which takes different values over the CSF spaces and the parenchyma, depending on tortuosity~\cite{sykova2008diffusion} and dispersive effects; and $\bm u$ is a convective velocity field representing the flow of CSF in $\Omega_{\rm CSF}$ and the flow of ISF in $\Omega_{\rm PAR}$. $\xi$ models a transfer or exchange parameter between the 3D domain ($\Omega_{\rm PAR}$ or $\Omega_{\rm CSF}$) and the perivacular networks $\Lambda_a, \Lambda_v$. To summarize,
+\[
+\phi =  \begin{cases}
+  1  & \mathrm{in} \;  \Omega_{\rm{CSF}} \\ 
+  \phi_{\rm{PAR}} & \mathrm{in} \; \Omega_{\rm{PAR}} 
+  \end{cases}, \; 
+D = \begin{cases}
+  D_{\rm{CSF}} & \mathrm{in} \;  \Omega_{\rm{CSF}} \\ 
+  D_{\rm{PAR}} & \mathrm{in} \; \Omega_{\rm{PAR}} \end{cases}, \; 
+  \quad \bm u  = \begin{cases}
+  \bm{u}_{\rm{CSF}} & \mathrm{in} \; \Omega_{\rm{CSF}} \\ 
+  \bm{u}_{\rm{PAR}} & \mathrm{in} \; \Omega_{\rm{PAR}} 
+\end{cases}, \; 
+\xi = \begin{cases}
+  \xi_{\rm{CSF}} & \mathrm{if} |\Omega^i \cap \Omega_{\rm{CSF}}| \neq 0 \\
+  \xi_{\rm{EF}} & \mathrm{if} |\Omega^i \cap \Omega_{\rm{PAR}}| \neq 0  
+\end{cases} . 
+\]
+In the above, $\xi$ is defined segment-wise: for each centerline $\Lambda^i$ with surrounding PVS $\Omega^i$, $|\Omega^i \cap \Omega_{\rm{PAR}}|$ (resp. $|\Omega^i \cap \Omega_{\rm{CSF}}|$) is nonzero whenever $\Omega^i$ intersects $\Omega_{\rm{PAR}}$ (resp. $\Omega_{\rm{CSF}}$). If the surrounding PVS intersects both, then we set $\xi = \xi_{\rm EF}$  if $\Omega^i$ mainly ($80$ percent) intersects $\Omega_{\rm{PAR}}$ in which case the interaction with $\Omega_{\rm{CSF}}$ (resp. $\Omega_{\rm{PAR}}$) is ignored; otherwise, we set $\xi = \xi_{\rm CSF}$. 
+ 
+\fixme{Also in~\eqref{eq:3d_pde}, the notation $\overline{c}$ denotes a lateral average of the concentration over the outer perivascular surfaces, defined for each centerline $\Lambda^i$ and each point $s \in \Lambda^i$ by}
+\begin{equation}
+  \overline{c}(s) = \frac{1}{A(s)} \int_{\Theta(s)} c 
+\end{equation}
+\fixme{where $\Theta(s)$ is a cross-section of the PVS $\Omega^i$ at $s$ and $A(s)$ is the area of $\Theta(s)$.} For both the periarterial and perivenous networks ($\Lambda_a, \Lambda_v$ with outer PVS boundaries $\Gamma_a, \Gamma_v$), the (Dirac delta) term $\delta_\Gamma$ is a distribution concentrated on the outer lateral surfaces of the PVSs. \discuss{More precisely, it is defined in terms of its action on any sufficiently smooth function $v : \Omega \rightarrow \R$ and for each $\Lambda^i \subseteq \Lambda$ with PVS $\Omega^i$ and outer lateral surface $\Gamma^i = \partial \Omega^i_2$ by}
+\begin{equation}
+  %\xi (\overline{c} - \hat c ) \delta_\Gamma (v) = \int_{\Lambda} P \xi ( \overline{c} - \hat c ) \overline{v} .
+  \delta_\Gamma (v) = \int_{\Gamma} v = \sum_{i} \int_{\Gamma^i} v = \sum_i \int_{\Lambda^i} P \, \overline{v} = \int_{\Lambda} P  \, \overline{v} .
+\end{equation}
+where $P = P(s)$ is defined as the perimeter of each cross-section $\Theta(s)$ for $s \in \Lambda^i$. 
+
+\mer{MER: Stopped here. Feel free to check the above. I thought the overline was defined as the cross-section perimeter average and not the cross-section average. This is more compatible with the definition of $\delta_{\Gamma}$ as well.}
+
+We refer to the reference~\cite{masri2023modelling} for a complete model derivation and analysis.
+
 The above is supplemented with the following boundary conditions. 
 \begin{alignat}{2}
 (D \nabla (\phi c) - \bm u c ) \cdot \bm{n}_{\rm SAS} &= g_{\mathrm{influx}} &&  \quad  \mathrm{on} \quad \spinal  \\ 
@@ -54,7 +105,9 @@ The above is supplemented with the following boundary conditions.
 (-D \nabla (\phi c_{\rm{PAR}}) + \bm u_{\rm{PAR}} c_{\rm{PAR} }) \cdot \bm{n}_{\rm{Pia}} & = \beta_{\rm{pia}} (c_{\rm PAR} - c_{\mathrm{CSF}}) &&  \quad  \mathrm{on} \quad \pia \cup \Gamma_{\mathrm{LV}}   .  
 \end{alignat} 
 
-% \mar{I think we can simplify the BCs here a bit, mostly since $\bm u \cdot \bm n$ is zero everywhere except for $\Gamma_{\rm LV}$ and $\Gamma_{\rm skull}$. So I suggest we remove all terms related to this? And we probably also don't need to split $\Gamma_{SC}$ in $\Gamma_{SC}^{in}$ and  $\Gamma_{SC}^{out}$?}
+%When convenient, we also denote $c|_{\Omega_{\rm PAR}} = c_{\rm PAR}$
+%and $c|_{\Omega_{\rm CSF}} = c_{\rm CSF}$.
+
 
 In the above, note that $\bm u \cdot \bm n  \neq 0$ on $\Gamma_{\rm LV} \cup \Gamma_{\rm skull^u}$ and $\bm u \cdot \bm n = 0$ on $\Gamma_{\rm SSAS} \cup \Gamma_{\rm skull^l} \cup \Gamma_{\rm Pia}$. 
 
@@ -63,36 +116,6 @@ At bifurcation nodes in $\Gamma_a, \Gamma_v$, we impose flux conservation and co
     \hat D A \partial_s (\phi \hat c) - A \hat u \hat c  = 0 \quad \mathrm{on} \quad \partial \Lambda. 
 \end{equation}
 
-Here $\phi$ is the fluid volume fraction (or porosity) of the brain (where $\phi \ll 1$), of the SAS (where $\phi = 1$) and of the PVS (where $0 \ll \phi \leq 1$); $D$ is the effective diffusion coefficient of the relevant solute in the respective media~\cite{sykova2008diffusion} which takes different values over the SAS and brain,  $\bm u$ and $\hat u$ are convective velocity fields in $\Omega$ and $\Lambda$ respectively, and $\xi$ is a transfer coefficient across the PVS-CSF and the PVS-Brain interface
-
-The notation $\overline{c}$ denotes the lateral average of the concentration over the outer perivascular boundary \footnote{
-The lateral average is defined as 
-\[ \overline{c}(s) = \frac{1}{A(s)} \int_{\Theta(s)} c ,\]
-where $\Theta(s)$ is a cross-section of the PVS at the point on $\bm{\lambda}(s)$ on $\Lambda$ where $\bm \lambda$ is a given parameterization of $\Lambda$ and $A(s)$ is the area of $\Theta(s)$. 
-}. The (Dirac delta) term $\delta_\Gamma$ is a source term concentrated on the outer boundary of the PVS (the union of the annular domains surrounding $\Lambda^i$) that models the solute exchange between the PVSs and their surroundings \footnote{The term $\delta_{\Gamma}$ is given for any function $v$, see \Cref{sec:details_numerical_method} for more details
-\[\xi  (\overline{c} - \hat c ) \delta_\Gamma (v) 
-= \int_{\Lambda} P \xi ( \overline{c} - \hat c ) \overline{v} 
-\]
-}.  
-
-\[
-%\phi =  \begin{cases}
-%   1  & \mathrm{in} \;  \Omega_{\rm{csf}} \\ 
-%   \phi_{\rm{PAR}} & \mathrm{in} \; \Omega_{\rm{PAR}} 
-%   \end{cases}, \; 
-%D= \begin{cases}
-%   D_{\rm{csf}} & \mathrm{in} \;  \Omega_{\rm{csf}} \\ 
-%   D_{\rm{PAR}} (1+ R) & \mathrm{in} \; \Omega_{\rm{PAR}} \end{cases}, \; 
-%   \quad \bm u  = \begin{cases}
-%   \bm{u}_{\rm{csf}} & \mathrm{in} \; \Omega_{\rm{csf}} \\ 
-%   \bm{u}_{\rm{PAR}} & \mathrm{in} \; \Omega_{\rm{PAR}} 
-%\end{cases}, \; 
-\xi = \begin{cases}
-\xi_{\rm{PVS}, \rm{PAR}} & \mathrm{if} |\Lambda^i \cap \Omega_{\rm{PAR}}| \neq 0 \\ 
- \xi_{\rm{PVS}, \rm{csf}} & \mathrm{if} |\Lambda^i \cap \Omega_{\rm{csf}}| \neq 0
-\end{cases} . 
-\]
-In the above,  $|\Lambda^i \cap \Omega_{\rm{PAR}}|$ (resp. $|\Lambda^i \cap \Omega_{\rm{csf}}|$) is nonzero whenever the surrounding PVS around the line $\Lambda^i$ intersects $\Omega_{\rm{PAR}}$ (resp. $\Omega_{\rm{csf}}$). If the surrounding PVS intersects both, then we set $\xi = \xi_{\mathrm{PVS}, \rm{PAR}}$ (resp $\xi_{\mathrm{PVS}, \rm{CSF}}$) if the PVS lies mostly ($80$ percent) in $\Omega_{\rm{PAR}}$ (resp. $\Omega_{\rm{CSF}}$) and the interaction with $\Omega_{\rm{PVS}}$ (resp. $\Omega_{\rm{CSF}}$ is ignored. 
 
 Further, $P$ and $A$ are the perimeter and area of the PVS which can vary along the centerline network, respectively.  Finally, we remark that $\hat u$ takes different values on each $\Lambda_i$.  Both $\Omega$ and $\Lambda$ are fixed in time and we assume constant-in- time radii (despite varying radii to drive peristaltic flow, see \cref{sec:sup:peristalsis}). Finally, we note that the model assumes that there is no interaction between the inner perivascular boundary and the blood vessel. 
 
@@ -126,7 +149,6 @@ We consider non-zero convection in the CSF space $u_{\rm CSF} \not = 0$ in \eqre
 \bm u_{\mathrm{CSF}} \cdot \bm n & = \frac{1}{ |\Gamma_{\rm LV}|}  u_{\rm in}, \quad \bm u \cdot \bm \tau = 0 \quad && \mathrm{on} \,\, \Gamma_{\rm{LV}} .  
 \end{alignat}
 \end{subequations}
-
 Here, $\bm n$ denotes the unit outward normal to the boundary, $\mu$ is the CSF viscosity, and $\bm u_{\rm in}$ is the steady CSF flow across the lateral ventricle wall, see \Cref{tab:pvs:parameters}.
 Condition \eqref{eq:efflux_condition} models an efflux site with positive resistance $R_0 \geq 0$. The Stokes system is solved with the finite element software $FEniCS$, stored and then subsequently read for all the relevant solute transport simulations. See Figure~\ref{fig:csf_flow_cardiac} for a streamline visualization of the obtained velocity profile and \Cref{sec:details_numerical_method} for details on the numerical algorithm employed.
 
