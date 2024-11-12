@@ -1,16 +1,64 @@
 \section{Supplementary methods}
 
-\subsection{Mathematical model definitions and further model specifications}
+These sections provide more detailed descriptions of the mathematical
+models and numerical approximations considered.
+
+\subsection{Mathematical models and definitions}
 \label{sec:more_maths}
 
-In these sections, we provide a complete definition of the
-mathematical models considered.
+\subsubsection{Notation}
 
-\subsubsection{Notation and definitions}
+In terms of domains, interfaces and boundaries, we consider the
+parenchyma $\Omega_{\rm PAR} \subset \R^3$ and CSF spaces $\Omega_{\rm
+  CSF} \subset \R^3$ with $\Omega = \Omega_{\rm PAR} \cup \Omega_{\rm
+  CSF}$. The interface between the parenchyma and CSF spaces is
+decomposed
+
+\subsection*{Notation and left-overs}
+
+\paragraph*{To be moved: notation and labels}
+The thin pia membrane encloses the brain, and we hence denote the CSF-brain interface with $\Gamma_{\rm pia}$, except for the separately marked surface of the lateral ventricles $\Gamma_{\rm LV}$ (thus $\partial \Omega_{\rm CSF} \bigcap \partial \Omega_{\rm PAR} = \Gamma_{\rm LV} \cup \Gamma_{\rm Pia}$).
+
+We denote the different parts of the outer boundary of $\Omega_{\rm
+  CSF}$ with $\Gamma_{\mathrm{skull}}$ facing the dura and skull and
+$\Gamma_{\rm SSAS}$ representing the lower interface towards the
+spinal subarachnoid space (SSAS). $\Gamma_{\mathrm{skull}}$ is further
+subdivided into its lower and upper parts: $\Gamma_{\mathrm{skull^l}}$
+and $\Gamma_{\mathrm{skull^u}}$ (compare \Cref{fig:concept}). The
+boundary of the spinal cord is denoted by $\Gamma_{\rm{SC}}$, which is
+given by $\Gamma_{\rm{SC}} = \partial \Omega_{\rm PAR} \setminus
+\partial \Omega_{\rm CSF}$ .
+
+%% We denote the domain defined by the connected centerlines by
+%% $\Lambda$.The vascular domain is then represented as the union of
+%% cylindrical vessels of radius $R_1^i$ surrounding the centerlines
+%% $\Lambda^i$. Moreover, we consider the surrounding perivascular spaces
+%% as the union of annular cylinders of inner radius $R_1^i$ and outer
+%% radius $R_2^i = \beta R_1^i$ of width $R_2^i - R_1^i = (\beta - 1)
+%% R_1^i$. 
+
 
 \subsubsection{Solute transport and exchange in intracranial domains (3D) and perivascular networks (1D)}
 
 In this section, we describe the mathematical model~\eqref{eq:multi_transport} and associated conditions in further detail.
+
+Recall that the 3D concentration $c$ is defined locally in each subdomain of $\Omega$ and satisfies
+\begin{equation}
+     \partial_t (\phi c) - \nabla \cdot (D \nabla (\phi c) ) + \nabla \cdot (\bm u c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma = f \quad \quad \mathrm{in} \quad \Omega_{\rm CSF} \cup \Omega_{\rm{PAR}}.  \label{eq:3d_pde}
+\end{equation}
+The above is supplemented with the following boundary conditions. 
+\begin{alignat}{2}
+(D \nabla (\phi c) - \bm u c ) \cdot \bm{n}_{\rm SAS} &= g_{\mathrm{influx}} &&  \quad  \mathrm{on} \quad \spinal  \\ 
+% (-D \nabla (\phi c) + \bm u c ) \cdot \bm{n}_{\spinal} &= 0 &&  \quad  \mathrm{on} \quad \spinal^{\mathrm{out}}  \\ 
+(-D \nabla (\phi c) + \bm u c ) \cdot \bm{n}_{\rm skull} & =   \beta c  &&  \quad  \mathrm{on} \quad \Gamma_{\rm skull^{u}}  \\ 
+(-D \nabla (\phi c) + \bm u c ) \cdot \bm{n}_{\rm skull} & =   0  &&  \quad  \mathrm{on} \quad \Gamma_{\rm skull^{l}}  \\ 
+(-D \nabla (\phi c_{\rm{PAR}}) + \bm u_{\rm{PAR}} c_{\rm{PAR} }) \cdot \bm{n}_{\rm{Pia}} &= - (-D \nabla  c_{\rm{CSF}} + \bm u_{\rm CSF} c_{\rm CSF} ) \cdot \bm{n}_{\rm{Pia}} &&  \quad  \mathrm{on} \quad \pia \cup \Gamma_{\mathrm{LV}}  \\ 
+(-D \nabla (\phi c_{\rm{PAR}}) + \bm u_{\rm{PAR}} c_{\rm{PAR} }) \cdot \bm{n}_{\rm{Pia}} & = \beta_{\rm{pia}} (c_{\rm PAR} - c_{\mathrm{CSF}}) &&  \quad  \mathrm{on} \quad \pia \cup \Gamma_{\mathrm{LV}}   .  
+\end{alignat} 
+
+% \mar{I think we can simplify the BCs here a bit, mostly since $\bm u \cdot \bm n$ is zero everywhere except for $\Gamma_{\rm LV}$ and $\Gamma_{\rm skull}$. So I suggest we remove all terms related to this? And we probably also don't need to split $\Gamma_{SC}$ in $\Gamma_{SC}^{in}$ and  $\Gamma_{SC}^{out}$?}
+
+In the above, note that $\bm u \cdot \bm n  \neq 0$ on $\Gamma_{\rm LV} \cup \Gamma_{\rm skull^u}$ and $\bm u \cdot \bm n = 0$ on $\Gamma_{\rm SSAS} \cup \Gamma_{\rm skull^l} \cup \Gamma_{\rm Pia}$. 
 
 At bifurcation nodes in $\Gamma_a, \Gamma_v$, we impose flux conservation and continuity of the concentration $\hat c$. We refer to \eqref{eq:flux_conservation} in \Cref{sec:details_numerical_method} for more details. For the perivascular network, the boundary nodes are collected into $\partial \Lambda$. We assume no tracer outflow on all boundary nodes and prescribe a homogeneous Neumann condition: 
 \begin{equation}
@@ -132,57 +180,8 @@ Since the pressure gradient the caused by the steady production-driven CSF flow 
 
 In case that the root does not lie within the CSF-space but the parenchyma, the CSF pressure is not yet computed. For that reason, we apply a simple extension technique to map the CSF pressure field into $\Omega_{\rm PAR}$. In particular, we solve a Laplace equation on $\Omega_{\rm PAR}$ with the CSF pressure on the Pial membrane ($\Gamma_{\rm Pia}$) as a boundary condition.
 
-
-
-\subsection{Estimating net perivascular flow induced by peristaltic waves}
-\label{sec:sup:peristalsis}
-
-We use the theoretical framework introduced by Gjerde et al.~\cite{gjerde2023directional} to compute an analytic estimate of the time-averaged (or \emph{net}) flow rates $\langle Q'_i \rangle$ (mm$^3$/s) induced by peristaltic pumping in a perivascular network$\Lambda = \cup_i \Lambda_i$. The motion of the (inner) vascular wall is described by a periodic traveling (peristaltic) wave of relative amplitude $\varepsilon$, wave length $\lambda$ (mm) and frequency $f$, acting normal to the wall. By definition, the wave number is $k = 2 \pi/\lambda$ and the angular frequency is $\omega = 2 \pi f$. Each PVS segment $\Lambda_i$ has length $L_i$ with wave-relative length $\ell_i = k L$, baseline inner radius $r_{o_i}'$, fixed outer radius $r_{e_i}'$, and outer-to-inner ratio $\beta_i = r_{e_i}'/r_{o_i}'$ (see also \Cref{tab:pvs:parameters}). These geometric parameters and the assumption of annular cylindrical PVS segments yield hydraulic resistances $\mathcal{R}_{o, i}$ and additional characteristic parameters, see \cite{gjerde2023directional} for the complete definitions and schematics. Since the analytical estimate is derived under the assumption that $k L \approx \mathcal{O} 1)$~\cite{gjerde2023directional} and has been verified against numerical simulations for $k L$ of the order $10^{-1}-10^2$~\cite[Table I]{gjerde2023directional}, we consider it applicable for the wave lengths and vascular network data considered here in which $k L$ ranges from \mer{$X$ to $Y$.}
-
-\begin{table}
-  \small
-  \begin{tabular}{llrc}
-    \toprule
-    Parameter & Description & Value(s)  & Ref.\\ 
-    \midrule
-    Relative PVS size $\beta$ & $\beta = \beta_i = r_{e_i} / r_{o_i}$ & 2 & $\approx$\cite{eide2024functional} \\
-    Wave frequency $f$ & Traveling wave frequency of vascular motion & $0.1-1.0$ Hz & \discuss{\cite{gjerde2023directional}} \\
-    Wave length $\lambda$ & Traveling wave length of vascular motion & $20-2000$ mm & \discuss{\cite{broggini2024long, gjerde2023directional}} \\
-    Wave amplitude & Relative amplitude of inner wall motion & $1-10\%$ & \discuss{\cite{gjerde2023directional}} \\
-    Vascular radii $\{r_{o_i}\}$ & Vascular network radii data (avg $\pm$ std, $\min$, $\max$) & $X$, $X$, $X$  mm & \cite{hodneland2019new} \\
-    Vascular branch lengths $\{L_{i}\}$ & Path length between vasc. junctions (avg $\pm$ std, $\min$, $\max$) & $X \pm Y$, $X$, $X$  mm & \discuss{--} \\
-    \bottomrule
-  \end{tabular}
-  \caption{Perivascular flow induced by vascular wall motion: parameters and key data characteristics.}
-  \label{tab:pvs:parameters}
-\end{table}
-% Vascular radii r_o (min, max, avg, std) (mm):  ....
-% Vascular branch lengths L (avg, std, min, max) (mm): ...
-
-\input{tikz/fig_pvs_flow}
-This theoretical formalism~\cite{gjerde2023directional} is defined
-relative to a network in the form of a directed, bifurcating tree with
-a single supply node/root $i_0$. To extend to a network of cerebral
-arteries with multiple supply nodes (such as the basilar and two
-internal carotid arteries in the current data
-set~\cite{hodneland2019new}), we separate the network $\Lambda$ into
-edge-disjoint subnetworks $\Lambda^1, \Lambda^2, \Lambda^3$, one for
-each of the supply nodes (\Cref{fig:sup:peristalsis}). Each node is assigned to the subnetwork associated with the nearest supply node, and edges between nodes are preserved. Next, we compute a minimal, bifurcating and directed tree representation of each subnetwork: $\mathcal{T}^1, \mathcal{T}^2, \mathcal{T}^3$. Each tree $\mathcal{T}^j = \cup E_n^j$ consists of the subset of the nodes from $\Lambda^j$ that have degree 1 (are leaf or root nodes) or degree $3$ (are true bifurcation points), and each path between nodes with degree $\not = 2$ in $\Lambda^j$ is represented in $\mathcal{T}^j$ by an edge $E^j$ with edge length $L$ corresponding to the total length of the original path and edge radius $r_o$ as the average of the path radii. For the few (2) nodes in $\Lambda$ with degree $>3$; i.e.~junctions where a branch splits into more than two downstream branches, only the two longest downstream paths are included in $\mathcal{T}^j$.
-
-For each subtree $\mathcal{T}^j = \cup_n E_n^j$, we compute the
-time-averaged downstream flow rate $\langle Q'_n \rangle$ induced by
-the vascular wall motion for each edge $n$ via~\cite[eq.~(5),
-  (34)]{gjerde2023directional}. We next uniquely assign the flow rate
-$\langle Q'_n \rangle$ to each of the branches $\Lambda_i$ that form
-the path $E_n^j$, thus yielding $\langle Q'_i \rangle$ for each
-perivascular segment $\Lambda_i$ (except those ignored above, for
-which we set a flow rate of zero). Finally, we define the mean
-longitudinal perivascular velocity $\langle u^{\rm PVS}_i \rangle$ by
-dividing the flow rate $\langle Q'_i \rangle$ by the cross-section
-area $A_i = \pi (r_{e_i}^2 - r_{o_i}^2) = \pi (\beta_i^2 - 1) r_{o_i}^2$
-
-
-\subsection{Numerical Method} \label{sec:details_numerical_method}
+\subsection{Numerical Method}
+\label{sec:details_numerical_method}
 Here we provide details on the numerical method used to solve the coupled system. We are given a mesh $\mathcal{T}_h $, consisting of elements denoted by $E$, of $\Omega= \brain \cup \sas$.  The collection of all interior facets to $\Omega_{\rm PAR}$ (resp.  to $\Omega_{\mathrm{CSF}}$) is  denoted by $\mathcal{F}_{h,b}$ (resp. $\mathcal{F}_{h,c}$).  The union of all interior facets $\mathcal{F}_i = \mathcal{F}_{h,b} \cup \mathcal{F}_{h,c}$. Facets lying on the pial interface are denoted by $\mathcal{F}_{\pia}$, on the skull by $\mathcal{F}_{\skull}$, and on the spinal canal by $\mathcal{F}_{\spinal}$. Note that $\mathcal{F}_i \cap \mathcal{F}_{\pia} = \emptyset $. The union of all the facets is denoted by $\mathcal{F}_h$. The restriction of $\mathcal{T}_h $ to $\Omega_{\mathrm{CSF}}$ is denoted by $\mathcal{E}_{h}$. 
 \subsubsection{CSF Flow}
 We recall the system of equations that we approximate. Find $(\bm u, p)$ such that 
@@ -268,27 +267,12 @@ The weak form reads: Find $(u_{\rm PVS}, p_{\rm PVS}) \in V_h^{\rm PVS} \times Q
 
 where $\tau$ is the tangent vector of the network. Here we employ the lowest order discretization and set $k=1$. For discussion of stability of the discrete model we refer to \cite{gjerde2024directional}. 
 
-\subsubsection{Solute transport} For the 3D concentration, we use broken polynomial spaces and interior penalty discontinuous Galerkin (DG) methods with upwinding in order to capture the sharp boundary layers.  For DG, we utilize the discrete space 
+\subsubsection{Solute transport}
+For the 3D concentration, we use broken polynomial spaces and interior penalty discontinuous Galerkin (DG) methods with upwinding in order to capture the sharp boundary layers.  For DG, we utilize the discrete space 
 \begin{equation}
 V_h^k = \{v_h \in L^2(\Omega): \;  v_h \vert_E \in \mathbb{P}^k(E), \; E \in \mathcal{T}_h\}.
 \end{equation}
-Recall that the 3D concentration $c$ is defined locally in each subdomain of $\Omega$ and satisfies
-\begin{equation}
-     \partial_t (\phi c) - \nabla \cdot (D \nabla (\phi c) ) + \nabla \cdot (\bm u c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma = f \quad \quad \mathrm{in} \quad \Omega_{\rm CSF} \cup \Omega_{\rm{PAR}}.  \label{eq:3d_pde}
-\end{equation}
-The above is supplemented with the following boundary conditions. 
-\begin{alignat}{2}
-(D \nabla (\phi c) - \bm u c ) \cdot \bm{n}_{\rm SAS} &= g_{\mathrm{influx}} &&  \quad  \mathrm{on} \quad \spinal  \\ 
-% (-D \nabla (\phi c) + \bm u c ) \cdot \bm{n}_{\spinal} &= 0 &&  \quad  \mathrm{on} \quad \spinal^{\mathrm{out}}  \\ 
-(-D \nabla (\phi c) + \bm u c ) \cdot \bm{n}_{\rm skull} & =   \beta c  &&  \quad  \mathrm{on} \quad \Gamma_{\rm skull^{u}}  \\ 
-(-D \nabla (\phi c) + \bm u c ) \cdot \bm{n}_{\rm skull} & =   0  &&  \quad  \mathrm{on} \quad \Gamma_{\rm skull^{l}}  \\ 
-(-D \nabla (\phi c_{\rm{PAR}}) + \bm u_{\rm{PAR}} c_{\rm{PAR} }) \cdot \bm{n}_{\rm{Pia}} &= - (-D \nabla  c_{\rm{CSF}} + \bm u_{\rm CSF} c_{\rm CSF} ) \cdot \bm{n}_{\rm{Pia}} &&  \quad  \mathrm{on} \quad \pia \cup \Gamma_{\mathrm{LV}}  \\ 
-(-D \nabla (\phi c_{\rm{PAR}}) + \bm u_{\rm{PAR}} c_{\rm{PAR} }) \cdot \bm{n}_{\rm{Pia}} & = \beta_{\rm{pia}} (c_{\rm PAR} - c_{\mathrm{CSF}}) &&  \quad  \mathrm{on} \quad \pia \cup \Gamma_{\mathrm{LV}}   .  
-\end{alignat} 
-
-% \mar{I think we can simplify the BCs here a bit, mostly since $\bm u \cdot \bm n$ is zero everywhere except for $\Gamma_{\rm LV}$ and $\Gamma_{\rm skull}$. So I suggest we remove all terms related to this? And we probably also don't need to split $\Gamma_{SC}$ in $\Gamma_{SC}^{in}$ and  $\Gamma_{SC}^{out}$?}
-
-In the above, note that $\bm u \cdot \bm n  \neq 0$ on $\Gamma_{\rm LV} \cup \Gamma_{\rm skull^u}$ and $\bm u \cdot \bm n = 0$ on $\Gamma_{\rm SSAS} \cup \Gamma_{\rm skull^l} \cup \Gamma_{\rm Pia}$. To discretize the diffusion term, we utilize symmetric weighted interior penalty dG bilinear forms. We refer to \cite{ern2009discontinuous} and \cite[Section 4.5.2.3]{di2011mathematical} for details on this method.  We define 
+To discretize the diffusion term, we utilize symmetric weighted interior penalty dG bilinear forms. We refer to \cite{ern2009discontinuous} and \cite[Section 4.5.2.3]{di2011mathematical} for details on this method.  We define 
 \begin{multline}
 a_h (c_h, v_h) = \sum_{E \in \mathcal{T}_h } \int_{E} D \nabla (\phi c_h) \cdot \nabla v_h + \sum_{F \in \mathcal{F}_i} \eta \frac{\gamma_{D,F}}{h_F} \int_{F} [c_h][v_h] 
 - \sum_{F \in \mathcal{F}_i} \int_{F} \left( \{D \phi \nabla c_h \}_w \cdot \bm n_F [v_h]  + \{D \phi\nabla v_h \}_w \cdot \bm n_F [c_h] \right).
@@ -341,6 +325,53 @@ Finally, we smooth the resulting field by solving a Helmholtz problem with $dP^2
 \end{equation}
 
 to obtain the locally averaged, spatially varying diffusion enhancement factor $R$.
+
+\subsection{Estimating net perivascular flow induced by peristaltic waves}
+\label{sec:sup:peristalsis}
+
+We use the theoretical framework introduced by Gjerde et al.~\cite{gjerde2023directional} to compute an analytic estimate of the time-averaged (or \emph{net}) flow rates $\langle Q'_i \rangle$ (mm$^3$/s) induced by peristaltic pumping in a perivascular network$\Lambda = \cup_i \Lambda_i$. The motion of the (inner) vascular wall is described by a periodic traveling (peristaltic) wave of relative amplitude $\varepsilon$, wave length $\lambda$ (mm) and frequency $f$, acting normal to the wall. By definition, the wave number is $k = 2 \pi/\lambda$ and the angular frequency is $\omega = 2 \pi f$. Each PVS segment $\Lambda_i$ has length $L_i$ with wave-relative length $\ell_i = k L$, baseline inner radius $r_{o_i}'$, fixed outer radius $r_{e_i}'$, and outer-to-inner ratio $\beta_i = r_{e_i}'/r_{o_i}'$ (see also \Cref{tab:pvs:parameters}). These geometric parameters and the assumption of annular cylindrical PVS segments yield hydraulic resistances $\mathcal{R}_{o, i}$ and additional characteristic parameters, see \cite{gjerde2023directional} for the complete definitions and schematics. Since the analytical estimate is derived under the assumption that $k L \approx \mathcal{O} 1)$~\cite{gjerde2023directional} and has been verified against numerical simulations for $k L$ of the order $10^{-1}-10^2$~\cite[Table I]{gjerde2023directional}, we consider it applicable for the wave lengths and vascular network data considered here in which $k L$ ranges from \mer{$X$ to $Y$.}
+
+\begin{table}
+  \small
+  \begin{tabular}{llrc}
+    \toprule
+    Parameter & Description & Value(s)  & Ref.\\ 
+    \midrule
+    Relative PVS size $\beta$ & $\beta = \beta_i = r_{e_i} / r_{o_i}$ & 2 & $\approx$\cite{eide2024functional} \\
+    Wave frequency $f$ & Traveling wave frequency of vascular motion & $0.1-1.0$ Hz & \discuss{\cite{gjerde2023directional}} \\
+    Wave length $\lambda$ & Traveling wave length of vascular motion & $20-2000$ mm & \discuss{\cite{broggini2024long, gjerde2023directional}} \\
+    Wave amplitude & Relative amplitude of inner wall motion & $1-10\%$ & \discuss{\cite{gjerde2023directional}} \\
+    Vascular radii $\{r_{o_i}\}$ & Vascular network radii data (avg $\pm$ std, $\min$, $\max$) & $X$, $X$, $X$  mm & \cite{hodneland2019new} \\
+    Vascular branch lengths $\{L_{i}\}$ & Path length between vasc. junctions (avg $\pm$ std, $\min$, $\max$) & $X \pm Y$, $X$, $X$  mm & \discuss{--} \\
+    \bottomrule
+  \end{tabular}
+  \caption{Perivascular flow induced by vascular wall motion: parameters and key data characteristics.}
+  \label{tab:pvs:parameters}
+\end{table}
+% Vascular radii r_o (min, max, avg, std) (mm):  ....
+% Vascular branch lengths L (avg, std, min, max) (mm): ...
+
+\input{tikz/fig_pvs_flow}
+This theoretical formalism~\cite{gjerde2023directional} is defined
+relative to a network in the form of a directed, bifurcating tree with
+a single supply node/root $i_0$. To extend to a network of cerebral
+arteries with multiple supply nodes (such as the basilar and two
+internal carotid arteries in the current data
+set~\cite{hodneland2019new}), we separate the network $\Lambda$ into
+edge-disjoint subnetworks $\Lambda^1, \Lambda^2, \Lambda^3$, one for
+each of the supply nodes (\Cref{fig:sup:peristalsis}). Each node is assigned to the subnetwork associated with the nearest supply node, and edges between nodes are preserved. Next, we compute a minimal, bifurcating and directed tree representation of each subnetwork: $\mathcal{T}^1, \mathcal{T}^2, \mathcal{T}^3$. Each tree $\mathcal{T}^j = \cup E_n^j$ consists of the subset of the nodes from $\Lambda^j$ that have degree 1 (are leaf or root nodes) or degree $3$ (are true bifurcation points), and each path between nodes with degree $\not = 2$ in $\Lambda^j$ is represented in $\mathcal{T}^j$ by an edge $E^j$ with edge length $L$ corresponding to the total length of the original path and edge radius $r_o$ as the average of the path radii. For the few (2) nodes in $\Lambda$ with degree $>3$; i.e.~junctions where a branch splits into more than two downstream branches, only the two longest downstream paths are included in $\mathcal{T}^j$.
+
+For each subtree $\mathcal{T}^j = \cup_n E_n^j$, we compute the
+time-averaged downstream flow rate $\langle Q'_n \rangle$ induced by
+the vascular wall motion for each edge $n$ via~\cite[eq.~(5),
+  (34)]{gjerde2023directional}. We next uniquely assign the flow rate
+$\langle Q'_n \rangle$ to each of the branches $\Lambda_i$ that form
+the path $E_n^j$, thus yielding $\langle Q'_i \rangle$ for each
+perivascular segment $\Lambda_i$ (except those ignored above, for
+which we set a flow rate of zero). Finally, we define the mean
+longitudinal perivascular velocity $\langle u^{\rm PVS}_i \rangle$ by
+dividing the flow rate $\langle Q'_i \rangle$ by the cross-section
+area $A_i = \pi (r_{e_i}^2 - r_{o_i}^2) = \pi (\beta_i^2 - 1) r_{o_i}^2$
 
 \subsection{Numerical verification}
 
@@ -398,6 +429,7 @@ Considering the mean tracer concentrations in the CSF, parenchyma and arterial a
     \end{subfigure}
     \caption{Mean tracer concentrations over the first 24\,h after injection on the CSF and parenchyma (a), and the arterial and venous PVS (b) computed on the standard resolution mesh for timesteps $dt \in \{60, 120, 240 \}$\,s.}    \label{fig:time_convergence_concentrations}
 \end{figure}
+
 
 \newpage
 \section{Notes}
