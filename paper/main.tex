@@ -746,34 +746,19 @@ in~\eqref{eq:multi_transport}.
 
 \subsection*{Dispersion in the CSF spaces}
 
-The pulsatile flow of CSF in the SAS and ventricular system associated
-with with the cardiac and respiratory cycles enhances molecular
-diffusion through dispersion~\cite{taylor1953dispersion,
-  watson1983diffusion, asgari2016glymphatic, keith2019dispersion,
-  ray2021quantitative, troyetsky2021dispersion}. In $\Omega_{\rm
-  CSF}$, we compute a spatially-varying dispersion factor $R$ by
-combining a computational model of cardiac-induced CSF flow at peak
-arterial dilation (peak systole) with theoretical estimates for
-shear-augmented (Taylor) dispersion \cite{taylor1953dispersion,
-  watson1983diffusion, keith2019dispersion}.
+The pulsatile flow of CSF in the SAS and ventricular system,
+associated with the cardiac and respiratory cycles, substantially
+enhances molecular diffusion through
+dispersion~\cite{taylor1953dispersion, watson1983diffusion,
+  asgari2016glymphatic, keith2019dispersion, ray2021quantitative,
+  troyetsky2021dispersion}. To account for these dispersive effects,
+we compute a spatially-varying dispersion factor $R$ in $\Omega_{\rm
+  CSF}$ (\Cref{fig:csf_flow_R}) by combining a computational model of
+the CSF pressure gradient at peak arterial dilation with theoretical
+estimates for shear-augmented (Taylor) dispersion
+\cite{taylor1953dispersion, watson1983diffusion, keith2019dispersion}. \mer{Include 1-2 sentences from Supplementary Methods here -- but which? And also revisit references with MC.}
 
-\mer{MER: Stopped here.}
-
-Sharp et al \cite{keith2019dispersion} estimated the enhancement of diffusion in the spinal subarachnoid space due to dispersive effects to average 5.8 times that of purely molecular diffusion with a theoretical maximum of $10^6$. 
-
-Similar to the case of CSF flow driven by production introduced in section \ref{sec:csf_fluid_vel}, we employ a Stokes flow model to predict CSF velocities at peak arterial dilation. In particular, we enforce a uniformly distributed inflow of $10$\,ml/s and $2$\,ml/s across the outer skull ($\Gamma_{\rm skull}$) and lateral ventricular surfaces ($\Gamma_{\rm LV}$) respectively, mimicking the effect of reduced CSF volume due to blood inflow. We prescribe a no-slip boundary condition on the pial surface $\Gamma_{\rm Pia}$ and zero-traction on the spinal boundary $\Gamma_{\rm SSAS}$, making the spinal compartment the only outflow route of CSF. Thus, we compute the cardiac-driven flow field by augmenting the Stokes flow model (eq. \ref{eq:momnetum_equation} and \ref{eq:divergence_equation}) with the following boundary conditions:
-
-\begin{equation}\label{eq:cardiac_flow_bcs}
-    \bm u = 0 \text{ on } \Gamma_{\rm Pia}; \quad 
-    \mu \nabla \bm u \cdot \bm n - p \bm n = 0 \text{ on } \Gamma_{\rm SSAS}; \quad 
-    \bm u = \frac{0.31 \cdot \bm n}{|\Gamma_{\rm LV}|} \,\text{ml/s} \text{ on } \Gamma_{\rm LV}; \quad
-    \bm u = \frac{8 \cdot \bm n}{|\Gamma_{\rm skull}|} \,\text{ml/s} \text{ on } \Gamma_{\rm skull}.
-\end{equation}
-
-The obtained pressure field only account for viscous forces, albeit cardiac induced CSF flow is known to be unsteady and substantially impacted by transient inertial forces. Assuming an oscillatory flow with the heartbeat frequency $\omega = 2 \pi$, a mean gap width of the CSF-filled spaces of $2h=3$\,mm and CSF density $\rho=10^3\,\text{kg/m}^3$, the Womersley number $\alpha$ becomes $\alpha^2 = \frac{h^2 \omega \rho}{\mu} = 20.2$, which is unsteady. Based on theoretical considerations on the ratio of oscillatory flow to steady flow impedances in a tube, we account for inertial forces in the pulsatile flow by upscaling the computed viscous pressure field by a factor of $1 + \alpha^2 / 8$ (see \cite{van1998cardiovascular}, chapter. 4.3).
-
-Further assuming unsteady dispersion, we follow Sharp et al \cite{keith2019dispersion} and calculate the enhancement factor $R$ from the non-dimensionalized pressure gradient $dP=\frac{|\nabla p|}{\omega \mu / h}$ as $R\approx dP^2 / \alpha^3$. Combining the computed pressure gradient with this scaling law yields a pointwise approximation of the dispersion factor. Finally, we account for the non-local nature of the dispersion mechanism by applying a smoothing technique to obtain a spatially varying, but locally averaged diffusion enhancement factor $R$ (see the visualization in \cref{fig:visualize_R} and \cref{sec:dispersion_details} for additional details).
-
+\mer{MER: Stopped here. WIP in Supplementary Methods.}
 
 \subsection*{Perivascular fluid flow induced by CSF pressure differences}
 
@@ -852,7 +837,6 @@ unresolved continuation in the CSF spaces and parenchyma.
       Free diffusion coefficient, Gadubutrol & $D^{\rm Gad}$ & $3.8 \times 10^{-4}$& $\text{mm}^2/\text{s}$ & \cite{valnes2020apparent}\\
       Parenchymal diffusion coefficient, Gadubutrol & $D^{\rm Gad}_{\rm PAR}$ & $1.2 \times 10^{-4}$ & $\text{mm}^2/\text{s}$  & \cite{hornkjol2022csf} \\
       Permeability coefficient, pia & $\beta_{\rm pia}$ & $2.6 \cdot 10^{-8}$ & m/s & \cite{riseth2025twocompartment} \\
-      Dispersion factor, CSF spaces & $R$ & $\dagger$ & -- & $\ast$ \\
       Permeability coefficient, endfoot sheath & $\xi_{\rm EF}$ & $3.8\cdot 10^{-7}$  & m/s & \cite{koch2023estimates} \\
       Molecular efflux rate & $\beta_{\rm exit}$ & $10^{-4}$ & mm$^2$/s & \cite{hornkjol2022csf} \\
       Total molecular volume & $m_{\rm tot}$ & $0.5$ & mmol & \cite{eide2024functional} \\
@@ -860,8 +844,7 @@ unresolved continuation in the CSF spaces and parenchyma.
       CSF production rate & $u_{\mathrm{in}}$ & $0.63$  & l / day & \cite{nilsson1992circadian} \\
       CSF viscosity & $\mu$ & $0.7$ & mPa$ \cdot $s & \cite{bloomfield1998effects} \\ 
       CSF outflow resistance & $R_0$ & $10^{-5}$  & Pa/(mm$\cdot$s) & \cite{hornkjol2022csf} \\ 
-      \midrule
-      \midrule
+      Dispersion factor, CSF spaces & $R$ & $\dagger$ & -- & $\ast$ \\
       \bottomrule
     \end{tabular}
   \end{center}
