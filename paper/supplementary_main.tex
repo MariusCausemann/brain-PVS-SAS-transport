@@ -82,9 +82,9 @@ In the above, $\xi$ is defined segment-wise: for each centerline $\Lambda^i$ wit
  
 \fixme{Also in~\eqref{eq:3d_pde}, the notation $\overline{c}$ denotes a lateral average of the concentration over the outer perivascular surfaces, defined for each centerline $\Lambda^i$ and each point $s \in \Lambda^i$ by}
 \begin{equation}
-  \overline{c}(s) = \frac{1}{A(s)} \int_{\Theta(s)} c 
+  \overline{c}(s) = \frac{1}{P(s)} \int_{\partial \Theta(s)} c 
 \end{equation}
-\fixme{where $\Theta(s)$ is a cross-section of the PVS $\Omega^i$ at $s$ and $A(s)$ is the area of $\Theta(s)$.} For both the periarterial and perivenous networks ($\Lambda_a, \Lambda_v$ with outer PVS boundaries $\Gamma_a, \Gamma_v$), the (Dirac delta) term $\delta_\Gamma$ is a distribution concentrated on the outer lateral surfaces of the PVSs. \discuss{More precisely, it is defined in terms of its action on any sufficiently smooth function $v : \Omega \rightarrow \R$ and for each $\Lambda^i \subseteq \Lambda$ with PVS $\Omega^i$ and outer lateral surface $\Gamma^i = \partial \Omega^i_2$ by}
+\rami{where $\partial \Theta(s)$ is the outer boundary of the cross-section $\Theta(s)$ of the PVS $\Omega^i$ at $s$ and $P(s)$ is the area of $\Theta(s)$.} For both the periarterial and perivenous networks ($\Lambda_a, \Lambda_v$ with outer PVS boundaries $\Gamma_a, \Gamma_v$), the (Dirac delta) term $\delta_\Gamma$ is a distribution concentrated on the outer lateral surfaces of the PVSs. \discuss{More precisely, it is defined in terms of its action on any sufficiently smooth function $v : \Omega \rightarrow \R$ and for each $\Lambda^i \subseteq \Lambda$ with PVS $\Omega^i$ and outer lateral surface $\Gamma^i = \partial \Omega^i_2$ by}
 \begin{equation}
   %\xi (\overline{c} - \hat c ) \delta_\Gamma (v) = \int_{\Lambda} P \xi ( \overline{c} - \hat c ) \overline{v} .
   \delta_\Gamma (v) = \int_{\Gamma} v = \sum_{i} \int_{\Gamma^i} v = \sum_i \int_{\Lambda^i} P \, \overline{v} = \int_{\Lambda} P  \, \overline{v} .
