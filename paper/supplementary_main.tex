@@ -29,34 +29,37 @@ towards the spinal cord is denoted by $\Gamma_{\rm{SC}}$ and given by
 $\Gamma_{\rm{SC}} = \partial \Omega_{\rm PAR} \setminus \partial
 \Omega_{\rm CSF}$.
 
-
-In addition, we consider two sets of perivascular networks represented
-as graphs: a periarterial network $\Lambda_a$ represented by the
-(connected) centerlines $\Lambda^i_{(a)}$ of the arterial tree, and a
-perivenous network $\Lambda_v$ associated with the centerlines
-$\Lambda^i_{(v)}$ of the veins. Recall that we represent the vascular
-domains as the union of cylindrical vessels of radius $R_1^i$
-surrounding the centerlines $\Lambda^i$. Moreover, we consider the
-surrounding perivascular spaces as the union of annular cylinders
-$\Omega^i$ of inner radius $R_1^i$ and outer radius $R_2^i > R_1^i$
-and thus of width $R_2^i - R_1^i$. We denote the outer lateral surface
-of the periarterial and perivenous spaces by $\Gamma_a$ and
-$\Gamma_v$, respectively. We omit the subscript $a$ or $v$ when
-referring to any such network, vessel segment or perivascular outer
-surface. We assume that $\Lambda$ is parametrized by the coordinate
-$s$, and with a minor abuse of notation, simply write $s \in \Lambda$
-to represent the point ${\bm \lambda}(s)$ on $\Lambda$ corresponding
-to $s$.
+In addition, we consider two sets of perivascular networks: a
+periarterial network $\Lambda_a$ represented by the (connected)
+centerlines $\Lambda^i_{(a)}$ of the arterial tree, and a perivenous
+network $\Lambda_v$ associated with the centerlines $\Lambda^i_{(v)}$
+of the veins. Recall that we represent the vascular domains as the
+union of cylindrical vessels of radius $R_1^i$ surrounding the
+centerlines $\Lambda^i$. Moreover, we consider the surrounding
+perivascular spaces as the union of annular cylinders $\Omega^i$ of
+inner radius $R_1^i$ and outer radius $R_2^i > R_1^i$ and thus of
+width $R_2^i - R_1^i$. We denote the outer lateral surface of the
+periarterial and perivenous spaces by $\Gamma_a$ and $\Gamma_v$,
+respectively. We omit the subscript $a$ or $v$ when referring to any
+such network, vessel segment or perivascular outer surface. We assume
+that $\Lambda$ is parametrized by the coordinate $s$, and with a minor
+abuse of notation, simply write $s \in \Lambda$ to represent the point
+${\bm \lambda}(s)$ on $\Lambda$ corresponding to $s$. Finally, we view
+each perivascular network both as a geometric domain and as a directed
+graph with the centerlines $\{ \Lambda^i \}$ as oriented edges and the
+connections as nodes $\mathcal{V}$.
 
 \subsubsection{Solute transport and exchange in intracranial domains (3D) and perivascular networks (1D)}
 
 In this section, we describe the mathematical
 model~\eqref{eq:multi_transport}, the associated definitions,
 interface and boundary conditions in further detail. We refer to the
-main text for explicit parameter values while giving the general, abstract
-form here. Recall that we model a concentration field $c = c(x, t)$
-for $x \in \Omega$ and $t > 0$ defined in $\Omega_{\rm PAR}$ and
-$\Omega_{\rm CSF}$ separately. In each of these domains, $c$ satisfies
+main text for explicit parameter values while giving the general,
+abstract form here, and to the reference~\cite{masri2023modelling} for
+the derivation and analysis of this 3D-1D model. Recall that we model
+a concentration field $c = c(x, t)$ for $x \in \Omega$ and $t > 0$
+defined in $\Omega_{\rm PAR}$ and $\Omega_{\rm CSF}$ separately. In
+each of these domains, $c$ satisfies
 \begin{equation}
   \partial_t (\phi c) - \nabla \cdot (D \nabla (\phi c) ) + \nabla \cdot (\bm u c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma = f \quad \quad \mathrm{in} \quad \Omega_{\rm CSF}, \Omega_{\rm{PAR}}.
   \label{eq:3d_pde}
@@ -87,11 +90,11 @@ Also in~\eqref{eq:3d_pde}, the notation $\overline{c}$ denotes a lateral average
 \end{equation}
 where $\partial \Theta_2^i(s)$ is the outer boundary of the cross-section $\Theta(s)$ of the PVS $\Omega^i$ at $s$ and $P(s)$ is the perimeter of $\Theta(s)$. Moreover, for both the periarterial and perivenous networks ($\Lambda_a, \Lambda_v$ with outer PVS boundaries $\Gamma_a, \Gamma_v$), the (Dirac delta) term $\delta_\Gamma$ is a distribution concentrated on the outer lateral surfaces of the PVSs. More precisely, it is defined in terms of its \mer{integrated} action on any sufficiently smooth function $v : \Omega \rightarrow \R$ and for each $\Lambda^i \subseteq \Lambda$ with PVS $\Omega^i$ and outer lateral surface $\Gamma^i = \partial \Omega^i_2$ such that
 \begin{equation}
-  \int_{\Omega} \xi (\overline{c} - \hat c ) \delta_\Gamma (v) =
+  \mer{\int_{\Omega}} \xi (\overline{c} - \hat c ) \delta_\Gamma (v) =
   \int_{\Lambda} P \xi (\overline{c} - \hat c ) \overline{v}, 
 \end{equation}
 under the assumption that $\xi$ is constant on each $\partial
-\Theta_2^i$.
+\Theta_2^i$. 
 %% , since:
 %% \begin{multline}
 %%   \int_{\Omega} \xi (\overline{c} - \hat c ) \delta_\Gamma (v) =
@@ -102,24 +105,83 @@ under the assumption that $\xi$ is constant on each $\partial
 %%   \sum_i \int_{\Lambda^i} P \xi (\overline{c} - \hat c ) \overline{v} =
 %%   \int_{\Lambda} P \xi (\overline{c} - \hat c ) \overline{v} .
 %% \end{multline}
-We refer to the reference~\cite{masri2023modelling} for a complete model derivation and analysis.
 %% \mer{MER: The previous was:
 %% \begin{equation}
 %%   \xi (\overline{c} - \hat c ) \delta_\Gamma (v) = \int_{\Lambda} P \xi ( \overline{c} - \hat c ) \overline{v} .
 %% \end{equation}
 %% }
 
-In addtion, we model the concentration $\hat{c} = \hat{c}(s, t)$ in
-the periarterial and perivenous networks ($s \in \Lambda_a, s \in
-\Lambda_v$) which represents the concentration in the perivascular
-space averaged over each perivascular cross-section and satisfies:
+The concentration $\hat{c} = \hat{c}(s, t)$ in the periarterial and
+perivenous networks ($s \in \Lambda_a, s \in \Lambda_v$), entering
+in~\eqref{eq:3d_pde}, represents the concentration in the perivascular
+space averaged over each perivascular cross-section and is governed by 
 \begin{equation}
-\partial_t (A  \hat c) - \partial_s(\hat D A \partial_s ( \hat c)) +\partial_s(A \hat u \hat c )  +  \xi P (\hat c - \overline{c}) = 0  \qquad \quad \mathrm{in} \quad  \Lambda_a, \Lambda_v ,
+  \partial_t (A  \hat c) - \partial_s(\hat D A \partial_s ( \hat c)) +\partial_s(A \hat u \hat c )  +  \xi P (\hat c - \overline{c}) = 0
+  \qquad \text{in} \quad \Lambda_a, \Lambda_v ,
+\label{eq:1d_pde}
 \end{equation}
-where $A = A(s)$ is defined for each $s \in \Lambda^i$ and each
-centerline $\Lambda^i$ with PVS $\Omega^i$ as the area of the PVS
-cross-section $\Theta^i(s)$.
+where in $\Lambda_a, \Lambda_v$ refers to in each $\Lambda^i$ in each
+of these networks. In~\eqref{eq:1d_pde}, $A = A(s)$ is defined as the
+PVS cross-sectional area; i.e.,~for each $s \in \Lambda^i$ with
+associated PVS $\Omega^i$, the area of the cross-section
+$\Theta^i(s)$. Also, $\hat{D}$ is the effective diffusion coefficient,
+and $\hat{u}$ is a convective velocity representing an (average) CSF
+flow velocity in the axial direction of the perivascular spaces. To
+complete~\eqref{eq:1d_pde}, we prescribe bifurcation conditions at
+internal nodes of the perivascular networks $\Lambda_a, \Lambda_v$ and
+boundary conditions at the end nodes. To this end, define the set of
+internal nodes $\mathcal{B} \subset \mathcal{V}$ as the set of nodes
+that are connected to two or more edges and the set of end nodes as
+$\mathcal{T}$, write $\hat{c}_i = \hat{c}|_{\Lambda^i}$, and let
+$\mathcal{E}(y)$ denote the set of (one, two or three) edges in
+$\{\Lambda^i\}$ sharing the node $y$. To impose continuity of the
+concentrations, we set that the concentrations when viewed from each
+edge must match at nodes:
+\begin{equation}
+  \hat{c}_i (y) = \hat{c}_y \qquad \foralls \Lambda^i \in \mathcal{E}(y),
+  \quad \foralls y \in \mathcal{B} .
+\end{equation}
+Moreover, to ensure conservation of flux, we set that the flux going
+in and out at nodes should add to zero, or more precisely, that for
+each $y \in \mathcal{B}$:
+\begin{equation}
+  \sum_{i \in \mathcal{E}(y)} (\hat{D} A_i \partial_s \hat{c}_i (y)  -  A_i \hat u_i(\mathsf{v}) \hat c_i(\mathsf{v})) n_i(\mathsf{v}) = 0
+  \label{eq:flux_conservation}
+\end{equation}
 
+For a given edge $\Lambda^i= (\mathsf{v}_\mathrm{in}^i, \mathsf{v}_{\mathrm{out}}^{i})$, we define the function $n_i: \mathcal{V} \rightarrow \{-1,0,1\}$ with $$
+n_i(\mathsf{v}_{\mathrm{in}}^i) = 1 , \,\, n _i (\mathsf{v}_{\mathrm{out}}^i) = -1 \,\, \mathrm{and} \,\,\, n_i(\mathsf{v}) = 0, \quad \forall \mathsf{v} \in 
+\mathcal{V} \,  \backslash \,  \{ \mathsf{v}_{\mathrm{in}}^\mathsf e,\mathsf{v}_{\mathrm{out}}^\mathsf e \}.  
+$$
+The collection of bifurcation points is denoted by $\mathcal{B} = \{ \mathsf{v} \in \mathcal{V}, \,\,  \mathrm{card}(\mathcal{E}(\mathsf{v})) \geq  3\}$. For any $\mathsf{v} \in \mathcal{B}$, we have 
+\begin{equation}
+\sum_{ i \in \mathcal{E}(\mathsf{v})} (\hat D A_i \phi \partial_s \hat{u}_i(\mathsf{v})  -  A_i \hat u_i(\mathsf{v}) \hat c_i(\mathsf{v})) n_i(\mathsf{v}) = 0  \label{eq:flux_conservation}
+\end{equation}
+
+
+\paragraph{Boundary and interface conditions}
+
+On the interface $\Gamma_{\mathrm{pia}}$ between the CSF and brain, we prescribe the following interface condition modeling a semi--permeable interface, writing $c|_{\Omega_{\rm PAR}} = c_{\rm PAR}$ and $c|_{\Omega_{\rm CSF}} = c_{\rm CSF}$:
+\begin{subequations}
+\begin{alignat}{2}
+(-D \nabla (\phi c_{\rm{PAR}}) + \bm u_{\rm{PAR}} c_{\rm{PAR} }) \cdot \bm{n}_{\rm{PAR}} &= - (- D \nabla c_{\rm{CSF}} + \bm u_{\rm{CSF}} c_{\rm{CSF}} ) \cdot \bm{n}_{\rm{PAR}} &&  \quad  \mathrm{on} \quad \pia \cup \Gamma_{\mathrm{LV}} ,  \\  
+(-D \nabla ( c_{\rm{PAR}}) + \bm u_{\rm{PAR}} c_{\rm{PAR} }) \cdot \bm{n}_{\rm{PAR}} & = \beta_{\rm{pia}} (c_{\rm PAR} - c_{\mathrm{CSF}}) &&  \quad  \mathrm{on} \quad  \pia \cup \Gamma_{\mathrm{LV}} .  
+\end{alignat} 
+\end{subequations}
+Here, $\beta_{\mathrm{pia}}$ is a permeability constant between the
+brain and the CSF. \mer{MER: Is the inclusion of $\Gamma_{\rm LV}$
+  correct in the equation here? If so, text needs minor edits.}
+
+For the perivascular network, the boundary nodes are collected into
+$\partial \Lambda$. We assume no tracer outflow on all boundary nodes
+and prescribe a homogeneous Neumann condition:
+\begin{equation}
+    \hat D A \partial_s (\phi \hat c) - A \hat u \hat c  = 0 \quad \mathrm{on} \quad \partial \Lambda. 
+\end{equation}
+
+%% Both $\Omega$ and $\Lambda$ are fixed in time and we assume
+%% constant-in- time radii (despite varying radii to drive peristaltic
+%% flow, see \cref{sec:sup:peristalsis}). 
 
 
 The above is supplemented with the following boundary conditions. 
@@ -138,22 +200,7 @@ The above is supplemented with the following boundary conditions.
 
 In the above, note that $\bm u \cdot \bm n  \neq 0$ on $\Gamma_{\rm LV} \cup \Gamma_{\rm skull^u}$ and $\bm u \cdot \bm n = 0$ on $\Gamma_{\rm SSAS} \cup \Gamma_{\rm skull^l} \cup \Gamma_{\rm Pia}$. 
 
-At bifurcation nodes in $\Gamma_a, \Gamma_v$, we impose flux conservation and continuity of the concentration $\hat c$. We refer to \eqref{eq:flux_conservation} in \Cref{sec:details_numerical_method} for more details. For the perivascular network, the boundary nodes are collected into $\partial \Lambda$. We assume no tracer outflow on all boundary nodes and prescribe a homogeneous Neumann condition: 
-\begin{equation}
-    \hat D A \partial_s (\phi \hat c) - A \hat u \hat c  = 0 \quad \mathrm{on} \quad \partial \Lambda. 
-\end{equation}
-
-
-Further, $P$ and $A$ are the perimeter and area of the PVS which can vary along the centerline network, respectively.  Finally, we remark that $\hat u$ takes different values on each $\Lambda_i$.  Both $\Omega$ and $\Lambda$ are fixed in time and we assume constant-in- time radii (despite varying radii to drive peristaltic flow, see \cref{sec:sup:peristalsis}). Finally, we note that the model assumes that there is no interaction between the inner perivascular boundary and the blood vessel. 
-
-
 \paragraph*{Interface conditions}
-On the interface $\Gamma_{\mathrm{pia}}$ between the CSF and brain, we prescribe the following condition modeling a semi--permeable pial interface 
-\begin{alignat}{2}
-(-D \nabla (\phi c_{\rm{PAR}}) + \bm u_{\rm{PAR}} c_{\rm{PAR} }) \cdot \bm{n}_{\rm{PAR}} &= - (- D \nabla c_{\rm{CSF}} + \bm u_{\rm{CSF}} c_{\rm{CSF}} ) \cdot \bm{n}_{\rm{PAR}} &&  \quad  \mathrm{on} \quad \pia \cup \Gamma_{\mathrm{LV}} ,  \\  
-(-D \nabla ( c_{\rm{PAR}}) + \bm u_{\rm{PAR}} c_{\rm{PAR} }) \cdot \bm{n}_{\rm{PAR}} & = \beta_{\rm{pia}} (c_{\rm PAR} - c_{\mathrm{CSF}}) &&  \quad  \mathrm{on} \quad  \pia \cup \Gamma_{\mathrm{LV}} .  
-\end{alignat} 
-Here, $\beta_{\mathrm{pia}}$ is a permeability constant between the brain and the CSF:
 
 \paragraph*{Boundary conditions}
 On $\Gamma_{\mathrm{skull}}$, the interface towards the dura and skull (\Cref{fig:concept}), we consider a constant uptake (or efflux) rate, represented by the boundary condition 
@@ -180,30 +227,6 @@ Here, $\bm n$ denotes the unit outward normal to the boundary, $\mu$ is the CSF 
 Condition \eqref{eq:efflux_condition} models an efflux site with positive resistance $R_0 \geq 0$. The Stokes system is solved with the finite element software $FEniCS$, stored and then subsequently read for all the relevant solute transport simulations. See Figure~\ref{fig:csf_flow_cardiac} for a streamline visualization of the obtained velocity profile and \Cref{sec:details_numerical_method} for details on the numerical algorithm employed.
 
 We do not explicitly model convection within the brain parenchyma $\Omega_{\rm PAR}$, and thus set ${\bm u} = {\bm u}_{\rm PAR} = 0$ there. 
-
-\subsubsection*{Dispersion in the CSF spaces}
-
-In addition, CSF pulsates in the SAS and ventricular system with each
-cardiac and respiratory cycle.
-
-
-Taking the large spatial differences of pulsatile CSF flow into account, we compute the local diffusion enhancement factor $R$ in the CSF-filled space $\Omega_{\rm CSF}$ by combining a computational model of cardiac induced CSF flow with theoretical estimates for shear-augmented (Taylor) dispersion \cite{taylor1953dispersion, watson1983diffusion}.
-
-Sharp et al \cite{keith2019dispersion} estimated the enhancement of diffusion in the spinal subarachnoid space due to dispersive effects to average 5.8 times that of purely molecular diffusion with a theoretical maximum of $10^6$. 
-
-Similar to the case of CSF flow driven by production introduced in section \ref{sec:csf_fluid_vel}, we employ a Stokes flow model to predict CSF velocities at peak arterial dilation. In particular, we enforce a uniformly distributed inflow of $10$\,ml/s and $2$\,ml/s across the outer skull ($\Gamma_{\rm skull}$) and lateral ventricular surfaces ($\Gamma_{\rm LV}$) respectively, mimicking the effect of reduced CSF volume due to blood inflow. We prescribe a no-slip boundary condition on the pial surface $\Gamma_{\rm Pia}$ and zero-traction on the spinal boundary $\Gamma_{\rm SSAS}$, making the spinal compartment the only outflow route of CSF. Thus, we compute the cardiac-driven flow field by augmenting the Stokes flow model (eq. \ref{eq:momnetum_equation} and \ref{eq:divergence_equation}) with the following boundary conditions:
-
-\begin{equation}\label{eq:cardiac_flow_bcs}
-    \bm u = 0 \text{ on } \Gamma_{\rm Pia}; \quad 
-    \mu \nabla \bm u \cdot \bm n - p \bm n = 0 \text{ on } \Gamma_{\rm SSAS}; \quad 
-    \bm u = \frac{0.31 \cdot \bm n}{|\Gamma_{\rm LV}|} \,\text{ml/s} \text{ on } \Gamma_{\rm LV}; \quad
-    \bm u = \frac{8 \cdot \bm n}{|\Gamma_{\rm skull}|} \,\text{ml/s} \text{ on } \Gamma_{\rm skull}.
-\end{equation}
-
-The obtained pressure field only account for viscous forces, albeit cardiac induced CSF flow is known to be unsteady and substantially impacted by transient inertial forces. Assuming an oscillatory flow with the heartbeat frequency $\omega = 2 \pi$, a mean gap width of the CSF-filled spaces of $2h=3$\,mm and CSF density $\rho=10^3\,\text{kg/m}^3$, the Womersley number $\alpha$ becomes $\alpha^2 = \frac{h^2 \omega \rho}{\mu} = 20.2$, which is unsteady. Based on theoretical considerations on the ratio of oscillatory flow to steady flow impedances in a tube, we account for inertial forces in the pulsatile flow by upscaling the computed viscous pressure field by a factor of $1 + \alpha^2 / 8$ (see \cite{van1998cardiovascular}, chapter. 4.3).
-
-Further assuming unsteady dispersion, we follow Sharp et al \cite{keith2019dispersion} and calculate the enhancement factor $R$ from the non-dimensionalized pressure gradient $dP=\frac{|\nabla p|}{\omega \mu / h}$ as $R\approx dP^2 / \alpha^3$. Combining the computed pressure gradient with this scaling law yields a pointwise approximation of the dispersion factor. Finally, we account for the non-local nature of the dispersion mechanism by applying a smoothing technique to obtain a spatially varying, but locally averaged diffusion enhancement factor $R$ (see the visualization in \cref{fig:visualize_R} and \cref{sec:dispersion_details} for additional details).
-
 
 \subsubsection{Perivascular fluid flow induced by pressure gradients}
 
@@ -343,15 +366,6 @@ The discrete formulation for \eqref{eq:3d_pde} then reads
 \begin{multline}
 \int_{\Omega}\frac{1}{\tau} (\phi c_h^n - \phi c_h^{n-1}) v_h + a_h(c_h^n, v_h) + a_h^{\mathrm{up}}(c_h^n,v_h) + \int_{\Gamma_{\mathrm{pia}} } \beta_{\mathrm{pia}}[c_h^n][v_h]  \\ + \int_{\Gamma_{\rm skull^u}} \beta c_h^n v_h +  \int_{\Lambda} \xi  P (\overline{c_h^n} - \hat c_h^n) \overline{v_h}  = \int_{\Omega} f^n v_h + \int_{\spinal} \gin v_h , \quad \forall v_h \in V_h^k.
 \end{multline}
-For the 1D concentration $\hat c$, we recall that $\hat c = \hat c_i $ on each segment of the network $\Lambda^i$.  We enforce continuity of the concentration on the bifurcation points and conservation of fluxes. We let $\mathcal{V}$ denote the set of all vertices in $\Lambda$ and $ 
-\mathcal{E}(\mathsf{v})$ denote the set of segments sharing a vertex $\mathsf{v}$.  For a given edge $\Lambda^i= (\mathsf{v}_\mathrm{in}^i, \mathsf{v}_{\mathrm{out}}^{i})$, we define the function $n_i: \mathcal{V} \rightarrow \{-1,0,1\}$ with $$
-n_i(\mathsf{v}_{\mathrm{in}}^i) = 1 , \,\, n _i (\mathsf{v}_{\mathrm{out}}^i) = -1 \,\, \mathrm{and} \,\,\, n_i(\mathsf{v}) = 0, \quad \forall \mathsf{v} \in 
-\mathcal{V} \,  \backslash \,  \{ \mathsf{v}_{\mathrm{in}}^\mathsf e,\mathsf{v}_{\mathrm{out}}^\mathsf e \}.  
-$$
-The collection of bifurcation points is denoted by $\mathcal{B} = \{ \mathsf{v} \in \mathcal{V}, \,\,  \mathrm{card}(\mathcal{E}(\mathsf{v})) \geq  3\}$. For any $\mathsf{v} \in \mathcal{B}$, we have 
-\begin{equation}
-\sum_{ i \in \mathcal{E}(\mathsf{v})} (\hat D A_i \phi \partial_s \hat{u}_i(\mathsf{v})  -  A_i \hat u_i(\mathsf{v}) \hat c_i(\mathsf{v})) n_i(\mathsf{v}) = 0  \label{eq:flux_conservation}
-\end{equation}
 For approximating the solution of the 1D equations in the network, we use the space 
 \[ \hat V_h = \{ v_h \in C^0(\Lambda), 
 \; v_h \vert_{\Lambda^i} \in V_h(\Lambda^i)
@@ -359,7 +373,33 @@ For approximating the solution of the 1D equations in the network, we use the sp
 \]
 where $V_h(\Lambda^i)$ is the space of continuous polynomials of degree $1$ on each $\Lambda^i$, 
 
-\subsection{Cardiac Dispersion Factor Estimation}\label{sec:dispersion_details}
+\subsection{Cardiac Dispersion Factor Estimation}
+
+\subsubsection*{Dispersion in the CSF spaces}
+
+In addition, CSF pulsates in the SAS and ventricular system with each
+cardiac and respiratory cycle.
+
+
+Taking the large spatial differences of pulsatile CSF flow into account, we compute the local diffusion enhancement factor $R$ in the CSF-filled space $\Omega_{\rm CSF}$ by combining a computational model of cardiac induced CSF flow with theoretical estimates for shear-augmented (Taylor) dispersion \cite{taylor1953dispersion, watson1983diffusion}.
+
+Sharp et al \cite{keith2019dispersion} estimated the enhancement of diffusion in the spinal subarachnoid space due to dispersive effects to average 5.8 times that of purely molecular diffusion with a theoretical maximum of $10^6$. 
+
+Similar to the case of CSF flow driven by production introduced in section \ref{sec:csf_fluid_vel}, we employ a Stokes flow model to predict CSF velocities at peak arterial dilation. In particular, we enforce a uniformly distributed inflow of $10$\,ml/s and $2$\,ml/s across the outer skull ($\Gamma_{\rm skull}$) and lateral ventricular surfaces ($\Gamma_{\rm LV}$) respectively, mimicking the effect of reduced CSF volume due to blood inflow. We prescribe a no-slip boundary condition on the pial surface $\Gamma_{\rm Pia}$ and zero-traction on the spinal boundary $\Gamma_{\rm SSAS}$, making the spinal compartment the only outflow route of CSF. Thus, we compute the cardiac-driven flow field by augmenting the Stokes flow model (eq. \ref{eq:momnetum_equation} and \ref{eq:divergence_equation}) with the following boundary conditions:
+
+\begin{equation}\label{eq:cardiac_flow_bcs}
+    \bm u = 0 \text{ on } \Gamma_{\rm Pia}; \quad 
+    \mu \nabla \bm u \cdot \bm n - p \bm n = 0 \text{ on } \Gamma_{\rm SSAS}; \quad 
+    \bm u = \frac{0.31 \cdot \bm n}{|\Gamma_{\rm LV}|} \,\text{ml/s} \text{ on } \Gamma_{\rm LV}; \quad
+    \bm u = \frac{8 \cdot \bm n}{|\Gamma_{\rm skull}|} \,\text{ml/s} \text{ on } \Gamma_{\rm skull}.
+\end{equation}
+
+The obtained pressure field only account for viscous forces, albeit cardiac induced CSF flow is known to be unsteady and substantially impacted by transient inertial forces. Assuming an oscillatory flow with the heartbeat frequency $\omega = 2 \pi$, a mean gap width of the CSF-filled spaces of $2h=3$\,mm and CSF density $\rho=10^3\,\text{kg/m}^3$, the Womersley number $\alpha$ becomes $\alpha^2 = \frac{h^2 \omega \rho}{\mu} = 20.2$, which is unsteady. Based on theoretical considerations on the ratio of oscillatory flow to steady flow impedances in a tube, we account for inertial forces in the pulsatile flow by upscaling the computed viscous pressure field by a factor of $1 + \alpha^2 / 8$ (see \cite{van1998cardiovascular}, chapter. 4.3).
+
+Further assuming unsteady dispersion, we follow Sharp et al \cite{keith2019dispersion} and calculate the enhancement factor $R$ from the non-dimensionalized pressure gradient $dP=\frac{|\nabla p|}{\omega \mu / h}$ as $R\approx dP^2 / \alpha^3$. Combining the computed pressure gradient with this scaling law yields a pointwise approximation of the dispersion factor. Finally, we account for the non-local nature of the dispersion mechanism by applying a smoothing technique to obtain a spatially varying, but locally averaged diffusion enhancement factor $R$ (see the visualization in \cref{fig:visualize_R} and \cref{sec:dispersion_details} for additional details).
+
+
+\subsubsection{Cardiac Dispersion Factor Estimation}\label{sec:dispersion_details}
 
 To compute a spatially varying estimate of the diffusion enhancement factor $R$, we consider the Stokes flow problem (\cref{eq:momnetum_equation} and \cref{eq:divergence_equation}) equipped with the boundary conditions \cref{eq:cardiac_flow_bcs} describing cardiac induced CSF flow at peak arterial pulsation. We use the numerical method described in \cref{sec:details_numerical_method} to solve the Stokes system and compute the non-dimensionalized local pressure difference $dP=\frac{|\nabla p| \rho}{\omega \mu / h}$ pointwise. Here, $\mu$ is the CSF viscosity, $\omega = 2 \pi$ is the oscillatory heart beat frequency, $2h=3$\,mm the assumed gap width and $\rho=10^3\,\text{kg/m}^3$ the density of the CSF.
 
