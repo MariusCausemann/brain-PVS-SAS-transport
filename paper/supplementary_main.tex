@@ -116,7 +116,7 @@ perivenous networks ($s \in \Lambda_a, s \in \Lambda_v$), entering
 in~\eqref{eq:3d_pde}, represents the concentration in the perivascular
 space averaged over each perivascular cross-section and is governed by 
 \begin{equation}
-  \partial_t (A  \hat c) - \partial_s(\hat D A \partial_s ( \hat c)) +\partial_s(A \hat u \hat c )  +  \xi P (\hat c - \overline{c}) = 0
+  \partial_t (A  \hat c) - \partial_s( \hat D A \partial_s (\hat c) ) + \partial_s(A \hat u \hat c )  +  \xi P (\hat c - \overline{c}) = 0
   \qquad \text{in} \quad \Lambda_a, \Lambda_v ,
 \label{eq:1d_pde}
 \end{equation}
@@ -132,31 +132,43 @@ internal nodes of the perivascular networks $\Lambda_a, \Lambda_v$ and
 boundary conditions at the end nodes. To this end, define the set of
 internal nodes $\mathcal{B} \subset \mathcal{V}$ as the set of nodes
 that are connected to two or more edges and the set of end nodes as
-$\mathcal{T}$, write $\hat{c}_i = \hat{c}|_{\Lambda^i}$, and let
+$\mathcal{T}$, write $\hat{c}^i = \hat{c}|_{\Lambda^i}$, and let
 $\mathcal{E}(y)$ denote the set of (one, two or three) edges in
 $\{\Lambda^i\}$ sharing the node $y$. To impose continuity of the
 concentrations, we set that the concentrations when viewed from each
 edge must match at nodes:
 \begin{equation}
-  \hat{c}_i (y) = \hat{c}_y \qquad \foralls \Lambda^i \in \mathcal{E}(y),
+  \hat{c}^i (y) = \hat{c}_y \qquad \foralls \Lambda^i \in \mathcal{E}(y),
   \quad \foralls y \in \mathcal{B} .
 \end{equation}
 Moreover, to ensure conservation of flux, we set that the flux going
 in and out at nodes should add to zero, or more precisely, that for
 each $y \in \mathcal{B}$:
 \begin{equation}
-  \sum_{i \in \mathcal{E}(y)} (\hat{D} A_i \partial_s \hat{c}_i (y)  -  A_i \hat u_i(\mathsf{v}) \hat c_i(\mathsf{v})) n_i(\mathsf{v}) = 0
+  \sum_{i \in \mathcal{E}(y)}
+  \left (\hat{D}^i A^i \partial_s \hat{c}^i (y) - A^i \hat u^i(y) \hat{c^i}(y) \right ) n_i(y)
+  = 0
   \label{eq:flux_conservation}
 \end{equation}
-
-For a given edge $\Lambda^i= (\mathsf{v}_\mathrm{in}^i, \mathsf{v}_{\mathrm{out}}^{i})$, we define the function $n_i: \mathcal{V} \rightarrow \{-1,0,1\}$ with $$
-n_i(\mathsf{v}_{\mathrm{in}}^i) = 1 , \,\, n _i (\mathsf{v}_{\mathrm{out}}^i) = -1 \,\, \mathrm{and} \,\,\, n_i(\mathsf{v}) = 0, \quad \forall \mathsf{v} \in 
-\mathcal{V} \,  \backslash \,  \{ \mathsf{v}_{\mathrm{in}}^\mathsf e,\mathsf{v}_{\mathrm{out}}^\mathsf e \}.  
-$$
-The collection of bifurcation points is denoted by $\mathcal{B} = \{ \mathsf{v} \in \mathcal{V}, \,\,  \mathrm{card}(\mathcal{E}(\mathsf{v})) \geq  3\}$. For any $\mathsf{v} \in \mathcal{B}$, we have 
+where the function $n_i : \mathcal{V} \rightarrow \{-1, 0, 1\}$
+defines an orientation of each vertex relative to the
+edges. Specifically, for an edge $\Lambda^i$ from $y_{\rm in}$ to $y_{\rm out}$
 \begin{equation}
-\sum_{ i \in \mathcal{E}(\mathsf{v})} (\hat D A_i \phi \partial_s \hat{u}_i(\mathsf{v})  -  A_i \hat u_i(\mathsf{v}) \hat c_i(\mathsf{v})) n_i(\mathsf{v}) = 0  \label{eq:flux_conservation}
+  n_i(y_{\rm in}) = 1, \quad
+  n_i(y_{\rm{out}}) = -1, \quad
+  n_i(y) = 0, \quad \forall y \in 
+  \mathcal{V} \
+  \,  \backslash \,  \{ y_{\rm in}, y_{\rm out} \}.  
 \end{equation}
+
+\mer{MER: Stopped here.}
+
+%% For a given edge $\Lambda^i= (\mathsf{v}_\mathrm{in}^i, \mathsf{v}_{\mathrm{out}}^{i})$, we define the function $n_i: \mathcal{V} \rightarrow \{-1,0,1\}$ with $$
+%% $$
+%% The collection of bifurcation points is denoted by $\mathcal{B} = \{ \mathsf{v} \in \mathcal{V}, \,\,  \mathrm{card}(\mathcal{E}(\mathsf{v})) \geq  3\}$. For any $\mathsf{v} \in \mathcal{B}$, we have 
+%% \begin{equation}
+%% \sum_{ i \in \mathcal{E}(\mathsf{v})} (\hat D A_i \phi \partial_s \hat{u}_i(\mathsf{v})  -  A_i \hat u_i(\mathsf{v}) \hat c_i(\mathsf{v})) n_i(\mathsf{v}) = 0  \label{eq:flux_conservation}
+%% \end{equation}
 
 
 \paragraph{Boundary and interface conditions}
@@ -200,7 +212,6 @@ The above is supplemented with the following boundary conditions.
 
 In the above, note that $\bm u \cdot \bm n  \neq 0$ on $\Gamma_{\rm LV} \cup \Gamma_{\rm skull^u}$ and $\bm u \cdot \bm n = 0$ on $\Gamma_{\rm SSAS} \cup \Gamma_{\rm skull^l} \cup \Gamma_{\rm Pia}$. 
 
-\paragraph*{Interface conditions}
 
 \paragraph*{Boundary conditions}
 On $\Gamma_{\mathrm{skull}}$, the interface towards the dura and skull (\Cref{fig:concept}), we consider a constant uptake (or efflux) rate, represented by the boundary condition 
