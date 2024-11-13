@@ -13,7 +13,7 @@ In terms of geometrical domains, we consider the parenchyma
 $\Omega_{\rm PAR} \subset \R^3$ and CSF spaces $\Omega_{\rm CSF}
 \subset \R^3$ with $\Omega = \Omega_{\rm PAR} \cup \Omega_{\rm CSF}$
 (see also \Cref{fig:intracranial_domains}). The coordinates in these
-3D domains is given by $x$. The interface between the parenchyma and
+3D domains is denoted by $x$. The interface between the parenchyma and
 CSF spaces is given by $\partial \Omega_{\rm PAR} \cap \partial
 \Omega_{\rm CSF}$ and we separate it as two parts: the surface of the
 lateral ventricles $\Gamma_{\rm LV}$ and the remaining pial interface
@@ -25,7 +25,7 @@ towards the spinal subarachnoid space (SSAS), while $\Gamma_{\rm AM}$
 is the outer interface towards the arachnoid and dura
 membranes. $\Gamma_{\rm AM}$ is further subdivided into its lower and
 upper parts: $\Gamma_{\rm AM-L}$ and $\Gamma_{\rm AM-U}$. The boundary
-of the spinal cord is denoted by $\Gamma_{\rm{SC}}$ and given by
+towards the spinal cord is denoted by $\Gamma_{\rm{SC}}$ and given by
 $\Gamma_{\rm{SC}} = \partial \Omega_{\rm PAR} \setminus \partial
 \Omega_{\rm CSF}$.
 
@@ -33,28 +33,29 @@ $\Gamma_{\rm{SC}} = \partial \Omega_{\rm PAR} \setminus \partial
 In addition, we consider two sets of perivascular networks represented
 as graphs: a periarterial network $\Lambda_a$ represented by the
 (connected) centerlines $\Lambda^i_{(a)}$ of the arterial tree, and a
-perivenous network $\Lambda_v$ corresponding to the centerlines
+perivenous network $\Lambda_v$ associated with the centerlines
 $\Lambda^i_{(v)}$ of the veins. Recall that we represent the vascular
 domains as the union of cylindrical vessels of radius $R_1^i$
 surrounding the centerlines $\Lambda^i$. Moreover, we consider the
 surrounding perivascular spaces as the union of annular cylinders
 $\Omega^i$ of inner radius $R_1^i$ and outer radius $R_2^i > R_1^i$
 and thus of width $R_2^i - R_1^i$. We denote the outer lateral surface
-of the periarterial and perivenous spaces by $\Gamma_a$ and $\Gamma_v$, respectively. We
-omit the subscript $a$ or $v$ when referring to any such network,
-vessel segment or perivascular outer surface. We assume that $\Gamma$
-is parametrized by the coordinate $s$, and with a minor abuse of
-notation, simply write $s \in \Lambda$ to represent the point ${\bm
-  \lambda}(s)$ on $\Lambda$ corresponding to $s$.
+of the periarterial and perivenous spaces by $\Gamma_a$ and
+$\Gamma_v$, respectively. We omit the subscript $a$ or $v$ when
+referring to any such network, vessel segment or perivascular outer
+surface. We assume that $\Lambda$ is parametrized by the coordinate
+$s$, and with a minor abuse of notation, simply write $s \in \Lambda$
+to represent the point ${\bm \lambda}(s)$ on $\Lambda$ corresponding
+to $s$.
 
 \subsubsection{Solute transport and exchange in intracranial domains (3D) and perivascular networks (1D)}
 
 In this section, we describe the mathematical
 model~\eqref{eq:multi_transport}, the associated definitions,
 interface and boundary conditions in further detail. We refer to the
-main text for explicit parameter values and give the general, abstract
+main text for explicit parameter values while giving the general, abstract
 form here. Recall that we model a concentration field $c = c(x, t)$
-for $x \in \Omega$, $t > 0$ defined in $\Omega_{\rm PAR}$ and
+for $x \in \Omega$ and $t > 0$ defined in $\Omega_{\rm PAR}$ and
 $\Omega_{\rm CSF}$ separately. In each of these domains, $c$ satisfies
 \begin{equation}
   \partial_t (\phi c) - \nabla \cdot (D \nabla (\phi c) ) + \nabla \cdot (\bm u c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma = f \quad \quad \mathrm{in} \quad \Omega_{\rm CSF}, \Omega_{\rm{PAR}}.
@@ -78,22 +79,48 @@ D = \begin{cases}
   \xi_{\rm{EF}} & \mathrm{if} |\Omega^i \cap \Omega_{\rm{PAR}}| \neq 0  
 \end{cases} . 
 \]
-In the above, $\xi$ is defined segment-wise: for each centerline $\Lambda^i$ with surrounding PVS $\Omega^i$, $|\Omega^i \cap \Omega_{\rm{PAR}}|$ (resp. $|\Omega^i \cap \Omega_{\rm{CSF}}|$) is nonzero whenever $\Omega^i$ intersects $\Omega_{\rm{PAR}}$ (resp. $\Omega_{\rm{CSF}}$). If the surrounding PVS intersects both, then we set $\xi = \xi_{\rm EF}$  if $\Omega^i$ mainly ($80$ percent) intersects $\Omega_{\rm{PAR}}$ in which case the interaction with $\Omega_{\rm{CSF}}$ (resp. $\Omega_{\rm{PAR}}$) is ignored; otherwise, we set $\xi = \xi_{\rm CSF}$. 
+In the above, $\xi$ is defined segment-wise: for each centerline $\Lambda^i$ with surrounding PVS $\Omega^i$, $|\Omega^i \cap \Omega_{\rm{PAR}}|$ (resp. $|\Omega^i \cap \Omega_{\rm{CSF}}|$) is nonzero whenever $\Omega^i$ intersects $\Omega_{\rm{PAR}}$ (resp. $\Omega_{\rm{CSF}}$). If the surrounding PVS intersects both, then we set $\xi = \xi_{\rm EF}$ if $\Omega^i$ mainly ($80$ percent) intersects $\Omega_{\rm{PAR}}$, in which case the interaction with $\Omega_{\rm{CSF}}$ is ignored; otherwise, we set $\xi = \xi_{\rm CSF}$. 
  
-\fixme{Also in~\eqref{eq:3d_pde}, the notation $\overline{c}$ denotes a lateral average of the concentration over the outer perivascular surfaces, defined for each centerline $\Lambda^i$ and each point $s \in \Lambda^i$ by}
+Also in~\eqref{eq:3d_pde}, the notation $\overline{c}$ denotes a lateral average of the concentration over the outer perivascular surfaces, defined for each centerline $\Lambda^i$ and each point $s \in \Lambda^i$ by
 \begin{equation}
-  \overline{c}(s) = \frac{1}{P(s)} \int_{\partial \Theta(s)} c 
+  \overline{c}(s) = \frac{1}{P(s)} \int_{\partial \Theta_2^i(s)} c 
 \end{equation}
-\rami{where $\partial \Theta(s)$ is the outer boundary of the cross-section $\Theta(s)$ of the PVS $\Omega^i$ at $s$ and $P(s)$ is the area of $\Theta(s)$.} For both the periarterial and perivenous networks ($\Lambda_a, \Lambda_v$ with outer PVS boundaries $\Gamma_a, \Gamma_v$), the (Dirac delta) term $\delta_\Gamma$ is a distribution concentrated on the outer lateral surfaces of the PVSs. \discuss{More precisely, it is defined in terms of its action on any sufficiently smooth function $v : \Omega \rightarrow \R$ and for each $\Lambda^i \subseteq \Lambda$ with PVS $\Omega^i$ and outer lateral surface $\Gamma^i = \partial \Omega^i_2$ by}
+where $\partial \Theta_2^i(s)$ is the outer boundary of the cross-section $\Theta(s)$ of the PVS $\Omega^i$ at $s$ and $P(s)$ is the perimeter of $\Theta(s)$. Moreover, for both the periarterial and perivenous networks ($\Lambda_a, \Lambda_v$ with outer PVS boundaries $\Gamma_a, \Gamma_v$), the (Dirac delta) term $\delta_\Gamma$ is a distribution concentrated on the outer lateral surfaces of the PVSs. More precisely, it is defined in terms of its \mer{integrated} action on any sufficiently smooth function $v : \Omega \rightarrow \R$ and for each $\Lambda^i \subseteq \Lambda$ with PVS $\Omega^i$ and outer lateral surface $\Gamma^i = \partial \Omega^i_2$ such that
 \begin{equation}
-  %\xi (\overline{c} - \hat c ) \delta_\Gamma (v) = \int_{\Lambda} P \xi ( \overline{c} - \hat c ) \overline{v} .
-  \delta_\Gamma (v) = \int_{\Gamma} v = \sum_{i} \int_{\Gamma^i} v = \sum_i \int_{\Lambda^i} P \, \overline{v} = \int_{\Lambda} P  \, \overline{v} .
+  \int_{\Omega} \xi (\overline{c} - \hat c ) \delta_\Gamma (v) =
+  \int_{\Lambda} P \xi (\overline{c} - \hat c ) \overline{v}, 
 \end{equation}
-where $P = P(s)$ is defined as the perimeter of each cross-section $\Theta(s)$ for $s \in \Lambda^i$. 
-
-\mer{MER: Stopped here. Feel free to check the above. I thought the overline was defined as the cross-section perimeter average and not the cross-section average. This is more compatible with the definition of $\delta_{\Gamma}$ as well.}
-
+under the assumption that $\xi$ is constant on each $\partial
+\Theta_2^i$.
+%% , since:
+%% \begin{multline}
+%%   \int_{\Omega} \xi (\overline{c} - \hat c ) \delta_\Gamma (v) =
+%%   \int_{\Gamma} \xi (\overline{c} - \hat c ) \delta_\Gamma (v) =
+%%   \sum_i \int_{\Gamma^i} \xi (\overline{c} - \hat c ) \delta_\Gamma (v) = 
+%%   \sum_i \int_{\Lambda^i} \int_{\partial \Theta_2^i} \xi (\overline{c} - \hat c ) \delta_\Gamma (v) = \\
+%%   \sum_i \int_{\Lambda^i} \left (  \xi (\overline{c} - \hat c ) \int_{\partial \Theta_2^i} \delta_\Gamma (v) \right ) =
+%%   \sum_i \int_{\Lambda^i} P \xi (\overline{c} - \hat c ) \overline{v} =
+%%   \int_{\Lambda} P \xi (\overline{c} - \hat c ) \overline{v} .
+%% \end{multline}
 We refer to the reference~\cite{masri2023modelling} for a complete model derivation and analysis.
+%% \mer{MER: The previous was:
+%% \begin{equation}
+%%   \xi (\overline{c} - \hat c ) \delta_\Gamma (v) = \int_{\Lambda} P \xi ( \overline{c} - \hat c ) \overline{v} .
+%% \end{equation}
+%% }
+
+In addtion, we model the concentration $\hat{c} = \hat{c}(s, t)$ in
+the periarterial and perivenous networks ($s \in \Lambda_a, s \in
+\Lambda_v$) which represents the concentration in the perivascular
+space averaged over each perivascular cross-section and satisfies:
+\begin{equation}
+\partial_t (A  \hat c) - \partial_s(\hat D A \partial_s ( \hat c)) +\partial_s(A \hat u \hat c )  +  \xi P (\hat c - \overline{c}) = 0  \qquad \quad \mathrm{in} \quad  \Lambda_a, \Lambda_v ,
+\end{equation}
+where $A = A(s)$ is defined for each $s \in \Lambda^i$ and each
+centerline $\Lambda^i$ with PVS $\Omega^i$ as the area of the PVS
+cross-section $\Theta^i(s)$.
+
+
 
 The above is supplemented with the following boundary conditions. 
 \begin{alignat}{2}
