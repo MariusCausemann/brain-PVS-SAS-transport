@@ -88,13 +88,15 @@ Also in~\eqref{eq:3d_pde}, the notation $\overline{c}$ denotes a lateral average
 \begin{equation}
   \overline{c}(s) = \frac{1}{P(s)} \int_{\partial \Theta_2^i(s)} c 
 \end{equation}
-where $\partial \Theta_2^i(s)$ is the outer boundary of the cross-section $\Theta(s)$ of the PVS $\Omega^i$ at $s$ and $P(s)$ is the perimeter of $\Theta(s)$. Moreover, for both the periarterial and perivenous networks ($\Lambda_a, \Lambda_v$ with outer PVS boundaries $\Gamma_a, \Gamma_v$), the (Dirac delta) term $\delta_\Gamma$ is a distribution concentrated on the outer lateral surfaces of the PVSs. More precisely, it is defined in terms of its \mer{integrated} action on any sufficiently smooth function $v : \Omega \rightarrow \R$ and for each $\Lambda^i \subseteq \Lambda$ with PVS $\Omega^i$ and outer lateral surface $\Gamma^i = \partial \Omega^i_2$ such that
+where $\partial \Theta_2^i(s)$ is the outer boundary of the cross-section $\Theta(s)$ of the PVS $\Omega^i$ at $s$ and $P(s)$ is the perimeter of $\Theta(s)$. Moreover, for both the periarterial and perivenous networks ($\Lambda_a, \Lambda_v$ with outer PVS boundaries $\Gamma_a, \Gamma_v$), the term $\delta_\Gamma$ is concentrated on the outer lateral surfaces of the PVSs, and defined in terms of its action on any sufficiently smooth function $v : \Omega \rightarrow \R$
+%and for each $\Lambda^i \subseteq \Lambda$ with PVS $\Omega^i$ and outer lateral surface $\Gamma^i = \partial \Omega^i_2$
+such that
 \begin{equation}
-  \mer{\int_{\Omega}} \xi (\overline{c} - \hat c ) \delta_\Gamma (v) =
+  \langle \xi (\overline{c} - \hat c ) \delta_\Gamma, v \rangle =
   \int_{\Lambda} P \xi (\overline{c} - \hat c ) \overline{v}, 
 \end{equation}
 under the assumption that $\xi$ is constant on each $\partial
-\Theta_2^i$. 
+\Theta_2^i$, see also~\cite{masri2024discontinuous}.
 %% , since:
 %% \begin{multline}
 %%   \int_{\Omega} \xi (\overline{c} - \hat c ) \delta_\Gamma (v) =
@@ -156,12 +158,9 @@ edges. Specifically, for an edge $\Lambda^i$ from $y_{\rm in}$ to $y_{\rm out}$
 \begin{equation}
   n_i(y_{\rm in}) = 1, \quad
   n_i(y_{\rm{out}}) = -1, \quad
-  n_i(y) = 0, \quad \forall y \in 
-  \mathcal{V} \
-  \,  \backslash \,  \{ y_{\rm in}, y_{\rm out} \}.  
+  n_i(y) = 0 \quad \foralls y \in 
+  \mathcal{V} \backslash \{ y_{\rm in}, y_{\rm out} \} .  
 \end{equation}
-
-\mer{MER: Stopped here.}
 
 %% For a given edge $\Lambda^i= (\mathsf{v}_\mathrm{in}^i, \mathsf{v}_{\mathrm{out}}^{i})$, we define the function $n_i: \mathcal{V} \rightarrow \{-1,0,1\}$ with $$
 %% $$
@@ -170,57 +169,58 @@ edges. Specifically, for an edge $\Lambda^i$ from $y_{\rm in}$ to $y_{\rm out}$
 %% \sum_{ i \in \mathcal{E}(\mathsf{v})} (\hat D A_i \phi \partial_s \hat{u}_i(\mathsf{v})  -  A_i \hat u_i(\mathsf{v}) \hat c_i(\mathsf{v})) n_i(\mathsf{v}) = 0  \label{eq:flux_conservation}
 %% \end{equation}
 
+\paragraph{Interface conditions between the brain and CSF spaces}
 
-\paragraph{Boundary and interface conditions}
-
-On the interface $\Gamma_{\mathrm{pia}}$ between the CSF and brain, we prescribe the following interface condition modeling a semi--permeable interface, writing $c|_{\Omega_{\rm PAR}} = c_{\rm PAR}$ and $c|_{\Omega_{\rm CSF}} = c_{\rm CSF}$:
+On the interface between the brain and the CSF spaces
+$\Gamma_{\mathrm{pia}} \cup \Gamma_{\rm LV}$, we prescribe the
+following interface conditions, which represent a semi--permeable
+interface, writing $c|_{\Omega_{\rm PAR}} = c_{\rm PAR}$ and
+$c|_{\Omega_{\rm CSF}} = c_{\rm CSF}$:
+%% \begin{subequations}
+%% \begin{alignat}{2}
+%% (-D \nabla (\phi c_{\rm{PAR}}) + \bm u_{\rm{PAR}} c_{\rm{PAR} }) \cdot \bm{n} &= - (- D (\phi \nabla c_{\rm{CSF}}) + \bm u_{\rm{CSF}} c_{\rm{CSF}} ) \cdot \bm{n} &&  \quad  \mathrm{on} \quad \Gamma_{\rm pia} \cup \Gamma_{\mathrm{LV}} ,  \\  
+%% (-D \nabla ( c_{\rm{PAR}}) + \bm u_{\rm{PAR}} c_{\rm{PAR} }) \cdot \bm{n} & = \beta_{\rm{pia}} (c_{\rm PAR} - c_{\mathrm{CSF}}) &&  \quad  \mathrm{on} \quad \Gamma_{\rm pia} \cup \Gamma_{\mathrm{LV}} ,  
+%% \end{alignat} 
+%% \end{subequations}
 \begin{subequations}
-\begin{alignat}{2}
-(-D \nabla (\phi c_{\rm{PAR}}) + \bm u_{\rm{PAR}} c_{\rm{PAR} }) \cdot \bm{n}_{\rm{PAR}} &= - (- D \nabla c_{\rm{CSF}} + \bm u_{\rm{CSF}} c_{\rm{CSF}} ) \cdot \bm{n}_{\rm{PAR}} &&  \quad  \mathrm{on} \quad \pia \cup \Gamma_{\mathrm{LV}} ,  \\  
-(-D \nabla ( c_{\rm{PAR}}) + \bm u_{\rm{PAR}} c_{\rm{PAR} }) \cdot \bm{n}_{\rm{PAR}} & = \beta_{\rm{pia}} (c_{\rm PAR} - c_{\mathrm{CSF}}) &&  \quad  \mathrm{on} \quad  \pia \cup \Gamma_{\mathrm{LV}} .  
+  \begin{alignat}{2}
+  (-D \nabla (\phi c) + \bm u c)|_{\Omega_{\rm PAR}} \cdot \bm{n}
+  &= - (-D \nabla (\phi c) + \bm u c)|_{\Omega_{\rm CSF}} \cdot \bm{n}
+  &&  \quad  \mathrm{on} \quad \Gamma_{\rm pia} \cup \Gamma_{\mathrm{LV}} ,  \\  
+  (- D \nabla (\phi  c) + \bm u c)|_{\Omega_{\rm PAR}} \cdot \bm{n} & = \beta_{\rm{pia}} (c_{\rm PAR} - c_{\mathrm{CSF}}) &&  \quad  \mathrm{on} \quad \Gamma_{\rm pia} \cup \Gamma_{\mathrm{LV}} ,  
 \end{alignat} 
-\end{subequations}
-Here, $\beta_{\mathrm{pia}}$ is a permeability constant between the
-brain and the CSF. \mer{MER: Is the inclusion of $\Gamma_{\rm LV}$
-  correct in the equation here? If so, text needs minor edits.}
+  \label{eq:interface:3d}%
+\end{subequations}%
+where $\bm{n} = \bm{n}_{\rm PAR}$ is the normal vector field defined
+over the interface, outward-pointing when viewed from $\Omega_{\rm
+  PAR}$, and $\beta_{\mathrm{pia}} \geqslant 0$ is a permeability
+constant.
 
-For the perivascular network, the boundary nodes are collected into
-$\partial \Lambda$. We assume no tracer outflow on all boundary nodes
-and prescribe a homogeneous Neumann condition:
+\paragraph{Boundary conditions: outer SAS interfaces and perivascular ends}
+
+We supplement~\eqref{eq:3d_pde} and~\eqref{eq:interface:3d} with the following boundary conditions representing a given molecular influx at $\Gamma_{\rm SSAS}$, molecular efflux at a constant update rate $\beta_{\rm exit}$ at $\Gamma_{\rm AM-U}$, and no influx or efflux elsewhere from the CSF spaces.
+\begin{alignat}{2}
+(D \nabla (\phi c) - \bm u c ) \cdot \bm{n} &= g_{\mathrm{influx}} &&  \quad  \mathrm{on} \quad \Gamma_{\rm SSAS},  \\ 
+% (-D \nabla (\phi c) + \bm u c ) \cdot \bm{n}_{\Gamma_{\rm SAS}} &= 0 &&  \quad  \mathrm{on} \quad \Gamma_{\rm SAS}^{\mathrm{out}}  \\ 
+(-D \nabla (\phi c) + \bm u c ) \cdot \bm{n} & = \beta c  &&  \quad  \mathrm{on} \quad \Gamma_{\rm AM-U},  \\ 
+(-D \nabla (\phi c) + \bm u c ) \cdot \bm{n} & = 0  &&  \quad  \mathrm{on} \quad \Gamma_{\rm AM-L} \discuss{\cup \Gamma_{\rm SC}}  .
+\end{alignat} 
+where again $\bm n$ denotes the outward-pointing boundary normal.
+
+%In the above, note that $\bm u \cdot \bm n  \neq 0$ on $\Gamma_{\rm LV} \cup \Gamma_{\rm skull^u}$ and $\bm u \cdot \bm n = 0$ on $\Gamma_{\rm SSAS} \cup \Gamma_{\rm skull^l} \cup \Gamma_{\rm Pia}$. 
+
+For the perivascular networks, we assume no molecular efflux at all
+end nodes $\mathcal{T}$ via a homogeneous Neumann condition
+augmenting~\eqref{eq:1d_pde}:
 \begin{equation}
-    \hat D A \partial_s (\phi \hat c) - A \hat u \hat c  = 0 \quad \mathrm{on} \quad \partial \Lambda. 
+    \hat D A \partial_s (\phi \hat c) - A \hat u \hat c  = 0 \quad \mathrm{on} \quad \mathcal{T}.
 \end{equation}
 
 %% Both $\Omega$ and $\Lambda$ are fixed in time and we assume
 %% constant-in- time radii (despite varying radii to drive peristaltic
 %% flow, see \cref{sec:sup:peristalsis}). 
 
-
-The above is supplemented with the following boundary conditions. 
-\begin{alignat}{2}
-(D \nabla (\phi c) - \bm u c ) \cdot \bm{n}_{\rm SAS} &= g_{\mathrm{influx}} &&  \quad  \mathrm{on} \quad \spinal  \\ 
-% (-D \nabla (\phi c) + \bm u c ) \cdot \bm{n}_{\spinal} &= 0 &&  \quad  \mathrm{on} \quad \spinal^{\mathrm{out}}  \\ 
-(-D \nabla (\phi c) + \bm u c ) \cdot \bm{n}_{\rm skull} & =   \beta c  &&  \quad  \mathrm{on} \quad \Gamma_{\rm skull^{u}}  \\ 
-(-D \nabla (\phi c) + \bm u c ) \cdot \bm{n}_{\rm skull} & =   0  &&  \quad  \mathrm{on} \quad \Gamma_{\rm skull^{l}}  \\ 
-(-D \nabla (\phi c_{\rm{PAR}}) + \bm u_{\rm{PAR}} c_{\rm{PAR} }) \cdot \bm{n}_{\rm{Pia}} &= - (-D \nabla  c_{\rm{CSF}} + \bm u_{\rm CSF} c_{\rm CSF} ) \cdot \bm{n}_{\rm{Pia}} &&  \quad  \mathrm{on} \quad \pia \cup \Gamma_{\mathrm{LV}}  \\ 
-(-D \nabla (\phi c_{\rm{PAR}}) + \bm u_{\rm{PAR}} c_{\rm{PAR} }) \cdot \bm{n}_{\rm{Pia}} & = \beta_{\rm{pia}} (c_{\rm PAR} - c_{\mathrm{CSF}}) &&  \quad  \mathrm{on} \quad \pia \cup \Gamma_{\mathrm{LV}}   .  
-\end{alignat} 
-
-%When convenient, we also denote $c|_{\Omega_{\rm PAR}} = c_{\rm PAR}$
-%and $c|_{\Omega_{\rm CSF}} = c_{\rm CSF}$.
-
-
-In the above, note that $\bm u \cdot \bm n  \neq 0$ on $\Gamma_{\rm LV} \cup \Gamma_{\rm skull^u}$ and $\bm u \cdot \bm n = 0$ on $\Gamma_{\rm SSAS} \cup \Gamma_{\rm skull^l} \cup \Gamma_{\rm Pia}$. 
-
-
-\paragraph*{Boundary conditions}
-On $\Gamma_{\mathrm{skull}}$, the interface towards the dura and skull (\Cref{fig:concept}), we consider a constant uptake (or efflux) rate, represented by the boundary condition 
-\begin{alignat}{2}
-(- D \nabla ( c_{\mathrm{CSF}}) + \bm u_{\mathrm{CSF}} c_{\mathrm{CSF}}) \cdot \bm{n}   & = \beta c_{\mathrm{CSF}}  && \quad \mathrm{on} \quad \Gamma_{\mathrm{skull}^{\rm u}},\\ 
-(-D \nabla c_{\rm CSF} + \bm u c_{\rm CSF}) \cdot \bm{n} & =  0   &&  \quad  \mathrm{on} \quad \Gamma_{\rm skull^{l}} , 
-\end{alignat}
-where $\beta$ represents a molecular outflow resistance. Here, we take $\beta = 10^{-4} \,\, \mathrm{mm}^2/\mathrm{s}$\cite{hornkjol2022csf}.
-
+\mer{MER: Stopped here.}
 
 \subsubsection{Incompressible Stokes flow of CSF in the SAS and ventricular system}
 
@@ -263,7 +263,7 @@ In case that the root does not lie within the CSF-space but the parenchyma, the 
 
 \subsection{Numerical Method}
 \label{sec:details_numerical_method}
-Here we provide details on the numerical method used to solve the coupled system. We are given a mesh $\mathcal{T}_h $, consisting of elements denoted by $E$, of $\Omega= \brain \cup \sas$.  The collection of all interior facets to $\Omega_{\rm PAR}$ (resp.  to $\Omega_{\mathrm{CSF}}$) is  denoted by $\mathcal{F}_{h,b}$ (resp. $\mathcal{F}_{h,c}$).  The union of all interior facets $\mathcal{F}_i = \mathcal{F}_{h,b} \cup \mathcal{F}_{h,c}$. Facets lying on the pial interface are denoted by $\mathcal{F}_{\pia}$, on the skull by $\mathcal{F}_{\skull}$, and on the spinal canal by $\mathcal{F}_{\spinal}$. Note that $\mathcal{F}_i \cap \mathcal{F}_{\pia} = \emptyset $. The union of all the facets is denoted by $\mathcal{F}_h$. The restriction of $\mathcal{T}_h $ to $\Omega_{\mathrm{CSF}}$ is denoted by $\mathcal{E}_{h}$. 
+Here we provide details on the numerical method used to solve the coupled system. We are given a mesh $\mathcal{T}_h $, consisting of elements denoted by $E$, of $\Omega= \Omega_{\rm PAR} \cup \Omega_{\rm CSF}$.  The collection of all interior facets to $\Omega_{\rm PAR}$ (resp.  to $\Omega_{\mathrm{CSF}}$) is  denoted by $\mathcal{F}_{h,b}$ (resp. $\mathcal{F}_{h,c}$).  The union of all interior facets $\mathcal{F}_i = \mathcal{F}_{h,b} \cup \mathcal{F}_{h,c}$. Facets lying on the pial interface are denoted by $\mathcal{F}_{\Gamma_{\rm pia}}$, on the skull by $\mathcal{F}_{\Gamma_{\rm skull}}$, and on the spinal canal by $\mathcal{F}_{\Gamma_{\rm SAS}}$. Note that $\mathcal{F}_i \cap \mathcal{F}_{\Gamma_{\rm pia}} = \emptyset $. The union of all the facets is denoted by $\mathcal{F}_h$. The restriction of $\mathcal{T}_h $ to $\Omega_{\mathrm{CSF}}$ is denoted by $\mathcal{E}_{h}$. 
 \subsubsection{CSF Flow}
 We recall the system of equations that we approximate. Find $(\bm u, p)$ such that 
 \begin{subequations}
@@ -319,7 +319,6 @@ where $A$ is the area of the PVS, $\mu$ is the dynamic viscosity, and $\kappa$ i
 \end{equation}
 
 As boundary conditions, we impose the precomputed fluid pressure $p_{\rm CSF}$ on the networks root nodes:
-
 \begin{equation}
     p_{\rm PVS} = p_{\rm CSF} \quad \text{ on } \Lambda^{\rm out}
 \end{equation}
@@ -375,7 +374,7 @@ a_h^{\mathrm{up}}(c_h, v_h) =- \sum_{E\in\mathcal{T}_h } \int_E \bm{u} c_h \nabl
 \end{equation*}
 The discrete formulation for \eqref{eq:3d_pde} then reads 
 \begin{multline}
-\int_{\Omega}\frac{1}{\tau} (\phi c_h^n - \phi c_h^{n-1}) v_h + a_h(c_h^n, v_h) + a_h^{\mathrm{up}}(c_h^n,v_h) + \int_{\Gamma_{\mathrm{pia}} } \beta_{\mathrm{pia}}[c_h^n][v_h]  \\ + \int_{\Gamma_{\rm skull^u}} \beta c_h^n v_h +  \int_{\Lambda} \xi  P (\overline{c_h^n} - \hat c_h^n) \overline{v_h}  = \int_{\Omega} f^n v_h + \int_{\spinal} \gin v_h , \quad \forall v_h \in V_h^k.
+\int_{\Omega}\frac{1}{\tau} (\phi c_h^n - \phi c_h^{n-1}) v_h + a_h(c_h^n, v_h) + a_h^{\mathrm{up}}(c_h^n,v_h) + \int_{\Gamma_{\mathrm{pia}} } \beta_{\mathrm{pia}}[c_h^n][v_h]  \\ + \int_{\Gamma_{\rm skull^u}} \beta c_h^n v_h +  \int_{\Lambda} \xi  P (\overline{c_h^n} - \hat c_h^n) \overline{v_h}  = \int_{\Omega} f^n v_h + \int_{\Gamma_{\rm SAS}} \gin v_h , \quad \forall v_h \in V_h^k.
 \end{multline}
 For approximating the solution of the 1D equations in the network, we use the space 
 \[ \hat V_h = \{ v_h \in C^0(\Lambda), 
