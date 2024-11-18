@@ -282,7 +282,6 @@ Cerebrospinal fluid flow
 \draft{\lipsum[1]}
 
 
-
 \subsection*{II: CSF flow}
 
 
@@ -761,24 +760,10 @@ Similar to the CSF spaces, dispersion due to cardiac and respiratory pulsation h
 
 \subsection*{Perivascular fluid flow induced by CSF pressure differences}
 
-The production of CSF in the choroid plexus generates a small, but consistent pressure gradient within the intracranial space. To compute the resulting CSF flow within the PVS, we solve 1D Darcy equations in the PVS network. The unknowns are the averaged PVS velocity, $u_{\rm pvs} = \langle u_{v,s} \rangle$, and the cross-section pressure $p_{\rm pvs} $ (assumed to be constant in each cross-section). The system is given by  \cite{daversin2022geometrically, gjerde2024directional} 
-\begin{alignat}{2}
-A \,  u_{\rm pvs}   + \frac{\kappa}{\mu} \, A \, \partial_{s} p_{\rm pvs} & = 0, &&  \quad \rm in  \,\, \Lambda  \\ 
--\partial_s (A \, u_{\rm pvs}) & = f, && \quad \rm in  \,\, \Lambda .  
-\end{alignat} 
-In the above, $A$ is the area of the PVS, $\mu$ is the dynamic viscosity, and $\kappa$ is derived from the assumption of Poiseuille
-flow in the annular cross-section of the PVS \cite{daversin2022geometrically,tithof2022network}: 
-\begin{equation}
-\kappa = \frac18 \left( R_2^2 + R_1^2 - \frac{1}{\ln(R_2/R_1)} (R_2^2- R_1^2) \right). 
-\end{equation}
-On bifurcations, conservation of fluxes is enforced weakly and continuity of the pressure is enforced strongly (in the choice of the finite element spaces). 
-
 Since the pressure gradient the caused by the steady production-driven CSF flow (see \cref{sec:csf_fluid_vel}), we impose the precomputed fluid pressure $p_{\rm CSF}$ on the networks root nodes:
-
 \begin{equation}
-    p_{\rm PVS} = p_{\rm CSF} \quad \text{ on } \Lambda^{\rm out}
+    \hat{p} = p_{\rm CSF} \quad \text{ on } \Lambda^{\rm out}
 \end{equation}
-
 In case that the root does not lie within the CSF-space but the parenchyma, the CSF pressure is not yet computed. For that reason, we apply a simple extension technique to map the CSF pressure field into $\Omega_{\rm PAR}$. In particular, we solve a Laplace equation on $\Omega_{\rm PAR}$ with the CSF pressure on the Pial membrane ($\Gamma_{\rm Pia}$) as a boundary condition.
 
 
