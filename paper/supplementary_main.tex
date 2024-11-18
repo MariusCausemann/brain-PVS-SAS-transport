@@ -1,11 +1,9 @@
 \section{Supplementary methods}
 
-These sections provide more detailed descriptions of the mathematical
-models and numerical approximations considered.
+These sections provide more detailed descriptions of the mathematical models and numerical approximations considered.
 
-\subsection{Mathematical models and definitions}
+\subsection{Mixed-dimensional transport and flow equations}
 \label{sec:more_maths}
-
 
 \subsubsection{Notation}
 
@@ -140,15 +138,16 @@ $\{\Lambda^i\}$ sharing the node $y$. To impose continuity of the
 concentrations, we set that the concentrations when viewed from each
 edge must match at nodes:
 \begin{equation}
-  \hat{c}^i (y) = \hat{c}_y \qquad \foralls \Lambda^i \in \mathcal{E}(y),
-  \quad \foralls y \in \mathcal{B} .
+  \hat{c}^i (y) = \hat{c}^j(y)
+  \qquad \foralls \Lambda^i, \Lambda^j \in \mathcal{E}(y)
+  \qquad \foralls y \in \mathcal{B} .
 \end{equation}
-Moreover, to ensure conservation of flux, we set that the flux going
-in and out at nodes should add to zero, or more precisely, that for
-each $y \in \mathcal{B}$:
+Moreover, to ensure \discuss{mass conservation}, we set that the flux
+going in and out at nodes should add to zero, or more precisely, that
+for each $y \in \mathcal{B}$:
 \begin{equation}
-  \sum_{i \in \mathcal{E}(y)}
-  \left (\hat{D}^i A^i \partial_s \hat{c}^i (y) - A^i \hat u^i(y) \hat{c^i}(y) \right ) n_i(y)
+  \sum_{\Lambda^i \in \mathcal{E}(y)}
+  \left (\hat{D}^i A^i \partial_s \hat{c}^i (y) - A^i \hat u^i(y) \hat{c}^i(y) \right ) n_i(y)
   = 0
   \label{eq:flux_conservation}
 \end{equation}
@@ -249,43 +248,68 @@ induced by CSF production in the choroid plexus with $\Gamma_{\rm AM-U}$ as the 
     \bm u \cdot \bm n & = \frac{1}{ |\Gamma_{\rm LV}|}  u_{\rm in}, \quad \bm u \cdot \bm \tau = 0 \quad && \text{ on } \Gamma_{\rm{LV}} ,  
   \end{alignat}
 \end{subequations}
-where $\bm n$ denotes the unit outward normal to the boundary, $\mu$ is the CSF viscosity, $R_0 > 0$ is a resistance parameter for CSF efflux, and $u_{\rm in}$ is a given fluid influx, here across the lateral ventricle wall $\Gamma_{\rm LV}$. We consider alternative variations of these boundary conditions in connection with estimating dispersion effects induced by CSF pulsatility, see~\Cref{sec:supp:dispersion}.
+where $\bm n$ denotes the unit outward normal to the boundary, $\mu$ is the (dynamic) CSF viscosity, $R_0 > 0$ is a resistance parameter for CSF efflux, and $u_{\rm in}$ is a given fluid influx, here across the lateral ventricle wall $\Gamma_{\rm LV}$. We consider alternative variations of these boundary conditions in connection with estimating dispersion effects induced by CSF pulsatility, see~\Cref{sec:supp:dispersion}.
 
 %% We consider non-zero convection in the CSF space $u_{\rm CSF} \not = 0$ in \eqref{eq:multi_transport_3d} resulting from steady state CSF production.  Recall that $\Omega_{\mathrm{CSF}}$ represents the CSF space and that $\Gamma_{\mathrm{skull^{u/l}}}$ and $\Gamma_{\mathrm{pia}}$, $\Gamma_{\mathrm{LV}}$ represent the boundaries facing the upper and lower parts of the dura, the pia and the lateral ventricles, respectively.  Assuming CSF production in the choroid plexus located at the lateral ventricle wall, we solve the  steady state Stokes equations for the velocity and the pressure $(\bm u_{\mathrm{CSF}}, p_{\mathrm{CSF}})$ in the CSF domain: 
 
 \subsubsection{Flow in perivascular networks induced by pressure gradients}
 
-To model flow induced by pressure differences between end nodes in a
-perivascular network $\Lambda$, with segments $\Lambda^i$, internal
-nodes $\mathcal{B}$ and end nodes $\mathcal{T}$, we consider the
-following system of hydraulic network
-equations~\cite{daversin2022geometrically, gjerde2024directional}. The
-unknowns are the PVS velocity $u_{\rm pvs}$ and pressure $p_{\rm
-  pvs}$, which represent the fluid velocity in the axial direction
-averaged across the PVS cross-sections and the cross-section-average
-fluid pressure, respectively, solving
-\mer{MER: Stopped here.}
+To model steady flow induced by pressure differences between end nodes
+in a perivascular network $\Lambda$, with edges $\{\Lambda^i\}_i$,
+internal nodes $\mathcal{B}$ and end nodes $\mathcal{T}$, we consider
+the following system of hydraulic network
+equations~\cite{tithof2022network, daversin2022geometrically,
+  gjerde2024directional}. The unknowns are the PVS flux $\hat{q} :
+\Lambda \rightarrow \R$ and pressure $\hat{p} : \Lambda
+\rightarrow \R$, which represent the fluid flux and the average
+pressure across cross-sections of the PVSs, respectively. These are
+defined for each $\Lambda^i$ by solving:
+\begin{subequations}
 \begin{alignat}{2}
-A \,  u_{\rm pvs}   + \frac{\kappa}{\mu} \, A \, \partial_{s} p_{\rm pvs} & = 0, &&  \quad \rm in  \,\, \Lambda  \\ 
--\partial_s (A \, u_{\rm pvs}) & = f, && \quad \rm in  \,\, \Lambda .  
+  \hat{q} + \frac{A \kappa}{\mu} \partial_{s} \hat{p} & = 0 &&
+  \quad \text{ in } \Lambda^i , \\ 
+  - \partial_s \hat{q} & = 0 &&
+  \quad \text{ in } \Lambda^i ,  
 \end{alignat} 
-In the above, $A$ is the area of the PVS, $\mu$ is the dynamic viscosity, and $\kappa$ is derived from the assumption of Poiseuille
-flow in the annular cross-section of the PVS \cite{daversin2022geometrically,tithof2022network}: 
+\label{eq:1d_flow}%
+\end{subequations}%
+where $A$ is the area of the PVS cross-sections, $\mu$ is the CSF viscosity as before, and $\kappa$ is derived from an assumption of Poiseuille flow in the annular cross-section of the PVS as~\cite{tithof2022network}: 
 \begin{equation}
 \kappa = \frac18 \left( R_2^2 + R_1^2 - \frac{1}{\ln(R_2/R_1)} (R_2^2- R_1^2) \right). 
 \end{equation}
-On bifurcations, conservation of fluxes is enforced weakly and continuity of the pressure is enforced strongly (in the choice of the finite element spaces). 
-
-Since the pressure gradient the caused by the steady production-driven CSF flow (see \cref{sec:csf_fluid_vel}), we impose the precomputed fluid pressure $p_{\rm CSF}$ on the networks root nodes:
-
+The PVS flux $\hat{q}$ and the associated average PVS velocity in the
+axial direction $\hat{u}$ are directly related by 
+area
 \begin{equation}
-    p_{\rm PVS} = p_{\rm CSF} \quad \text{ on } \Lambda^{\rm out}
+  \hat{q}^i = A^i \hat{u}^i \qquad \foralls \Lambda^i.
 \end{equation}
 
-In case that the root does not lie within the CSF-space but the parenchyma, the CSF pressure is not yet computed. For that reason, we apply a simple extension technique to map the CSF pressure field into $\Omega_{\rm PAR}$. In particular, we solve a Laplace equation on $\Omega_{\rm PAR}$ with the CSF pressure on the Pial membrane ($\Gamma_{\rm Pia}$) as a boundary condition.
+In addition, to complete~\eqref{eq:1d_flow}, we impose continuity of
+the fluid pressure and conservation of flux at each internal node. Write
+$\hat{p}^i = \hat{p}|_{\Lambda^i}$. These conditions then read as: for
+each $y \in \mathcal{B}$ with connected edges $\mathcal{E}(y)$:
+\begin{subequations}
+\begin{align}
+  \hat{p}^i(y) &= \hat{p}^j(y) \qquad \foralls \Lambda^i, \Lambda^j \in \mathcal{E}(y), \\
+  \sum_{\Lambda^i \in \mathcal{E}(y)} \hat{q}^i n^i(y) &= 0  .
+\end{align}
+\end{subequations}
+Finally, to drive this flow, we impose given fluid pressures $p_0$ at the
+network end nodes:
+\begin{equation}
+  \hat{p}(y) = p_0(y) \qquad y \in \mathcal{T} .
+\end{equation}
+In the case where modelling flow in the perivascular networks
+$\Lambda_a, \Lambda_v$ induced by CSF production, we impose the fluid
+pressure $p_{\rm CSF}$ computed in the CSF spaces $\Omega_{\rm CSF}$
+(and its harmonic extensions into $\Omega_{\rm PAR}$) as the given
+fluid pressures $p_0$.
 
-\subsection{Numerical Method}
+\mer{MER: Stopped here.}
+
+\subsection{Numerical solution of the transport and flow equations}
 \label{sec:details_numerical_method}
+
 Here we provide details on the numerical method used to solve the coupled system. We are given a mesh $\mathcal{T}_h $, consisting of elements denoted by $E$, of $\Omega= \Omega_{\rm PAR} \cup \Omega_{\rm CSF}$.  The collection of all interior facets to $\Omega_{\rm PAR}$ (resp.  to $\Omega_{\mathrm{CSF}}$) is  denoted by $\mathcal{F}_{h,b}$ (resp. $\mathcal{F}_{h,c}$).  The union of all interior facets $\mathcal{F}_i = \mathcal{F}_{h,b} \cup \mathcal{F}_{h,c}$. Facets lying on the pial interface are denoted by $\mathcal{F}_{\Gamma_{\rm pia}}$, on the skull by $\mathcal{F}_{\Gamma_{\rm skull}}$, and on the spinal canal by $\mathcal{F}_{\Gamma_{\rm SAS}}$. Note that $\mathcal{F}_i \cap \mathcal{F}_{\Gamma_{\rm pia}} = \emptyset $. The union of all the facets is denoted by $\mathcal{F}_h$. The restriction of $\mathcal{T}_h $ to $\Omega_{\mathrm{CSF}}$ is denoted by $\mathcal{E}_{h}$. 
 
 \subsubsection{Solute transport}
@@ -363,33 +387,8 @@ We set $\sigma =20$. The discretization for the CSF flow, is then to find $(\bm 
 \mathcal{A}_h(u_h, v_h)  + \sum_{F \in \mathcal{F}_{\Gamma_{\mathrm{skull}}}} \int_{F} R_0 (\bm u_h \cdot \bm n) (\bm v_h \cdot \bm n) - \int_{\Omega} \nabla \cdot \bm v_h \, p_h  & = 0, \quad \forall \bm v_h \in \bm V_h   \\ 
 (\nabla \cdot \bm u_h , q_h ) & = 0, \quad \forall q_h \in S_h.
 \end{align}
+
 \subsubsection{PVS flow} 
-
-
-Recall that we compute pressure-driven flow within the PVS by solving a 1D Darcy equations in the PVS network. The unknowns are the averaged PVS velocity, $u_{\rm pvs} = \langle u_{v,s} \rangle$, and the cross-section pressure $p_{\rm pvs} $ (assumed to be constant in each cross-section). The system is given by  \cite{daversin2022geometrically, 
-gjerde2024directional} 
-
-\begin{alignat}{2}
-A \,  u_{\rm pvs}   + \frac{\kappa}{\mu} \, A \, \partial_{s} p_{\rm pvs} & = 0, &&  \quad \rm in  \,\, \Lambda  \\ 
--\partial_s (A \, u_{\rm pvs}) & = f, && \quad \rm in  \,\, \Lambda .  
-\end{alignat} 
-
-where $A$ is the area of the PVS, $\mu$ is the dynamic viscosity, and $\kappa$ is derived from the assumption of Poiseuille flow in the annular cross-section of the PVS  \cite{daversin2022geometrically,tithof2022network}: 
-\begin{equation}
-\kappa = \frac18 \left( R_2^2 + R_1^2 - \frac{1}{\ln(R_2/R_1)} (R_2^2- R_1^2) \right). 
-\end{equation}
-
-As boundary conditions, we impose the precomputed fluid pressure $p_{\rm CSF}$ on the networks root nodes:
-\begin{equation}
-    p_{\rm PVS} = p_{\rm CSF} \quad \text{ on } \Lambda^{\rm out}
-\end{equation}
-
-In case that the root does not lie within the CSF-space but the parenchyma, the CSF pressure is not yet computed. For that reason, we apply a simple extension technique to map the CSF pressure field into $\Omega_{\rm PAR}$.
-In particular, we solve the Laplace equation
-\begin{equation}
-    - \Delta p = 0; \quad p = p_{\rm CSF} \text{ on } \Gamma_{\rm Pia}
-\end{equation}
-to obtain the extension of $p_{\rm CSF}$ onto $\Omega_{\rm PAR}$.
 
 To enforce conservation of flux and continuity of pressure on bifurcation points, we approximate the velocity with a piecewise discontinuous polynomials and the pressure with continuous piecewise polynomials, respectively. The finite element spaces thus are:
 
@@ -399,19 +398,17 @@ To enforce conservation of flux and continuity of pressure on bifurcation points
    Q_h^{\rm PVS} = \{ q_h \in C^0(\Lambda),  q_h \vert_{\Lambda^i} \in \mathbb{P}^k(\Lambda_i), q_h \vert_{\Gamma_{\rm Pia}} = p_{\rm CSF} \}
 \end{align}
 
-The weak form reads: Find $(u_{\rm PVS}, p_{\rm PVS}) \in V_h^{\rm PVS} \times Q_h^{\rm PVS}$ such that
+The weak form reads: Find $(\hat{u}, \hat{p}) \in V_h^{\rm PVS} \times Q_h^{\rm PVS}$ such that
 
 \begin{align}
-(A u_{\rm PVS}, v) + \left(v, \frac{A \kappa}{\mu} \partial_s p_{\rm PVS}  \right) &= 0 \quad \forall v \in V_h^{\rm PVS} \\
-(A u_{\rm PVS} , \partial_s q ) &= 0 \quad  \forall q \in  Q_h^{\rm PVS}
+(A \hat{u}, v) + \left(v, \frac{A \kappa}{\mu} \partial_s \hat{p}  \right) &= 0 \quad \forall v \in V_h^{\rm PVS} \\
+(A \hat{u}, \partial_s q ) &= 0 \quad  \forall q \in  Q_h^{\rm PVS}
 \end{align}
 
 where $\tau$ is the tangent vector of the network. Here we employ the lowest order discretization and set $k=1$. For discussion of stability of the discrete model we refer to \cite{gjerde2024directional}. 
 
-
-\subsection{Dispersion in the CSF spaces}
+\subsection{Modelling dispersion in the CSF spaces}
 \label{sec:supp:dispersion}
-
 
 In addition, CSF pulsates in the SAS and ventricular system with each
 cardiac and respiratory cycle.
