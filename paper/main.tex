@@ -309,7 +309,6 @@ The aqueductal ($0.31\,$ml/s) and craniocervical ($8.31\,$ml/s) flow rates predi
 Sharp et al used the theory of dispersive mixing to predict a dispersion enhancement factor of $91.8$ in the (open) spinal SAS, which lies well within the range of our spatially varying estimate (ranging from 0 to 160). Conversely, \cite{ray2021quantitative} report up to 10,000 times greater diffusion in perivascular regions, but their modelling lumps diffusive, dispersive and advective transport in a single enhancement factor and is thus not directly comparable.
 
 
-%"However, dispersion only adds a factor of two locally in the PVS alone when compared to extracellular diffusion Asgari et al. (2016); Sharp et al. (2019a)"
 
 \begin{figure}[h!]
 \centering 
@@ -742,17 +741,20 @@ the CSF pressure gradient at peak arterial dilation with theoretical
 estimates for shear-augmented (Taylor) dispersion
 \cite{taylor1953dispersion, watson1983diffusion, keith2019dispersion}. \mer{Include 1-2 sentences from Supplementary Methods here -- but which? And also revisit references with MC.}
 
+\mer{MER: Stopped here. WIP in Supplementary Methods.}
+
 \subsection*{Dispersion in the PVS}
 
-In contrast to the CSF space, pulsatile mixing plays a negligible role in the PVS
-\begin{itemize}
-    \item \cite{asgari2016glymphatic}
-    \item \cite{troyetsky2021dispersion}
-    \item \cite{keith2019dispersion}
-\end{itemize}
+Similar to the CSF spaces, dispersion due to cardiac and respiratory pulsation has been hypothesized to enhance transport in the perivascular spaces. However, recent estimates indicate that the effect of dispersion does not exceed a factor of 2 compared to diffusion alone \cite{asgari2016glymphatic,keith2019dispersion,bojarskaite2023sleep,asgari2016glymphatic,troyetsky2021dispersion}, and we thus do not model dispersive effects in the PVS. 
+\mar{Maybe we should just take a factor of 2 as the upper bound?}
+
+% \cite{keith2019dispersion}: dispersion in PVS is negligiable in porous PVS, but might be relevant in open PVS (R=220) (theoretical estimates)
+%  \cite{bojarskaite2023sleep} numerical simulations show that the enhancement factor is likely in the range of 10 - 50 \%
+%\cite{asgari2016glymphatic} numerical simulations show increase of 16% to 50%  in distribution lengths
+%\cite{troyetsky2021dispersion}:   maximum enhancement of diffusion of only about 5%
 
 
-\mer{MER: Stopped here. WIP in Supplementary Methods.}
+
 
 \subsection*{Perivascular fluid flow induced by CSF pressure differences}
 
