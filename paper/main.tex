@@ -243,7 +243,7 @@ Cerebrospinal fluid flow
   ``A digital twin'' for molecular enrichment and clearance in human intracranial spaces
 \item
   CSF flow, the role of production versus no/cardiac/respiratory
-  dispersive effects on tracer trajectories, flow bifurcation.
+  dispersive effects on tracer trajectories, flow bifurcation. With and without tentorium cerebellum.
 \item
   ``The role'' of PVS flow speed
 \item
@@ -285,10 +285,13 @@ Cerebrospinal fluid flow
 
 \subsection*{II: CSF flow}
 
+
 Flow of CSF through the SAS and the ventricular system is a crucial driver of transport in the human brain environment. While cardiac- and respiratory induced oscillatory flow increases mixing, the production of CSF in the choroid plexus creates a steady advective flow within the CSF-filled spaces of the cranium \cite{hornkjol2022csf}. 
 We construct a 3D model of the SAS and the ventricular system (\Cref{fig:csf_flow_geom}) and compute CSF flow fields for three different scenarios: CSF production in the choroid plexus, CSF flow at systolic peak blood inflow and CSF flow in response to free breathing.
 
 To simulate the production-driven flow, we impose an inflow of $630\,$ml/day \cite{nilsson1992circadian} across the surface of the lateral ventricle and allow a resistive outflow across the upper convexity of the skull (see \Cref{fig:csf_flow_geom}), leading to a total pressure drop of $35\,$mPa between the production and outflow sites. A maximum flow velocity of $2\,$mm/s is attained in the aqueduct (\Cref{fig:csf_flow_prod}), while the mean velocity in the SAS is $4.4\,\mu$m/s.
+
+The Stokes system is solved with the finite element software $FEniCS$, stored and then subsequently read for all the relevant solute transport simulations. See Figure~\ref{fig:csf_flow_cardiac} for a streamline visualization of the obtained velocity profile and \Cref{sec:details_numerical_method} for details on the numerical algorithm employed.
 
 Assessing the effect of cardiac-driven dispersion, we compute a steady CSF flow field at peak cranial blood volume during the cardiac cycle. We mimic resulting the reduced CSF space volume by imposing an inflow of $8\,$ml/s \cite{baledent2014imaging} and $0.31\,$ml/s \cite{vinje2019respiratory} across the arachnoid mater and the lateral ventricle surface, respectively. We allow free outflow into the spinal SAS. In addition, we upscale the obtained pressure field to account for the lack of pulsatile inertial effects in our model (see \ref{sec:dispersion_details}). In this scenario, we observe a pressure drop of $8.5\,$Pa between lateral ventricles and the spinal SAS and a maximum flow velocity of $0.29\,$m/s at the craniocervical junction.
 Next, we estimate a spatially varying dispersion enhancement factor $R$ from cardiac-induced pulsatility by combining the computed pressure field with the theory of shear-augmented dispersion (see \Cref{sec:dispersion_details}). We find that cardiac-induced pulsatile CSF flow increases the effective diffusion by up to two orders of magnitude in the aqueduct and around the cisterna magna, but has little effect in most of the SAS ($R < 1$) (\Cref{fig:csf_flow_R_cardiac}). 
