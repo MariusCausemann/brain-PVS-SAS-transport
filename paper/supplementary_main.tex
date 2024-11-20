@@ -48,6 +48,7 @@ graph with the centerlines $\{ \Lambda^i \}$ as oriented edges and the
 connections as nodes $\mathcal{V}$.
 
 \subsubsection{Solute transport and exchange in intracranial domains (3D) and perivascular networks (1D)}
+\label{sec:app:transport_eqs}
 
 In this section, we describe the mathematical
 model~\eqref{eq:multi_transport}, the associated definitions,
@@ -59,11 +60,14 @@ a concentration field $c = c(x, t)$ for $x \in \Omega$ and $t > 0$
 defined in $\Omega_{\rm PAR}$ and $\Omega_{\rm CSF}$ separately. In
 each of these domains, $c$ satisfies
 \begin{equation}
-  \partial_t (\phi c) - \nabla \cdot (D \nabla (\phi c) ) + \nabla \cdot (\bm u c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma = f \quad \quad \mathrm{in} \quad \Omega_{\rm CSF}, \Omega_{\rm{PAR}}.
+  \partial_t (\phi c) - \nabla \cdot (D \nabla (\phi c) ) + \nabla \cdot (\bm u c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma
+  %= f
+   = 0
+  \quad \quad \mathrm{in} \quad \Omega_{\rm CSF}, \Omega_{\rm{PAR}}.
   \label{eq:3d_pde}
 \end{equation}
 In~\eqref{eq:3d_pde}, $\phi$ is the fluid volume fraction (also known as the porosity) defined in the parenchyma ($\phi \ll 1$ in $\Omega_{\rm PAR}$) and in the CSF spaces ($\phi = 1$ in $\Omega_{\rm CSF}$). In the parenchyma, $\phi$ represents the extracellular space volume fraction. Moreover, $D$ is the effective diffusion coefficient of the relevant solute in the respective media which takes different values over the CSF spaces and the parenchyma, depending on tortuosity~\cite{sykova2008diffusion} and dispersive effects; and $\bm u$ is a convective velocity field representing the flow of CSF in $\Omega_{\rm CSF}$ and the flow of ISF in $\Omega_{\rm PAR}$. $\xi$ models a transfer or exchange parameter between the 3D domain ($\Omega_{\rm PAR}$ or $\Omega_{\rm CSF}$) and the perivacular networks $\Lambda_a, \Lambda_v$. To summarize,
-\[
+\begin{equation*}
 \phi =  \begin{cases}
   1  & \mathrm{in} \;  \Omega_{\rm{CSF}} \\ 
   \phi_{\rm{PAR}} & \mathrm{in} \; \Omega_{\rm{PAR}} 
@@ -79,20 +83,20 @@ D = \begin{cases}
   \xi_{\rm{CSF}} & \mathrm{if} |\Omega^i \cap \Omega_{\rm{CSF}}| \neq 0 \\
   \xi_{\rm{EF}} & \mathrm{if} |\Omega^i \cap \Omega_{\rm{PAR}}| \neq 0  
 \end{cases} . 
-\]
+\end{equation*}
 In the above, $\xi$ is defined segment-wise: for each centerline $\Lambda^i$ with surrounding PVS $\Omega^i$, $|\Omega^i \cap \Omega_{\rm{PAR}}|$ (resp. $|\Omega^i \cap \Omega_{\rm{CSF}}|$) is nonzero whenever $\Omega^i$ intersects $\Omega_{\rm{PAR}}$ (resp. $\Omega_{\rm{CSF}}$). If the surrounding PVS intersects both, then we set $\xi = \xi_{\rm EF}$ if $\Omega^i$ mainly ($80$ percent) intersects $\Omega_{\rm{PAR}}$, in which case the interaction with $\Omega_{\rm{CSF}}$ is ignored; otherwise, we set $\xi = \xi_{\rm CSF}$. 
  
 Also in~\eqref{eq:3d_pde}, the notation $\overline{c}$ denotes a lateral average of the concentration over the outer perivascular surfaces, defined for each centerline $\Lambda^i$ and each point $s \in \Lambda^i$ by
-\begin{equation}
+\begin{equation*}
   \overline{c}(s) = \frac{1}{P(s)} \int_{\partial \Theta_2^i(s)} c 
-\end{equation}
+\end{equation*}
 where $\partial \Theta_2^i(s)$ is the outer boundary of the cross-section $\Theta(s)$ of the PVS $\Omega^i$ at $s$ and $P(s)$ is the perimeter of $\Theta(s)$. Moreover, for both the periarterial and perivenous networks ($\Lambda_a, \Lambda_v$ with outer PVS boundaries $\Gamma_a, \Gamma_v$), the term $\delta_\Gamma$ is concentrated on the outer lateral surfaces of the PVSs, and defined in terms of its action on any sufficiently smooth function $v : \Omega \rightarrow \R$
 %and for each $\Lambda^i \subseteq \Lambda$ with PVS $\Omega^i$ and outer lateral surface $\Gamma^i = \partial \Omega^i_2$
 such that
-\begin{equation}
+\begin{equation*}
   \langle \xi (\overline{c} - \hat c ) \delta_\Gamma, v \rangle =
   \int_{\Lambda} P \xi (\overline{c} - \hat c ) \overline{v}, 
-\end{equation}
+\end{equation*}
 under the assumption that $\xi$ is constant on each $\partial
 \Theta_2^i$, see also~\cite{masri2024discontinuous}.
 %% , since:
@@ -111,6 +115,43 @@ under the assumption that $\xi$ is constant on each $\partial
 %% \end{equation}
 %% }
 
+On the interface between the brain and the CSF spaces
+$\Gamma_{\mathrm{pia}} \cup \Gamma_{\rm LV}$, we prescribe the
+following interface conditions, which represent a semi--permeable
+interface, writing $c|_{\Omega_{\rm PAR}} = c_{\rm PAR}$ and
+$c|_{\Omega_{\rm CSF}} = c_{\rm CSF}$:
+%% \begin{subequations}
+%% \begin{alignat}{2}
+%% (-D \nabla (\phi c_{\rm{PAR}}) + \bm u_{\rm{PAR}} c_{\rm{PAR} }) \cdot \bm{n} &= - (- D (\phi \nabla c_{\rm{CSF}}) + \bm u_{\rm{CSF}} c_{\rm{CSF}} ) \cdot \bm{n} &&  \quad  \mathrm{on} \quad \Gamma_{\rm pia} \cup \Gamma_{\mathrm{LV}} ,  \\  
+%% (-D \nabla ( c_{\rm{PAR}}) + \bm u_{\rm{PAR}} c_{\rm{PAR} }) \cdot \bm{n} & = \beta_{\rm{pia}} (c_{\rm PAR} - c_{\mathrm{CSF}}) &&  \quad  \mathrm{on} \quad \Gamma_{\rm pia} \cup \Gamma_{\mathrm{LV}} ,  
+%% \end{alignat} 
+%% \end{subequations}
+\begin{subequations}
+  \begin{alignat}{2}
+  (-D \nabla (\phi c) + \bm u c)|_{\Omega_{\rm PAR}} \cdot \bm{n}
+  &= - (-D \nabla (\phi c) + \bm u c)|_{\Omega_{\rm CSF}} \cdot \bm{n}
+  &&  \quad  \mathrm{on} \quad \Gamma_{\rm pia} \cup \Gamma_{\mathrm{LV}} ,  \\  
+  (- D \nabla (\phi  c) + \bm u c)|_{\Omega_{\rm PAR}} \cdot \bm{n} & = \beta_{\rm{pia}} (c_{\rm PAR} - c_{\mathrm{CSF}}) &&  \quad  \mathrm{on} \quad \Gamma_{\rm pia} \cup \Gamma_{\mathrm{LV}} ,  
+\end{alignat} 
+  \label{eq:3d_interface}%
+\end{subequations}%
+where $\bm{n} = \bm{n}_{\rm PAR}$ is the normal vector field defined
+over the interface, outward-pointing when viewed from $\Omega_{\rm
+  PAR}$, and $\beta_{\mathrm{pia}} \geqslant 0$ is a permeability
+constant.
+
+We supplement~\eqref{eq:3d_pde} and~\eqref{eq:3d_interface} with the following boundary conditions representing a given molecular influx at $\Gamma_{\rm SSAS}$, molecular efflux at a constant update rate $\beta_{\rm exit}$ at $\Gamma_{\rm AM-U}$, and no influx or efflux elsewhere from the CSF spaces.
+\begin{subequations}
+\begin{alignat}{2}
+(D \nabla (\phi c) - \bm u c ) \cdot \bm{n} &= g_{\mathrm{influx}} &&  \quad  \mathrm{on} \quad \Gamma_{\rm SSAS},  \\ 
+% (-D \nabla (\phi c) + \bm u c ) \cdot \bm{n}_{\Gamma_{\rm SAS}} &= 0 &&  \quad  \mathrm{on} \quad \Gamma_{\rm SAS}^{\mathrm{out}}  \\ 
+(-D \nabla (\phi c) + \bm u c ) \cdot \bm{n} & = \beta_{\rm exit} c  &&  \quad  \mathrm{on} \quad \Gamma_{\rm AM-U},  \\ 
+(-D \nabla (\phi c) + \bm u c ) \cdot \bm{n} & = 0  &&  \quad  \mathrm{on} \quad \Gamma_{\rm AM-L} \cup \Gamma_{\rm SC}  .
+\end{alignat} 
+\label{eq:3d_bcs}
+\end{subequations}
+where again $\bm n$ denotes the outward-pointing boundary normal.
+
 The concentration $\hat{c} = \hat{c}(s, t)$ in the periarterial and
 perivenous networks ($s \in \Lambda_a, s \in \Lambda_v$), entering
 in~\eqref{eq:3d_pde}, represents the concentration in the perivascular
@@ -126,8 +167,9 @@ PVS cross-sectional area; i.e.,~for each $s \in \Lambda^i$ with
 associated PVS $\Omega^i$, the area of the cross-section
 $\Theta^i(s)$. Also, $\hat{D}$ is the effective diffusion coefficient,
 and $\hat{u}$ is a convective velocity representing an (average) CSF
-flow velocity in the axial direction of the perivascular spaces. To
-complete~\eqref{eq:1d_pde}, we prescribe bifurcation conditions at
+flow velocity in the axial direction of the perivascular spaces.
+
+To complete~\eqref{eq:1d_pde}, we prescribe bifurcation conditions at
 internal nodes of the perivascular networks $\Lambda_a, \Lambda_v$ and
 boundary conditions at the end nodes. To this end, define the set of
 internal nodes $\mathcal{B} \subset \mathcal{V}$ as the set of nodes
@@ -163,59 +205,8 @@ edges. Specifically, for an edge $\Lambda^i$ from $y_{\rm in}$ to $y_{\rm out}$
   \label{eq:def:sign}
 \end{equation}
 
-%% For a given edge $\Lambda^i= (\mathsf{v}_\mathrm{in}^i, \mathsf{v}_{\mathrm{out}}^{i})$, we define the function $n^i: \mathcal{V} \rightarrow \{-1,0,1\}$ with $$
-%% $$
-%% The collection of bifurcation points is denoted by $\mathcal{B} = \{ \mathsf{v} \in \mathcal{V}, \,\,  \mathrm{card}(\mathcal{E}(\mathsf{v})) \geq  3\}$. For any $\mathsf{v} \in \mathcal{B}$, we have 
-%% \begin{equation}
-%% \sum_{ i \in \mathcal{E}(\mathsf{v})} (\hat D A_i \phi \partial_s \hat{u}_i(\mathsf{v})  -  A_i \hat u_i(\mathsf{v}) \hat c_i(\mathsf{v})) n^i(\mathsf{v}) = 0  \label{eq:flux_conservation}
-%% \end{equation}
-
-\paragraph{Interface conditions between the brain and CSF spaces}
-
-On the interface between the brain and the CSF spaces
-$\Gamma_{\mathrm{pia}} \cup \Gamma_{\rm LV}$, we prescribe the
-following interface conditions, which represent a semi--permeable
-interface, writing $c|_{\Omega_{\rm PAR}} = c_{\rm PAR}$ and
-$c|_{\Omega_{\rm CSF}} = c_{\rm CSF}$:
-%% \begin{subequations}
-%% \begin{alignat}{2}
-%% (-D \nabla (\phi c_{\rm{PAR}}) + \bm u_{\rm{PAR}} c_{\rm{PAR} }) \cdot \bm{n} &= - (- D (\phi \nabla c_{\rm{CSF}}) + \bm u_{\rm{CSF}} c_{\rm{CSF}} ) \cdot \bm{n} &&  \quad  \mathrm{on} \quad \Gamma_{\rm pia} \cup \Gamma_{\mathrm{LV}} ,  \\  
-%% (-D \nabla ( c_{\rm{PAR}}) + \bm u_{\rm{PAR}} c_{\rm{PAR} }) \cdot \bm{n} & = \beta_{\rm{pia}} (c_{\rm PAR} - c_{\mathrm{CSF}}) &&  \quad  \mathrm{on} \quad \Gamma_{\rm pia} \cup \Gamma_{\mathrm{LV}} ,  
-%% \end{alignat} 
-%% \end{subequations}
-\begin{subequations}
-  \begin{alignat}{2}
-  (-D \nabla (\phi c) + \bm u c)|_{\Omega_{\rm PAR}} \cdot \bm{n}
-  &= - (-D \nabla (\phi c) + \bm u c)|_{\Omega_{\rm CSF}} \cdot \bm{n}
-  &&  \quad  \mathrm{on} \quad \Gamma_{\rm pia} \cup \Gamma_{\mathrm{LV}} ,  \\  
-  (- D \nabla (\phi  c) + \bm u c)|_{\Omega_{\rm PAR}} \cdot \bm{n} & = \beta_{\rm{pia}} (c_{\rm PAR} - c_{\mathrm{CSF}}) &&  \quad  \mathrm{on} \quad \Gamma_{\rm pia} \cup \Gamma_{\mathrm{LV}} ,  
-\end{alignat} 
-  \label{eq:3d_interface}%
-\end{subequations}%
-where $\bm{n} = \bm{n}_{\rm PAR}$ is the normal vector field defined
-over the interface, outward-pointing when viewed from $\Omega_{\rm
-  PAR}$, and $\beta_{\mathrm{pia}} \geqslant 0$ is a permeability
-constant.
-
-\paragraph{Boundary conditions: outer SAS interfaces and perivascular ends}
-
-We supplement~\eqref{eq:3d_pde} and~\eqref{eq:3d_interface} with the following boundary conditions representing a given molecular influx at $\Gamma_{\rm SSAS}$, molecular efflux at a constant update rate $\beta_{\rm exit}$ at $\Gamma_{\rm AM-U}$, and no influx or efflux elsewhere from the CSF spaces.
-\begin{subequations}
-\begin{alignat}{2}
-(D \nabla (\phi c) - \bm u c ) \cdot \bm{n} &= g_{\mathrm{influx}} &&  \quad  \mathrm{on} \quad \Gamma_{\rm SSAS},  \\ 
-% (-D \nabla (\phi c) + \bm u c ) \cdot \bm{n}_{\Gamma_{\rm SAS}} &= 0 &&  \quad  \mathrm{on} \quad \Gamma_{\rm SAS}^{\mathrm{out}}  \\ 
-(-D \nabla (\phi c) + \bm u c ) \cdot \bm{n} & = \beta c  &&  \quad  \mathrm{on} \quad \Gamma_{\rm AM-U},  \\ 
-(-D \nabla (\phi c) + \bm u c ) \cdot \bm{n} & = 0  &&  \quad  \mathrm{on} \quad \Gamma_{\rm AM-L} \cup \Gamma_{\rm SC}  .
-\end{alignat} 
-\label{eq:3d_bcs}
-\end{subequations}
-where again $\bm n$ denotes the outward-pointing boundary normal.
-
-%In the above, note that $\bm u \cdot \bm n  \neq 0$ on $\Gamma_{\rm LV} \cup \Gamma_{\rm skull^u}$ and $\bm u \cdot \bm n = 0$ on $\Gamma_{\rm SSAS} \cup \Gamma_{\rm skull^l} \cup \Gamma_{\rm Pia}$. 
-
-For the perivascular networks, we assume no molecular efflux at all
-end nodes $\mathcal{T}$ via a homogeneous Neumann condition
-augmenting~\eqref{eq:1d_pde}:
+Finally, we assume no molecular efflux at all end nodes $\mathcal{T}$
+via a homogeneous Neumann condition augmenting~\eqref{eq:1d_pde}:
 \begin{equation}
     \hat D A \partial_s (\phi \hat c) - A \hat u \hat c  = 0 \quad \mathrm{on} \quad \mathcal{T}.
     \label{eq:1d_bcs}
@@ -231,7 +222,7 @@ The time-independent, incompressible Stokes equations model the flow
 of an incompressible Newtonian fluid at low Reynolds numbers, and read
 as follows: over the domain $\Omega_{\rm CSF} \subset \R^3$, find the
 velocity vector field $\bm u : \Omega_{\rm CSF} \rightarrow \R^3$ and
-the pressure $p : \Omega_{\rm CSF} \rightarrow \R$ such that
+the pressure field $p : \Omega_{\rm CSF} \rightarrow \R$ such that
 \begin{subequations}
   \begin{alignat}{2}
     - \mu \Delta \bm u  + \nabla p &=  0 \quad && \text{ in } \Omega_{\rm CSF},
@@ -354,8 +345,7 @@ and~\eqref{eq:flux_conservation}, and the boundary
 conditions~\eqref{eq:3d_bcs} and~\eqref{eq:1d_bcs}. We discretize
 these equations using an implicit finite difference scheme in time and
 a discontinuous Galerkin (DG) finite element method with upwinding in
-space to capture the sharp boundary layers.
-
+space to accurately capture sharp boundary layers.
 
 We first consider the discretization of~\eqref{eq:3d_pde} and
 introduce the discrete space
@@ -373,7 +363,7 @@ to~\cite{ern2009discontinuous} and \cite[Section
 method. \discuss{Recall that $\phi$ is constant in each domain
   $\Omega_{\rm PAR}$ and $\Omega_{\rm CSF}$, and thus in particular
   that $\nabla (\phi c) = \phi \nabla c$ on each $E \in \mathcal{T}$.}
-Define
+Define for $c, v \in V_h^k$:
 \begin{equation}
   a_h (c, v)
   =
@@ -386,36 +376,51 @@ Define
 In~\eqref{eq:dg_sip}, for each facet $F \in \mathcal{F}^i$ shared
 between cells $E^1$ and $E^2$ with facet normal vector $\bm n_F$
 pointing from $E^1$ to $E^2$, the jump $[\cdot]$ is given by $[v] =
-v|_{E^1} - v|_{E^2}$, and the weighed average $\{ \cdot \}_w$ is
-defined as:
+v|_{E^1} - v|_{E^2}$, and the unweighted average $\{ \cdot \}$ and
+weighed average $\{ \cdot \}_w$ are defined as:
 \begin{equation}
-  \{v\}_{w} = \frac{\kappa_2}{\kappa_1 + \kappa_2} v |_{E^1} + \frac{\kappa_1}{\kappa_1 + \kappa_2} v |_{E^2},
+  \{v\} = \frac12 v |_{E^1} + \frac12 v |_{E^2}, \qquad
+  \{v\}_{w} = \frac{\kappa_2}{\kappa_1 + \kappa_2} v |_{E^1} + \frac{\kappa_1}{\kappa_1 + \kappa_2} v |_{E^2}
   \quad \text{where} \quad \kappa_i = \phi D|_{E^i}.  
 \end{equation}
-The parameter $\gamma_{D,F}$ is the harmonic mean of the \discuss{porosity-weighted} diffusion coefficient given by 
+The parameter $\gamma_{D,F}$ is the harmonic mean of the
+\discuss{porosity-weighted} diffusion coefficient given by
 \begin{equation}
   \gamma_{D,F} = \frac{\kappa_1\kappa_2}{\kappa_1 + \kappa_2},
 \end{equation}
-and $\eta$ is a user-specified penalty parameter.
+and $\eta$ is a user-specified penalty parameter. To discretize the convection term in~\eqref{eq:3d_pde}, we use
+upwinding, see \cite[Section 2.3.1]{di2011mathematical} and the
+references therein. For $c, v \in V_h^k$, define
+\begin{equation}
+  a_h^{\mathrm{up}}(c, v)
+  = - \sum_{E \in \mathcal{T}} \int_E \bm{u} c \nabla v
+  + \sum_{F \in \mathcal{F}_i } \int_F \{ \bm u  c\} \cdot \bm{n}_F [v] +
+  \sum_{F \in \mathcal{F}_i} \int_F \frac{|\bm u \cdot \bm n_F|}{2} [c] [v] .
+\end{equation}
+Our discrete formulation for \eqref{eq:3d_pde} with the interface conditions~\eqref{eq:3d_interface} and boundary conditions~\eqref{eq:3d_bcs} and given initial conditions $c_h^0$ then reads: for $n = 1, 2, \dots$, find $c_h^n \in V_h^k$ such that, for all $v \in V_h^k$:
+\begin{equation}
+  \int_{\Omega} \frac{1}{\tau} (\phi c_h^n - \phi c_h^{n-1}) v
+  + a_h(c_h^n, v) + a_h^{\mathrm{up}}(c_h^n,v)
+  + \int_{\Gamma_{\rm pia} \discuss{\cup \Gamma_{\rm LV}} } \beta_{\rm pia}[c_h^n][v] 
+  + \int_{\Gamma_{\rm AM-U}} \beta_{\rm exit} c_h^n v 
+  + \int_{\Lambda} \xi  P \left (\overline{c_h^n} - \hat c_h^n \right) \overline{v} 
+  = 
+  %\int_{\Omega} f^n v +
+  \int_{\Gamma_{\rm \discuss{S}SAS}} g_{\rm influx} v
+  %, \quad \forall v \in V_h^k
+  .
+\end{equation}
 
-\mer{MER. Stopped here.}
-
-For the convection term, we use upwinding, see \cite[Section
-  2.3.1]{di2011mathematical} and the references therein. For discrete
-functions $c, v \in V_h^k$, define
-\begin{equation*}
-a_h^{\mathrm{up}}(c_h, v_h) =- \sum_{E\in\mathcal{T}_h } \int_E \bm{u} c_h \nabla v_h  + \sum_{F \in \mathcal{F}_i } \int_F \{ \bm u  c_h\} \cdot \bm{n}_F [v_h]  + \sum_{F \in \mathcal{F}_i} \int_F \frac{|\bm u \cdot \bm n_F |}{2} [c_h ] [v_h ] 
-\end{equation*}
-The discrete formulation for \eqref{eq:3d_pde} then reads 
-\begin{multline}
-\int_{\Omega}\frac{1}{\tau} (\phi c_h^n - \phi c_h^{n-1}) v_h + a_h(c_h^n, v_h) + a_h^{\mathrm{up}}(c_h^n,v_h) + \int_{\Gamma_{\mathrm{pia}} } \beta_{\mathrm{pia}}[c_h^n][v_h]  \\ + \int_{\Gamma_{\rm skull^u}} \beta c_h^n v_h +  \int_{\Lambda} \xi  P (\overline{c_h^n} - \hat c_h^n) \overline{v_h}  = \int_{\Omega} f^n v_h + \int_{\Gamma_{\rm SAS}} \gin v_h , \quad \forall v_h \in V_h^k.
-\end{multline}
-For approximating the solution of the 1D equations in the network, we use the space 
-\[ \hat V_h = \{ v_h \in C^0(\Lambda), 
-\; v_h \vert_{\Lambda^i} \in V_h(\Lambda^i)
-\}, 
-\]
-where $V_h(\Lambda^i)$ is the space of continuous polynomials of degree $1$ on each $\Lambda^i$, 
+To discretize~\eqref{eq:1d_pde} with the bifurcation
+conditions~\eqref{eq:conc_continuity}
+and~\eqref{eq:flux_conservation}, and the boundary
+conditions~\eqref{eq:1d_bcs}, we use the space of continuous piecewise
+linear polynomials defined over $\Lambda$:
+\begin{equation}
+  \hat V_h
+  = \{ v \in C^0(\Lambda), \; v \vert_{\Lambda^i} \in \mathbb{P}^1(\Lambda^i) \}, 
+\end{equation}
+where $\mathbb{P}^1(\Lambda^i)$ is the space of linear polynomials on each $\Lambda^i$. 
 
 \subsubsection{CSF Flow}
 %% We recall the system of equations that we approximate. Find $(\bm u, p)$ such that 
