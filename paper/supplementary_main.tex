@@ -141,6 +141,7 @@ edge must match at nodes:
   \hat{c}^i (y) = \hat{c}^j(y)
   \qquad \foralls \Lambda^i, \Lambda^j \in \mathcal{E}(y)
   \qquad \foralls y \in \mathcal{B} .
+  \label{eq:conc_continuity}
 \end{equation}
 Moreover, to ensure \discuss{mass conservation}, we set that the flux
 going in and out at nodes should add to zero, or more precisely, that
@@ -151,21 +152,22 @@ for each $y \in \mathcal{B}$:
   = 0
   \label{eq:flux_conservation}
 \end{equation}
-where the function $n_i : \mathcal{V} \rightarrow \{-1, 0, 1\}$
+where the function $n^i : \mathcal{V} \rightarrow \{-1, 0, 1\}$
 defines an orientation of each vertex relative to the
 edges. Specifically, for an edge $\Lambda^i$ from $y_{\rm in}$ to $y_{\rm out}$
 \begin{equation}
-  n_i(y_{\rm in}) = 1, \quad
-  n_i(y_{\rm{out}}) = -1, \quad
-  n_i(y) = 0 \quad \foralls y \in 
+  n^i(y_{\rm in}) = 1, \quad
+  n^i(y_{\rm{out}}) = -1, \quad
+  n^i(y) = 0 \quad \foralls y \in 
   \mathcal{V} \backslash \{ y_{\rm in}, y_{\rm out} \} .  
+  \label{eq:def:sign}
 \end{equation}
 
-%% For a given edge $\Lambda^i= (\mathsf{v}_\mathrm{in}^i, \mathsf{v}_{\mathrm{out}}^{i})$, we define the function $n_i: \mathcal{V} \rightarrow \{-1,0,1\}$ with $$
+%% For a given edge $\Lambda^i= (\mathsf{v}_\mathrm{in}^i, \mathsf{v}_{\mathrm{out}}^{i})$, we define the function $n^i: \mathcal{V} \rightarrow \{-1,0,1\}$ with $$
 %% $$
 %% The collection of bifurcation points is denoted by $\mathcal{B} = \{ \mathsf{v} \in \mathcal{V}, \,\,  \mathrm{card}(\mathcal{E}(\mathsf{v})) \geq  3\}$. For any $\mathsf{v} \in \mathcal{B}$, we have 
 %% \begin{equation}
-%% \sum_{ i \in \mathcal{E}(\mathsf{v})} (\hat D A_i \phi \partial_s \hat{u}_i(\mathsf{v})  -  A_i \hat u_i(\mathsf{v}) \hat c_i(\mathsf{v})) n_i(\mathsf{v}) = 0  \label{eq:flux_conservation}
+%% \sum_{ i \in \mathcal{E}(\mathsf{v})} (\hat D A_i \phi \partial_s \hat{u}_i(\mathsf{v})  -  A_i \hat u_i(\mathsf{v}) \hat c_i(\mathsf{v})) n^i(\mathsf{v}) = 0  \label{eq:flux_conservation}
 %% \end{equation}
 
 \paragraph{Interface conditions between the brain and CSF spaces}
@@ -188,7 +190,7 @@ $c|_{\Omega_{\rm CSF}} = c_{\rm CSF}$:
   &&  \quad  \mathrm{on} \quad \Gamma_{\rm pia} \cup \Gamma_{\mathrm{LV}} ,  \\  
   (- D \nabla (\phi  c) + \bm u c)|_{\Omega_{\rm PAR}} \cdot \bm{n} & = \beta_{\rm{pia}} (c_{\rm PAR} - c_{\mathrm{CSF}}) &&  \quad  \mathrm{on} \quad \Gamma_{\rm pia} \cup \Gamma_{\mathrm{LV}} ,  
 \end{alignat} 
-  \label{eq:interface:3d}%
+  \label{eq:3d_interface}%
 \end{subequations}%
 where $\bm{n} = \bm{n}_{\rm PAR}$ is the normal vector field defined
 over the interface, outward-pointing when viewed from $\Omega_{\rm
@@ -197,7 +199,7 @@ constant.
 
 \paragraph{Boundary conditions: outer SAS interfaces and perivascular ends}
 
-We supplement~\eqref{eq:3d_pde} and~\eqref{eq:interface:3d} with the following boundary conditions representing a given molecular influx at $\Gamma_{\rm SSAS}$, molecular efflux at a constant update rate $\beta_{\rm exit}$ at $\Gamma_{\rm AM-U}$, and no influx or efflux elsewhere from the CSF spaces.
+We supplement~\eqref{eq:3d_pde} and~\eqref{eq:3d_interface} with the following boundary conditions representing a given molecular influx at $\Gamma_{\rm SSAS}$, molecular efflux at a constant update rate $\beta_{\rm exit}$ at $\Gamma_{\rm AM-U}$, and no influx or efflux elsewhere from the CSF spaces.
 \begin{subequations}
 \begin{alignat}{2}
 (D \nabla (\phi c) - \bm u c ) \cdot \bm{n} &= g_{\mathrm{influx}} &&  \quad  \mathrm{on} \quad \Gamma_{\rm SSAS},  \\ 
@@ -205,6 +207,7 @@ We supplement~\eqref{eq:3d_pde} and~\eqref{eq:interface:3d} with the following b
 (-D \nabla (\phi c) + \bm u c ) \cdot \bm{n} & = \beta c  &&  \quad  \mathrm{on} \quad \Gamma_{\rm AM-U},  \\ 
 (-D \nabla (\phi c) + \bm u c ) \cdot \bm{n} & = 0  &&  \quad  \mathrm{on} \quad \Gamma_{\rm AM-L} \cup \Gamma_{\rm SC}  .
 \end{alignat} 
+\label{eq:3d_bcs}
 \end{subequations}
 where again $\bm n$ denotes the outward-pointing boundary normal.
 
@@ -215,6 +218,7 @@ end nodes $\mathcal{T}$ via a homogeneous Neumann condition
 augmenting~\eqref{eq:1d_pde}:
 \begin{equation}
     \hat D A \partial_s (\phi \hat c) - A \hat u \hat c  = 0 \quad \mathrm{on} \quad \mathcal{T}.
+    \label{eq:1d_bcs}
 \end{equation}
 
 %% Both $\Omega$ and $\Lambda$ are fixed in time and we assume
@@ -252,7 +256,7 @@ where $\bm n$ denotes the unit outward normal to the boundary, $\mu$ is the (dyn
 
 %% We consider non-zero convection in the CSF space $u_{\rm CSF} \not = 0$ in \eqref{eq:multi_transport_3d} resulting from steady state CSF production.  Recall that $\Omega_{\mathrm{CSF}}$ represents the CSF space and that $\Gamma_{\mathrm{skull^{u/l}}}$ and $\Gamma_{\mathrm{pia}}$, $\Gamma_{\mathrm{LV}}$ represent the boundaries facing the upper and lower parts of the dura, the pia and the lateral ventricles, respectively.  Assuming CSF production in the choroid plexus located at the lateral ventricle wall, we solve the  steady state Stokes equations for the velocity and the pressure $(\bm u_{\mathrm{CSF}}, p_{\mathrm{CSF}})$ in the CSF domain: 
 
-\subsubsection{Flow in perivascular networks induced by pressure gradients}
+\subsubsection{Steady flow in perivascular networks -- induced by pressure differences}
 
 To model steady flow induced by pressure differences between end nodes
 in a perivascular network $\Lambda$, with edges $\{\Lambda^i\}_i$,
@@ -278,8 +282,7 @@ where $A$ is the area of the PVS cross-sections, $\mu$ is the CSF viscosity as b
 \kappa = \frac18 \left( R_2^2 + R_1^2 - \frac{1}{\ln(R_2/R_1)} (R_2^2- R_1^2) \right). 
 \end{equation}
 The PVS flux $\hat{q}$ and the associated average PVS velocity in the
-axial direction $\hat{u}$ are directly related by 
-area
+axial direction $\hat{u}$ are directly related by the cross-sectional area
 \begin{equation}
   \hat{q}^i = A^i \hat{u}^i \qquad \foralls \Lambda^i.
 \end{equation}
@@ -294,7 +297,7 @@ each $y \in \mathcal{B}$ with connected edges $\mathcal{E}(y)$:
   \sum_{\Lambda^i \in \mathcal{E}(y)} \hat{q}^i n^i(y) &= 0  .
 \end{align}
 \end{subequations}
-Finally, to drive this flow, we impose given fluid pressures $p_0$ at the
+where $n^i$ is as defined by~\eqref{eq:def:sign}. Finally, to drive this flow, we impose given fluid pressures $p_0$ at the
 network end nodes:
 \begin{equation}
   \hat{p}(y) = p_0(y) \qquad y \in \mathcal{T} .
@@ -305,35 +308,101 @@ pressure $p_{\rm CSF}$ computed in the CSF spaces $\Omega_{\rm CSF}$
 (and its harmonic extensions into $\Omega_{\rm PAR}$) as the given
 fluid pressures $p_0$.
 
-\mer{MER: Stopped here.}
-
 \subsection{Numerical solution of the transport and flow equations}
 \label{sec:details_numerical_method}
 
-Here we provide details on the numerical method used to solve the coupled system. We are given a mesh $\mathcal{T}_h $, consisting of elements denoted by $E$, of $\Omega= \Omega_{\rm PAR} \cup \Omega_{\rm CSF}$.  The collection of all interior facets to $\Omega_{\rm PAR}$ (resp.  to $\Omega_{\mathrm{CSF}}$) is  denoted by $\mathcal{F}_{h,b}$ (resp. $\mathcal{F}_{h,c}$).  The union of all interior facets $\mathcal{F}_i = \mathcal{F}_{h,b} \cup \mathcal{F}_{h,c}$. Facets lying on the pial interface are denoted by $\mathcal{F}_{\Gamma_{\rm pia}}$, on the skull by $\mathcal{F}_{\Gamma_{\rm skull}}$, and on the spinal canal by $\mathcal{F}_{\Gamma_{\rm SAS}}$. Note that $\mathcal{F}_i \cap \mathcal{F}_{\Gamma_{\rm pia}} = \emptyset $. The union of all the facets is denoted by $\mathcal{F}_h$. The restriction of $\mathcal{T}_h $ to $\Omega_{\mathrm{CSF}}$ is denoted by $\mathcal{E}_{h}$. 
+We solve the models presented in~\Cref{sec:more_maths} numerically
+using finite element methods. The following subsections provide more
+details, model-by-model.
 
-\subsubsection{Solute transport}
-For the 3D concentration, we use broken polynomial spaces and interior penalty discontinuous Galerkin (DG) methods with upwinding in order to capture the sharp boundary layers.  For DG, we utilize the discrete space 
-\begin{equation}
-V_h^k = \{v_h \in L^2(\Omega): \;  v_h \vert_E \in \mathbb{P}^k(E), \; E \in \mathcal{T}_h\}.
-\end{equation}
-To discretize the diffusion term, we utilize symmetric weighted interior penalty dG bilinear forms. We refer to \cite{ern2009discontinuous} and \cite[Section 4.5.2.3]{di2011mathematical} for details on this method.  We define 
-\begin{multline}
-a_h (c_h, v_h) = \sum_{E \in \mathcal{T}_h } \int_{E} D \nabla (\phi c_h) \cdot \nabla v_h + \sum_{F \in \mathcal{F}_i} \eta \frac{\gamma_{D,F}}{h_F} \int_{F} [c_h][v_h] 
-- \sum_{F \in \mathcal{F}_i} \int_{F} \left( \{D \phi \nabla c_h \}_w \cdot \bm n_F [v_h]  + \{D \phi\nabla v_h \}_w \cdot \bm n_F [c_h] \right).
- \nonumber
- \end{multline}
-In the above, for $F\in \mathcal{F}_h^i$ with a normal $n_F$ pointing from $E_F^1$ to $E_F^2$,  the jump is given by $[v_h] = v_h{}_{\vert_{E_F^1}} - v_h{}_{\vert_{E_{F}^2}}$, and the weighed average is defined as follows.
-\begin{equation}
-\{v_h\}_{w} = \frac{ \kappa_{\vert_{E_F^2}}}{\kappa_{\vert_{E_F^1}}+ \kappa_{\vert_{E_F^2}}} v_h{}_{\vert_{E_{F}^1}} + \frac{\kappa_{\vert_{E_F^1}}}{\kappa_{ \vert_{E_F^1}}+ \kappa_{\vert_{E_F^2}}} v_h{}_{\vert_{E_{F}^2}}, \quad \text{where} \quad \kappa = D \phi.  
-\end{equation}
-The parameter $\gamma_{D,F}$ is the harmonic mean of the diffusion coefficient given by 
-$$
-\gamma_{D,F} = \frac{ \kappa_{\vert_{E_F^1}}\kappa_{\vert_{E_F^2}}}{\kappa_{\vert_{E_F^1}}+ \kappa_{\vert_{E_F^2}}},
-$$
-and $\eta$ is a user specified penalty to be determined later. 
+\subsubsection{Computational mesh entities: definitions and notation}
 
-For the convection term, we use upwinding, see \cite[Section 2.3.1]{di2011mathematical} and the references therein. Define 
+We consider a mesh $\mathcal{T} = \{ E \}$ of $\Omega = \Omega_{\rm
+  PAR} \cup \Omega_{\rm CSF}$, consisting of tetrahedral mesh cells
+$E$, and conforming to the domains $\Omega_{\rm PAR}$ and $\Omega_{\rm
+  CSF}$ and to the CSF-brain interface $\Gamma_{\rm pia} \cup
+\Gamma_{\rm LV}$. We denote the restriction of $\mathcal{T}$ to
+$\Omega_{\rm PAR}$ and $\Omega_{\rm CSF}$ by $\mathcal{T}_{\rm PAR}$
+and $\mathcal{T}_{\rm CSF}$, respectively. The collection of all
+interior facets (faces of the mesh cells) in $\mathcal{T}_{\rm PAR}$
+(resp. in $\mathcal{T}_{\rm CSF}$) is denoted by $\mathcal{F}_{i, \rm
+  PAR}$ (resp. $\mathcal{F}_{i, \rm CSF}$). We define the union of
+facets interior both to $\mathcal{T}_{i, \rm PAR}$ and
+$\mathcal{T}_{i, \rm CSF}$ as $\mathcal{F}_i = \mathcal{F}_{i, \rm
+  PAR} \cup \mathcal{F}_{i, \rm CSF}$. Facets lying on the pial
+interface $\Gamma_{\rm pia}$ are denoted by $\mathcal{F}_{\rm pia}$,
+on the outer (arachnoid) boundary $\Gamma_{\rm AM}$ by
+$\mathcal{F}_{\rm AM}$, on the interface toward the spinal cord
+$\Gamma_{\rm SC}$ by $\mathcal{F}_{\rm SC}$ and on the interface
+towards the spinal SAS $\Gamma_{\rm SSAS}$ by $\mathcal{F}_{\rm
+  SSAS}$. The union of all facets in $\mathcal{T}$ is denoted by
+$\mathcal{F}$.
+
+%Note in particular that $\mathcal{F}_i \cap \mathcal{F}_{pia}} =
+%  \emptyset$.
+
+%The restriction of $\mathcal{T}_h $ to $\Omega_{\mathrm{CSF}}$ is
+%denoted by $\mathcal{E}_{h}$.
+
+\subsubsection{Finite element solution of coupled 3D-1D solute transport equations }
+
+We consider the system of coupled 3D-1D solute transport equations
+given by~\eqref{eq:3d_pde} and~\eqref{eq:1d_pde} with the interface
+conditions~\eqref{eq:3d_interface}, the bifurcation
+conditions~\eqref{eq:conc_continuity}
+and~\eqref{eq:flux_conservation}, and the boundary
+conditions~\eqref{eq:3d_bcs} and~\eqref{eq:1d_bcs}. We discretize
+these equations using an implicit finite difference scheme in time and
+a discontinuous Galerkin (DG) finite element method with upwinding in
+space to capture the sharp boundary layers.
+
+
+We first consider the discretization of~\eqref{eq:3d_pde} and
+introduce the discrete space
+\begin{equation}
+  %V_h^k = \{c_h \in L^2(\Omega): \;  v_h \vert_E \in \mathbb{P}^k(E), \; E \in \mathcal{T}_h\}.
+  V_h^k = \{c \in L^2(\discuss{\mathcal{T}}): \;  c \vert_E \in \mathbb{P}^k(E), \; E \in \mathcal{T}\} ,
+\end{equation}
+where $L^2(\mathcal{T})$ is the space of square-integrable functions
+defined relative to $\mathcal{T}$ and $\mathbb{P}^k(E)$ denotes the
+space of polynomials of degree $\leqslant k$ defined over the
+tetrahedra $E$. To discretize the diffusion term in~\eqref{eq:3d_pde},
+we use a symmetric weighted interior penalty DG formulation, referring
+to~\cite{ern2009discontinuous} and \cite[Section
+  4.5.2.3]{di2011mathematical} for details on this
+method. \discuss{Recall that $\phi$ is constant in each domain
+  $\Omega_{\rm PAR}$ and $\Omega_{\rm CSF}$, and thus in particular
+  that $\nabla (\phi c) = \phi \nabla c$ on each $E \in \mathcal{T}$.}
+Define
+\begin{equation}
+  a_h (c, v)
+  =
+  \sum_{E \in \mathcal{T}} \int_{E} D \discuss{\phi} \nabla c \cdot \nabla v
+  + \sum_{F \in \mathcal{F}_i} \eta \frac{\gamma_{D,F}}{h_F} \int_{F} [c][v] 
+  - \sum_{F \in \mathcal{F}_i} \int_{F} \left( \{D \phi \nabla c \}_w \cdot \bm n_F [v]
+  + \{D \phi \nabla v \}_w \cdot \bm n_F [c] \right).
+  \label{eq:dg_sip}
+\end{equation}
+In~\eqref{eq:dg_sip}, for each facet $F \in \mathcal{F}^i$ shared
+between cells $E^1$ and $E^2$ with facet normal vector $\bm n_F$
+pointing from $E^1$ to $E^2$, the jump $[\cdot]$ is given by $[v] =
+v|_{E^1} - v|_{E^2}$, and the weighed average $\{ \cdot \}_w$ is
+defined as:
+\begin{equation}
+  \{v\}_{w} = \frac{\kappa_2}{\kappa_1 + \kappa_2} v |_{E^1} + \frac{\kappa_1}{\kappa_1 + \kappa_2} v |_{E^2},
+  \quad \text{where} \quad \kappa_i = \phi D|_{E^i}.  
+\end{equation}
+The parameter $\gamma_{D,F}$ is the harmonic mean of the \discuss{porosity-weighted} diffusion coefficient given by 
+\begin{equation}
+  \gamma_{D,F} = \frac{\kappa_1\kappa_2}{\kappa_1 + \kappa_2},
+\end{equation}
+and $\eta$ is a user-specified penalty parameter.
+
+\mer{MER. Stopped here.}
+
+For the convection term, we use upwinding, see \cite[Section
+  2.3.1]{di2011mathematical} and the references therein. For discrete
+functions $c, v \in V_h^k$, define
 \begin{equation*}
 a_h^{\mathrm{up}}(c_h, v_h) =- \sum_{E\in\mathcal{T}_h } \int_E \bm{u} c_h \nabla v_h  + \sum_{F \in \mathcal{F}_i } \int_F \{ \bm u  c_h\} \cdot \bm{n}_F [v_h]  + \sum_{F \in \mathcal{F}_i} \int_F \frac{|\bm u \cdot \bm n_F |}{2} [c_h ] [v_h ] 
 \end{equation*}
