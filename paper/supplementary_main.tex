@@ -230,6 +230,7 @@ the pressure field $p : \Omega_{\rm CSF} \rightarrow \R$ such that
     \nabla \cdot \bm u &= 0 \quad && \text{ in } \Omega_{\rm CSF},
     \label{eq:divergence_equation} .
   \end{alignat}
+  \label{eq:stokes}
 \end{subequations}
 In addition, we impose the following boundary conditions to model flow
 induced by CSF production in the choroid plexus with $\Gamma_{\rm AM-U}$ as the main efflux site:
@@ -242,6 +243,7 @@ induced by CSF production in the choroid plexus with $\Gamma_{\rm AM-U}$ as the 
     \bm u &= 0 && \text{ on } \Gamma_{\rm{SSAS}}, \\
     \bm u \cdot \bm n & = \frac{1}{ |\Gamma_{\rm LV}|}  u_{\rm in}, \quad \bm u \cdot \bm \tau = 0 \quad && \text{ on } \Gamma_{\rm{LV}} ,  
   \end{alignat}
+  \label{eq:stokes_bcs}
 \end{subequations}
 where $\bm n$ denotes the unit outward normal to the boundary, $\mu$ is the (dynamic) CSF viscosity, $R_0 > 0$ is a resistance parameter for CSF efflux, and $u_{\rm in}$ is a given fluid influx, here across the lateral ventricle wall $\Gamma_{\rm LV}$. We consider alternative variations of these boundary conditions in connection with estimating dispersion effects induced by CSF pulsatility, see~\Cref{sec:supp:dispersion}.
 
@@ -323,11 +325,15 @@ $\mathcal{T}_{i, \rm CSF}$ as $\mathcal{F}_i = \mathcal{F}_{i, \rm
   PAR} \cup \mathcal{F}_{i, \rm CSF}$. Facets lying on the pial
 interface $\Gamma_{\rm pia}$ are denoted by $\mathcal{F}_{\rm pia}$,
 on the outer (arachnoid) boundary $\Gamma_{\rm AM}$ by
-$\mathcal{F}_{\rm AM}$, on the interface toward the spinal cord
-$\Gamma_{\rm SC}$ by $\mathcal{F}_{\rm SC}$ and on the interface
-towards the spinal SAS $\Gamma_{\rm SSAS}$ by $\mathcal{F}_{\rm
-  SSAS}$. The union of all facets in $\mathcal{T}$ is denoted by
-$\mathcal{F}$.
+$\mathcal{F}_{\rm AM}$, on the inner ventricular interface
+$\Gamma_{\rm LV}$ by $\mathcal{F}_{\rm LV}$, on the boundary toward
+the spinal cord $\Gamma_{\rm SC}$ by $\mathcal{F}_{\rm SC}$ and on the
+boundary towards the spinal SAS $\Gamma_{\rm SSAS}$ by
+$\mathcal{F}_{\rm SSAS}$. \discuss{For convenience, we denote $\mathcal{F}_e =
+\mathcal{F}_{\rm pia} \cup \mathcal{F}_{\rm LV} \cup \mathcal{F}_{\rm
+  AM-U} \cup \mathcal{F}_{\rm SSAS}$, and the union of all facets in
+$\mathcal{T}$ is denoted by $\mathcal{F} = \mathcal{F}_i \cup
+\mathcal{F}_e \discuss{\cup \mathcal{F}_{\rm SC} \cup \mathcal{F}_{\rm AM-L}}$.}
 
 %Note in particular that $\mathcal{F}_i \cap \mathcal{F}_{pia}} =
 %  \emptyset$.
@@ -375,9 +381,10 @@ Define for $c, v \in V_h^k$:
 \end{equation}
 In~\eqref{eq:dg_sip}, for each facet $F \in \mathcal{F}^i$ shared
 between cells $E^1$ and $E^2$ with facet normal vector $\bm n_F$
-pointing from $E^1$ to $E^2$, the jump $[\cdot]$ is given by $[v] =
-v|_{E^1} - v|_{E^2}$, and the unweighted average $\{ \cdot \}$ and
-weighed average $\{ \cdot \}_w$ are defined as:
+pointing from $E^1$ to $E^2$, \discuss{$h_F$ denotes the facet size},
+the jump $[\cdot]$ is given by $[v] = v|_{E^1} - v|_{E^2}$, and the
+unweighted average $\{ \cdot \}$ and weighed average $\{ \cdot \}_w$
+are defined as:
 \begin{equation}
   \{v\} = \frac12 v |_{E^1} + \frac12 v |_{E^2}, \qquad
   \{v\}_{w} = \frac{\kappa_2}{\kappa_1 + \kappa_2} v |_{E^1} + \frac{\kappa_1}{\kappa_1 + \kappa_2} v |_{E^2}
@@ -397,7 +404,7 @@ references therein. For $c, v \in V_h^k$, define
   + \sum_{F \in \mathcal{F}_i } \int_F \{ \bm u  c\} \cdot \bm{n}_F [v] +
   \sum_{F \in \mathcal{F}_i} \int_F \frac{|\bm u \cdot \bm n_F|}{2} [c] [v] .
 \end{equation}
-Our discrete formulation for \eqref{eq:3d_pde} with the interface conditions~\eqref{eq:3d_interface} and boundary conditions~\eqref{eq:3d_bcs} and given initial conditions $c_h^0$ then reads: for $n = 1, 2, \dots$, find $c_h^n \in V_h^k$ such that, for all $v \in V_h^k$:
+Our discrete formulation for \eqref{eq:3d_pde} with the interface conditions~\eqref{eq:3d_interface} and boundary conditions~\eqref{eq:3d_bcs} and given initial conditions $c_h^0$ then reads: for $n = 1, 2, \dots$, with $t^n - t^{n-1} = \tau$, find $c_h^n \in V_h^k$ such that for all $v \in V_h^k$:
 \begin{equation}
   \int_{\Omega} \frac{1}{\tau} (\phi c_h^n - \phi c_h^{n-1}) v
   + a_h(c_h^n, v) + a_h^{\mathrm{up}}(c_h^n,v)
@@ -422,45 +429,41 @@ linear polynomials defined over $\Lambda$:
 \end{equation}
 where $\mathbb{P}^1(\Lambda^i)$ is the space of linear polynomials on each $\Lambda^i$. 
 
-\subsubsection{CSF Flow}
-%% We recall the system of equations that we approximate. Find $(\bm u, p)$ such that 
-%% \begin{subequations}
-%%     \begin{alignat}{2}
-%%  - \mu \Delta \bm u + \nabla p & =  \bm 0 \quad && \mathrm{in} \,\,  \Omega_{\rm CSF}, \label{eq:momnetum_equation}  \\ 
-%%  \nabla \cdot  \bm u & = 0 \quad && \mathrm{in} \,\,   \Omega_{\rm CSF}, \label{eq:divergence_equation}  \\ 
-%% \mu \nabla \bm u \cdot \bm{n} -  p \bm n  &  = -R_0 ( \bm u \cdot \bm n ) \bm n, \,\,  \quad \bm u \cdot \bm \tau = 0 \quad  && \mathrm{on}  \label{eq:efflux_condition} \,\, \Gamma_{\mathrm{skull^u}}, \\ 
-%% \bm u & = 0 && \mathrm{on} \,\, \Gamma_{\rm{pia}} \cup \Gamma_{\mathrm{skull^l}} \cup \Gamma_{\rm{SSAS}} \\
-%% \bm u \cdot  \bm n   =  \frac{1}{|\Gamma_{\mathrm{LV}}|} u_{\mathrm{in}}  , & \; \; \bm u \cdot \bm \tau  = 0  && \mathrm{on} \;  \Gamma_{\mathrm{LV}},
-%% \end{alignat}
-%% \end{subequations}
+\subsubsection{Finite element solution of the incompressible Stokes equations}
 
-We follow \cite{hong2016robust} and approximate the velocity field $u$ and the pressure $p$ with the following finite element spaces. 
-\begin{align}
-\bm V_h  & = \{ \bm v  \in H(\mathrm{div}; \Omega_{\mathrm{CSF}}): \; \bm v \vert_{E} \in \mathbb{BDM}^2 (E),  \; E \in \mathcal{E}_h; \;  \bm v \cdot \bm n = 0 \text{ on } \Gamma_{\rm{pia}} \cup \Gamma_{\mathrm{skull^l}} \cup \Gamma_{\rm{SSAS}}, \;\; \bm v \cdot \bm n = \frac{1}{|\Gamma_{\mathrm{LV}}|} u_{\mathrm{in}} \text{ on } \Gamma_{\mathrm{LV}} \} \\ 
-S_h  & = \{q \in L^2(\Omega):  \;  q \vert_E \in \mathbb{P}^1(E),  \; E \in \mathcal{E}_h \}. 
-\end{align}
-Here, $H(\mathrm{div};\Omega)$ is the space of $L^2$ vector fields with $L^2$ divergence,  $\mathbb{BDM}^2$ is the Brezzi-Douglas--Marini element \cite{brezzi1987mixed} of order 2, and  $\bm n$ (resp. $\bm \tau$) is the unit outward normal (resp. tangent) vector.  
-Given any vector $\bm v$, the normal and tangential components on each facet  are denoted by 
-\[ 
-\bm v_n = (\bm v \cdot \bm n)\bm n , \quad \bm v_t = (\bm v - \bm v_n). 
-\]
-Since $V_h \subset H(\mathrm{div}, \Omega_{\rm{CSF}})$, then $[\bm v_n] = 0 $ on $\mathcal{F}_{h,c}$. Continuity in the tangential component is enforced weakly via interior penalization. For notational simplicity, denote by $\mathcal{F}_{\Gamma}$ the facets lying on $\Gamma_{\rm{pia}} \cup \Gamma_{\mathrm{skull}} \cup \Gamma_{\rm{SSAS}} \cup \Gamma_{\mathrm{LV}}$. Define the form 
+We consider an H(div)-based finite element approximation of the incompressible Stokes equations~\eqref{eq:stokes} defined over $\Omega_{\rm CSF}$ with the boundary conditions~\eqref{eq:stokes_bcs}. Following\cite{hong2016robust}, we approximate the velocity field $\bm u$ and the pressure field $p$ with the following finite element spaces:
+\begin{align*}
+  \bm V_h &= \{ \bm v  \in H(\mathrm{div}, \Omega_{\mathrm{CSF}}): \;
+  \bm v \vert_{E} \in \mathrm{BDM}^2(E), \; E \in \mathcal{T}_{\rm CSF}; \;
+  \bm v \cdot \bm n = 0
+  \text{ on } \Gamma_{\rm{pia}} \cup \Gamma_{\rm AM-L} \cup \Gamma_{\rm{SSAS}}, \;\; \bm v \cdot \bm n = \frac{1}{|\Gamma_{\mathrm{LV}}|} u_{\mathrm{in}} \text{ on } \Gamma_{\mathrm{LV}} \}  \\ 
+  Q_h  &= \{q \in L^2(\Omega_{\rm CSF}): \; q \vert_E \in \mathbb{P}^1(E),
+  \; E \in \mathcal{T}_{\rm CSF} \}. 
+\end{align*}
+Here, $H(\mathrm{div}, \Omega)$ is the space of $L^2(\Omega)$ vector fields with $L^2(\Omega)$ divergence, $\mathrm{BDM}^2$ is the Brezzi-Douglas--Marini element~\cite{brezzi1987mixed} of degree 2, and $\bm n$ and $\bm \tau$ are the unit outward normal and unit tangent vectors to each facet, respectively. Given any vector $\bm v$, the normal and tangential components on each facet are denoted and given by 
+\begin{equation}
+\bm v_n = (\bm v \cdot \bm n) \bm n, \quad \bm v_t = \bm v - \bm v_n. 
+\end{equation}
+Since $\bm V_h \subset H(\mathrm{div}, \Omega_{\rm CSF})$, then $[\bm v_n] = 0 $ on $\mathcal{F}_{\rm CSF}$. Continuity in the tangential component is enforced weakly via interior penalization. Define the form \mer{MER: Check $\Gamma_{\rm AM}$ part.}
 \begin{multline}
-\mathcal{A}_h (\bm u, \bm v) = \sum_{E \in \mathcal{E}_h} \int_{E} \mu \nabla u : \nabla v - \sum_{
-F \in \mathcal{F}_{h,c} \cup \mathcal{F}_{\Gamma} 
-} \int_{F} \mu \{\nabla u\}\cdot \bm n_F \cdot [\bm v_t] 
-\\ - \sum_{
-F \in \mathcal{F}_{h,c} \cup \mathcal{F}_{\Gamma} 
-} \int_{F} \mu \{\nabla v\}\cdot \bm n_F \cdot [\bm u_t]
-+ \sum_{
-F \in \mathcal{F}_{h,c} \cup \mathcal{F}_{\Gamma} 
-} \frac{\sigma \mu}{h} \int_{F} [\bm u_t ] \cdot [\bm v_t].   
+  \mathcal{A}_h(\bm u, \bm v)
+  = \sum_{E \in \mathcal{T}_{\rm CSF}} \int_{E} \mu \nabla \bm u : \nabla \bm v
+  - \sum_{F \in \discuss{\mathcal{F}_{\rm CSF} \cup \mathcal{F}_{e}}} \left (
+  \int_{F} \mu \{\nabla \bm u\} \cdot \bm n_F \cdot [\bm v_t] 
+  - %\sum_{F \in \mathcal{F}_{h,c} \cup \mathcal{F}_{\Gamma}}
+  \int_{F} \mu \{\nabla \bm v\}\cdot \bm n_F \cdot [\bm u_t]
+  + %\sum_{F \in \mathcal{F}_{h,c} \cup \mathcal{F}_{\Gamma}}
+  \frac{\sigma \mu}{h} \int_{F} [\bm u_t ] \cdot [\bm v_t] \right ),   
 \end{multline}
-We set $\sigma =20$. The discretization for the CSF flow, is then to find $(\bm u_h, p_h) \in \bm V_h \times S_h$ such  that 
+where \discuss{$h$ denotes the element size}. We set the penalty parameter for the tangential continuity to be $\sigma = 20$. Our finite element discretization of the incompressible Stokes equations is then to find $(\bm u_h, p_h) \in \bm V_h \times Q_h$ such that 
+\begin{subequations}
 \begin{align}
-\mathcal{A}_h(u_h, v_h)  + \sum_{F \in \mathcal{F}_{\Gamma_{\mathrm{skull}}}} \int_{F} R_0 (\bm u_h \cdot \bm n) (\bm v_h \cdot \bm n) - \int_{\Omega} \nabla \cdot \bm v_h \, p_h  & = 0, \quad \forall \bm v_h \in \bm V_h   \\ 
-(\nabla \cdot \bm u_h , q_h ) & = 0, \quad \forall q_h \in S_h.
+  \mathcal{A}_h(\bm u_h, \bm v_h)
+  + \sum_{F \in \mathcal{F}_{\rm AM-U}} \int_{F} R_0 (\bm u_h \cdot \bm n) (\bm v_h \cdot \bm n)
+  - \int_{\Omega_{\rm CSF}} \nabla \cdot \bm v_h \, p_h  &= 0, \qquad \foralls \bm v_h \in \bm V_h, \\ 
+\int_{\Omega_{\rm CSF}} \nabla \cdot \bm u_h \, q_h  &= 0, \qquad \foralls q_h \in Q_h.
 \end{align}
+\end{subequations}
 
 \subsubsection{PVS flow} 
 
