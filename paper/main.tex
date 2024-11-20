@@ -296,22 +296,27 @@ To simulate the production-driven flow, we impose an inflow of $400\,$ml/day \ci
 %The Stokes system is solved with the finite element software $FEniCS$, stored and then subsequently read for all the relevant solute transport simulations. See Figure~\ref{fig:csf} for a streamline visualization of the obtained velocity profile and \Cref{sec:details_numerical_method} for details on the numerical algorithm employed.
 
 % cardiac pulsatility
-Assessing the effect of cardiac-driven dispersion, we compute a steady CSF flow field at peak cranial blood volume during the cardiac cycle. We mimic resulting the reduced CSF space volume by imposing an inflow of $8\,$ml/s \cite{baledent2014imaging} and $0.31\,$ml/s \cite{vinje2019respiratory} across the arachnoid mater and the lateral ventricle surface, respectively. We allow free outflow into the spinal SAS. In addition, we upscale the obtained pressure field to account for the lack of pulsatile inertial effects in our model (see \ref{sec:dispersion_details}). In this scenario, we observe a pressure drop of $8.5\,$Pa between lateral ventricles and the spinal SAS and a maximum flow velocity of $0.29\,$m/s at the craniocervical junction.
-Next, we estimate a spatially varying dispersion enhancement factor $R$ from cardiac-induced pulsatility by combining the computed pressure field with the theory of shear-augmented dispersion (see \Cref{sec:dispersion_details}). We find that cardiac-induced pulsatile CSF flow increases the effective diffusion by up to two orders of magnitude in the aqueduct and around the cisterna magna, but has little effect in most of the SAS ($R < 1$) (\Cref{fig:csf}). 
+Assessing the effect of cardiac-driven dispersion, we compute a steady CSF flow field at peak cranial blood volume during the cardiac cycle. We mimic resulting the reduced CSF space volume by imposing an inflow of $8\,$ml/s \cite{baledent2014imaging} and $0.31\,$ml/s \cite{vinje2019respiratory} across the arachnoid mater and the lateral ventricle surface, respectively. We allow free outflow into the spinal SAS. In addition, we upscale the obtained pressure field to account for the lack of pulsatile inertial effects in our model (see \ref{sec:dispersion_details}). In this scenario, we observe a pressure drop of $8.5\,$Pa between lateral ventricles and the spinal SAS and a maximum flow velocity of $16.7\,$cm/s in the aqueduct (\Cref{fig:csf}F and J).
+Next, we estimate a spatially varying dispersion enhancement factor $R$ from cardiac-induced pulsatility by combining the computed pressure field with the theory of shear-augmented dispersion (see \Cref{sec:dispersion_details}). We find that cardiac-induced pulsatile CSF flow increases the effective diffusion by up to two orders of magnitude in the aqueduct and around the cisterna magna, but has little effect in most of the SAS ($R < 1$) (\Cref{fig:csf} G and K). 
 
 % respiratory pulsatility
-Employing the same methodology, we estimate the respiratory contribution to dispersive mixing by computing the CSF flow field driven by an inflow of $0.121\,$ml/s \cite{liu2024using} and $0.879\,$ml/s across the lateral ventricular wall and the arachnoid mater, respectively. This amounts to a respiratory peak flow volume of $1\,$ ml/s at the craniocervical junction \cite{gutierrez2022effect}. While the resulting flow velocities are about one order of magnitude lower than their cardiac-induced counterparts (see \Cref{fig:csf_flow_respiratory}), respiratory dispersive mixing reaches a factor of up to 80 due the lower respiratory frequency ($0.25\,$Hz) (\Cref{fig:csf_flow_R_respiratory}).
+Employing the same methodology, we estimate the respiratory contribution to dispersive mixing by computing the CSF flow field driven by an inflow of $0.121\,$ml/s \cite{liu2024using} and $0.879\,$ml/s across the lateral ventricular wall and the arachnoid mater, respectively. This amounts to a respiratory peak flow volume of $1\,$ ml/s at the craniocervical junction \cite{gutierrez2022effect}. While the resulting flow velocities are about one order of magnitude lower than their cardiac-induced counterparts (see \Cref{fig:csf}H and L), respiratory dispersive mixing reaches a factor of up to 350 due the lower respiratory frequency ($0.25\,$Hz) (\Cref{fig:csf}I and M).
 
 
 % tracer trajectory of the standard model
+Next, we predict the advective and dispersive spreading of $0.5\,$mmol intrathecally injected Gadobutrol in CSF-filled spaces, the parenchymal tissue and PVSs around arteries and veines. One hour post-injection, 
+\begin{itemize}
+    \item 
+\end{itemize}
 
 
 % tracer trajectory of model variations
+model variations are hard to fit on a one page figure -
 
 \begin{itemize}
     \item only dispersion model: No production flow. Tracer remains in the subtentorial regions, in cerebellum, brain stem and surrounding CSF. In contrast to other models, it travels up the ventricular system - similar to what is observed in iNPH patients?
-    \item Low dispersion model: account for uncertainty (or pathologies with impaired pulsatile motion?) - tracer exclusively spreads in the frontal half of the brain.
-    \item 
+    \item Low dispersion model: account for uncertainty (or pathologies with impaired pulsatile motion?) - tracer exclusively spreads in the frontal half of the brain. Bifurcation of CSF production flow field: flow bifurcates around the midbrain in two directions: a) through the quadrigeminal cistern into the longitudinal fissure and b) frontally around the brain through the outer SAS. Only models with "enough" dispersion enable tracer to follow trajectory a).
+    \item without tentorium: 
 \end{itemize}
 
 \begin{figure}[h!]
