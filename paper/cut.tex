@@ -1,3 +1,94 @@
+\mer{MER: Old, revisit to see if we have forgotten any of these interesting ideas.}
+\subsection*{Effect of interfaces (interface permeability)}
+
+\begin{itemize}
+    \item Model 0 (baseline): only diffusion, different diffusion coefficient in the parenchyma and SAS/PVS. No leak to vasculature (zero permeability). $\infty$ $\zeta_0$ at the PVS-SAS interface, $\zeta_1$ at the PVS-SAS interface. Koch et al could be a reference for PVS-parenchyma, maybe Tithof et al (2022, "A network model" ...) could give some ideas for parameters, also see Mestre et al, Nature comms, 2022. 
+    \item 
+    With altered interface permeabilities in the PVS (Model 1), and or in the parenchyma (Model 2) 
+    \end{itemize}
+
+
+\subsection*{Effect of convection}
+\begin{itemize}
+    \item 
+    With convective flow in the PVS (zero flow in the parenchyma for now)
+    \begin{itemize}
+        \item 
+        Model 3: PVS flow equal to 18.7 $\mu$m/s
+        \item 
+        Model 4: Better PVS flow (distributed, according to conservation of mass, assumptions on PVS area)
+    \end{itemize}    
+    \item 
+    With convective flow in the ECS (out of scope here, for follow-up work?)
+\end{itemize}
+
+\begin{figure}
+    \centering
+    \includegraphics[width = 0.9 \textwidth]{modelB_modelC_overview.png}
+    \caption{Tracer concentrations for a purely diffusive model with tracer inflow via the CSF-filled space (left) and a convective model with Tracer inflow via the arterial PVS (middle) and their difference (right) at 1, 6, 12, 18 and 24 hours after injection.}
+    \label{fig:2}
+\end{figure}
+
+\subsection*{Effect of pia}
+  
+Effect of pia permeability (Model N-1)    
+
+\begin{figure}
+     \centering
+     \begin{subfigure}[b]{0.33\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{modelA_total_conc.png}
+         \caption{arterial inflow, pure diffusion}
+         \label{fig:y equals x}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{0.33\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{modelB_total_conc.png}
+         \caption{SAS inflow, pure diffusion}
+         \label{fig:three sin x}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{0.33\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{modelC_total_conc.png}
+         \caption{arterial inflow, diffusion + PVS convection}
+         \label{fig:five over x}
+     \end{subfigure}
+        \caption{Total tracer amount in parenchyma, CSF, arterial PVS and venous PVS}
+        \label{fig:three graphs}
+\end{figure}
+
+\begin{figure}
+\begin{subfigure}{0.5 \linewidth}
+    \centering
+    \includegraphics[width=1\linewidth]{figures/modelA_conc_at_label.png}
+    \caption{B1 - $\xi$}
+    \includegraphics[width=1\linewidth]{figures/modelB1-10_conc_at_label.png}
+    \caption{B1 - $10 \xi$}
+    \includegraphics[width=1\linewidth]{figures/modelB1-100_conc_at_label.png}
+    \caption{B1 - $100 \xi$}
+    \includegraphics[width=1\linewidth]{figures/modelB1-1000_conc_at_label.png}
+    \caption{B1 - $1000 \xi$}
+\end{subfigure}
+\begin{subfigure}{0.5 \linewidth}
+    \centering
+    \includegraphics[width=1\linewidth]{figures/modelB2-1_conc_at_label.png}
+    \caption{B2 - $\xi$}
+    \includegraphics[width=1\linewidth]{figures/modelB2-10_conc_at_label.png}
+    \caption{B2 - $10 \xi$}
+    \includegraphics[width=1\linewidth]{figures/modelB2-100_conc_at_label.png}
+    \caption{B2 - $100 \xi$}
+    \includegraphics[width=1\linewidth]{figures/modelB2-1000_conc_at_label.png}
+    \caption{B2 - $1000 \xi$}
+\end{subfigure}
+    \label{fig:modelB_xi_variations}
+\end{figure}
+
+
+
+\section{Foo}
+
 We consider non-zero convection in the CSF space $u_{\rm CSF} \not = 0$ in \eqref{eq:multi_transport_3d} resulting from steady state CSF production.  Recall that $\Omega_{\mathrm{CSF}}$ represents the CSF space and that $\Gamma_{\mathrm{skull^{u/l}}}$ and $\Gamma_{\mathrm{pia}}$, $\Gamma_{\mathrm{LV}}$ represent the boundaries facing the upper and lower parts of the dura, the pia and the lateral ventricles, respectively.  Assuming CSF production in the choroid plexus located at the lateral ventricle wall, we solve the  steady state Stokes equations for the velocity and the pressure $(\bm u_{\mathrm{CSF}}, p_{\mathrm{CSF}})$ in the CSF domain: 
 \begin{subequations}
     \begin{alignat}{2}
