@@ -230,8 +230,8 @@ the pressure field $p : \Omega_{\rm CSF} \rightarrow \R$ such that
     \nabla \cdot \bm u &= 0 \quad && \text{ in } \Omega_{\rm CSF},
     \label{eq:divergence_equation} .
   \end{alignat}
-  \label{eq:stokes}
-\end{subequations}
+  \label{eq:stokes}%
+\end{subequations}%
 In addition, we impose the following boundary conditions to model flow
 induced by CSF production in the choroid plexus with $\Gamma_{\rm AM-U}$ as the main efflux site:
 \begin{subequations}
@@ -243,8 +243,8 @@ induced by CSF production in the choroid plexus with $\Gamma_{\rm AM-U}$ as the 
     %\bm u &= 0 && \text{ on } \Gamma_{\rm{SSAS}}, \\
     \bm u \cdot \bm n & = \frac{1}{ |\Gamma_{\rm LV}|}  u_{\rm in}, \quad \bm u \cdot \bm \tau = 0 \quad && \text{ on } \Gamma_{\rm{LV}} ,  
   \end{alignat}
-  \label{eq:stokes_bcs}
-\end{subequations}
+  \label{eq:stokes_bcs}%
+\end{subequations}%
 where $\bm n$ denotes the unit outward normal to the boundary, $\mu$ is the (dynamic) CSF viscosity, $R_0 > 0$ is a resistance parameter for CSF efflux, and $u_{\rm in}$ is a given fluid influx, here across the lateral ventricle wall $\Gamma_{\rm LV}$. We consider alternative variations of these boundary conditions in connection with estimating dispersion effects induced by CSF pulsatility, see~\Cref{sec:supp:dispersion}.
 
 %% We consider non-zero convection in the CSF space $u_{\rm CSF} \not = 0$ in \eqref{eq:multi_transport_3d} resulting from steady state CSF production.  Recall that $\Omega_{\mathrm{CSF}}$ represents the CSF space and that $\Gamma_{\mathrm{skull^{u/l}}}$ and $\Gamma_{\mathrm{pia}}$, $\Gamma_{\mathrm{LV}}$ represent the boundaries facing the upper and lower parts of the dura, the pia and the lateral ventricles, respectively.  Assuming CSF production in the choroid plexus located at the lateral ventricle wall, we solve the  steady state Stokes equations for the velocity and the pressure $(\bm u_{\mathrm{CSF}}, p_{\mathrm{CSF}})$ in the CSF domain: 
@@ -317,23 +317,24 @@ $E$, and conforming to the domains $\Omega_{\rm PAR}$ and $\Omega_{\rm
 \Gamma_{\rm LV}$. We denote the restriction of $\mathcal{T}$ to
 $\Omega_{\rm PAR}$ and $\Omega_{\rm CSF}$ by $\mathcal{T}_{\rm PAR}$
 and $\mathcal{T}_{\rm CSF}$, respectively. The collection of all
-interior facets (faces of the mesh cells) in $\mathcal{T}_{\rm PAR}$
-(resp. in $\mathcal{T}_{\rm CSF}$) is denoted by $\mathcal{F}_{i, \rm
-  PAR}$ (resp. $\mathcal{F}_{i, \rm CSF}$). We define the union of
-facets interior both to $\mathcal{T}_{i, \rm PAR}$ and
-$\mathcal{T}_{i, \rm CSF}$ as $\mathcal{F}_i = \mathcal{F}_{i, \rm
-  PAR} \cup \mathcal{F}_{i, \rm CSF}$. Facets lying on the pial
-interface $\Gamma_{\rm pia}$ are denoted by $\mathcal{F}_{\rm pia}$,
-on the outer (arachnoid) boundary $\Gamma_{\rm AM}$ by
-$\mathcal{F}_{\rm AM}$, on the inner ventricular interface
-$\Gamma_{\rm LV}$ by $\mathcal{F}_{\rm LV}$, on the boundary toward
-the spinal cord $\Gamma_{\rm SC}$ by $\mathcal{F}_{\rm SC}$ and on the
-boundary towards the spinal SAS $\Gamma_{\rm SSAS}$ by
-$\mathcal{F}_{\rm SSAS}$. \discuss{For convenience, we denote $\mathcal{F}_e =
-\mathcal{F}_{\rm pia} \cup \mathcal{F}_{\rm LV} \cup \mathcal{F}_{\rm
-  AM-U} \cup \mathcal{F}_{\rm SSAS}$, and the union of all facets in
-$\mathcal{T}$ is denoted by $\mathcal{F} = \mathcal{F}_i \cup
-\mathcal{F}_e \discuss{\cup \mathcal{F}_{\rm SC} \cup \mathcal{F}_{\rm AM-L}}$.}
+interior facets (i.e.~triangular faces of the tetrahedral mesh cells)
+in $\mathcal{T}_{\rm PAR}$ and $\mathcal{T}_{\rm CSF}$ are denoted by
+$\mathcal{F}_{i, \rm PAR}$ and $\mathcal{F}_{i, \rm CSF}$,
+respectively. We define the union of facets interior both to
+$\mathcal{T}_{i, \rm PAR}$ and $\mathcal{T}_{i, \rm CSF}$ as
+$\mathcal{F}_i = \mathcal{F}_{i, \rm PAR} \cup \mathcal{F}_{i, \rm
+  CSF}$. Facets lying on the pial interface $\Gamma_{\rm pia}$ are
+denoted by $\mathcal{F}_{\rm pia}$, on the outer (arachnoid) boundary
+$\Gamma_{\rm AM}$ by $\mathcal{F}_{\rm AM}$, on the inner ventricular
+interface $\Gamma_{\rm LV}$ by $\mathcal{F}_{\rm LV}$, on the boundary
+toward the spinal cord $\Gamma_{\rm SC}$ by $\mathcal{F}_{\rm SC}$ and
+on the boundary towards the spinal SAS $\Gamma_{\rm SSAS}$ by
+$\mathcal{F}_{\rm SSAS}$. \discuss{For convenience, we denote
+  $\mathcal{F}_e = \mathcal{F}_{\rm pia} \cup \mathcal{F}_{\rm LV}
+  \cup \mathcal{F}_{\rm AM-U} \cup \mathcal{F}_{\rm SSAS}$, and the
+  union of all facets in $\mathcal{T}$ is denoted by $\mathcal{F} =
+  \mathcal{F}_i \cup \mathcal{F}_e \discuss{\cup \mathcal{F}_{\rm SC}
+    \cup \mathcal{F}_{\rm AM-L}}$.}
 
 %Note in particular that $\mathcal{F}_i \cap \mathcal{F}_{pia}} =
 %  \emptyset$.
@@ -357,13 +358,13 @@ We first consider the discretization of~\eqref{eq:3d_pde} and
 introduce the discrete space
 \begin{equation}
   %V_h^k = \{c_h \in L^2(\Omega): \;  v_h \vert_E \in \mathbb{P}^k(E), \; E \in \mathcal{T}_h\}.
-  V_h^k = \{c \in L^2(\discuss{\mathcal{T}}): \;  c \vert_E \in \mathbb{P}^k(E), \; E \in \mathcal{T}\} ,
+  V_h^k = \{c \in L^2(\Omega): \;  c \vert_E \in \mathbb{P}^k(E), \; E \in \mathcal{T}\} ,
 \end{equation}
-where $L^2(\mathcal{T})$ is the space of square-integrable functions
-defined relative to $\mathcal{T}$ and $\mathbb{P}^k(E)$ denotes the
-space of polynomials of degree $\leqslant k$ defined over the
-tetrahedra $E$. To discretize the diffusion term in~\eqref{eq:3d_pde},
-we use a symmetric weighted interior penalty DG formulation, referring
+where $L^2(\Omega)$ is the space of square-integrable functions
+defined over $\Omega$ and $\mathbb{P}^k(E)$ denotes the space of
+polynomials of degree $\leqslant k$ defined over the tetrahedra
+$E$. To discretize the diffusion term in~\eqref{eq:3d_pde}, we use a
+symmetric weighted interior penalty DG formulation, referring
 to~\cite{ern2009discontinuous} and \cite[Section
   4.5.2.3]{di2011mathematical} for details on this
 method. \discuss{Recall that $\phi$ is constant in each domain
@@ -444,11 +445,11 @@ Here, $H(\mathrm{div}, \Omega)$ is the space of $L^2(\Omega)$ vector fields with
 \begin{equation}
 \bm v_n = (\bm v \cdot \bm n) \bm n, \quad \bm v_t = \bm v - \bm v_n. 
 \end{equation}
-Since $\bm V_h \subset H(\mathrm{div}, \Omega_{\rm CSF})$, then $[\bm v_n] = 0 $ on $\mathcal{F}_{\rm CSF}$. Continuity in the tangential component is enforced weakly via interior penalization. Define the form \mer{MER: Check $\Gamma_{\rm AM}$ part. 26.11.24: Rami will check $\mathcal{F}_e$ versus definitions of the boundaries and where it appears.}
+Since $\bm V_h \subset H(\mathrm{div}, \Omega_{\rm CSF})$, then $[\bm v_n] = 0 $ on $\mathcal{F}_{i, \rm CSF}$. Continuity in the tangential component is enforced weakly via interior penalization. Define the form \mer{MER: Check $\Gamma_{\rm AM}$ part. 26.11.24: Rami will check $\mathcal{F}_e$ versus definitions of the boundaries and where it appears.}
 \begin{multline}
   \mathcal{A}_h(\bm u, \bm v)
   = \sum_{E \in \mathcal{T}_{\rm CSF}} \int_{E} \mu \nabla \bm u : \nabla \bm v
-  - \sum_{F \in \discuss{\mathcal{F}_{\rm CSF} \cup \mathcal{F}_{e}}} \left (
+  - \sum_{F \in \discuss{\mathcal{F}_{i, \rm CSF} \cup \mathcal{F}_{e}}} \left (
   \int_{F} \mu \{\nabla \bm u\} \cdot \bm n_F \cdot [\bm v_t] 
   - %\sum_{F \in \mathcal{F}_{h,c} \cup \mathcal{F}_{\Gamma}}
   \int_{F} \mu \{\nabla \bm v\}\cdot \bm n_F \cdot [\bm u_t]
