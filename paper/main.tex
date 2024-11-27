@@ -16,6 +16,7 @@
 \usepackage{float}
 \usepackage{amsmath}
 \usepackage{siunitx}
+\usepackage{placeins}
 \usetikzlibrary{quotes}
 \usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,positioning,fit,petri}
 
@@ -24,12 +25,13 @@
 \captionsetup[subfigure]{justification=justified,singlelinecheck=false}
 
 \title{In-silico molecular enrichment and clearance of the human intracranial space}
-\author[1,x]{Marius Causemann}
-\author[1,x]{Miroslav Kuchta}
-\author[1,x]{Rami Masri}
-\author[1,*]{Marie E. Rognes }
+\author[1]{Marius Causemann}
+\author[1]{Miroslav Kuchta}
+\author[2]{Rami Masri}
+\author[1,3,*]{Marie E. Rognes }
 \affil[1]{Department of Numerical Analysis and Scientific Computing, Simula Research Laboratory, Oslo, Norway}
-\affil[x]{Author order to be discussed.}
+\affil[2]{Brown University, Providence, Rhode Island, USA}
+\affil[3]{K. G. Jebsen Centre for Brain Fluid Research}
 \affil[*]{meg@simula.no}
 
 \newcommand{\rami}[1]{\textcolor{blue}{#1}}
@@ -63,14 +65,9 @@
 %
 \thispagestyle{empty}
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \mer{MER: Target length: 5000 words, 4-6 figures: 600 words Intro. 1400 words Methods. 2000 words Results. 1000 words Discussion.}
 
-
 \section*{Introduction}
-
 
 Molecular transport in perivascular spaces (PVSs) is established as a key pathway for human brain clearance and delivery. Previous studies indicate that molecules move rapidly in the subarachnoid space (SAS) and in PVSs surrounding pial arteries. Here, we aim to model and study this transport in a full pial perivascular and/or vascular network embedded in the SAS.  
 
@@ -78,167 +75,9 @@ Motivation: as indicated by~\cite{iliff2012paravascular}, referring to
 Cserr, Phys Rev., 1971, bulk convective flow may be more important for
 larger species (larger distances) and larger molecules.
 
-\section*{Background}
-
-\mer{Point from Miro: Goriely and scaling from mice to men.}
-
-\begin{enumerate}
-\item
-  Communication between perivascular spaces and the subarachnoid space
-  \begin{itemize}
-  \item
-    Rennels et al~\cite{rennels1985evidence} infused tracer into the lateral cerebral ventricles and subarachnoid space of cats (and one dog) and observed that the tracer distributed in a perivascular pattern. The tracer distributed more rapidly around arterioles than around capillaries and veins. Importantly, the rapid paravascular influx was modulated by arterial pulsatility and in particular reduced by reduced vessel pulsatility. They directly postulate that ``fluid circulation through the central nervous system occurs via paravascular pathways'', and discuss both mixing and pumping as pulsatility-associated mechanisms for transport. 
-  \item
-    Weller and coauthors conducted pioneering studies of perivascular spaces, flow and transport~\cite{zhang1990interrelationships, zhang1992directional, weller2005microscopic}. They identified thin sheaths of pial cells surrounding arteries and arterioles (but not veins or venules) on the brain surface and within the human brain itself~\cite{zhang1990interrelationships}. Further, they observed that tracers spread along perivascular (arterial, venous and capillar) spaces in (rat) grey matter, and in the subarachnoid space (to the cribriform plate and nasal lymphatics).   
-  \item
-    Ichimura et al~\cite{ichimura1991distribution} study the distribution of large molecular weight tracers in the subarachnoid and surface perivascular spaces and within the cortex in rats. They observed rapid spread in perivascular spaces, and that tracers injected into the CSF of the subarachnoid space spread also into subarachnoid and cortical perivascular spaces. In conclusion, they highlight the presence of an extensive perivascular network, and report of some bulk flow, but slow and of variable directionality - in contrast to e.g Rennels et al~\cite{rennels1985evidence}. 
-  \item In a series of papers, Bakker and coauthors study perivascular anatomy and solute transport~\cite{bedussi2017paravascular, bedussi2018paravascular}. They find that the subarachnoid space, the cisterns, ventricles and penetrating periarteriolar spaces form a continuous cerebrospinal fluid-filled space surrounding and penetrating into the murine brain \cite{bedussi2017paravascular}. Moreover, they demonstrate pulsatile and directional (antegrade) flow in perivascular (predominantly periarterial) spaces on the brain surface \cite{bedussi2018paravascular}. 
-  \item
-    Iliff et al~\cite{iliff2012paravascular} observed rapid movement of tracer (injected in the cisterna magna) along the outside of surface arteries and penetrating arterioles in mice, and state this is in agreement with the presence of perivascular sheaths as reviewed by Weller~\cite{weller2005microscopic}.
-  \item
-    The architecture of perivascular spaces in and around the rat brain was also studied in detail by Thorne and colleagues~\cite{pizzo2018intrathecal, hannocks2018molecular}. Hannocks et al~\cite{hannocks2018molecular} characterize the molecular composition of different perivascular compartments. Pizzo et al~\cite{pizzo2018intrathecal} emphasizes the presence of stomata or pores present on the interface between blood vessels and the CSF in the subarachnoid space. Neither seem to quantitatively report on PVS widths.
-  \item Mestre et al~\cite{mestre2022periarteriolar} study the properties of pial perivascular spaces in detail in mice, and in particular the structure and coverage of pial cells and pial layers surrounding leptomeningeal arteries (and arterioles). They report of pial cells forming sheaths for larger ($> 10000 \mu$m$^2$ cross-section lumen area) surface arteries and partially coverage for smaller surface arteries, with higher coverage in ventral SAS regions. They find that these pial layers do not form an impermeable barrier to small molecules. Importantly, they also study the pial coverage in aged and Alzheimer's model mice, and find significant and complex changes in these pial structures.
-  \item
-    In humans, Eide and Ringstad investigate cerebrospinal fluid tracer transport in the human subarachnoid space after intrathecal injection~\cite{eide2024functional}. They observe tracer enrichment antegrade along the major cerebral arteries, and enrichment of the nearly cerebral cortex. They also consider variations in different patient cohorts and find impaired transport in iNPH patients with increased perivascular space size. They report of tracer enrichment in donut-shaped perivascular spaces. The timings here may be the best estimate of human PVS flow speeds. 
-  \item
-    Yamamoto et al~\cite{yamamoto2024perivascular} also report of contrast-enhancement in human PVS.
-  \end{itemize}
-\item
-  Shapes and sizes of the perivascular spaces\footnote{The area $A$ of
-  a circle with inner radius $R_1$ is $A = \pi R_1^2$. The area $A_2$
-  of an annulus with inner radius $R_1$ and outer radius $R_2$ is $A_2
-  = \pi (R_2^2 - R_1^2)$. The width of this annulus is $R_2 -
-  R_1$. The ratio PVS/lumen area can thus be estimated as $A_2/A =
-  (R_2^2 - R_1^2)/R_1^2$. For example, if $R_2 = n R_1$ ($n = 2
-  \rightarrow$ PVS width equal to lumen radius, $n = 3 \rightarrow$
-  PVS width equal to lumen diameter), then $A_2/A = n^2 - 1$. However,
-  if the annulus has an elliptic outer boundary with radii $R_a$ and
-  $R_b$, then its area is $A_e = \pi (R_a R_b - R_1^2)$, and so in the
-  extreme case where $R_a > R_b = R_1$, the area is $\pi R_1 (R_a -
-  R_1)$, and the PVS/lumen area ratio is $A_e/A = (R_a -
-  R_1)/R_1$. And so, for $R_a = n R_1$, then $A_e/A = n-1$.}. Note
-  that representing the surface PVS as annular cylinders is a
-  simplification, and several studies emphasize the asymmetric nature
-  of the PVS shape~\cite{mestre2018flow, tithof2019hydraulic,
-    vinje2021brain, raicevic2023sizes}. Moreover, do not forget that
-  the sizes of mice and humans are orders of magnitude apart.
-  \begin{itemize}
-  \item
-    Ichimura et al~\cite{ichimura1991distribution} report on a typical
-    perivascular width of $1-10\mu$m, but broader around vessel
-    bifurcations in the rat subarachnoid space (fixed specimens).
-  \item Foley et al~\cite{foley2012realtime} report on perivascular
-    space width within rat cortex of $8-10\mu$m for arterioles of
-    $\approx$30$\mu$m in diameter.
-  \item
-    Schain et al~\cite{schain2017cortical} report on the sizes of pial
-    arteries ($6.0-11 \mu$m in diameter\footnote{Schain et
-    al~\cite{schain2017cortical} state diameter rather, but the
-    diameter does not match with the given area, so perhaps this
-    should be the radius}) and veins ($9.4-21\mu$m) in mice, with an
-    average PVS/lumen area ratio of $1.26$ for arteries and $0.13$ for
-    veins. 
-  \item Mestre et al~\cite{mestre2018flow} measure and characterize
-    pial perivascular transport and estimate flow magnitudes in
-    mice. They report a PVS/lumen area ratio of $1.4 \pm 0.1$ and a
-    PVS width of $\approx 40 \mu$m which described as comparable to
-    the adjacent artery (diameter). 
-\item
-  Raicevic et al~\cite{raicevic2023sizes} study the sizes and shapes
-  of perivascular spaces surrounding pial arteries in mice in detail,
-  in particular the relationship between periarterial space and lumen
-  (cross-section) area and its variation with vessel area and
-  location. They remark that the variation in PVS area is larger
-  between PVS segments than along a single PVS segment. The PVS area
-  seems to increase with the vessel area, but an affine approximation
-  gives a poor fit, and from inspecting the distribution, the
-  relationship seems superlinear. The peak distribution value of
-  segmented PVS/lumen area is $1.12$.
-  \item
-    In terms of size, Bedussi et al.~\cite{bedussi2018paravascular} report a PVS width of $\approx$20$\mu$m surrounding surface arteries branching from the MCA (of diameters $45 \pm 7$ $\mu$m). Note that they include both data from mice and OCT data from humans. They report of human PVS size linearly related with the vessel size (and in the range 0.1--0.35 mm for vessels of diameter 0.1--0.5 mm).
-  \item Vinje et al~\cite{vinje2021brain} and references therein illustrates the location and characteristics of human pial perivascular spaces, using human OCT data from the Bakker lab.
-  \item Bollman et al~\cite{bollmann2022imaging} image the human pial vasculature at high resolution (7T), and report of pial arterial diameters in the range $50-280 \mu$m.
-\item
-  Smets et al~\cite{smets2024perivascular} study the size of
-  perivascular spaces surrounding pial arteries and veins in mice
-  (in-vivo), with particular emphasis on the properties of perivenous
-  spaces. They observe the PVS as two ``triangular spaces'' adjacent
-  to both arteries and veins, and separated from the subarachnoid
-  space by a membrane (see also references
-  to~\cite{zhang1990interrelationships, pizzo2018intrathecal,
-    mollgard2023mesothelium}). They found that the cross-section area
-  of the PVS correlates with the lumen area both for pial arteries
-  and veins, but not for penetrating vessels. They report a
-  PVS-to-lumen-area ratio of 0.43 for arteries and 0.35 for veins.
-\item
-  Personal communication (Ringstad, Oct 15 2024)~\cite{eide2024functional}: a typical blood vessel in the M2-segment of the MCA is 1.56 mm in diameter ($2 R_1$) with an annular PVS of width ($R_2 - R_1$) 1.23 mm and total PVS diameter $2 R_2$ of 3.93. In iNPH patients, extreme outliers are observed; e.g. still with annular PVS, but not concentric (shifted vessel), for vessel diameter of 2 mm and PVS width from 1.1 mm to 6.0 mm.
-  \end{itemize}
-\item
-  Perivascular hydraulic resistances. The hydraulic resistance of
-  perivascular spaces has been studied extensively, with key
-  contributions from Thomas, Kelley, Tithof and collaborators~\cite{tithof2019hydraulic}.
-  \begin{itemize}
-  \item Boster et al.~\cite{boster2024hydraulic} study methods of estimating the hydraulic resistance of perivascular spaces via in-vivo imaging-based 3D reconstructions of pial perivascular spaces in mice; they report of hydraulic resistances of the order $1.7 \times 10^6 - 8.9 \times 10^5$ mmHg·min/mL/m).
-  \end{itemize}
-\item
-  Perivascular flow characteristics: magnitudes and directionality?
-  \begin{itemize}
-  \item
-    Rennels et al~\cite{rennels1985evidence} highlight in their
-    Discussion that
-    \begin{quote}
-      This evidence of fluid displacement in both directions through
-      the perivascular spaces suggest either that influx and efflux
-      occur intermittently through the same perivascular spaces or
-      that these fluid movements occur via separate populations of
-      perivascular spaces.
-    \end{quote}
-  \item
-    Ichimura et al~\cite{ichimura1991distribution} found that albumin in the subarachnoid periarterial space moved 1.5 mm away from the injection site in about 7 minutes, thus a net speed of around $3.6 \mu$m/s. 
-  \item
-    Hadaczek et al~\cite{hadaczek2006perivascular} studied the role of arterial pulsations in more detail, following up on~\cite{rennels1985evidence}.
-  \item Foley et al~\cite{foley2012realtime} study perivascular transport characteristics of nanoparticles injected in the cerebral cortex of rats, though in the context of convection-enhanced delivery.
-  \item
-    In terms of movement, Bedussi et al~\cite{bedussi2018paravascular} found a net movement of particles in surface PVS (in mice) in the antegrade (same direction as blood flow) direction with an average velocity of $17 \pm 2\mu$m/s, and a mean amplitude of the pulsatile motion of $14 \pm 2 \mu$m.
-\item Mestre et al~\cite{mestre2018flow} report a mean (averaged over time and space) flow speed of $18.7 \mu$m/s (root-mean-square velocity?) with net transport in the antegrade direction (near the MCA, in mice).
-\item
-  Asgari et al~\cite{asgari2016glymphatic} model tracer transport in axial periarterial spaces, highlight the negligible net (directional, bulk) flow induced by arterial wall pulsations at physiologically realistic wavelengths, but also the contributions from wall pulsations to dispersion. 
-\item
-  Rey and Sartinoranont~\cite{rey2018pulsatile} examine pulsatility as a driver for net flow in perivascular spaces within the brain parenchyma via a hydraulic network models, again highlighting the negligible net flow induced by vascular wall movements, but significant pulsatile flow and thus potential for dispersive effects~\cite{watson1983diffusion, asgari2016glymphatic}.
-\item
-  Rey et al~\cite{rey2023perivascular} consider a comprehensive ex-vivo perivascular network segmentation in the rat brain following in-vivo intraventricular contrast infusion. They highlight the numerous connections between the ventricular system and the perivascular spaces, including long perivascular segments extending from the surface and deep into the brain. 
-\item
-  In the context of dispersion, see also~\cite{asgari2016glymphatic, keith2019dispersion, troyetsky2021dispersion}
-\item
-  Wright et al~\cite{wright2024coupled} study the dynamics (waveforms over time) of human arterial blood flow (with resting-state fMRI) and perivascular CSF flow (with dynDWI, apparent diffusion coefficient (mm$^2$/s)). The waveforms seem coupled, with the arterial peak preceding the CSF peak by around 0.06 (of a cardiac cycle). The report ADC in the PVS on the order $2.5-5.5 \times 10^{-3}$ mm$^2$/s, with alterations in the coupling with age.
-\item
-  Boster and coauthors~\cite{boster2023artificial, toscano2024infeering} estimate perivascular flow parameters in mice via physics-informed neural networks (e.g.~pressure gradients, hydraulic resistances, shear stresses). Boster et al~\cite{boster2023artificial} estimate PVS pressure gradients on the order of $0.7-5 \times 10^{-4} \unit{Pa/\mu m}$\footnote{Note that 
-  \begin{equation}
-    1 \times 10^{-4} \, \unit{Pa/\mu m} = 1 \times 10^{2} \, \unit{Pa/m} \approx 100/133 \unit{mmHg/m} \approx 0.75 \unit{mmHg/m}
-  \end{equation}
-   }, downstream velocity component of $12.75 \pm 6.25 \unit{\mu m/s}$. 
-  \end{itemize}
-\item
-  Broggini et al~\cite{broggini2024long} describe long-wavelength traveling waves of vasomotion (0.1 Hz) in pial arterioles in mice. They find waves traveling in both directions, with waves exiting the surface of the cortex more often than chance (85 of 140 exit). ``The wavelength of the observed pial waves is long, typically 20 mm or twice the length of the mouse cortex (inset in Figure 4C).'', with relative amplitudes in the range 0.02--0.12 in pial arterioles.
-\item
-  Kedarasetti et al~\cite{kedarasetti2020functional} model functional hyperemia waves (aka stimulus-induced vasomotion, see also van Veluw et al~\cite{vanveluw2020vasomotion}). Note that the directionality of vasomotion is classically thought to be in the opposite direction of the blood flow.
-\item
-  Note that Gokina et al~\cite{gokina1996electrical} report of spontaneous rhythmic contraction in human pial arteries.
-\end{enumerate}
-Cerebrospinal fluid flow
-\begin{itemize}
-\item
-  Sweetman and Linninger~\cite{sweetman2011cerebrospinal} model the flow of cerebrospinal fluid in the cranial and spinal subarachnoid space of a healthy human driven by pulsatile displacement of the upper walls of the lateral ventricles representing volumetric changes of the vasculature, with model predictions in good agreement with clinical observations of CSF velocity magnitude and stroke volume. 
-\item Causemann et al.~\cite{causemann2022human}
-\item
-  Vinje et al.~\cite{vinje2019respiratory} consider clinical measurements of intracranial pressure differences and human CSF-space geometries together with computational modelling to study CSF flow patterns in the aqueduct. They estimate the pressure gradient across the cerebral aqueduct resulting from a CSF production of 0.5L/day to be $0.009 \pm 0.006$ mmHg/m.
-\item Hornkjøl et al~\cite{hornkjol2022csf} model CSF flow and solute transport in the human SAS and brain parenchyma. 
-\end{itemize}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Results}
-
-~ 2000 words and 7 subsections - around 300 words each?
+\mar{~ 2000 words and 7 subsections - around 300 words each?}
 \begin{enumerate}
 \item
   ``A digital twin'' for molecular enrichment and clearance in human intracranial spaces
@@ -248,13 +87,13 @@ Cerebrospinal fluid flow
 \item
   ``The role'' of PVS flow speed
 \item
-  ``The role'' of PVS sheaths and permeability
+  ``The role'' of PVS sheaths and permeability - does functional separation entail structural separation?
 \item
-  ``The role'' of PVS size versus pathologies $R_2 = 3 R_1$ instead of $R_2 = 2 R_1$?
+  ``The role'' of PVS size (motivated by pathologies)
 \item
-  Clearance from the CSF spaces - with and without low pressure veins, but keeping the intrathecal source of solute. Quantities of interest?
+  Clearance from the CSF spaces - with and without low pressure veins, but keeping the intrathecal source of solute. 
 \item
-  Clearance from the parenchyma - with and without low pressure veins, $c_0 = 1.0$.
+  Clearance from the parenchyma: $c_0 = 1.0$. Different substances?
 \end{enumerate}
 
 \begin{figure}
@@ -278,13 +117,11 @@ Cerebrospinal fluid flow
   Highlight computational model availability, open source code.
 \item
   Provides an interactive in-silico platform for studying intracranial solute transport -- distribute such that anyone can run (possibly try to recruit MinRK if advantageous).
+\item
+  \mer{MER: Remember to report on how much concentration enters into the brain?}
 \end{itemize}
 
-\draft{\lipsum[1]}
-
-
-\subsection*{II: CSF flow}
-
+\subsection*{CSF flow and dispersion shifts enrichment patterns}
 
 Flow of CSF through the SAS and the ventricular system is a crucial driver of transport in the human brain environment.
 While cardiac- and respiratory induced oscillatory flow increases mixing, the production of CSF in the choroid plexus creates a steady advective flow within the CSF-filled spaces of the cranium \cite{hornkjol2022csf}. 
@@ -318,7 +155,7 @@ Next, we use the computed advective velcity field and dispersion enhancement fac
 
 \begin{figure}[h!]
 \centering 
-\includegraphics[width = 0.9 \linewidth]{figures/figure2.png}
+\includegraphics[width = 0.9\linewidth]{figures/figure2.png}
 \caption{
 A) Illustration of 3D-domains; 
 B) Illustration of relevant boundaries; 
@@ -339,65 +176,7 @@ O) model X,Y and Z after 12h;
 \label{fig:csf}
 \end{figure}  
 
-\subsection*{III: Perivascular flow}
-
-\draft{\lipsum[1]}
-
-\begin{figure}
-    \centering
-    \includegraphics[height=\textheight]{figures/figure3.png}
-    \caption{\mer{MER: Put vasculature network illustration here. Many aspects actually. Marking of segments. Location relative to 3D. Radius etc. Marius will evaluate and suggest. Results: Group segments by logical order. For key arterial segments: average radius and length (can be moved to Supplementary if need be); pressure values; flow velocities; and then histograph with flow velocities for each mesh cell. Make sure to minorly note that ACA refers to a segment of the ACA and not the whole thing e.g.}}
-    \label{fig:pvs}
-\end{figure}
-
-\Cref{fig:pvs}.
-
-\subsection*{Structural versus functional compartmentalization of perivascular spaces}
-
-\begin{itemize}
-\item
-  Are perivascular spaces functionally or structurally
-  compartmentalized? Human and rodent observations indicate that
-  tracers concentrate in perivascular spaces surrounding the pial and
-  subarachnoid vasculature. Must these spaces be structural
-  i.e.~defined by semi-permeable structural
-  membrane~\cite{zhang1990interrelationships, zhang1992directional,
-    mestre2018flow, eide2024functional}, or can such
-  compartmentalization be a result of regions of enhanced flow or
-  mixing~\cite{bedussi2017paravascular, vinje2021brain}? See also
-  references in Background.
-\item
-  Compare Model A variations \Cref{tab:scenarios}).
-\end{itemize}
-\begin{figure}
-\begin{subfigure}{0.5 \linewidth}
-    \centering
-    \includegraphics[width=1\linewidth]{figures/modelA_conc_at_label.png}
-    \caption{B1 - $\xi$}
-    \includegraphics[width=1\linewidth]{figures/modelB1-10_conc_at_label.png}
-    \caption{B1 - $10 \xi$}
-    \includegraphics[width=1\linewidth]{figures/modelB1-100_conc_at_label.png}
-    \caption{B1 - $100 \xi$}
-    \includegraphics[width=1\linewidth]{figures/modelB1-1000_conc_at_label.png}
-    \caption{B1 - $1000 \xi$}
-\end{subfigure}
-\begin{subfigure}{0.5 \linewidth}
-    \centering
-    \includegraphics[width=1\linewidth]{figures/modelB2-1_conc_at_label.png}
-    \caption{B2 - $\xi$}
-    \includegraphics[width=1\linewidth]{figures/modelB2-10_conc_at_label.png}
-    \caption{B2 - $10 \xi$}
-    \includegraphics[width=1\linewidth]{figures/modelB2-100_conc_at_label.png}
-    \caption{B2 - $100 \xi$}
-    \includegraphics[width=1\linewidth]{figures/modelB2-1000_conc_at_label.png}
-    \caption{B2 - $1000 \xi$}
-\end{subfigure}
-    \label{fig:modelB_xi_variations}
-\end{figure}
-
-\subsection*{The significance of low-resistance perivascular pathways}
-
-\mer{MER: Remember to report on how much concentration enters into the brain?}
+\subsection*{The significance of perivascular spaces as flow highways}
 \begin{itemize}
 \item
   Perivascular flow and transport has been identified as a key
@@ -405,107 +184,113 @@ O) model X,Y and Z after 12h;
   metabolic waste clearance -- what are the global (intracranial)
   effects of such intracranial highways? 
 \item
-  Compare Model A and B (\Cref{tab:scenarios}).
-\item
-  Do solutes move from PVS to the SAS, or both along the PVS and along the SAS?
+  Do solutes move from PVS to the SAS, or both along the PVS and along
+  the SAS?
 \end{itemize}
-
-
-\subsection*{Clearance and the brain's waterscape}
-\begin{itemize}
-\item 
-  Modelling metabolite clearance rather than solute influx (Model
-  C). Consider several diffusion coefficients corresponding to
-  gadubutrol, dextran, tau and amyloid-beta, otherwise identical flow
-  set-ups.
-\end{itemize}
-
-\subsection*{Intracranial solute influx and clearance during sleep}
-
-\begin{itemize}
-\item
-  Sleep is known to affect a number of the transport characteristics including: increased extracellular volume fraction, altered vascular pulsatility and a-forteriori perivascular flow and mixing, reduced CSF production, reduced glymphatic transport.
-\end{itemize}
-
-
-\subsection*{Influx and clearance in pathologies}
-\begin{itemize}
-\item
-  A number of neurological and neurodegenerative disorders yield mechanical changes in the intracranial environment (increased arterial stiffness, cerebral arterial angiopathies, perivascular flow changes due to hypertension, altered CSF flow patterns, altered diffusion properties in cancer, BBB leakage). One key clinical aspect is increased PVS width in e.g. iNPH. 
-\end{itemize}
-
-
-\subsection*{Veins}
-\mer{MER: Just a placeholder. Disregard veins in the first sections.}
-
-\newpage
-
-\mer{MER: Old, revisit to see if we have forgotten any of these interesting ideas.}
-\subsection*{Effect of interfaces (interface permeability)}
-
-\begin{itemize}
-    \item Model 0 (baseline): only diffusion, different diffusion coefficient in the parenchyma and SAS/PVS. No leak to vasculature (zero permeability). $\infty$ $\zeta_0$ at the PVS-SAS interface, $\zeta_1$ at the PVS-SAS interface. Koch et al could be a reference for PVS-parenchyma, maybe Tithof et al (2022, "A network model" ...) could give some ideas for parameters, also see Mestre et al, Nature comms, 2022. 
-    \item 
-    With altered interface permeabilities in the PVS (Model 1), and or in the parenchyma (Model 2) 
-    \end{itemize}
-
-
-\subsection*{Effect of convection}
-\begin{itemize}
-    \item 
-    With convective flow in the PVS (zero flow in the parenchyma for now)
-    \begin{itemize}
-        \item 
-        Model 3: PVS flow equal to 18.7 $\mu$m/s
-        \item 
-        Model 4: Better PVS flow (distributed, according to conservation of mass, assumptions on PVS area)
-    \end{itemize}    
-    \item 
-    With convective flow in the ECS (out of scope here, for follow-up work?)
-\end{itemize}
-
 \begin{figure}
     \centering
-    \includegraphics[width = 0.9 \textwidth]{modelB_modelC_overview.png}
-    \caption{Tracer concentrations for a purely diffusive model with tracer inflow via the CSF-filled space (left) and a convective model with Tracer inflow via the arterial PVS (middle) and their difference (right) at 1, 6, 12, 18 and 24 hours after injection.}
-    \label{fig:2}
+    \includegraphics[height=\textheight]{figures/figure3.png}
+    \caption{\mer{MER: Put vasculature network illustration here. Many aspects actually. Marking of segments. Location relative to 3D. Radius etc. Marius will evaluate and suggest. Results: Group segments by logical order. For key arterial segments: average radius and length (can be moved to Supplementary if need be); pressure values; flow velocities; and then histograph with flow velocities for each mesh cell. Make sure to minorly note that ACA refers to a segment of the ACA and not the whole thing e.g.}}
+    \label{fig:pvs}
 \end{figure}
-\subsection*{Effect of BBB}
+\Cref{fig:pvs}.
 
-Leakage to the blood, some sink/non-zero permeability for the PVS-blood (BBB) interface (Model N).
+\subsection*{Structural versus functional compartmentalization of perivascular spaces}
 
-\subsection*{Effect of pia}
-  
-Effect of pia permeability (Model N-1)    
+\begin{itemize}
+\item
+  Are perivascular spaces functionally or structurally
+compartmentalized? Human and rodent observations indicate that tracers
+concentrate in perivascular spaces surrounding the pial and
+subarachnoid vasculature. Must these spaces be structural i.e.~defined
+by semi-permeable structural
+membrane~\cite{zhang1990interrelationships, zhang1992directional,
+  mestre2018flow, eide2024functional}, or can such
+compartmentalization be a result of regions of enhanced flow or
+mixing~\cite{bedussi2017paravascular, vinje2021brain}? See also
+references in Background.
+\item
+  Vary the PVS permeability $\xi$.
+\end{itemize}
 
-\begin{figure}
-     \centering
-     \begin{subfigure}[b]{0.33\textwidth}
-         \centering
-         \includegraphics[width=\textwidth]{modelA_total_conc.png}
-         \caption{arterial inflow, pure diffusion}
-         \label{fig:y equals x}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{0.33\textwidth}
-         \centering
-         \includegraphics[width=\textwidth]{modelB_total_conc.png}
-         \caption{SAS inflow, pure diffusion}
-         \label{fig:three sin x}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{0.33\textwidth}
-         \centering
-         \includegraphics[width=\textwidth]{modelC_total_conc.png}
-         \caption{arterial inflow, diffusion + PVS convection}
-         \label{fig:five over x}
-     \end{subfigure}
-        \caption{Total tracer amount in parenchyma, CSF, arterial PVS and venous PVS}
-        \label{fig:three graphs}
-\end{figure}
+\subsection*{Enlarged perivascular spaces yield ...}
 
+\begin{itemize}
+  \item Take $R_2 = 3 R_1$ instead of $2 R_1$.
+\end{itemize}
+
+\subsection*{The perivenous contribution to molecular clearance of CSF tracers}
+
+\begin{itemize}
+\item
+  Look at clearance phase 12h-24h-48h-72h.
+\item
+  Look at concentration in the veins
+\item
+  Look at concentration in the parenchyma
+\item
+  Consider low-pressure sink for the perivenous spaces.
+\end{itemize}
+
+\subsection*{Clearance of intraparenchymal solutes}
+
+\begin{itemize}
+\item
+  Clearance of a molecular concentration in the parenchyma, different
+  molecular sizes - ranging from Gadubutrol to amyloid-$\beta$/$\tau$.
+\end{itemize}
+
+\bigskip
+
+\FloatBarrier
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Discussion}
+
+\paragraph{CSF flow model validation}
+
+Hornkjøl et al \cite{hornkjol2022csf} model CSF flow induced by production in the choroid plexus and report a peak velocity of $8.9\,$mm/s in the aqueduct. Given that similar flow rates were enforced, the deviation from our value of $2.0\,$mm/s is likely due to differences in diameter of the reconstructed aqueduct. Additionally, their peak velocities in the SAS range between 20 - 50 $\mu\,$m/s, which is compatible with our mean velocity of $4.4\,\mu$m/s (\Cref{fig:csf_flow_histo}).
+
+The aqueductal ($0.31\,$ml/s) and craniocervical ($8.31\,$ml/s) flow rates predicted by our model align well with previously reported values of $0.31\,$ml/s peak aqueductal flow rate \cite{vinje2019respiratory} and about $9\,$ml/s peak net blood inflow into the cranium \cite{baledent2014imaging}. Further, Linninger et al \cite{linninger2007cerebrospinal} model cardiac-induced CSF flow and predict a maximum transmantle pressure difference of $10\,$Pa, which is in good agreement with our estimate of $8.5\,$Pa as well as clinically measured mean pressure differences of $11.5\,$Pa between sensors placed subdurally and in the lateral ventricle \cite{vinje2019respiratory}.
+% 10.7 cm/s CSF flow at the craniovertebral junction in control \cite{bapuraj2016cerebrospinal}, area difference?
+
+Sharp et al used the theory of dispersive mixing to predict a dispersion enhancement factor of $91.8$ in the (open) spinal SAS, which lies well within the range of our spatially varying estimate (ranging from 0 to 160). Conversely, \cite{ray2021quantitative} report up to 10,000 times greater diffusion in perivascular regions, but their modelling lumps diffusive, dispersive and advective transport in a single enhancement factor and is thus not directly comparable.
+
+
+
+\subsection*{Limitations}
+
+\begin{itemize}
+\item
+  \mer{MER/MC: How about dispersion in the PVS?}
+\item 
+  Inaccuracies in vascular geometry representation - and consequences downstream for e.g. numerical integration.
+\item
+  PVS geometry assumptions and approximations. Humans different from mice. Limitations in resolution.
+\item
+  No vasculature in the cerebellum, and of course no vasculature below certain resolution.
+\item
+  Only partially accounting for pulsatility. 
+\item
+  Accounting for brain diffusive anisotropy. Little effect expected. Maybe something to consider in small follow-up work.
+\item
+  Permeability and stiffness of the pial membrane
+\item
+  PVS-blood exchange and BBB leakage. Natural to consider in model variation here, or follow-up work. We here ignore PVS-blood exchange, and thus only model the perivascular concentration at the network level (in addition to the SAS/brain concentration in the surroundings).
+
+\end{itemize}
+
+\subsection*{Outlook}
+
+\begin{itemize}
+\item
+  Considering the (maybe) low diffusion in CSF spaces, maybe pure
+  advection would be relevant? Both computational and physiological
+  implications/interest.
+\end{itemize}
+
+\newpage
 \section*{Methods}
 
 %\mer{MER: I recommend writing each (sub)section of Methods as a nearly stand-alone paragraph. Let's see if we can avoid subsubsections/paragraphs. If you need to add more detail than you think is appropriate, put it in a Supplementary Methods section in the Appendix.} 
@@ -773,7 +558,6 @@ The numerical scheme for the CSF flow equations utilizes polynomial spaces that 
 
 For the 3D transport problem, we use the interior penalty discontinuous Galerkin (DG) method with weighted averages and upwinding for the convection term \cite{ern2009discontinuous}.  We remark that the choice of DG in the 3D domain is necessary here since  continuous Galerkin methods even when supplemented with artificial diffusion stabilization terms were unstable in our experiments. For the 1D transport problem, we use continuous Galerkin spaces defined over the entire network with additional artificial diffusion silization when the 1D velocity is non--zero.  DG methods for the coupled 3D--1D problem have been recently analyzed  where convergence of the method for the elliptic case is established \cite{masri2024discontinuous}. While the analysis is for DG methods for both the 3D and the 1D problem, we expect similar arguments to hold here. However, note that the 3D--1D coupling induces a singularity in the 3D solution and one can only expect suboptimal error rates near the 1D network. In subdomains excluding the 1D lines, almost optimal rates can be expected for both DG methods \cite{masri2023discontinuous} and CG methods \cite{koppl2016local}.  Extension of the convergence analysis to convection--diffusion problems is an interesting future research direction. 
 
-
 \begin{table}
   \begin{center}
   \begin{tabular}{ll|llllll|ll}
@@ -834,53 +618,6 @@ For the 3D transport problem, we use the interior penalty discontinuous Galerkin
 \end{table}
 
 
-\mer{To be edited, just moved here:} We will consider different values for the SAS-PVS permeability $\xi$, including $\xi = 0$ (sealed PVS), $\xi \approx \infty$ (PVS continuous with SAS), as well as reasonable intermediate values. We will ignore PVS-blood exchange, and thus only model the perivascular concentration at the network level (in addition to the SAS/brain concentration in the surroundings).  
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newpage
-\section*{Discussion}
-
-\paragraph{CSF flow Model validation}
-
-Hornkjøl et al \cite{hornkjol2022csf} model CSF flow induced by production in the choroid plexus and report a peak velocity of $8.9\,$mm/s in the aqueduct. Given that similar flow rates were enforced, the deviation from our value of $2.0\,$mm/s is likely due to differences in diameter of the reconstructed aqueduct. Additionally, their peak velocities in the SAS range between 20 - 50 $\mu\,$m/s, which is compatible with our mean velocity of $4.4\,\mu$m/s (\Cref{fig:csf_flow_histo}).
-
-The aqueductal ($0.31\,$ml/s) and craniocervical ($8.31\,$ml/s) flow rates predicted by our model align well with previously reported values of $0.31\,$ml/s peak aqueductal flow rate \cite{vinje2019respiratory} and about $9\,$ml/s peak net blood inflow into the cranium \cite{baledent2014imaging}. Further, Linninger et al \cite{linninger2007cerebrospinal} model cardiac-induced CSF flow and predict a maximum transmantle pressure difference of $10\,$Pa, which is in good agreement with our estimate of $8.5\,$Pa as well as clinically measured mean pressure differences of $11.5\,$Pa between sensors placed subdurally and in the lateral ventricle \cite{vinje2019respiratory}.
-% 10.7 cm/s CSF flow at the craniovertebral junction in control \cite{bapuraj2016cerebrospinal}, area difference?
-
-Sharp et al used the theory of dispersive mixing to predict a dispersion enhancement factor of $91.8$ in the (open) spinal SAS, which lies well within the range of our spatially varying estimate (ranging from 0 to 160). Conversely, \cite{ray2021quantitative} report up to 10,000 times greater diffusion in perivascular regions, but their modelling lumps diffusive, dispersive and advective transport in a single enhancement factor and is thus not directly comparable.
-
-
-
-\subsection*{Limitations}
-
-\begin{itemize}
-\item
-  \mer{MER/MC: How about dispersion in the PVS?}
-\item 
-  Inaccuracies in vascular geometry representation - and consequences downstream for e.g. numerical integration.
-\item
-  PVS geometry assumptions and approximations. Humans different from mice. Limitations in resolution.
-\item
-  No vasculature in the cerebellum, and of course no vasculature below certain resolution.
-\item
-  Only partially accounting for pulsatility. Ignoring respiration frequencies - dubious in the context of CSF flow.
-\item
-  Accounting for brain diffusive anisotropy. Little effect expected. Maybe something to consider in small follow-up work.
-\item
-  Permeability and stiffness of the pial membrane
-\item
-  PVS-blood exchange and BBB leakage. Natural to consider in model variation here, or follow-up work.
-\end{itemize}
-
-\subsection*{Outlook}
-
-\begin{itemize}
-\item
-  Considering the (maybe) low diffusion in CSF spaces, maybe pure
-  advection would be relevant? Both computational and physiological
-  implications/interest.
-\end{itemize}
-
 \bibliography{references}
 
 \newpage
@@ -902,5 +639,8 @@ The corresponding author is responsible for submitting a \href{http://www.nature
 \newpage
 \appendix
 \input{supplementary_main.tex}
+
+\input{background.tex}
+
 
 \end{document}
