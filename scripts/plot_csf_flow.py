@@ -1,4 +1,5 @@
 
+from xml import dom
 import pyvista as pv
 import typer
 from vtk_adapter import create_vtk_structures
@@ -6,7 +7,7 @@ import numpy as np
 from fenics import *
 import matplotlib 
 import k3d.colormaps.paraview_color_maps as pcm
-from compute_dispersion_field import alpha
+from compute_dispersion_field import alpha_cardiac, alpha_respiratory
 from plotting_utils import set_plotting_defaults, minmax
 from generate_synthseg_mesh import CSFID, LVID, V34ID
 import matplotlib.pyplot as plt
@@ -14,21 +15,26 @@ from matplotlib.ticker import PercentFormatter
 import seaborn as sns
 from plot_subdomains import get_camera
 from vtk.util.numpy_support import numpy_to_vtk
+import seaborn as sns
 
 m2mum = 1e6
 
 def velocity_histo(sm, u, filename, vscale, vunit):
     set_plotting_defaults()
+    sns.set_context('paper', font_scale=1.8)
+
     DG0 = sm.function_space()
     umag = project(sqrt(inner(u,u)), DG0,
                    solver_type="cg", preconditioner_type="hypre_amg")
     cellvol = assemble(TestFunction(DG0)*dx)
-    ids = [CSFID, LVID, V34ID]
-    indices = [sm.vector()[:]==i for i in ids]  
-    fig, axes = plt.subplots(ncols=3, figsize=(7,3))
+    domains = [[CSFID], [V34ID],]
+    names = ["SAS", "V3 & V4"]
+    indices = [np.isin(sm.vector()[:], dom) for dom in domains]  
+    #from IPython import embed; embed()
+    fig, axes = plt.subplots(ncols=len(domains), figsize=(7,3))
     nbins = 20
-    colors = sns.color_palette("crest", n_colors=3)
-    for ax, name, idx, col in zip(axes, ["SAS", "LV", "V3 & V4"], indices, colors):
+    colors = sns.color_palette("crest", n_colors=len(domains))
+    for ax, name, idx, col in zip(axes,names , indices, colors):
         uvals = umag.vector()[idx] * vscale
         xlims = (0, np.percentile(uvals, 92))
         ax.hist(uvals, bins=nbins, weights=cellvol[idx] / cellvol[idx].sum(),
@@ -41,10 +47,10 @@ def velocity_histo(sm, u, filename, vscale, vunit):
         #           color="black",ymax=0.6, label=f"{max*1e-3:.1f} mm/s")
         ax.set_xlabel(f"velocity ({vunit})")
         ax.set_ylabel("frequency")
-        plt.tight_layout()
+        #plt.tight_layout()
         ax.set_xlim(xlims)
         ax.legend(frameon=False, loc="lower left", alignment="right",
-                  borderaxespad=0, handlelength=1.3, bbox_to_anchor=[0.2, 0.7])
+                  borderaxespad=0, handlelength=1.3, bbox_to_anchor=[0.1, 0.7])
         ax.yaxis.set_major_formatter(PercentFormatter(1, decimals=0))
     plt.savefig(filename, bbox_inches='tight')
 
@@ -53,6 +59,11 @@ def from_k3d(colorlist):
     return matplotlib.colors.LinearSegmentedColormap.from_list("", cm)
 
 cardiac_config = dict(pcmap="balance", 
+                    vcmap="inferno", vscale=1e2, pscale=1, 
+                    vunit="cm/s", punit="Pa",
+                    vticks= [1e-2, 0.1, 1, 5],
+                    vmin=1e-2, vbar_fmt="%.1f")
+respiration_config = dict(pcmap="balance", 
                     vcmap="inferno", vscale=1e2, pscale=1, 
                     vunit="cm/s", punit="Pa",
                     vticks= [1e-2, 0.1, 1, 5],
@@ -84,9 +95,18 @@ def plot_csf_flow(dirname: str):
     grid["v"] = v.vector()[:].reshape(-1, 3)
     grid["p"] = p.vector()[:] - p.vector().min()
     if "cardiac" in dirname:
-        grid["p"] *= (1 + alpha**2 / 8)
+        print("adjusting pressure with (1 + alpha_cardiac**2 / 8) ")
+        print(f"alpha_cardiac = {alpha_cardiac} ")
+        grid["p"] *= (1 + alpha_cardiac**2 / 8)
         config = cardiac_config
         velocity_histo(sm, v, f"{dirname}/cardiac_velocity_histo.png", vscale=1e3,
+                       vunit="mm/s")
+    elif "respiratory" in dirname:
+        print("adjusting pressure with (1 + alpha_respiratory**2 / 8) ")
+        print(f"alpha_respiratory = {alpha_respiratory} ")
+        grid["p"] *= (1 + alpha_respiratory**2 / 8)
+        config = respiration_config
+        velocity_histo(sm, v, f"{dirname}/resp_velocity_histo.png", vscale=1e3,
                        vunit="mm/s")
     else:
         config = prod_config
@@ -106,34 +126,35 @@ def plot_csf_flow(dirname: str):
     terminal_speed=3e-4, max_steps=200,
     )
 
-    p_bar_args=dict(title=f"p ({config['punit']})", vertical=False,
+    p_bar_args=dict(title=f" p ({config['punit']})", vertical=False,
                         height=0.08, width=0.6, position_x=0.2,
-                        position_y=-0.0, title_font_size=52,
+                        position_y=-0.0, title_font_size=64,
                         bold=False, font_family="times",
-                        label_font_size=44, fmt="%.1f")
+                        label_font_size=60, fmt="%.1f")
     v_bar_args = p_bar_args.copy()
     v_bar_args.update(dict(title=f"u ({config['vunit']})", vertical=True),
-                            height=0.4, width=0.08, position_x=0.88,
+                            height=0.4, width=0.08, position_x=0.87,
                             position_y=0.02,
                             fmt=config["vbar_fmt"])
+    for c in ["white", "black"]:
 
-    pl = pv.Plotter(off_screen=True, window_size=(1600, 1600))
-    pl.add_mesh(grid.clip(), scalars="p", clim=[0, np.round(grid["p"].max(),1)],
-        cmap=config["pcmap"],
-        scalar_bar_args=p_bar_args)
-    vmax = np.round(np.linalg.norm(grid["v"], axis=1).max(), 3)
-    pl.add_mesh(streamlines, line_width=2, cmap=config["vcmap"],
-                 clim=[config["vmin"], vmax],show_scalar_bar=False,
-                log_scale=True)
-    
-    bar = pl.add_scalar_bar(**v_bar_args)
-    ticks = config["vticks"] + [np.round(vmax, 3)]
-    bar.SetCustomLabels(numpy_to_vtk(ticks))
-    bar.SetUseCustomLabels(True)
-    pl.camera_position = 'yz'
-    pl.camera = get_camera(grid)
-    pl.screenshot(f"{dirname}/csf_v.png",
-    transparent_background=True)
+        pl = pv.Plotter(off_screen=True, window_size=(1600, 1600))
+        pl.add_mesh(grid.clip(), scalars="p", clim=[0, np.round(grid["p"].max(),1)],
+            cmap=config["pcmap"],
+            scalar_bar_args=dict(**p_bar_args, color=c))
+        vmax = np.round(np.linalg.norm(grid["v"], axis=1).max(), 3)
+        pl.add_mesh(streamlines, line_width=2, cmap=config["vcmap"],
+                    clim=[config["vmin"], vmax],show_scalar_bar=False,
+                    log_scale=True)
+        
+        bar = pl.add_scalar_bar(**v_bar_args, color=c)
+        ticks = config["vticks"] + [np.round(vmax, 3)]
+        bar.SetCustomLabels(numpy_to_vtk(ticks))
+        bar.SetUseCustomLabels(True)
+        pl.camera_position = 'yz'
+        pl.camera = get_camera(grid)
+        pl.screenshot(f"{dirname}/csf_v{'_dark' if c=='white' else ''}.png",
+        transparent_background=True)
 
     #from IPython import embed; embed()
 

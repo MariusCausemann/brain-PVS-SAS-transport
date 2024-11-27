@@ -11,16 +11,16 @@ grid = pv.read_meshio("mesh/standard/standard_facets.xdmf")
 dirname = "plots/meshplots/"
 os.makedirs(dirname, exist_ok=True)
 
-bds = {"SK-U":UPPER_SKULL_ID,"SK-L": LOWER_SKULL_ID,
+bds = {"AM-U":UPPER_SKULL_ID,"AM-L": LOWER_SKULL_ID,
        "SSAS":SPINAL_OUTLET_ID,
         #"SC": SPINAL_CORD_ID, 
-        "LV":LV_INTERF_ID,  "Pia":PIA_ID,}
-clips = ["Pia", "SK-L", "SK-U"]
+        " LV":LV_INTERF_ID,  " Pia":PIA_ID,}
+clips = [" Pia", "AM-L", "AM-U"]
 
-bar_args=dict(title="", vertical=False, height=0.08, width=0.8, position_x=0.1,
-                        position_y=-0.05, title_font_size=52,
+bar_args=dict(title="", vertical=True, height=0.8, width=0.06, position_x=-0.035,
+                        position_y=0.1, title_font_size=52,
                         bold=False, font_family="times",
-                        label_font_size=44)
+                        label_font_size=72)
 print(grid.array_names)
 bounds = list(grid.bounds)
 bounds[0] = (bounds[0] + bounds[1]) * 0.5
