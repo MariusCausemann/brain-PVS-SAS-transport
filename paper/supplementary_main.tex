@@ -430,39 +430,39 @@ We consider an H(div)-based finite element approximation of the incompressible S
   Q_h  &= \{q \in L^2(\Omega_{\rm CSF}): \; q \vert_E \in \mathbb{P}^1(E),
   \; E \in \mathcal{T}_{\rm CSF} \}. 
 \end{align*}
-Here, $H(\mathrm{div}, \Omega)$ is the space of $L^2(\Omega)$ vector fields with $L^2(\Omega)$ divergence, $\mathrm{BDM}^2$ is the Brezzi-Douglas--Marini element~\cite{brezzi1987mixed} of degree 2, and $\bm n$ and $\bm \tau$ are the unit outward normal and unit tangent vectors to each facet, respectively. Given any vector $\bm v$, the normal and tangential components on each facet are denoted and given by 
+\mer{MER: How about the homogenized version of $\bm V_h$? - to distinguish for test space?} Here, $H(\mathrm{div}, \Omega)$ is the space of $L^2(\Omega)$ vector fields with $L^2(\Omega)$ divergence, $\mathrm{BDM}^2$ is the Brezzi-Douglas--Marini element~\cite{brezzi1987mixed} of degree 2, and $\bm n$ and $\bm \tau$ are the unit outward normal and unit tangent vectors to each facet, respectively. Given any vector $\bm v$, the normal and tangential components on each facet are denoted and given by 
 \begin{equation}
 \bm v_n = (\bm v \cdot \bm n) \bm n, \quad \bm v_t = \bm v - \bm v_n. 
 \end{equation}
-Since $\bm V_h \subset H(\mathrm{div}, \Omega_{\rm CSF})$, then $[\bm v_n] = 0 $ on $\mathcal{F}_{i, \rm CSF}$. Continuity in the tangential component is enforced weakly via interior penalization. Facets lying on the pial interface $\Gamma_{\rm pia}$ are
-denoted by $\mathcal{F}_{\rm pia}$, on the outer (arachnoid) boundary
-$\Gamma_{\rm AM}$ by $\mathcal{F}_{\rm AM}$, on the inner ventricular
-interface $\Gamma_{\rm LV}$ by $\mathcal{F}_{\rm LV}$, on the boundary
-toward the spinal cord $\Gamma_{\rm SC}$ by $\mathcal{F}_{\rm SC}$ and
-on the boundary towards the spinal SAS $\Gamma_{\rm SSAS}$ by
-$\mathcal{F}_{\rm SSAS}$.
-\discuss{For convenience, we denote
-  $\mathcal{F}_e = \mathcal{F}_{\rm pia} \cup \mathcal{F}_{\rm LV}
-  \cup \mathcal{F}_{\rm AM-U} \cup \mathcal{F}_{\rm SSAS}$, and the
-  union of all facets in $\mathcal{T}$ is denoted by $\mathcal{F} =
-  \mathcal{F}_i \cup \mathcal{F}_e \discuss{\cup \mathcal{F}_{\rm SC}
-    \cup \mathcal{F}_{\rm AM-L}}$.}
-Now, define the form 
+Since $\bm V_h \subset H(\mathrm{div}, \Omega_{\rm CSF})$, then $[\bm
+  v_n] = 0 $ on $\mathcal{F}_{i, \rm CSF}$. Continuity in the
+tangential component is enforced weakly via interior penalization. \mer{For
+convenience, we collect all facets exterior to the CSF space but not
+on the (Neumann) boundary $\Gamma_{\rm AM-U}$ in the set
+$\mathcal{F}_{e} = \mathcal{F}_{\rm pia} \cup \mathcal{F}_{\rm LV}
+\cup \mathcal{F}_{\rm AM-L} \cup \mathcal{F}_{\rm SSAS}$, where facets
+lying on the pial interface $\Gamma_{\rm pia}$ are denoted by
+$\mathcal{F}_{\rm pia}$, on the lower and upper outer (arachnoid) boundary
+$\Gamma_{\rm AM-L}$ and $\Gamma_{\rm AM-U}$ by $\mathcal{F}_{\rm AM-L}$ and $\mathcal{F}_{\rm AM-U}$, on the inner ventricular
+interface $\Gamma_{\rm LV}$ by $\mathcal{F}_{\rm LV}$,
+%on the boundary toward the spinal cord $\Gamma_{\rm SC}$ by $\mathcal{F}_{\rm SC}$
+and on the boundary towards the spinal SAS $\Gamma_{\rm SSAS}$ by
+$\mathcal{F}_{\rm SSAS}$.} Now, define the form 
 \begin{multline}
   \mathcal{A}_h(\bm u, \bm v)
   = \sum_{E \in \mathcal{T}_{\rm CSF}} \int_{E} \mu \nabla \bm u : \nabla \bm v
-  - \sum_{F \in \discuss{\mathcal{F}_{i, \rm CSF} \cup \mathcal{F}_{e}}} \left (
+  - \sum_{F \in \mer{\mathcal{F}_{i, \rm CSF} \cup \mathcal{F}_{e}}} \left (
   \int_{F} \mu \{\nabla \bm u\} \cdot \bm n_F \cdot [\bm v_t] 
   - %\sum_{F \in \mathcal{F}_{h,c} \cup \mathcal{F}_{\Gamma}}
   \int_{F} \mu \{\nabla \bm v\}\cdot \bm n_F \cdot [\bm u_t]
   + %\sum_{F \in \mathcal{F}_{h,c} \cup \mathcal{F}_{\Gamma}}
   \frac{\sigma \mu}{h} \int_{F} [\bm u_t ] \cdot [\bm v_t] \right ),   
 \end{multline}
-where \discuss{$h$ denotes the element size}. We set the penalty parameter for the tangential continuity to be $\sigma = 20$. Our finite element discretization of the incompressible Stokes equations is then to find $(\bm u_h, p_h) \in \bm V_h \times Q_h$ such that 
+where \discuss{$h$ denotes the element size} and on exterior facets \mer{the average and jump operators take the one-sided values}. We set the penalty parameter for the tangential continuity to be $\sigma = 20$. Our finite element discretization of the incompressible Stokes equations is then to find $(\bm u_h, p_h) \in \bm V_h \times Q_h$ such that 
 \begin{subequations}
 \begin{align}
   \mathcal{A}_h(\bm u_h, \bm v_h)
-  + \sum_{F \in \discuss{\mathcal{F}_{\rm AM-U}}} \int_{F} R_0 (\bm u_h \cdot \bm n) (\bm v_h \cdot \bm n)
+  + \sum_{F \in \mathcal{F}_{\rm AM-U}} \int_{F} R_0 (\bm u_h \cdot \bm n) (\bm v_h \cdot \bm n)
   - \int_{\Omega_{\rm CSF}} \nabla \cdot \bm v_h \, p_h  &= 0, \qquad \foralls \bm v_h \in \bm V_h, \\ 
 \int_{\Omega_{\rm CSF}} \nabla \cdot \bm u_h \, q_h  &= 0, \qquad \foralls q_h \in Q_h.
 \end{align}
@@ -496,7 +496,7 @@ CSF pulsates in the SAS and ventricular system with each cardiac and respiratory
 
 \rami{I rewrote the above paragraph and some aspects of this section}
 
-\rami{  CSF pulsates in the SAS and ventricular system with each cardiac and respiratory cycle with large spatial differences.  This leads to dispersion effects. For example, 
+\rami{CSF pulsates in the SAS and ventricular system with each cardiac and respiratory cycle with large spatial differences.  This leads to dispersion effects. For example, 
 Sharp et al \cite{keith2019dispersion} estimated the enhancement of diffusion in the spinal subarachnoid space due to dispersive effects to average 5.8 times that of purely molecular diffusion with a theoretical maximum of $10^6$. 
 This phenomena is accounted for in our model by scaling the free diffusion coeffiecient $D^{\mathrm{Gad}}$ by the formula $D^{\mathrm{eff}} = (1+R) D^{\mathrm{Gad}}$ where $R$ represents a local diffusion enhancement in the CSF-filled space $\Omega_{\rm CSF}$.} 
 
