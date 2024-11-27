@@ -190,7 +190,7 @@ going in and out at nodes should add to zero, or more precisely, that
 for each $y \in \mathcal{B}$:
 \begin{equation}
   \sum_{\Lambda^i \in \mathcal{E}(y)}
-  \left (\hat{D}^i A^i \partial_s \hat{c}^i (y) - A^i \hat u^i(y) \hat{c}^i(y) \right ) n_i(y)
+  \left (\hat{D}^i A^i \partial_s \hat{c}^i (y) - A^i \hat u^i(y) \hat{c}^i(y) \right ) ni(y)
   = 0
   \label{eq:flux_conservation}
 \end{equation}
@@ -217,7 +217,7 @@ via a homogeneous Neumann condition augmenting~\eqref{eq:1d_pde}:
 %% flow, see \cref{sec:sup:peristalsis}). 
 
 \subsubsection{Modelling CSF flow via the incompressible Stokes equations}
-
+\label{sec:csf_flow}
 The time-independent, incompressible Stokes equations model the flow
 of an incompressible Newtonian fluid at low Reynolds numbers, and read
 as follows: over the domain $\Omega_{\rm CSF} \subset \R^3$, find the
@@ -238,9 +238,9 @@ induced by CSF production in the choroid plexus with $\Gamma_{\rm AM-U}$ as the 
   \begin{alignat}{2}
     \mu \nabla \bm u \cdot \bm{n} - p \bm n &= -R_0 ( \bm u \cdot \bm n ) \bm n
     && \text{ on } \Gamma_{\mathrm{AM-U}}, \\
-    \bm u &= 0 && \text{ on } \Gamma_{\mathrm{AM-L}}, \\
-    \bm u &= 0 && \text{ on } \Gamma_{\rm{pia}}, \\
-    \bm u &= 0 && \text{ on } \Gamma_{\rm{SSAS}}, \\
+    \bm u &= 0 && \text{ on } \Gamma_{\mathrm{AM-L}}\cup\Gamma_{\rm{pia}}\cup\Gamma_{\rm{SSAS}}, \\
+    %\bm u &= 0 && \text{ on } \Gamma_{\rm{pia}}, \\
+    %\bm u &= 0 && \text{ on } \Gamma_{\rm{SSAS}}, \\
     \bm u \cdot \bm n & = \frac{1}{ |\Gamma_{\rm LV}|}  u_{\rm in}, \quad \bm u \cdot \bm \tau = 0 \quad && \text{ on } \Gamma_{\rm{LV}} ,  
   \end{alignat}
   \label{eq:stokes_bcs}
@@ -381,7 +381,7 @@ Define for $c, v \in V_h^k$:
 \end{equation}
 In~\eqref{eq:dg_sip}, for each facet $F \in \mathcal{F}^i$ shared
 between cells $E^1$ and $E^2$ with facet normal vector $\bm n_F$
-pointing from $E^1$ to $E^2$, \discuss{$h_F$ denotes the facet size},
+pointing from $E^1$ to $E^2$, \discuss{$h_F$ denotes the facet diameter},
 the jump $[\cdot]$ is given by $[v] = v|_{E^1} - v|_{E^2}$, and the
 unweighted average $\{ \cdot \}$ and weighed average $\{ \cdot \}_w$
 are defined as:
@@ -444,7 +444,7 @@ Here, $H(\mathrm{div}, \Omega)$ is the space of $L^2(\Omega)$ vector fields with
 \begin{equation}
 \bm v_n = (\bm v \cdot \bm n) \bm n, \quad \bm v_t = \bm v - \bm v_n. 
 \end{equation}
-Since $\bm V_h \subset H(\mathrm{div}, \Omega_{\rm CSF})$, then $[\bm v_n] = 0 $ on $\mathcal{F}_{\rm CSF}$. Continuity in the tangential component is enforced weakly via interior penalization. Define the form \mer{MER: Check $\Gamma_{\rm AM}$ part.}
+Since $\bm V_h \subset H(\mathrm{div}, \Omega_{\rm CSF})$, then $[\bm v_n] = 0 $ on $\mathcal{F}_{\rm CSF}$. Continuity in the tangential component is enforced weakly via interior penalization. Define the form \mer{MER: Check $\Gamma_{\rm AM}$ part. 26.11.24: Rami will check $\mathcal{F}_e$ versus definitions of the boundaries and where it appears.}
 \begin{multline}
   \mathcal{A}_h(\bm u, \bm v)
   = \sum_{E \in \mathcal{T}_{\rm CSF}} \int_{E} \mu \nabla \bm u : \nabla \bm v
@@ -487,42 +487,48 @@ where $\tau$ is the tangent vector of the network. Here we employ the lowest ord
 \subsection{Modelling dispersion in the CSF spaces}
 \label{sec:supp:dispersion}
 
-In addition, CSF pulsates in the SAS and ventricular system with each
-cardiac and respiratory cycle.
+CSF pulsates in the SAS and ventricular system with each cardiac and respiratory cycle. Taking the large spatial differences of pulsatile CSF flow into account, we estimate a local diffusion enhancement factor $R$ in the CSF-filled space $\Omega_{\rm CSF}$ by combining a computational model of cardiac- and respiration-induced pulsatile CSF flow with theoretical estimates for shear-augmented (Taylor) dispersion \cite{taylor1953dispersion, watson1983diffusion}.
 
-Taking the large spatial differences of pulsatile CSF flow into account, we compute the local diffusion enhancement factor $R$ in the CSF-filled space $\Omega_{\rm CSF}$ by combining a computational model of cardiac induced CSF flow with theoretical estimates for shear-augmented (Taylor) dispersion \cite{taylor1953dispersion, watson1983diffusion}.
+\rami{I rewrote the above paragraph and some aspects of this section}
 
+\rami{  CSF pulsates in the SAS and ventricular system with each cardiac and respiratory cycle with large spatial differences.  This leads to dispersion effects. For example, 
 Sharp et al \cite{keith2019dispersion} estimated the enhancement of diffusion in the spinal subarachnoid space due to dispersive effects to average 5.8 times that of purely molecular diffusion with a theoretical maximum of $10^6$. 
+This phenomena is accounted for in our model by scaling the free diffusion coeffiecient $D^{\mathrm{Gad}}$ by the formula $D^{\mathrm{eff}} = (1+R) D^{\mathrm{Gad}}$ where $R$ represents a local diffusion enhancement in the CSF-filled space $\Omega_{\rm CSF}$.} 
 
-Similar to the case of CSF flow driven by production introduced in section \ref{sec:csf_fluid_vel}, we employ a Stokes flow model to predict CSF velocities at peak arterial dilation. In particular, we enforce a uniformly distributed inflow of $10$\,ml/s and $2$\,ml/s across the outer skull ($\Gamma_{\rm skull}$) and lateral ventricular surfaces ($\Gamma_{\rm LV}$) respectively, mimicking the effect of reduced CSF volume due to blood inflow. We prescribe a no-slip boundary condition on the pial surface $\Gamma_{\rm Pia}$ and zero-traction on the spinal boundary $\Gamma_{\rm SSAS}$, making the spinal compartment the only outflow route of CSF. Thus, we compute the cardiac-driven flow field by augmenting the Stokes flow model (eq. \ref{eq:momnetum_equation} and \ref{eq:divergence_equation}) with the following boundary conditions:
+\rami{ Note that since there is no data for the local values of $R$, we estimate $R$ by combining computational results (solving Stokes flow equations, see below) and explicit estimates for dispersion enhancement that are derived under simplifying assumptions on the problem geometry, the flow field and concentration profiles \cite{watson1983diffusion, keith2019dispersion}. Therefore such an estimate is heuristic; however,  our computational results qualitatively agree with observed data.  A key feature in our estimate of $R$ is that it is spatially varying, including local effects depending on a  computed flow field. }
 
+
+Similar to the case of CSF flow driven by production introduced in \Cref{sec:csf_flow}, we employ a Stokes flow model to predict CSF velocities corresponding to the peak cardiac and respiratory blood inflow rates. In particular, we enforce a uniformly distributed inflow of $u^{\rm in}_{\rm AM}$ and $u^{\rm in}_{\rm LV}$ across the arachnoid mater ($\Gamma_{\rm AM}$) and lateral ventricular surfaces ($\Gamma_{\rm LV}$) respectively, mimicking the effect of reduced CSF volume due to blood inflow. We set $u^{\rm in}_{\rm AM} = 6\,$ml/s and $u^{\rm in}_{\rm LV}=0.31\,$ml/s in the cardiac case, and $u^{\rm{in}}_{\rm{AM}} = 1\,$ml/s and $u^{\rm in}_{\rm{LV}}=0.121\,$ml/s in the respiratory case, respectively.
+We prescribe a no-slip boundary condition on the pial surface $\Gamma_{\rm Pia}$ and zero-traction on the spinal boundary $\Gamma_{\rm SSAS}$, making the spinal compartment the only outflow route of CSF. Thus, we compute the pulsatile flow fields by augmenting the Stokes flow model (eq. \ref{eq:momnetum_equation} and \ref{eq:divergence_equation}) with the following boundary conditions:
 \begin{equation}\label{eq:cardiac_flow_bcs}
     \bm u = 0 \text{ on } \Gamma_{\rm Pia}; \quad 
     \mu \nabla \bm u \cdot \bm n - p \bm n = 0 \text{ on } \Gamma_{\rm SSAS}; \quad 
-    \bm u = \frac{0.31 \cdot \bm n}{|\Gamma_{\rm LV}|} \,\text{ml/s} \text{ on } \Gamma_{\rm LV}; \quad
-    \bm u = \frac{8 \cdot \bm n}{|\Gamma_{\rm skull}|} \,\text{ml/s} \text{ on } \Gamma_{\rm skull}.
+    \bm u = \frac{u^{\rm in}_{\rm LV} \cdot \bm n}{|\Gamma_{\rm LV}|} \text{ on } \Gamma_{\rm LV}; \quad
+    \bm u = \frac{u^{\rm in}_{\rm AM} \cdot \bm n}{|\Gamma_{\rm skull}|} \text{ on } \Gamma_{\rm skull}.
 \end{equation}
+The obtained pressure fields $p_{\rm cardiac}$ and $p_{\rm resp}$ only account for viscous forces, albeit cardiac and respiratory induced CSF flow is known to be unsteady and substantially impacted by transient inertial forces. Assuming an oscillatory flow with either the heartbeat frequency $\omega_{\rm cardiac} = 2 \pi$ or respiratory frequency $\omega_{\rm resp} = 0.5 \pi$, a mean gap width of the CSF-filled spaces of $2h=3$\,mm and CSF density $\rho=10^3\,\text{kg/m}^3$, the Womersley numbers $\alpha$ become $\alpha_{\rm cardiac}^2 = \frac{h^2 \omega_{\rm cardiac} \rho}{\mu} = 20.2$ and $\alpha_{\rm resp}^2=5.05$, which is unsteady. Based on theoretical considerations on the ratio of oscillatory flow to steady flow impedances in a tube, we account for inertial forces in the pulsatile flow by upscaling the computed viscous pressure field by a factor of $1 + \alpha^2 / 8$ (see \cite{van1998cardiovascular}, chapter. 4.3). Thus, the upscaled pressure fields become $p^{\rm up}_{\rm cardiac}= (1 + \alpha_{\rm cardiac}^2 / 8)p$ and $p^{\rm up}_{\rm resp}= (1 + \alpha_{\rm resp}^2 / 8)p$.
 
-The obtained pressure field only account for viscous forces, albeit cardiac induced CSF flow is known to be unsteady and substantially impacted by transient inertial forces. Assuming an oscillatory flow with the heartbeat frequency $\omega = 2 \pi$, a mean gap width of the CSF-filled spaces of $2h=3$\,mm and CSF density $\rho=10^3\,\text{kg/m}^3$, the Womersley number $\alpha$ becomes $\alpha^2 = \frac{h^2 \omega \rho}{\mu} = 20.2$, which is unsteady. Based on theoretical considerations on the ratio of oscillatory flow to steady flow impedances in a tube, we account for inertial forces in the pulsatile flow by upscaling the computed viscous pressure field by a factor of $1 + \alpha^2 / 8$ (see \cite{van1998cardiovascular}, chapter. 4.3).
-
-Further assuming unsteady dispersion, we follow Sharp et al \cite{keith2019dispersion} and calculate the enhancement factor $R$ from the non-dimensionalized pressure gradient $dP=\frac{|\nabla p|}{\omega \mu / h}$ \rami{Can we refer to the exact equation here from Sharp et al ? i find that they write $P = (\partial \tilde p / \partial \tilde x) / (\rho \omega \mu_e/h)$ ... so i am a bit confused
-}as $R\approx dP^2 / \alpha^3$. Combining the computed pressure gradient with this scaling law yields a pointwise approximation of the dispersion factor. Finally, we account for the non-local nature of the dispersion mechanism by applying a smoothing technique to obtain a spatially varying, but locally averaged diffusion enhancement factor $R$ (see the visualization in \cref{fig:visualize_R} and \cref{sec:dispersion_details} for additional details).
-
-
-%\subsubsection{Cardiac Dispersion Factor Estimation}
-%\label{sec:dispersion_details}
-
-To compute a spatially varying estimate of the diffusion enhancement factor $R$, we consider the Stokes flow problem (\cref{eq:momnetum_equation} and \cref{eq:divergence_equation}) equipped with the boundary conditions \cref{eq:cardiac_flow_bcs} describing cardiac induced CSF flow at peak arterial pulsation. We use the numerical method described in \cref{sec:details_numerical_method} to solve the Stokes system and compute the non-dimensionalized local pressure difference $dP=\frac{|\nabla p| \rho}{\omega \mu / h}$ pointwise. Here, $\mu$ is the CSF viscosity, $\omega = 2 \pi$ is the oscillatory heart beat frequency, $2h=3$\,mm the assumed gap width and $\rho=10^3\,\text{kg/m}^3$ the density of the CSF.
-
-In addition, we account for inertial forces in the pulsatile flow by upscaling the obtained pressure gradient by a factor of $1 + \alpha^2 / 8$ (see \cite{van1998cardiovascular}, chapter. 4.3), where $\alpha^2 = \frac{h^2 \omega \rho}{\mu} = 20.2$ is the square of the Womersley number for an oscillatory flow.
-
-Finally, we smooth the resulting field by solving a Helmholtz problem with $dP^2$ as the right-hand side
-
+Further assuming unsteady dispersion, we follow Sharp et al \cite{keith2019dispersion} and estimate each enhancement factor $R_{\rm cardiac}$ and $R_{\rm respiratory}$ from the non-dimensionalized pressure gradient 
+$$R_{i} \approx dP_{i}^2 / \alpha_{i}^3, \quad  \text{where} \quad  dP=\frac{|\nabla p^{\rm up}_{i}|}{\omega_{i} \mu / h} \quad \text{for} \quad i = \{\mathrm{cardiac}, \mathrm{resp}\}.$$
+Finally, we account for the non-local nature of the dispersion mechanism and smooth the resulting field by solving a Helmholtz problem with $dP+i^2/\alpha_i^3$ as the right-hand side
 \begin{equation}
-- 10^{-4} \Delta R + R = dP^2 \quad \text{ on } \Omega_{\rm CSF} \qquad \text{ and } \quad \nabla R \cdot \bm n = 0 \quad \text{ on } \partial \Omega_{\rm CSF}
+- 10^{-4} \Delta R_i + R_i = dP_i^2/\alpha_i^3 \quad \text{ on } \Omega_{\rm CSF} \qquad \text{ and } \quad \nabla R_i \cdot \bm n = 0, \quad \text{ on } \partial \Omega_{\rm CSF}
 \end{equation}
+to obtain the locally averaged, spatially varying diffusion enhancement factor $R_i$. The diffusion enhancement factor $R$ in $D^{\mathrm{eff}} = D^{\mathrm{Gad}}( 1 +R)$ is then estimated by $R \approx R_{\rm{cardiac}} + R_{\rm{resp}}$. 
+% %\subsubsection{Cardiac Dispersion Factor Estimation}
+% %\label{sec:dispersion_details}
 
-to obtain the locally averaged, spatially varying diffusion enhancement factor $R$.
+% To compute a spatially varying estimate of the diffusion enhancement factor $R$, we consider the Stokes flow problem (\cref{eq:momnetum_equation} and \cref{eq:divergence_equation}) equipped with the boundary conditions \cref{eq:cardiac_flow_bcs} describing cardiac induced CSF flow at peak arterial pulsation. We use the numerical method described in \cref{sec:details_numerical_method} to solve the Stokes system and compute the non-dimensionalized local pressure difference $dP=\frac{|\nabla p| \rho}{\omega \mu / h}$ pointwise. Here, $\mu$ is the CSF viscosity, $\omega = 2 \pi$ is the oscillatory heart beat frequency, $2h=3$\,mm the assumed gap width and $\rho=10^3\,\text{kg/m}^3$ the density of the CSF.
+
+% In addition, we account for inertial forces in the pulsatile flow by upscaling the obtained pressure gradient by a factor of $1 + \alpha^2 / 8$ (see \cite{van1998cardiovascular}, chapter. 4.3), where $\alpha^2 = \frac{h^2 \omega \rho}{\mu} = 20.2$ is the square of the Womersley number for an oscillatory flow.
+
+% Finally, we smooth the resulting field by solving a Helmholtz problem with $dP^2/alpha^3$ as the right-hand side
+
+% \begin{equation}
+% - 10^{-4} \Delta R + R = dP^2/\alpha^3 \quad \text{ on } \Omega_{\rm CSF} \qquad \text{ and } \quad \nabla R \cdot \bm n = 0 \quad \text{ on } \partial \Omega_{\rm CSF}
+% \end{equation}
+
+% to obtain the locally averaged, spatially varying diffusion enhancement factor $R$.
 
 \subsection{Estimating net perivascular flow induced by peristaltic waves}
 \label{sec:sup:peristalsis}
