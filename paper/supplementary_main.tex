@@ -308,7 +308,7 @@ We solve the models presented in~\Cref{sec:more_maths} numerically
 using finite element methods. The following subsections provide more
 details, model-by-model.
 
-\subsubsection{Computational mesh entities: definitions and notation}
+\subsubsection{Computational mesh entities: definitions and common notation}
 
 We consider a mesh $\mathcal{T} = \{ E \}$ of $\Omega = \Omega_{\rm
   PAR} \cup \Omega_{\rm CSF}$, consisting of tetrahedral mesh cells
@@ -323,18 +323,7 @@ $\mathcal{F}_{i, \rm PAR}$ and $\mathcal{F}_{i, \rm CSF}$,
 respectively. We define the union of facets interior both to
 $\mathcal{T}_{i, \rm PAR}$ and $\mathcal{T}_{i, \rm CSF}$ as
 $\mathcal{F}_i = \mathcal{F}_{i, \rm PAR} \cup \mathcal{F}_{i, \rm
-  CSF}$. Facets lying on the pial interface $\Gamma_{\rm pia}$ are
-denoted by $\mathcal{F}_{\rm pia}$, on the outer (arachnoid) boundary
-$\Gamma_{\rm AM}$ by $\mathcal{F}_{\rm AM}$, on the inner ventricular
-interface $\Gamma_{\rm LV}$ by $\mathcal{F}_{\rm LV}$, on the boundary
-toward the spinal cord $\Gamma_{\rm SC}$ by $\mathcal{F}_{\rm SC}$ and
-on the boundary towards the spinal SAS $\Gamma_{\rm SSAS}$ by
-$\mathcal{F}_{\rm SSAS}$. \discuss{For convenience, we denote
-  $\mathcal{F}_e = \mathcal{F}_{\rm pia} \cup \mathcal{F}_{\rm LV}
-  \cup \mathcal{F}_{\rm AM-U} \cup \mathcal{F}_{\rm SSAS}$, and the
-  union of all facets in $\mathcal{T}$ is denoted by $\mathcal{F} =
-  \mathcal{F}_i \cup \mathcal{F}_e \discuss{\cup \mathcal{F}_{\rm SC}
-    \cup \mathcal{F}_{\rm AM-L}}$.}
+  CSF}$. 
 
 %Note in particular that $\mathcal{F}_i \cap \mathcal{F}_{pia}} =
 %  \emptyset$.
@@ -445,7 +434,20 @@ Here, $H(\mathrm{div}, \Omega)$ is the space of $L^2(\Omega)$ vector fields with
 \begin{equation}
 \bm v_n = (\bm v \cdot \bm n) \bm n, \quad \bm v_t = \bm v - \bm v_n. 
 \end{equation}
-Since $\bm V_h \subset H(\mathrm{div}, \Omega_{\rm CSF})$, then $[\bm v_n] = 0 $ on $\mathcal{F}_{i, \rm CSF}$. Continuity in the tangential component is enforced weakly via interior penalization. Define the form \mer{MER: Check $\Gamma_{\rm AM}$ part. 26.11.24: Rami will check $\mathcal{F}_e$ versus definitions of the boundaries and where it appears.}
+Since $\bm V_h \subset H(\mathrm{div}, \Omega_{\rm CSF})$, then $[\bm v_n] = 0 $ on $\mathcal{F}_{i, \rm CSF}$. Continuity in the tangential component is enforced weakly via interior penalization. Facets lying on the pial interface $\Gamma_{\rm pia}$ are
+denoted by $\mathcal{F}_{\rm pia}$, on the outer (arachnoid) boundary
+$\Gamma_{\rm AM}$ by $\mathcal{F}_{\rm AM}$, on the inner ventricular
+interface $\Gamma_{\rm LV}$ by $\mathcal{F}_{\rm LV}$, on the boundary
+toward the spinal cord $\Gamma_{\rm SC}$ by $\mathcal{F}_{\rm SC}$ and
+on the boundary towards the spinal SAS $\Gamma_{\rm SSAS}$ by
+$\mathcal{F}_{\rm SSAS}$.
+\discuss{For convenience, we denote
+  $\mathcal{F}_e = \mathcal{F}_{\rm pia} \cup \mathcal{F}_{\rm LV}
+  \cup \mathcal{F}_{\rm AM-U} \cup \mathcal{F}_{\rm SSAS}$, and the
+  union of all facets in $\mathcal{T}$ is denoted by $\mathcal{F} =
+  \mathcal{F}_i \cup \mathcal{F}_e \discuss{\cup \mathcal{F}_{\rm SC}
+    \cup \mathcal{F}_{\rm AM-L}}$.}
+Now, define the form 
 \begin{multline}
   \mathcal{A}_h(\bm u, \bm v)
   = \sum_{E \in \mathcal{T}_{\rm CSF}} \int_{E} \mu \nabla \bm u : \nabla \bm v
@@ -460,11 +462,13 @@ where \discuss{$h$ denotes the element size}. We set the penalty parameter for t
 \begin{subequations}
 \begin{align}
   \mathcal{A}_h(\bm u_h, \bm v_h)
-  + \sum_{F \in \mathcal{F}_{\rm AM-U}} \int_{F} R_0 (\bm u_h \cdot \bm n) (\bm v_h \cdot \bm n)
+  + \sum_{F \in \discuss{\mathcal{F}_{\rm AM-U}}} \int_{F} R_0 (\bm u_h \cdot \bm n) (\bm v_h \cdot \bm n)
   - \int_{\Omega_{\rm CSF}} \nabla \cdot \bm v_h \, p_h  &= 0, \qquad \foralls \bm v_h \in \bm V_h, \\ 
 \int_{\Omega_{\rm CSF}} \nabla \cdot \bm u_h \, q_h  &= 0, \qquad \foralls q_h \in Q_h.
 \end{align}
 \end{subequations}
+
+\mer{MER: Stopped here.}
 
 \subsubsection{PVS flow} 
 
