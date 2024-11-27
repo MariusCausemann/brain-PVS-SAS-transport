@@ -1,4 +1,4 @@
-description : "model A"
+description : "clearance"
 dt : 120
 T : 86400 # 1 day in seconds
 mesh : "mesh/standard/standard.xdmf"
@@ -16,7 +16,7 @@ par_csf_permability: 2.6e-8 # Riseth, 2024 (MRI2FEM book)
 root_pvs_permability_factor : 100.0
 pvs_ratio_artery : 2
 pvs_ratio_venes: 2
-initial_concentration : 0.0
+initial_concentration : 1.0
 molecular_outflow_resistance : 8.0e-7
 arterial_velocity_file : ["results/pvs_flow_prod/sas_flow/pvs_flow.hdf",
                           "results/pvs_flow_peristaltic/cardiac_pvs_oscillation/pvs_flow.hdf",
@@ -27,8 +27,7 @@ boundary_conditions:
   # influx of a total of 0.5mmol tracer with a linearly decreasing function over the first two hours
   sas : 
     type : Neumann
-    expr : "m_tot/(t_max*t_max*A) *max(0.0, t_max - abs(t - t_max))"
-     # t (current time) and A (surface area) are computed and updated in the code
+    expr : "0"
     params : 
       t_max : 3600 # s
       m_tot : 0.5e-3 # mol
