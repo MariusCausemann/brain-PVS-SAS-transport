@@ -38,6 +38,19 @@ def get_subdomain_dofs(V, subdomains, subd_id):
         [dm.cell_dofs(c.index()) for c in SubsetIterator(subdomains, subd_id)]))
     return subd_dofs
 
+def read_pvs_velocity(vel_file, netw):
+    from evaluate_pvs_flow import sig_to_space
+    print(f"reading arterial PVS velocity from {vel_file}")
+    with HDF5File(MPI.comm_world, vel_file,'r') as f:
+        sig = f.attributes("/u").to_dict()["signature"]
+        vel = Function(sig_to_space(sig, netw))
+        f.read(vel, "u")
+    # make sure the velocity field is tangential to the network
+    tau = xii.TangentCurve(netw)
+    un = vel - tau*inner(vel, tau)
+    assert assemble(inner(un,un)*dx) < 1e-16
+    return vel 
+
 
 def run_simulation(configfile: str):
 
@@ -65,6 +78,7 @@ def run_simulation(configfile: str):
     beta = config["molecular_outflow_resistance"]
     beta_csf_par = config["par_csf_permability"]
     root_xi_factor = config["root_pvs_permability_factor"]
+    c_init = config["initial_concentration"]
 
     vein, vein_radii, vein_roots = read_vtk_network("mesh/networks/venes_smooth.vtk", rescale_mm2m=False)
     vein_radii = as_P0_function(vein_radii)
@@ -117,34 +131,29 @@ def run_simulation(configfile: str):
     Ds = pcws_constant(vol_subdomains, {CSFID: sas_diffusion,  # csf
                                         PARID: parenchyma_diffusion # parenchyma
                                         })
-    art_xi_root = Function(FunctionSpace(artery, "CG", 1))
-    idx = map_kdtree(artery.coordinates(), FunctionSpace(artery, "CG", 1).tabulate_dof_coordinates())
-    art_xi_root.vector()[:] = np.where(artery_roots.array()[:] > 0, root_xi_factor, 1)[idx]
-    xi_a = pcws_constant(artmarker, art_xi_dict)
-    xi_a.vector()[:] *= interpolate(art_xi_root, xi_a.function_space()).vector()[:]
-    xi_v = pcws_constant(veinmarker, ven_xi_dict)
+    
+    def get_xi(marker, xi_dict, roots):
+        netw = marker.mesh()
+        netw_xi_root =  Function(FunctionSpace(netw, "CG", 1))
+        idx = map_kdtree(netw.coordinates(), FunctionSpace(netw, "CG", 1).tabulate_dof_coordinates())
+        netw_xi_root.vector()[:] = np.where(roots.array()[:] > 0, root_xi_factor, 1)[idx]
+        xi = pcws_constant(marker, xi_dict)
+        xi.vector()[:] *= interpolate(netw_xi_root, xi.function_space()).vector()[:]
+        return xi
+
+    xi_a = get_xi(artmarker, art_xi_dict, artery_roots)
+    xi_v = get_xi(veinmarker, ven_xi_dict, vein_roots)
 
     Da = Constant(arterial_pvs_diffusion) 
     Dv = Constant(venous_pvs_diffusion)
 
-    if "arterial_velocity_file" in config.keys():
-        from evaluate_pvs_flow import sig_to_space
-        velocity_a = 0
-        for vel_file in config["arterial_velocity_file"]:
-            print(f"reading arterial PVS velocity from {vel_file}")
-            with HDF5File(MPI.comm_world, vel_file,'r') as f:
-                sig = f.attributes("/u").to_dict()["signature"]
-                velocity_a_func = Function(sig_to_space(sig, artery))
-                f.read(velocity_a_func, "u")
-            # make sure the velocity field is tangential to the network
-            velocity_a += velocity_a_func
-        tau = xii.TangentCurve(artery)
-        un = velocity_a - tau*inner(velocity_a, tau)
-        assert assemble(inner(un,un)*dx) < 1e-16
-        
-    else:
-        velocity_a = Constant([0]*gdim)
+    velocity_a, velocity_v = Constant([0]*gdim), Constant([0]*gdim)
 
+    for afile in config["arterial_velocity_file"]:
+        velocity_a += read_pvs_velocity(afile, artery)
+    for vfile in config["venous_velocity_file"]:
+        velocity_v += read_pvs_velocity(vfile, vein)
+        
     if "csf_velocity_file" in config.keys():
         print("reading CSF velocity from file...")
         vel_file = config["csf_velocity_file"]
@@ -167,19 +176,25 @@ def run_simulation(configfile: str):
 
 
     if "csf_dispersion_file" in config.keys():
-        print("reading CSF dispersion from file...")
-        dispersion_file = config["csf_dispersion_file"]
-        with XDMFFile(dispersion_file) as file:
-            sm = xii.EmbeddedMesh(label, [CSFID, LVID, V34ID])
-            R = Function(FunctionSpace(sm, "DG", 1))
-            file.read_checkpoint(R, "R")
+        dispfiles = config["csf_dispersion_file"]
+        if isinstance(dispfiles, str): dispfiles = [dispfiles]
+        dispweights = config.get("csf_dispersion_weights", [1]*len(dispfiles))
+
+        sm = xii.EmbeddedMesh(label, [CSFID, LVID, V34ID])
+        smDG0 = FunctionSpace(sm, "DG", 1)
+        R = Function(smDG0)
+        for dispf,w in zip(dispfiles, dispweights):
+            print(f"reading CSF dispersion from file: {dispf}")
+            with XDMFFile(dispf) as file:
+                Ri = Function(smDG0)
+                file.read_checkpoint(Ri, "R")
+                R.vector()[:] += Ri.vector()[:] * w
         metrics["R_mean"] = assemble(R*dx) / assemble(1*dx(domain=sm))
         metrics["R_max"] = R.vector().max()
         metrics["R_min"] = R.vector().min()
         R = map_dg_on_global(R, parentmesh=mesh)
         Ds *= (1 + R)
 
-    velocity_v = Constant([0]*gdim)
 
     fa = Constant(0.0) 
     fv = Constant(0.0)
@@ -193,7 +208,7 @@ def run_simulation(configfile: str):
     v, qa, qv = map(TestFunction, W)
      
     # initial conditions 
-    u_o  = Constant(0.0)
+    u_o  = Constant(c_init)
     pa_o = Constant(0.0) 
     pv_o = Constant(0.0) 
 
