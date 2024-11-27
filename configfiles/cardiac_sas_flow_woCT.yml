@@ -1,7 +1,7 @@
-mesh : "mesh/standard/standard_outer.xdmf"
+mesh : "mesh/woCT/woCT_outer.xdmf"
 discretization : BDM
 order : 2
-mu : 0.7e-3 #dfsdsf
+mu : 0.7e-3 #dsfsdf
 no_slip_bcs : [1,2,3,4]
 resistance_bcs : []
 inflow_bcs : 

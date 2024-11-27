@@ -1,4 +1,4 @@
-mesh : "mesh/standard/standard_outer.xdmf"
+mesh : "mesh/woCT/woCT_outer.xdmf"
 discretization : BDM
 mu : 0.7e-3 
 no_slip_bcs : [1,2,3,4,6]
