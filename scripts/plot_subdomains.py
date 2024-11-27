@@ -26,15 +26,15 @@ if __name__=="__main__":
     LV = grid.extract_cells(grid["label"]==LVID)
 
     CSF["l"] = np.full(CSF["label"].shape, " SAS", dtype='<U10')
-    V34["l"] = np.full(V34["label"].shape, "V3 & V4", dtype='<U10')
+    V34["l"] = np.full(V34["label"].shape, "V3&4", dtype='<U10')
     LV["l"] = np.full(LV["label"].shape, "LV", dtype='<U10')
 
     comb = pv.merge([CSF.clip(), V34, LV])
 
-    bar_args=dict(title="", vertical=False, height=0.08, width=0.6, position_x=0.2,
-                            position_y=-0.05, title_font_size=52,
+    bar_args=dict(title="", vertical=True, height=0.8, width=0.06, position_x=-0.035,
+                            position_y=0.1, title_font_size=52,
                             bold=False, font_family="times",
-                            label_font_size=44)
+                            label_font_size=72)
 
     pl = pv.Plotter(off_screen=True, window_size=(1600, 1600))
     colors = sns.color_palette("Blues", n_colors=3)
