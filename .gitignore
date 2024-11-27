@@ -7,6 +7,7 @@ __*
 data/T1.nii.gz
 temp/
 logs/
+.cropped/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
