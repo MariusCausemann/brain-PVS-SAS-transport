@@ -1,4 +1,4 @@
 epsilon: 0.0009
 edge_length_r : 0.015
-create_tentorium : True
+create_tentorium : False
 hemisphere_min_distance : 0
