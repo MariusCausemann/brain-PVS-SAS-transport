@@ -174,11 +174,11 @@ internal nodes of the perivascular networks $\Lambda_a, \Lambda_v$ and
 boundary conditions at the end nodes. To this end, define the set of
 internal nodes $\mathcal{B} \subset \mathcal{V}$ as the set of nodes
 that are connected to two or more edges and the set of end nodes as
-$\mathcal{T}$, write $\hat{c}^i = \hat{c}|_{\Lambda^i}$, and let
-$\mathcal{E}(y)$ denote the set of (one, two or three) edges in
-$\{\Lambda^i\}$ sharing the node $y$. To impose continuity of the
-concentrations, we set that the concentrations when viewed from each
-edge must match at nodes:
+$\mathcal{N} \subset \mathcal{V}$, write $\hat{c}^i =
+\hat{c}|_{\Lambda^i}$, and let $\mathcal{E}(y)$ denote the set of
+(one, two or three) edges in $\{\Lambda^i\}$ sharing the node $y$. To
+impose continuity of the concentrations, we set that the
+concentrations when viewed from each edge must match at nodes:
 \begin{equation}
   \hat{c}^i (y) = \hat{c}^j(y)
   \qquad \foralls \Lambda^i, \Lambda^j \in \mathcal{E}(y)
@@ -205,10 +205,10 @@ edges. Specifically, for an edge $\Lambda^i$ from $y_{\rm in}$ to $y_{\rm out}$
   \label{eq:def:sign}
 \end{equation}
 
-Finally, we assume no molecular efflux at all end nodes $\mathcal{T}$
+Finally, we assume no molecular efflux at all end nodes $\mathcal{N}$
 via a homogeneous Neumann condition augmenting~\eqref{eq:1d_pde}:
 \begin{equation}
-    \hat D A \partial_s (\phi \hat c) - A \hat u \hat c  = 0 \quad \mathrm{on} \quad \mathcal{T}.
+    \hat D A \partial_s (\phi \hat c) - A \hat u \hat c  = 0 \quad \mathrm{on} \quad \mathcal{N}.
     \label{eq:1d_bcs}
 \end{equation}
 
@@ -253,7 +253,7 @@ where $\bm n$ denotes the unit outward normal to the boundary, $\mu$ is the (dyn
 
 To model steady flow induced by pressure differences between end nodes
 in a perivascular network $\Lambda$, with edges $\{\Lambda^i\}_i$,
-internal nodes $\mathcal{B}$ and end nodes $\mathcal{T}$, we consider
+internal nodes $\mathcal{B}$ and end nodes $\mathcal{N}$, we consider
 the following system of hydraulic network
 equations~\cite{tithof2022network, daversin2022geometrically,
   gjerde2024directional}. The unknowns are the PVS flux $\hat{q} :
@@ -289,11 +289,13 @@ each $y \in \mathcal{B}$ with connected edges $\mathcal{E}(y)$:
   \hat{p}^i(y) &= \hat{p}^j(y) \qquad \foralls \Lambda^i, \Lambda^j \in \mathcal{E}(y), \\
   \sum_{\Lambda^i \in \mathcal{E}(y)} \hat{q}^i n^i(y) &= 0  .
 \end{align}
+\label{eq:1d_flow:bifurcations}
 \end{subequations}
 where $n^i$ is as defined by~\eqref{eq:def:sign}. Finally, to drive this flow, we impose given fluid pressures $p_0$ at the
 network end nodes:
 \begin{equation}
-  \hat{p}(y) = p_0(y) \qquad y \in \mathcal{T} .
+  \hat{p}(y) = p_0(y) \qquad y \in \mathcal{N} .
+  \label{eq:1d_flow:bcs}
 \end{equation}
 In the case where modelling flow in the perivascular networks
 $\Lambda_a, \Lambda_v$ induced by CSF production, we impose the fluid
@@ -347,10 +349,10 @@ We first consider the discretization of~\eqref{eq:3d_pde} and
 introduce the discrete space
 \begin{equation}
   %V_h^k = \{c_h \in L^2(\Omega): \;  v_h \vert_E \in \mathbb{P}^k(E), \; E \in \mathcal{T}_h\}.
-  V_h^k = \{c \in L^2(\Omega): \;  c \vert_E \in \mathbb{P}^k(E), \; E \in \mathcal{T}\} ,
+  V_h^k = \{c \in L^2(\Omega): \;  c \vert_E \in \mathrm{P}^k(E), \; E \in \mathcal{T}\} ,
 \end{equation}
 where $L^2(\Omega)$ is the space of square-integrable functions
-defined over $\Omega$ and $\mathbb{P}^k(E)$ denotes the space of
+defined over $\Omega$ and $\mathrm{P}^k(E)$ denotes the space of
 polynomials of degree $\leqslant k$ defined over the tetrahedra
 $E$. To discretize the diffusion term in~\eqref{eq:3d_pde}, we use a
 symmetric weighted interior penalty DG formulation, referring
@@ -415,9 +417,9 @@ conditions~\eqref{eq:1d_bcs}, we use the space of continuous piecewise
 linear polynomials defined over $\Lambda$:
 \begin{equation}
   \hat V_h
-  = \{ v \in C^0(\Lambda), \; v \vert_{\Lambda^i} \in \mathbb{P}^1(\Lambda^i) \}, 
+  = \{ v \in C^0(\Lambda), \; v \vert_{\Lambda^i} \in \mathrm{P}^1(\Lambda^i) \}, 
 \end{equation}
-where $\mathbb{P}^1(\Lambda^i)$ is the space of linear polynomials on each $\Lambda^i$. 
+where $\mathrm{P}^1(\Lambda^i)$ is the space of linear polynomials on each $\Lambda^i$. 
 
 \subsubsection{Finite element solution of the incompressible Stokes equations}
 
@@ -427,7 +429,7 @@ We consider an H(div)-based finite element approximation of the incompressible S
   \bm v \vert_{E} \in \mathrm{BDM}^2(E), \; E \in \mathcal{T}_{\rm CSF}; \;
   \bm v \cdot \bm n = 0
   \text{ on } \Gamma_{\rm{pia}} \cup \Gamma_{\rm AM-L} \cup \Gamma_{\rm{SSAS}}, \;\; \bm v \cdot \bm n = \frac{1}{|\Gamma_{\mathrm{LV}}|} u_{\mathrm{in}} \text{ on } \Gamma_{\mathrm{LV}} \}  \\ 
-  Q_h  &= \{q \in L^2(\Omega_{\rm CSF}): \; q \vert_E \in \mathbb{P}^1(E),
+  Q_h  &= \{q \in L^2(\Omega_{\rm CSF}): \; q \vert_E \in \mathrm{P}^1(E),
   \; E \in \mathcal{T}_{\rm CSF} \}. 
 \end{align*}
 \mer{MER: How about the homogenized version of $\bm V_h$? - to distinguish for test space?} Here, $H(\mathrm{div}, \Omega)$ is the space of $L^2(\Omega)$ vector fields with $L^2(\Omega)$ divergence, $\mathrm{BDM}^2$ is the Brezzi-Douglas--Marini element~\cite{brezzi1987mixed} of degree 2, and $\bm n$ and $\bm \tau$ are the unit outward normal and unit tangent vectors to each facet, respectively. Given any vector $\bm v$, the normal and tangential components on each facet are denoted and given by 
@@ -463,31 +465,39 @@ where \discuss{$h$ denotes the element size} and on exterior facets \mer{the ave
 \begin{align}
   \mathcal{A}_h(\bm u_h, \bm v_h)
   + \sum_{F \in \mathcal{F}_{\rm AM-U}} \int_{F} R_0 (\bm u_h \cdot \bm n) (\bm v_h \cdot \bm n)
-  - \int_{\Omega_{\rm CSF}} \nabla \cdot \bm v_h \, p_h  &= 0, \qquad \foralls \bm v_h \in \bm V_h, \\ 
-\int_{\Omega_{\rm CSF}} \nabla \cdot \bm u_h \, q_h  &= 0, \qquad \foralls q_h \in Q_h.
+  - \int_{\Omega_{\rm CSF}} \nabla \cdot \bm v_h \, p_h  &= 0 \qquad \foralls \bm v_h \in \bm V_h, \\ 
+\int_{\Omega_{\rm CSF}} \nabla \cdot \bm u_h \, q_h  &= 0 \qquad \foralls q_h \in Q_h.
 \end{align}
 \end{subequations}
 
+\subsubsection{Finite element solution of the perivascular network equations} 
+
+We consider meshes $\mathcal{I}_a, \mathcal{I}_v$ representing a
+conforming subdivision of each of the perivascular networks
+$\Lambda_a$, $\Lambda_v$. Relative to each mesh $\mathcal{I}$, we define the
+space of (discontinuous) piecewise constants $\hat{Z}_h(\mathcal{I})$ and define
+spaces of continuous piecewise linears $\hat{V}_{h, g}(\mathcal{I})$ with
+prescribed boundary node values (on $\mathcal{N}$) given by $g$:
+\begin{align}
+  \hat{Z}_h(\mathcal{I}) &= \{z \in L^2(\Lambda) \, | \, z \vert_{\Lambda_i} \in \mathrm{P}^{0}(\Lambda_i) \, \foralls \Lambda^i \in \mathcal{I}\}, \\
+  \hat{V}_{h, g}(\mathcal{I}) &= \{ v \in C^0(\Lambda) \, | \, v \vert_{\Lambda^i} \in \mathrm{P}^1(\Lambda_i), \, v(x) = g(x) \, \foralls x \in \mathcal{N} \} .
+  %Q_h^{\rm PVS} &= \{ q_h \in C^0(\Lambda),  q_h \vert_{\Lambda^i} \in \mathrm{P}^k(\Lambda_i), q_h \vert_{\Gamma_{\rm Pia}} = p_{\rm CSF} \}
+\end{align}
+To discretize~\eqref{eq:1d_flow} with the bifurcation
+conditions~\eqref{eq:1d_flow:bifurcations} and boundary
+conditions~\eqref{eq:1d_flow:bcs}, we use the space of continuous
+functions $\hat{Z}_h(\mathcal{I})$ to enforce the continuity of the pressure at
+bifurcation points, while the conservation of flux is enforced
+(weakly) through the variational formulation. The discrete variational form of the equations then reads: Find $(\hat{q}, \hat{p}) \in \hat{Z}_h(\mathcal{I}) \times \hat{V}_{h, p_0}(\mathcal{I})$ such that
+\begin{subequations}
+\begin{align}
+  \langle \hat{q}, z \rangle +  \langle z, \frac{A \kappa}{\mu} \partial_s \hat{p}  \rangle &= 0 \quad \forall z \in \hat{Z}_h(\mathcal{I}) \\
+  \langle \hat{q}, \partial_s w \rangle &= 0 \quad  \forall w \in \hat{V}_{h, 0}(\mathcal{I}).
+\end{align}
+\end{subequations}%
+where $\langle \cdot, \cdot \rangle$ denotes the $L^2(\mathcal{I})$-inner product and defined segment-wise. For a stability and convergence analysis of this discrete model, we refer to the reference\cite{gjerde2024directional}. 
+
 \mer{MER: Stopped here.}
-
-\subsubsection{PVS flow} 
-
-To enforce conservation of flux and continuity of pressure on bifurcation points, we approximate the velocity with a piecewise discontinuous polynomials and the pressure with continuous piecewise polynomials, respectively. The finite element spaces thus are:
-
-\begin{align}
-   V_h^{\rm PVS} = \{v_h \in L^2(\Lambda): v_h \vert_{\Lambda_i} \in
-   \mathbb{P}^{k -1}(\Lambda_i)\} \text{ and }
-   Q_h^{\rm PVS} = \{ q_h \in C^0(\Lambda),  q_h \vert_{\Lambda^i} \in \mathbb{P}^k(\Lambda_i), q_h \vert_{\Gamma_{\rm Pia}} = p_{\rm CSF} \}
-\end{align}
-
-The weak form reads: Find $(\hat{u}, \hat{p}) \in V_h^{\rm PVS} \times Q_h^{\rm PVS}$ such that
-
-\begin{align}
-(A \hat{u}, v) + \left(v, \frac{A \kappa}{\mu} \partial_s \hat{p}  \right) &= 0 \quad \forall v \in V_h^{\rm PVS} \\
-(A \hat{u}, \partial_s q ) &= 0 \quad  \forall q \in  Q_h^{\rm PVS}
-\end{align}
-
-where $\tau$ is the tangent vector of the network. Here we employ the lowest order discretization and set $k=1$. For discussion of stability of the discrete model we refer to \cite{gjerde2024directional}. 
 
 \subsection{Modelling dispersion in the CSF spaces}
 \label{sec:supp:dispersion}
@@ -537,6 +547,8 @@ to obtain the locally averaged, spatially varying diffusion enhancement factor $
 
 \subsection{Estimating net perivascular flow induced by peristaltic waves}
 \label{sec:sup:peristalsis}
+
+\mer{MER: This needs a pass to update to new notation and new style.}
 
 We use the theoretical framework introduced by Gjerde et al.~\cite{gjerde2023directional} to compute an analytic estimate of the time-averaged (or \emph{net}) flow rates $\langle Q'_i \rangle$ (mm$^3$/s) induced by peristaltic pumping in a perivascular network$\Lambda = \cup_i \Lambda_i$. The motion of the (inner) vascular wall is described by a periodic traveling (peristaltic) wave of relative amplitude $\varepsilon$, wave length $\lambda$ (mm) and frequency $f$, acting normal to the wall. By definition, the wave number is $k = 2 \pi/\lambda$ and the angular frequency is $\omega = 2 \pi f$. Each PVS segment $\Lambda_i$ has length $L_i$ with wave-relative length $\ell_i = k L$, baseline inner radius $r_{o_i}'$, fixed outer radius $r_{e_i}'$, and outer-to-inner ratio $\beta_i = r_{e_i}'/r_{o_i}'$ (see also \Cref{tab:pvs:parameters}). These geometric parameters and the assumption of annular cylindrical PVS segments yield hydraulic resistances $\mathcal{R}_{o, i}$ and additional characteristic parameters, see \cite{gjerde2023directional} for the complete definitions and schematics. Since the analytical estimate is derived under the assumption that $k L \approx \mathcal{O} 1)$~\cite{gjerde2023directional} and has been verified against numerical simulations for $k L$ of the order $10^{-1}-10^2$~\cite[Table I]{gjerde2023directional}, we consider it applicable for the wave lengths and vascular network data considered here in which $k L$ ranges from \mer{$X$ to $Y$.}
 
