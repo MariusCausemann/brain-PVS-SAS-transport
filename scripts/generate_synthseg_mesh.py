@@ -15,18 +15,20 @@ V34ID = 4
 CSFNOFLOWID = 5
 
 def get_csg_tree(folder):
-    return  {"operation":"union",
+    tree = {"operation":"union",
                 "right":
                     {"operation":"union",
-                    "left":f"mesh/T1/{folder}/LV.ply",
-                    "right":f"mesh/T1/{folder}/V34.ply",
+                    "left":f"{folder}/LV.ply",
+                    "right":f"{folder}/V34.ply",
                     },
                 "left":
                     {"operation":"union",
-                    "left":f"mesh/T1/{folder}/skull.ply",
-                    "right":f"mesh/T1/{folder}/parenchyma_incl_ventr.ply",
+                    "left":f"{folder}/skull.ply",
+                    "right":f"{folder}/parenchyma_incl_ventr.ply",
                     },
                 } 
+    print(tree)
+    return tree
 
 def generate_mesh(configfile : str):
 
@@ -35,23 +37,22 @@ def generate_mesh(configfile : str):
 
     tetra = wm.Tetrahedralizer(epsilon=config["epsilon"],
                                edge_length_r=config["edge_length_r"],
-                               coarsen=True, max_threads=4, stop_quality=8)
-    folder = "surfaces"
-    if config.get("cube", False): folder = "box_surfaces"
-    csg_tree = get_csg_tree(folder)
+                               coarsen=True, max_threads=4, stop_quality=8,
+                               max_its=30)
+    csg_tree = get_csg_tree(f"mesh/{meshname}/surfaces")
 
     tetra.load_csg_tree(json.dumps(csg_tree))
     tetra.tetrahedralize()
     point_array, cell_array, marker = tetra.get_tet_mesh()
     mesh = meshio.Mesh(
-            point_array, [("tetra", cell_array)], cell_data={"label": [marker.ravel()]}
+            point_array, [("tetra", cell_array)], 
+            cell_data={"label": [marker.ravel()]}
         )
     mesh = pv.from_meshio(mesh).clean()
     
     # make sure all expected labels are actually there
     assert np.isin([CSFID, PARID, LVID, V34ID,], mesh["label"]).all()
 
-    parenchyma_surf = pv.read("mesh/T1/surfaces/parenchyma_incl_ventr.ply")
     os.makedirs(f"mesh/{meshname}/volmesh", exist_ok=True)
     pv.save_meshio(f"mesh/{meshname}/volmesh/mesh.xdmf", mesh)
 
