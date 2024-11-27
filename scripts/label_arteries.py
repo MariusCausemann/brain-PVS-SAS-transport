@@ -15,7 +15,7 @@ pointlabels = [("BA",(0.084971, 0.104599, 0.0424848)),
                ("ACA-A2", (0.0805165,0.115209,0.0781812)),
                ("ACA-A3", (0.0795565, 0.133436, 0.0905888)),
                ("ACA-A4", (0.0815724, 0.111484, 0.107046)),
-               ("ACA-A5", (0.0815178, 0.0984657, 0.167766)),
+               #("ACA-A5", (0.0815178, 0.0984657, 0.167766)),
                ("PER-R", (0.123073, 0.101526, 0.135256)),
                ("PER-L", (0.0401122, 0.0939796, 0.13324))
             ]
@@ -24,7 +24,7 @@ def get_tangent(v, n):
     return v - np.dot(np.dot(v,n), n)
 
 if __name__=="__main__":
-   filename = "plots/labeled_arteries.png"
+   filename = "plots/meshplots/labeled_arteries.png"
    art = pv.read("mesh/networks/arteries_tubes.vtk")
    labelcoords = lambda label: art.bounds[::2]
 
@@ -39,7 +39,7 @@ if __name__=="__main__":
                      position_y=0.0, title_font_size=24,
                      label_font_size=24, fmt="%.1f")
    pl = pv.Plotter(off_screen=True)
-   pl.add_mesh(art, cmap="coolwarm", scalar_bar_args=bar_args)
+   pl.add_mesh(art, cmap="coolwarm", scalar_bar_args=bar_args, show_scalar_bar=True)
    pl.add_points(np.array(points), render_points_as_spheres=False, 
                  point_size=20, color=col)
    center = art.center_of_mass() - np.array([0,0, 0.047])
@@ -60,6 +60,6 @@ if __name__=="__main__":
    pl.camera.azimuth += 160
    pl.camera.elevation += 7
    pl.camera.zoom(1.6)
-   pl.screenshot(filename, transparent_background=False)
+   pl.screenshot(filename, transparent_background=True)
    print(pl.camera.direction)
    pl.export_html(filename.replace("png", "html"))
