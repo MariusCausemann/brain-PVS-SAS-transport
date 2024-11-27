@@ -38,7 +38,7 @@ def get_result(modelname, domain, times):
         grid["radius"] = label.vector()[:]
     return grid
 
-def get_result_fenics(modelname, domain, times):
+def get_result_fenics(modelname, domain, times, getroots=False):
     from fenics import XDMFFile, FunctionSpace, Function
     from solver  import get_mesh, read_vtk_network, as_P0_function
     filename = f"results/{modelname}/{modelname}_{domain}.xdmf"
@@ -49,10 +49,10 @@ def get_result_fenics(modelname, domain, times):
         mesh, vol_subdomains = get_mesh(config["mesh"])
         V = FunctionSpace(mesh, "DG", 1)
     if domain == "artery":
-        mesh, radii, _ = read_vtk_network("mesh/networks/arteries_smooth.vtk", rescale_mm2m=False)
+        mesh, radii, roots = read_vtk_network("mesh/networks/arteries_smooth.vtk", rescale_mm2m=False)
         V = FunctionSpace(mesh, "CG", 1)
     if domain == "vein":
-        mesh, radii, _ = read_vtk_network("mesh/networks/venes_smooth.vtk", rescale_mm2m=False)
+        mesh, radii, roots = read_vtk_network("mesh/networks/venes_smooth.vtk", rescale_mm2m=False)
         V = FunctionSpace(mesh, "CG", 1)
     results = []
     print(f"reading results from {modelname} at")
@@ -64,7 +64,10 @@ def get_result_fenics(modelname, domain, times):
             f.read_checkpoint(c, "c", i)
             results.append(c)
     if domain in ["artery", "vein"]:
-        return results, as_P0_function(radii)
+        if getroots:
+            return results, as_P0_function(radii), roots
+        else:
+            return results, as_P0_function(radii)
     elif domain=="sas":
         return results, vol_subdomains
 
@@ -107,6 +110,7 @@ def read_config(configfile):
 def clip_plot(csf, par, networks, filename, title, clim, cmap, cbar_title):
     import pyvista as pv
     from extract_vessels import get_tubes
+    cmap = Colormap(cmap).to_matplotlib()
 
     csf_clipped = csf.clip(normal="y")
     par_clipped = par.clip(normal="y")
@@ -126,6 +130,20 @@ def clip_plot(csf, par, networks, filename, title, clim, cmap, cbar_title):
     pl.camera.zoom(1.3)
     pl.add_title(title, font_size=12)
     return pl.screenshot(filename, transparent_background=True, return_img=True)
+
+def T1_clip_plot(objects,  normal):
+    import pyvista as pv
+    pl = pv.Plotter(off_screen=True, window_size=(800, 800))
+    for obj in objects:
+        obj_args = dict(show_scalar_bar=False)
+        obj_args.update(dict(obj.field_data))
+        if "cmap" in obj_args.keys():
+            obj_args["cmap"] = Colormap(obj_args["cmap"]).to_matplotlib()
+        pl.add_mesh(obj, **obj_args)
+    pl.background_color="black"
+    pl.camera_position = {"x":"yz","y":"xz", "z":"xy"}[normal]
+    pl.camera.zoom(1.4)
+    return pl.screenshot(None, return_img=True)
 
 def isosurf_plot(sas, networks, bg, filename, title, clim, cmap, cbar_title):
     import pyvista as pv
