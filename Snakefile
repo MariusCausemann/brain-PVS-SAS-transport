@@ -5,14 +5,24 @@ from collections import defaultdict
 num_mumps_threads = 16
 mesh_refine_models = ["modelALowRes", "modelA", "modelAHighRes"]
 time_refine_models = ["modelA", "modelAsmalldt", "modelAlargedt"]
-model_variations = ["modelA" ,"modelB1-10", "modelB1-100", "modelB1-1000",
-                    "modelB2-1", "modelB2-10", "modelB2-100", "modelB2-1000"]
+model_variations = ["modelA" , "modelA-LowD", "modelA-OnlyDispersion",
+                    "modelA-woCT", "modelA-strongVM","modelA-PVS-disp",
+                    #"modelB1-10", "modelB1-100", "modelB1-1000",
+                    #"modelB2-1", "modelB2-10", "modelB2-100", "modelB2-1000",
+                    #"modelC", "modelA-NoResp", "modelA-NoDisp", "modelA-LowD",
+                    "modelA-Venes"]
 
-model_comparisons = ["modelA_modelB1-10","modelA_modelB1-100", "modelA_modelB1-1000",
-                    "modelA_modelB2-1", "modelA_modelB2-10", "modelA_modelB2-100",
-                     "modelA_modelB2-1000" ]
+model_comparisons = [
+                    #"modelA_modelB1-10","modelA_modelB1-100", "modelA_modelB1-1000",
+                    #"modelA_modelB2-1", "modelA_modelB2-10", "modelA_modelB2-100",
+                    # "modelA_modelB2-1000", "modelA_modelC",
+                    # "modelA_modelA-NoResp",
+                    "modelA_modelA-woCT",
+                    "modelA_modelA-strongVM",
+                    "modelA_modelA-PVS-disp"            
+                    ]
 
-models =  mesh_refine_models + time_refine_models + model_variations
+models =  model_variations #mesh_refine_models + time_refine_models
 times = list(np.array([1, 3, 6, 12, 24])*60*60)
 conctimes =  list((np.array([0, 1/3, 2/3, 1, 4/3, 5/3, 2, 7/3, 8/3, 3, 4, 5, 6 ,9, 12, 15, 18, 21, 24])*60*60).astype(int))
 
@@ -29,9 +39,6 @@ diffmax = {"detail":defaultdict(lambda: 0.1,{"modelA_modelA4":0.2}),
 }
 types = ["overview", "isosurf", "timesurf"]
 
-# check for headless server here? https://github.com/pyvista/pyvista/blob/f872ffebc7f56b1ff03541e368935c3304fc5e33/pyvista/plotting/tools.py#L54
-# or try vtk osmesa build...
-
 def getconfig(model, key):
     return read_config(f"configfiles/{model}.yml").get(key, [])
 
@@ -40,7 +47,9 @@ rule all:
         expand("plots/comparisons/{c}/{c}_{type}.png",c=model_comparisons, type=types),
         expand("plots/{modelname}/{modelname}_tracer_vessel_dist.png", modelname=models),
         expand("plots/{modelname}/{modelname}_total_conc.png", modelname=models),
-        "plots/pvs_flow_prod/sas_flow/",
+        expand("plots/{modelname}/{modelname}_overview.png", modelname=models),
+        expand("plots/{modelname}/{modelname}.mp4", modelname=models),
+        "plots/pvs_flow_prod/sas_flow-arteries/",
         "plots/pvs_flow_peristaltic/vasomotion/",
         "plots/pvs_flow_peristaltic/cardiac_pvs_oscillation/",
         #expand("plots/{modelname}/{modelname}_{tp}_{t}.png", modelname=models, t=times, tp=types)
@@ -55,6 +64,7 @@ rule runSimuation:
         config="configfiles/{modelname}.yml",
         csf_velocity_file=lambda wildcards: getconfig(wildcards.modelname, "csf_velocity_file"),
         arterial_velocity_file=lambda wildcards: getconfig(wildcards.modelname, "arterial_velocity_file"),
+        venous_velocity_file=lambda wildcards: getconfig(wildcards.modelname, "venous_velocity_file"),
         csf_dispersion_file=lambda wildcards: getconfig(wildcards.modelname, "csf_dispersion_file"),
     output:
         sas="results/{modelname}/{modelname}_sas.xdmf",
@@ -75,7 +85,7 @@ rule computeDispersionField:
         csf_dispersion_file="results/csf_flow/{csf_flow_model}/R.xdmf",
         csf_dispersion_plot="results/csf_flow/{csf_flow_model}/R.png",
     shell:
-        "xvfb-run -a python scripts/compute_dispersion_field.py {input.csf_pressure_file} {output.csf_dispersion_file}"
+        "python scripts/compute_dispersion_field.py {input.csf_pressure_file} {output.csf_dispersion_file}"
 
 rule computeFlowField:
     conda:"environment.yml"
@@ -95,7 +105,7 @@ rule generatePlot:
     output:
         plot="plots/{modelname}/{modelname}_{type}_{time,[0-9]*}.png"
     shell:
-        "xvfb-run -a python scripts/generate_plot.py {wildcards.modelname} {wildcards.time} {wildcards.type} --filename {output.plot}"
+        "python scripts/generate_plot.py {wildcards.modelname} {wildcards.time} {wildcards.type} --filename {output.plot}"
 
 rule generateDiffPlot:
     conda:"environment.yml"
@@ -109,7 +119,7 @@ rule generateDiffPlot:
     output:
         plot="plots/comparisons/{model1}_{model2}/{model1}_{model2}_diff_{type}_{time}.png"
     shell:
-        "xvfb-run -a python scripts/create_diff_plot.py {wildcards.model1} {wildcards.model2} {wildcards.time} {wildcards.type} --filename {output.plot}"
+        "python scripts/create_diff_plot.py {wildcards.model1} {wildcards.model2} {wildcards.time} {wildcards.type} --filename {output.plot}"
 
 rule getConcentrationRange:
     conda:"environment.yml"
@@ -143,8 +153,8 @@ rule compareModels:
         diffmax= lambda wildcards: diffmax[wildcards.type][f"{wildcards.model1}_{wildcards.model2}"]
     shell:
         """
-        xvfb-run -a python scripts/compare_models.py {wildcards.model1} {wildcards.model2} {wildcards.type} {params.cmax} {params.diffmax} {times} &&
-        xvfb-run -a python scripts/compare_models_horizontal.py {wildcards.model1} {wildcards.model2} {wildcards.type} {params.cmax} {times} &&
+        python scripts/compare_models.py {wildcards.model1} {wildcards.model2} {wildcards.type} {params.cmax} {params.diffmax} {times} &&
+        python scripts/compare_models_horizontal.py {wildcards.model1} {wildcards.model2} {wildcards.type} {params.cmax} {times} &&
         python scripts/generate_comparison_barplots.py {wildcards.model1} {wildcards.model2}
         """
 
@@ -157,7 +167,7 @@ rule analyzeTracerDist:
     output:
         plot="plots/{modelname}/{modelname}_tracer_vessel_dist.png"
     shell:
-        "xvfb-run -a python scripts/analyze_tracer_dist.py {wildcards.modelname} {times}"
+        "python scripts/analyze_tracer_dist.py {wildcards.modelname} {times}"
 
 rule totalTracer:
     conda:"environment.yml"
@@ -169,7 +179,7 @@ rule totalTracer:
         plot="plots/{modelname}/{modelname}_total_conc.png",
         metrics_yaml="results/{modelname}/mean_concentrations.yml",
     shell:
-        "xvfb-run -a python scripts/mean_concentrations.py {wildcards.modelname}"
+        "python scripts/mean_concentrations.py {wildcards.modelname}"
 
 rule segmentT1:
     input:
@@ -183,18 +193,19 @@ rule segmentT1:
 rule generateSurfaces:
     conda:"environment.yml"
     input:
-        "data/T1_synthseg.nii.gz"
+        "data/T1_synthseg.nii.gz",
+        config="configfiles/meshconfig/{meshname}.yml"
     output:
-        [f"mesh/T1/surfaces/{n}.ply" for n in ["LV", "parenchyma", "skull", "V34"]]
+        [f"mesh/{{meshname}}/surfaces/{n}.ply" for n in ["LV", "parenchyma", "skull", "V34"]]
     shell:
         """
-        python scripts/extract_synthseg_surfaces.py
+        python scripts/extract_synthseg_surfaces.py {input.config}
         """
 
 rule generateMesh:
     conda:"environment.yml"
     input:
-        [f"mesh/T1/surfaces/{n}.ply" for n in ["LV", "parenchyma", "skull", "V34"]],
+        [f"mesh/{{meshname}}/surfaces/{n}.ply" for n in ["LV", "parenchyma", "skull", "V34"]],
         "configfiles/meshconfig/{meshname}.yml"
     output:
         "mesh/{meshname}/volmesh/mesh.xdmf",
@@ -238,7 +249,7 @@ rule computeSASFlow:
         export OMP_NUM_THREADS={threads} && \
         mpiexec -n 16 python scripts/sas_flow_Hdiv.py \
         configfiles/{wildcards.csf_flow_model}.yml && \
-        xvfb-run -a python3 scripts/plot_csf_flow.py results/csf_flow/{wildcards.csf_flow_model}
+        python3 scripts/plot_csf_flow.py results/csf_flow/{wildcards.csf_flow_model}
         """
 
 
@@ -247,11 +258,11 @@ rule computeProdPVSFlow:
     input:
         "results/csf_flow/{csf_flow_model}/flow.hdf",
     output:
-        hdf='results/pvs_flow_prod/{csf_flow_model}/pvs_flow.hdf',
-        outputdir=directory("results/pvs_flow_prod/{csf_flow_model}"),
+        hdf='results/pvs_flow_prod/{csf_flow_model}-{network}/pvs_flow.hdf',
+        outputdir=directory("results/pvs_flow_prod/{csf_flow_model}-{network}"),
     shell:
         """
-        python scripts/pvs_flow_prod.py {wildcards.csf_flow_model}
+        python scripts/pvs_flow_prod.py {wildcards.csf_flow_model} {wildcards.network}
         python scripts/evaluate_pvs_flow.py {output.hdf}
         """
 
@@ -282,11 +293,35 @@ rule computePeristalticPVSFlow:
 rule evaluatePVSFlow:
     conda:"environment.yml"
     input:
-        hdf='results/{flow_type}/{pvs_flow_model}/pvs_flow.hdf',
+        hdf='results/{flow_type}/{pvs_flow_model}-{netw}/pvs_flow.hdf',
     output:
-        directory("plots/{flow_type}/{pvs_flow_model}/")
+        directory("plots/{flow_type}/{pvs_flow_model}-{netw}/")
     shell:
         "python scripts/evaluate_pvs_flow.py {input.hdf}"
+
+
+rule generateT1OverviewPlot:
+    conda:"environment.yml"
+    input:
+        sas1="results/{m}/{m}_sas.xdmf",
+        art1="results/{m}/{m}_artery.xdmf",
+        ven1="results/{m}/{m}_vein.xdmf",    
+    output:
+        "plots/{m}/{m}_overview.png"
+    shell:
+        "python scripts/overview_plot.py {wildcards.m}"
+
+
+rule makeVideo:
+    conda:"environment.yml"
+    input:
+        sas="results/{m}/{m}_sas.xdmf",
+        art="results/{m}/{m}_artery.xdmf",
+    output:
+        "plots/{m}/{m}.mp4"
+    shell:
+        "python scripts/make_video.py {wildcards.m}"
+
 
 
 
