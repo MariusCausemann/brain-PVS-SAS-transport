@@ -95,10 +95,10 @@ def mark_boundaries(label):
     bm = df.MeshFunction("size_t", mesh, 2, 0)
 
     # set upper and lower skull
-    upper_skull_z = 0.05
+    upper_skull_z = 0.00
     lower_skull = df.CompiledSubDomain("on_boundary")
     lower_skull.mark(bm, LOWER_SKULL_ID)
-    upper_skull = df.CompiledSubDomain("on_boundary && x[2] > m",
+    upper_skull = df.CompiledSubDomain("on_boundary && (x[2] - 0.8*x[1]) > m",
                                      m=upper_skull_z)
     upper_skull.mark(bm, UPPER_SKULL_ID)
 
@@ -155,7 +155,7 @@ def mark_and_refine(configfile : str):
         crit = abs(get_surface_dist(sas, parenchyma_surf)) < 0.003
         print(sas.num_cells())
         sas, label = refine_sphere(sas, bottom_refine_coords, 0.08, label, 
-                                    criterion=crit, min_size=config["epsilon"] * 4)
+                                    criterion=crit, min_size=config["edge_length_r"] / 3)
         print(sas.num_cells())
 
     # refine inlet area
@@ -167,7 +167,17 @@ def mark_and_refine(configfile : str):
         print(sas.num_cells())
         crit = abs(get_surface_dist(sas, parenchyma_surf)) < 0.002
         sas, label = refine_sphere(sas, inlet_coords, 0.01, label, criterion=crit,
-                                    min_size=config["epsilon"]*2)
+                                    min_size=config["edge_length_r"] / 8)
+        print(sas.num_cells())
+
+    # refine AQ area
+    print("======================")
+    print("refining AQ area...")
+    aq_coords = (0.0815, 0.082, 0.0665)
+    for i in range(1):
+        print("======================")
+        print(sas.num_cells())
+        sas, label = refine_sphere(sas, aq_coords, 0.005, label)
         print(sas.num_cells())
 
     # refine interpeduncular
@@ -194,7 +204,10 @@ def mark_and_refine(configfile : str):
     for i,m in enumerate(cell_f.array()):
         colors.array()[cellmap[i]] = m
 
-    label.array()[colors.array()[:] >=2]  = CSFNOFLOWID
+    cols,  color_counts = np.unique(colors.array(), return_counts=True)
+
+    label.array()[np.isin(colors.array()[:],
+                          cols[np.argsort(color_counts)[:-2]])]  = CSFNOFLOWID
     label.rename("label", "label")
 
     def count_external_facets(mesh):
