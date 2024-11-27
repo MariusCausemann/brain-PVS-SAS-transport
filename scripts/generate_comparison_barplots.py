@@ -7,25 +7,10 @@ import seaborn as sns
 import os
 from pathlib import Path
 from plotting_utils import time_str, set_plotting_defaults
-from compute_dispersion_field import alpha
+from compute_dispersion_field import alpha_cardiac, alpha_respiratory
 import typer
 from typing import List
 
-csf_flow_model = {"LowRes":"sas_flow_LowRes",
-                "standard":"sas_flow",
-                "HighRes":"sas_flow_HighRes",
-                "dt=240s":"sas_flow",
-                "dt=120s":"sas_flow",
-                "dt=60s":"sas_flow",
-                "vasomotion":"sas_flow"}
-
-transport_model = {"LowRes":"modelALowRes",
-                "standard":"modelA",
-                "HighRes":"modelAHighRes",
-                "dt=120s":"modelA",
-                "dt=240s":"modelAlargedt",
-                "dt=60s":"modelAsmalldt",
-                "vasomotion":"modelAB"}
 
 mesh_refinement_models = ["standard", "vasomotion"]
 time_refinement_models = ["dt=240s", "dt=120s", "dt=60s"]
@@ -50,8 +35,11 @@ def compare_models(models: List[str]):
         # get PVS flow stats
         #md.update(read_config(f"results/csf_flow/{csfm}/pvs_metrics.yml"))
         # get cardiac PVS flow stats
-        cardiac_csf = read_config(f"results/csf_flow/cardiac_{csfm}/metrics.yml")
-        cardiac_csf["pmax"] *= (1 + alpha**2 / 8)
+        dispersion_file = tmconfig["csf_dispersion_file"]
+        if isinstance(dispersion_file, list): dispersion_file=dispersion_file[0]
+        csfm_cardiac = dispersion_file.split("/")[-2]
+        cardiac_csf = read_config(f"results/csf_flow/{csfm_cardiac}/metrics.yml")
+        cardiac_csf["pmax"] *= (1 + alpha_cardiac ** 2 / 8)
         md.update({f"cardiac_{k}":v for k,v in cardiac_csf.items()})
         # get mean concentrations
         md.update(read_config(f"results/{tm}/mean_concentrations.yml"))
@@ -106,7 +94,7 @@ def compare_models(models: List[str]):
 
     nfigs = len(barplot_groups)
     fig_width = [ 1  + int(len(bp["vars"]) / 4) for bp in barplot_groups]
-
+    from IPython import embed; embed()
     nrows, ncols = 4,4
     fig = plt.figure(figsize=(7, 8))
     gs = plt.GridSpec(nrows, ncols, figure=fig)
