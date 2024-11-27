@@ -63,7 +63,7 @@ def compute_pvs_flow(pvs_flow_file):
         umed = np.median(abs(uvals))
         range = np.round(minmax([uvals], percentile=99.9), 1)
         nbins = 50
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(4,3))
         counts, bins, containers = plt.hist(uvals, density=False, bins=nbins, histtype="bar",
                 range=range, edgecolor='black', linewidth=0.4, 
                         weights=lengths / lengths.sum())
@@ -83,7 +83,7 @@ def compute_pvs_flow(pvs_flow_file):
         plt.xlim(range)
         plt.legend(frameon=False)
         ax.yaxis.set_major_formatter(PercentFormatter(1))
-        plt.savefig(f"{plot_dir}/{model}_velocity_histo_{variant}.png")
+        plt.savefig(f"{plot_dir}/{model}_velocity_histo_{variant}.png", dpi=300)
 
     points = np.array([c for n,c in pointlabels])
     cellidx = map_kdtree(FunctionSpace(mesh, "DG", 0).tabulate_dof_coordinates(),
@@ -102,35 +102,35 @@ def compute_pvs_flow(pvs_flow_file):
         radii.append(assemble(m2mm*artery_radii*dxs(si))/ length)
         lengths.append(length*m2mm)
     df = pd.DataFrame({"p":pressures, "u":velocities, "loc":artlabels, "L":lengths,
-                        "R":radii}).sort_values(by="loc")
+                        "R":radii})
 
-    plt.figure()
-    ax = sns.barplot(df, x="loc", y="p", palette="crest")
+    plt.figure(figsize=(4,3))
+    ax = sns.barplot(df, x="loc", y="p",)# palette="crest")
     ax.set_xlabel("")
     ax.set_ylabel("pressure (mPa)")
-    plt.xticks(rotation=45); plt.tight_layout()
-    plt.savefig(f"{plot_dir}/{model}_arteries_labels_pressure.png")
+    plt.xticks(rotation=45,ha='right', rotation_mode='anchor', size="10");plt.tight_layout()
+    plt.savefig(f"{plot_dir}/{model}_pressure.png")
 
-    plt.figure()
-    ax = sns.barplot(df, x="loc", y="u", palette="flare")
+    plt.figure(figsize=(4,3))
+    ax = sns.barplot(df, x="loc", y="u",)# palette="flare")
     ax.set_xlabel("")
     ax.set_ylabel("flow velocity (μm/s)")
-    plt.xticks(rotation=45);plt.tight_layout()
-    plt.savefig(f"{plot_dir}/{model}_arteries_labels_velocity.png")
+    plt.xticks(rotation=45,ha='right', rotation_mode='anchor', size="10");plt.tight_layout()
+    plt.savefig(f"{plot_dir}/{model}_velocity.png")
 
-    plt.figure()
-    ax = sns.barplot(df, x="loc", y="R", palette="blend:#7AB,#EDA")
+    plt.figure(figsize=(4,3))
+    ax = sns.barplot(df, x="loc", y="R",)# palette="blend:#7AB,#EDA")
     ax.set_xlabel("")
     ax.set_ylabel("radius (mm)")
-    plt.xticks(rotation=45);plt.tight_layout()
-    plt.savefig(f"{plot_dir}/{model}_arteries_labels_radius.png")
+    plt.xticks(rotation=45,ha='right', rotation_mode='anchor', size="10");plt.tight_layout()
+    plt.savefig(f"{plot_dir}/{model}_radius.png")
 
-    plt.figure()
-    ax = sns.barplot(df, x="loc", y="L", palette="blend:#7AB,#EDA")
+    plt.figure(figsize=(4,3))
+    ax = sns.barplot(df, x="loc", y="L",)# palette="blend:#7AB,#EDA")
     ax.set_xlabel("")
     ax.set_ylabel("segment length (mm)")
-    plt.xticks(rotation=45);plt.tight_layout()
-    plt.savefig(f"{plot_dir}/{model}_arteries_labels_length.png")
+    plt.xticks(rotation=45,ha='right', rotation_mode='anchor', size="10");plt.tight_layout()
+    plt.savefig(f"{plot_dir}/{model}_length.png")
 
     length = assemble(1*dx(domain=mesh))
     umean = assemble(uh_mag*dx) / length
