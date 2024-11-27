@@ -61,11 +61,11 @@ def compare_models(modela:str, modelb:str, type:str, cmax:float, times:List[int]
             for g in [csf, art, ven, par, comb]: g.set_active_scalars(f"c_{t}")
             cbar_title = "concentration (mol/l)"
             if type=="overview":
-                cmap = "tempo"
+                cmap = "tempo_r"
                 img = clip_plot(csf, par, [art, ven], None, title, clim=(0, cmax), 
                           cmap=cmap, cbar_title=cbar_title)
             if type=="isosurf":
-                cmap = "tempo"
+                cmap = "tempo_r"
                 img = isosurf_plot(comb, [art], bg, None, title, clim=(0, cmax), 
                           cmap=cmap, cbar_title=cbar_title)
             if type=="timesurf":
@@ -88,8 +88,8 @@ def compare_models(modela:str, modelb:str, type:str, cmax:float, times:List[int]
     for j,m in enumerate(descr):
         ax = grid.axes_row[j][0]
         ax.text( -0.08, 0.5, m, va="center", transform=ax.transAxes, fontsize=12, rotation=90)
-
-    mplcmap = cmap=Colormap(cmap).to_matplotlib()
+    #from IPython import embed; embed()
+    mplcmap = Colormap(cmap).to_matplotlib()
     norm = mpl.colors.Normalize(vmin=0, vmax=cmax)
     if type=="timesurf":
         norm = mpl.colors.BoundaryNorm(np.arange(0, len(times) + 1), mplcmap.N)
