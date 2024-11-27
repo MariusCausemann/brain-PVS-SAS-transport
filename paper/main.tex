@@ -150,7 +150,6 @@ Next, we use the computed advective velcity field and dispersion enhancement fac
 % tracer trajectory of model variations
 
 
-
 \begin{itemize}
     \item only dispersion model: No production flow. Tracer remains in the subtentorial regions, in cerebellum, brain stem and surrounding CSF. In contrast to other models, it travels up the ventricular system - similar to what is observed in iNPH patients?
     \item Low dispersion model: account for uncertainty (or pathologies with impaired pulsatile motion?) - tracer exclusively spreads in the frontal half of the brain. Bifurcation of CSF production flow field: flow bifurcates around the midbrain in two directions: a) through the quadrigeminal cistern into the longitudinal fissure and b) frontally around the brain through the outer SAS. Only models with "enough" dispersion enable tracer to follow trajectory a).
@@ -191,6 +190,13 @@ O) model X,Y and Z after 12h;
   Do solutes move from PVS to the SAS, or both along the PVS and along
   the SAS?
 \end{itemize}
+
+\paragraph{PVS Flow velocities}
+\begin{itemize}
+    \item we consider three different PVS flow fields: PVS flow driven by production field pressure differences, cardiac peristaltic flow and vasomotion peristaltic flow. 
+\end{itemize}
+
+
 \begin{figure}
     \centering
     \includegraphics[height=\textheight]{figures/figure3.png}
@@ -306,19 +312,18 @@ we first automatically segment the brain parenchyma and CSF spaces,
 including the ventricular system and SAS, using
 Synthseg~\cite{billot2023robust,billot2023synthseg}. We next manually
 adjust the segmentation to accurately represent the connections
-between CSF spaces (aqueduct, median aperture), smoothen, and finally
+between CSF spaces (aqueduct, median aperture, tentorium cerebelli), smoothen, and finally
 extract surface representations of the outer (arachnoid) boundary, the
 pial membrane and other interfaces. Conforming to these surface and
 interface representations, we generate a tetrahedral mesh $\Omega$
 representing the complete intracranial volume as the union of the
 parenchyma $\Omega_{\rm PAR}$ and CSF spaces $\Omega_{\rm CSF}$, using
 fTetWild~\cite{hu2020fast}. The resulting computational mesh consists
-of $153\,729$ vertices and $851\,904$ mesh cells, which vary between
-$0.4$ mm and $1.2$ cm in mesh cell diameter. The parenchyma has a
-total volume of $1386$ ml, whereas the ventricles and the outer SAS
-contribute $28$ ml and $277$ ml, respectively, to a total CSF volume
-of $305$ml, in agreement with recent
-estimates~\cite{hladky2024regulation}.
+of $221\,988$ vertices and $1\,225\,774$ mesh cells, which vary between
+$0.24$ mm and $1.29$ cm in mesh cell diameter. The parenchyma has a
+total volume of $1318$ ml, whereas the ventricles and the outer SAS
+contribute $32$ ml and $328$ ml, respectively, to a total CSF volume
+of $360$ml, in agreement with recent estimates~\cite{hladky2024regulation}.
 
 %% In addition, we slightly modify the segmentation to ensure correct
 %% connectivity of the ventricular system. In particular, we elongate
