@@ -47,14 +47,14 @@ class Figure2_Panels(PanelsSpec):
             content_offset=offset,
             text=Text("production-driven CSF flow", **textargs)
     )
-    d2: Panel = Panel(
+    e: Panel = Panel(
             RasterImage("results/csf_flow/sas_flow/prod_velocity_histo.png",
                          ElemSize(fs, fs*0.6, units)),
             Location(xstart + 3*fs*fac, y0 + fs),
             content_offset=Location(-0.3, 0),
             text=Text("production-driven CSF velocities", **dict(textargs, y=0.1))
         )
-    e: Panel = Panel(
+    f: Panel = Panel(
             RasterImage("results/csf_flow/cardiac_sas_flow/csf_v.png", 
                         ElemSize(fs, fs, units)),
             Location(xstart, y1),
@@ -69,68 +69,89 @@ class Figure2_Panels(PanelsSpec):
             text=Text("cardiac dispersion enhancement", **textargs)
         )
     
-    f: Panel = Panel(
+    h: Panel = Panel(
             RasterImage("results/csf_flow/respiratory_sas_flow/csf_v.png", 
             ElemSize(fs, fs, units)),
             Location(xstart +fac*2*fs, y1),
             content_offset=offset,
             text=Text("respiratory-driven CSF flow", **textargs)
         )
-    h: Panel = Panel(
+    i: Panel = Panel(
             RasterImage("results/csf_flow/respiratory_sas_flow/R.png",
                          ElemSize(fs, fs, units)),
             Location(xstart +3*fs*fac, y1),
             content_offset=offset,
             text=Text("respiratory dispersion enhancement", **dict(textargs))
         )
-    i: Panel = Panel(
+    j: Panel = Panel(
             RasterImage("results/csf_flow/cardiac_sas_flow/cardiac_velocity_histo.png",
                          ElemSize(fs*fac, fs/2, units)),
             Location(xstart + 0*fs, y2),
             text=Text("cardiac flow velocities", **textargs_histo)
         )
-    j: Panel = Panel(
+    k: Panel = Panel(
             RasterImage("results/csf_flow/cardiac_sas_flow/R_histo.png",
                          ElemSize(fs*fac, fs/2, units)),
             Location(xstart + 1*fs*fac, y2),
             text=Text("cardiac dispersion enhancement", **textargs_histo)
         )
-    k: Panel = Panel(
+    l: Panel = Panel(
             RasterImage("results/csf_flow/respiratory_sas_flow/resp_velocity_histo.png",
                          ElemSize(fs*fac, fs/2, units)),
             Location(0.0 + 2*fs*fac, y2),
             text=Text("respiratory flow velocities", **textargs_histo)
         )
-    l: Panel = Panel(
+    m: Panel = Panel(
             RasterImage("results/csf_flow/respiratory_sas_flow/R_histo.png",
                          ElemSize(fs*fac, fs/2, units)),
             Location(0.0 +3*fs*fac, y2),
             text=Text("respiratory dispersion enhancement", **textargs_histo)
         )
-    
-    m: Panel = Panel(
-            RasterImage("plots/modelA/modelA_overview.png",
-                         ElemSize(12.9, hn, units), crop=(0,100,0,0)),
-            Location(0.0, y3),
-            content_offset=Location(0,0),
-            text=(Text(" 1:00 h", **dict(textargs, y=-0.1, x=w/2)),
-                  Text(" 6:00 h", **dict(textargs, y=-0.1, x=3*w/2 )),
-                  Text("12:00 h", **dict(textargs, y=-0.1, x=5*w/2)),
-                  Text("24:00 h", **dict(textargs, y=-0.1, x=7*w/2)))
-        )
     n: Panel = Panel(
-            RasterImage("plots/modelA-LowD/modelA-LowD_overview.png",
-                         ElemSize(3, hn, units), crop=(1400, 100, 1300, 0)),
-            Location(12.8, y3), auto_label=True,
+            RasterImage("plots/modelA/modelA_overview.png",
+                         ElemSize(3, hn, units), crop=(1420, 100, 1350, 0)),
+            Location(xstart, y3), auto_label=True,
             content_offset=Location(0,0),
-            text=Text("low dispersion (12 h)", **dict(textargs, y=-0.1, x=1.5))
+            text=Text("baseline", **dict(textargs, y=-0.1, x=1.5))
         )
     n2: Panel = Panel(
             RasterImage("plots/modelA-OnlyDispersion/modelA-OnlyDispersion_overview.png",
-                         ElemSize(3, hn, units), crop=(1400, 100, 1300, 0)),
-            Location(12.8 + compwidth, y3), auto_label=False,
+                         ElemSize(3, hn, units), crop=(1420, 100, 1350, 0)),
+            Location(xstart + compwidth, y3), auto_label=False,
             content_offset=Location(0,0),
             text=Text("no advection (12 h)", **dict(textargs, y=-0.1, x=1.5))
+        )
+    n3: Panel = Panel(
+            RasterImage("plots/modelA-LowD/modelA-LowD_overview.png",
+                         ElemSize(3, hn, units), crop=(1420, 100, 1350, 0)),
+            Location(xstart + 2*compwidth, y3), auto_label=False,
+            content_offset=Location(0,0),
+            text=Text("low dispersion (12 h)", **dict(textargs, y=-0.1, x=1.5))
+        )
+    n4: Panel = Panel(
+            RasterImage("plots/modelA-OnlyDispersion/modelA-OnlyDispersion_overview.png",
+                         ElemSize(3, hn, units), crop=(1420, 100, 1350, 0)),
+            Location(xstart + 3*compwidth, y3), auto_label=False,
+            content_offset=Location(0,0),
+            text=Text("placeholder", **dict(textargs, y=-0.1, x=1.5))
+        )
+    n5: Panel = Panel(
+            RasterImage("plots/modelA-OnlyDispersion/modelA-OnlyDispersion_overview.png",
+                         ElemSize(3, hn, units), crop=(2850, 100, 20, 0)),
+            Location(xstart + 4*compwidth, y3), auto_label=False,
+            content_offset=Location(0,0),
+        )
+    o:Panel = Panel(
+            RasterImage("plots/modelA/modelA_total_conc.png",
+                         ElemSize(5,4, units)),
+            Location(13, y3),
+            text=Text("Total tracer content", **textargs_histo)
+        )
+    p:Panel = Panel(
+            RasterImage("plots/modelA/modelA_mean_conc.png",
+                         ElemSize(5,4, units)),
+            Location(13, y3 + 4),
+            text=Text("Tracer concentrations", **textargs_histo)
         )
 
 

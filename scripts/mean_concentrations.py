@@ -59,35 +59,14 @@ def compare_concentrations(modelname:str):
     csf_tot = np.array([assemble(phi*c*dx(CSFID)) for c in sas_conc])
     art_tot = np.array([assemble(area_artery*c*dxa) for c in art_conc])
     ven_tot = np.array([assemble(area_vein*c*dxv) for c in ven_conc])
-    tot = par_tot + csf_tot + art_tot + ven_tot
 
     #inflow = np.cumsum([k*max(0.0, t0 - t) for t in alltimes]) * dt
     set_plotting_defaults()
-    sns.set_palette("magma_r", n_colors=4)
-    mol2mmol = 1e3
     fig, ax = plt.subplots()
-    ax2 = ax.twinx()
-    tot = np.zeros_like(times)
     labels = ["CSF", "parenchyma", "PVS artery", "PVS vein"]
     compartments = [csf_tot, par_tot, art_tot, ven_tot]
     volumes = [assemble(phi*dx(CSFID)), assemble(phi*dx(PARID)),
                assemble(area_artery*dxa),assemble(area_vein*dxv)]
-    for q,v, l in zip(compartments, volumes, labels):
-        new_tot = tot + q*mol2mmol
-        #plt.plot(times / (60*60), new_tot, ".-", label=l)
-        fill = ax.fill_between(times/ (60*60), new_tot, tot, alpha=0.7, label=l)
-        ax2.plot(times/ (60*60), q/v,"o-" , ms=10,
-                 mfc=fill.get_facecolor(), color="grey")
-        tot = new_tot
-    
-    #plt.plot(alltimes / (60*60), inflow, "--" , label="inflow")
-    plt.xlabel("time (h)")
-    ax2.set_ylabel('mean tracer concentration (mmol/l)')
-    ax.set_ylabel("total tracer content (mmol)")
-    ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.1), ncol=6, columnspacing=0.7)
-    plt.tight_layout()
-    filename = f"plots/{modelname}/{modelname}_total_conc.png"
-    plt.savefig(filename)
 
     metrics = dict()
     for l,v, comp in zip(labels, volumes, compartments):
