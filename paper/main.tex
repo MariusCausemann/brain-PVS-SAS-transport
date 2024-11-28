@@ -73,12 +73,104 @@ their implications.''
 
 \section*{Introduction}
 
-Molecular transport in perivascular spaces (PVSs) is established as a key pathway for human brain clearance and delivery. Previous studies indicate that molecules move rapidly in the subarachnoid space (SAS) and in PVSs surrounding pial arteries. Here, we aim to model and study this transport in a full pial perivascular and/or vascular network embedded in the SAS.  
+% What is the problem? (Big picture)
+% - Big picture/importance sentence.
+% - More in-depth info
+% - "XXX is unknown". 
 
-Motivation: as indicated by~\cite{iliff2012paravascular}, referring to
+% What we already know about the problem
+
+% What are our research questions and how do we answer them
+
+% Main findings and outlook
+
+\newpage
+\section*{Introduction (rough ideas)}
+
+\begin{itemize}
+\item
+  Need better understanding of transport of solutes in intracranial spaces.
+\item
+  Need to integrate separate observations e.g. on diffusion in
+  neuropil, PVS flow, net flow, effect of dispersion
+\item
+ Need to transfer and integrate insights from animal models,
+  computational models and theoretical insights into the human case. 
+\item
+ Controversies need to be resolved.
+\end{itemize}
+
+Transport of molecules within the spaces of the central nervous system
+(CSF spaces, parenchyma) is important. Both in the context of
+intracranial drug delivery with potential for personalized treatment
+of cancer, diagnostics and treatment of CSF-related disorders, and in
+the context of understanding clearance in connection with
+neurodegenerative disease and for future treatment and diagnostics of
+dementia disorders. Understanding and predicting molecular enrichment
+is important for treatment and diagnostics of (brain) cancer, for
+diagnostics of CSF-related disorders like normal pressure
+hydrocephalus, subarachnoid hemorrage. Moreover, altered transport and
+clearance is believed to be key factor in neurodegenerative diseases
+like Alzheimer's disease and Parkinson's disease, and in sleep. CSF
+flow and PVS established to play a key role. Clinical studies have
+revealed large individual variation and variation between
+cohorts/disease groups, therefore important in particular in the
+context of personalized medicine. However, we are far from
+understanding (the mechanisms behind) these variations.
+
+% What we already know about the problem
+Our current understanding has primarily been established via
+experimental medical research (cats, rats, mice, pigs). Big open
+questions and controversy remain, lack holistic understanding of these
+physiological process remains, hard to translate experimental studies
+to humans. In the last decade, clinical studies. Clinical studies have
+revealed large individual variation and variation between
+cohorts/disease groups. However, we are far from understanding the
+mechanisms behind these variations and integrating and translating
+experimental observations to humans.  In-silico modelling is starting
+to play an integral role, evaluating hypothesis and pinpointing
+mechanisms, but most efforts have been focused on local aspects and
+lacking a holistic model. Hard to quantify the overall contribution of
+individual effects.
+
+PVS flow is important as shown by experimental studies. This is being
+corroborated by clinical studies in humans (Eide and Ringstad (2024),
+and the new one). However, a number of open questions remain: to what
+extent are PVSs compartmentalized, how fast is the flow in human PVS,
+what is the effect of dilated PVS as seen in disease cases etc.  Also,
+open questions on transport characteristics of the CSF spaces - what
+gives the individual variations in tracer enhancements? 
+
+What is known is that fluid motion (in the ventricular system and SAS,
+in perivascular spaces, and possibly within the parenchyma) and
+pulsatility play key
+roles. Glymphatics~\cite{iliff2012paravascular}. Diffusion, PVS flow
+and dispersion, CSF flow. Molecular transport in perivascular spaces
+(PVSs) is established as a key pathway for human brain clearance and
+delivery. Previous studies indicate that molecules move rapidly in the
+subarachnoid space (SAS) and in PVSs surrounding pial arteries. CSF
+production in the choroid plexus and possibly in the parenchyma. CSF
+efflux pathways, meningeal lympahtics, nerve routes. See also to
 Cserr, Phys Rev., 1971, bulk convective flow may be more important for
-larger species (larger distances) and larger molecules.
+larger species (larger distances) and larger molecules. Contribution
+both from net flow (convection) and pulsatility (mixing) both in the
+CSF spaces and in PVSs. Some aspects are better established, such as;
+while other factors are more disputed such as ... contribution of
+vasomotion. Moreover, the role of local effects in the bigger picture
+has remained hard to evaluate.
 
+% What are our research questions and how do we answer them
+Recent developments on 3D-1D modelling of transport in PVS and
+tissue. ``Digital twin for molecular enrichment and clearance in human
+intracranial spaces''. Can we model the interplay between
+molecular transport in the intracranial compartments, CSF flow and PVS
+flow and transport to holistically quantify the contributions in humans?
+
+% Main findings and outlook
+Here, we aim to model and study this transport in a full pial
+perivascular and/or vascular network embedded in the SAS.
+
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Results}
 \mer{Update: ~2800 words and 7 subsections - around 300-450 words each?}
@@ -141,7 +233,7 @@ Assessing the effect of cardiac-driven dispersion, we compute a steady CSF flow 
 Next, we estimate a spatially varying dispersion enhancement factor $R$ from cardiac-induced pulsatility by combining the computed pressure field with the theory of shear-augmented dispersion (see \Cref{sec:dispersion_details}). Assuming a cardiac frequency of $1\,$Hz, find that cardiac-induced pulsatile CSF flow increases the effective diffusion by up to two orders of magnitude in the aqueduct and around the cisterna magna, but has little effect in most of the SAS ($R < 1$) (\Cref{fig:csf} G and K). 
 
 % respiratory pulsatility
-Employing the same methodology, we estimate the respiratory contribution to dispersive mixing by computing the CSF flow field driven by an inflow of $0.121\,$ml/s \cite{liu2024using} and $1\,$ml/s across the lateral ventricular wall and the arachnoid mater, respectively. This amounts to a respiratory peak flow volume of $1.121\,$ ml/s at the craniocervical junction \cite{gutierrez2022effect}. While the resulting flow velocities are only about one fourth of their cardiac-induced counterparts (see \Cref{fig:csf}H and L), respiratory dispersive mixing reaches a factor of up to 350 due the lower respiratory frequency ($0.25\,$Hz) (\Cref{fig:csf}I and M).
+Employing the same methodology, we estimate the respiratory contribution to dispersive mixing by computing the CSF flow field driven by an inflow of $0.121\,$ml/s \cite{liu2024using} and $1\,$ml/s \cite{gutierrez2022effect} across the lateral ventricular wall and the arachnoid mater, respectively. This amounts to a respiratory peak flow volume of $1.121\,$ ml/s at the craniocervical junction \cite{gutierrez2022effect}. While the resulting flow velocities are only about one fourth of their cardiac-induced counterparts (see \Cref{fig:csf}H and L), respiratory dispersive mixing reaches a factor of up to 350 due the lower respiratory frequency ($0.25\,$Hz) (\Cref{fig:csf}I and M).
 
 
 % tracer trajectory of the standard model
@@ -625,7 +717,6 @@ For the 3D transport problem, we use the interior penalty discontinuous Galerkin
     for studying metabolite clearance (instead of solute influx).}
 \label{tab:scenarios}
 \end{table}
-
 
 \bibliography{references}
 
