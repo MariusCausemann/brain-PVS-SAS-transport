@@ -7,10 +7,12 @@ from tqdm import tqdm
 from plot_csf_flow import from_k3d
 import k3d.colormaps.paraview_color_maps as pcm
 from extract_vessels import get_tubes
+import seaborn as sns
 
 def make_movie(modelname:str):
     config = read_config(f"configfiles/{modelname}.yml")
     dt , T= config["dt"], config["T"]
+    #cmap = sns.blend_palette(["lightsteelblue", "orange", "darkviolet"],as_cmap=True)
     cmap = from_k3d(pcm.Yellow___Gray___Blue).reversed()
     clim = (0,2)
     times = np.arange(0, T + dt, dt*config["output_frequency"])
@@ -34,7 +36,7 @@ def make_movie(modelname:str):
 
     pl = pv.Plotter(off_screen=True, window_size=(1200, 1200))
     pl.set_background("black")
-    pl.open_movie(f"plots/{modelname}/{modelname}.mp4", framerate=24,
+    pl.open_movie(f"plots/{modelname}/{modelname}_violet.mp4", framerate=24,
                   quality=8)
     pl.add_mesh(skull,style='points',point_size=0.1, opacity=0.6, show_scalar_bar=False,
                 color="silver", specular=1, render_points_as_spheres=True)
