@@ -26,12 +26,17 @@ class Figure2_Panels(PanelsSpec):
             content_offset=Location(-1,-1.3),
             text=Text("Arterial network", **dict(textargs, x=4.5, y=1.2))
         )
+    a2: Panel = Panel(
+            RasterImage("paper/figures/peristaltic_flow.png", ElemSize(5, 2, units)),
+            Location(xstart + 8, y0),
+            text=Text("Peristaltic flow", **dict(textargs, x=2, y=0))
+        )
     b: Panel = Panel(
         RasterImage("plots/pvs_flow_prod/sas_flow-arteries/sas_flow-arteries_radius.png",
                      ElemSize(6, 6, units)),
-        Location(xstart + 8, y0),
-        #content_offset=Location(-1,-1.3),
-        text=Text("radii of selected arteries", **dict(textargs, y=0.3))
+        Location(xstart + 8, 2.5),
+        content_offset=Location(-1,-0.8),
+        text=Text("radii of selected arteries", **dict(textargs, y=1.2, x=3))
     )
     c: Panel = Panel(
         RasterImage("plots/pvs_flow_prod/sas_flow-arteries/sas_flow-arteries_velocity_histo_cell.png",
