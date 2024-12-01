@@ -57,7 +57,12 @@
 ``The abstract — which should be no more than 200 words long and contain
 no references — should serve both as a general introduction to the
 topic and as a brief, non-technical summary of the main results and
-their implications.'' 
+their implications.''
+
+A molecular agent injected into the spinal canal will spread into the
+cerebrospinal fluid (CSF) spaces surrounding the human brain and into
+the brain parenchyma, preferentially along perivascular spaces (PVS),
+and eventually appear in the systemic blood. 
 \end{abstract}
 \begin{document}
 
@@ -73,16 +78,19 @@ their implications.''
 
 \section*{Introduction}
 
-% What is the problem? (Big picture)
-% - Big picture/importance sentence.
-% - More in-depth info
-% - "XXX is unknown". 
+% What is the big picture problem and why is it important? 
+\textcolor{lightgray}{\lipsum[1]}
 
-% What we already know about the problem
+% What we already know and do not know about the problem.
+% Experimental research in animal models. Clinical work in
+% humans. Modelling.
+\textcolor{lightgray}{\lipsum[1]}
 
 % What are our research questions and how do we answer them
+In this study, ... \textcolor{lightgray}{\lipsum[1]}
 
 % Main findings and outlook
+Main findings and outlook \textcolor{lightgray}{\lipsum[1]}
 
 \newpage
 \section*{Introduction (rough ideas)}
@@ -100,9 +108,19 @@ their implications.''
  Controversies need to be resolved.
 \end{itemize}
 
+The problem we are addressing here is that we would like to be able to
+understand, integrate and quantify the role of different mechanisms -
+including effects associated with individual variations - on molecular
+enrichment and clearance of human intracranial spaces. And we think of
+this as a step on the way to predict tracer enrichment after
+intrathecal injection in a personalized medicine context. Which is
+important because of drug delivery/treatment in cancer, diagnostics
+for CSF and dementia disorders, and clearance in neurodegenerative
+disease.
+
 Transport of molecules within the spaces of the central nervous system
 (CSF spaces, parenchyma) is important. Both in the context of
-intracranial drug delivery with potential for personalized treatment
+intracranial drug delivery with potential for personalized theranostics
 of cancer, diagnostics and treatment of CSF-related disorders, and in
 the context of understanding clearance in connection with
 neurodegenerative disease and for future treatment and diagnostics of
@@ -159,6 +177,22 @@ while other factors are more disputed such as ... contribution of
 vasomotion. Moreover, the role of local effects in the bigger picture
 has remained hard to evaluate.
 
+While several aspects of the brain's glymphatic system remain
+enigmatic, clear contributions are CSF flow in the brain surroundings
+and perivascular pathways. Cerebrospinal fluid (CSF) is produced by
+the choroid plexus~\cite{}, pulsates within the ventricular system and
+subarachnoid space (SAS) in synchrony with cardiac, respiratory, and
+neural waves~\cite{vinje2019respiratory, fultz2019coupled,
+  williams2023xxx}, and drains via the dural sinuses, meningeal
+lymphatics, cranial nerves or other outflow
+pathways~\cite{proulx2021cerebrospinal}. Hornkjøl demonstrates that
+... \cite{hornkjol2022csf}. In the parenchyma, more controversial:
+diffusion clearly plays a role \cite{nicolson}, the low permeability
+of the extracellular space hinders significant convection neuropil
+\cite{holter}, (estimates on the order of 1-10 $\mu$/min) in humans
+\cite{vinje2023human} and cats \cite{cserr}, possibly focused on
+perivascular spaces along penetrating vessel.
+
 % What are our research questions and how do we answer them
 Recent developments on 3D-1D modelling of transport in PVS and
 tissue. ``Digital twin for molecular enrichment and clearance in human
@@ -193,11 +227,8 @@ perivascular and/or vascular network embedded in the SAS.
 \end{enumerate}
 
 \begin{figure}
-     \begin{subfigure}[b]{0.45\textwidth}
-         \centering
-         \includegraphics[width=\textwidth]{figures/Brain-PVS-callouts.png}
-     \end{subfigure}
-     \hfill
+    \centering
+    \includegraphics[width=\textwidth]{figures/figure1.png}
      \caption{a) Illustration of the different intracranial domains
        considered with labels;}
      \label{fig:intracranial_domains}
@@ -265,8 +296,9 @@ J) cardiac-induced flow velocities;
 K) cardiac-induced dispersion enhancement factor;
 L) respiratory flow velocities;
 M) respiratory dispersion enhancement factor;
-N) sagittal, coronal and axial planes of tracer concentration after 1, 6, 12 and 24$\,$h for model A. The outer model boundaries is shown in cyan, the pial membrane in purple and the arteries in red.;
-O) model X,Y and Z after 12h;
+N) sagittal, coronal and axial planes of tracer concentration after 12h in different model variations. The outer model boundaries is shown in cyan, the pial membrane in purple and the arteries in red.;
+O) total content of tracer in each compartment;
+P) mean tracer concentration in each compartment;
 }
 \label{fig:csf}
 \end{figure}  
@@ -741,6 +773,5 @@ The corresponding author is responsible for submitting a \href{http://www.nature
 \input{supplementary_main.tex}
 
 \input{background.tex}
-
 
 \end{document}
