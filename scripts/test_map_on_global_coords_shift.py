@@ -4,9 +4,9 @@ import numpy as np
 import numpy_indexed as npi
 from pykdtree.kdtree import KDTree
 
-def map_kdtree(data_points, query_points):
+def map_kdtree(data_points, query_points, **kwargs):
     tree = KDTree(data_points)
-    dist, idx = tree.query(query_points, k=1)
+    dist, idx = tree.query(query_points, **kwargs)
     return idx
 
 def get_global_space(uh, mesh):

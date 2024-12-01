@@ -1,6 +1,11 @@
 import pyvista as pv
 import numpy as np
 import seaborn as sns
+from cmap import Colormap
+import pandas as pd
+from PIL import Image, ImageFont, ImageDraw  
+from test_map_on_global_coords_shift import map_kdtree
+
 pointlabels = [("BA",(0.084971, 0.104599, 0.0424848)),
                ("ICA-R",(0.0965484, 0.112456,0.0413785)),
                ("ICA-L",(0.0695824, 0.111343, 0.0415065)),
@@ -25,41 +30,95 @@ def get_tangent(v, n):
 
 if __name__=="__main__":
    filename = "plots/meshplots/labeled_arteries.png"
-   art = pv.read("mesh/networks/arteries_tubes.vtk")
-   labelcoords = lambda label: art.bounds[::2]
+   art = pv.read("mesh/networks/arteries_tubes.vtk").triangulate()
 
    art["radius"] *= 1e3
-   col = "fuchsia"      
+   col = "cyan"   
+   cmap = Colormap("curl_pink_r")   
    arrow_length = 0.015
+   window_size = (1200, 850)
    camera_direction = (-0.256, -0.958, -0.122)
-   points = [p for l, p in pointlabels]
-   labels = [l for l, p in pointlabels]
+   #pointlabels.sort(key=lambda pl: pl[1][2], reverse=True)
+   #from IPython import embed; embed()
+   idx = map_kdtree(np.array(art.points), 
+                    np.array([p for l,p in pointlabels]).astype(np.float32),
+                     distance_upper_bound=3e-3, k=100)
+
+   ex = art.extract_points(np.unique(idx))
+   #from IPython import embed; embed()
    bar_args=dict(title="radius (mm)", vertical=False,
                      height=0.07, width=0.6, position_x=0.2,
-                     position_y=0.0, title_font_size=24,
-                     label_font_size=24, fmt="%.1f")
-   pl = pv.Plotter(off_screen=True)
-   pl.add_mesh(art, cmap="coolwarm", scalar_bar_args=bar_args, show_scalar_bar=True)
-   pl.add_points(np.array(points), render_points_as_spheres=False, 
-                 point_size=20, color=col)
-   center = art.center_of_mass() - np.array([0,0, 0.047])
-   label_coords = []
-   for i, (l, p) in enumerate(pointlabels):
-      dir = np.array(p) - center
-      dir = get_tangent(dir, camera_direction)
-      dir /= np.linalg.norm(dir)
-      arr = pv.Arrow(start=np.array(p), direction=dir, scale=arrow_length,
-                     tip_length=1e-3, tip_radius=5e-3, shaft_radius=1e-2)
-      pl.add_mesh(arr, color=col)
-      label_coords.append(p + arrow_length*dir)
-      
-   pl.add_point_labels(label_coords, labels, show_points=False, 
-      always_visible=True, shape_color=col)
+                     position_y=0.0, title_font_size=28,
+                     label_font_size=28, fmt="%.1f")
+   pl = pv.Plotter(off_screen=True, window_size=window_size)
+   pl.add_mesh(art, cmap=cmap, scalar_bar_args=bar_args)
+   pl.add_mesh(ex, show_scalar_bar=False, color=col)
    pl.camera_position = 'xz'
-   #pl.camera.roll += 10
-   pl.camera.azimuth += 160
-   pl.camera.elevation += 7
-   pl.camera.zoom(1.6)
-   pl.screenshot(filename, transparent_background=True)
+   #pl.camera.roll += 5
+   pl.camera.azimuth += 165
+   pl.camera.elevation += 10
+   pl.camera.zoom(1.85)
+   pl.camera.focal_point = np.array(pl.camera.focal_point) + np.array([0,0,-0.008])
+
+   import vtk
+   coordinate = vtk.vtkCoordinate()
+   coordinate.SetCoordinateSystemToWorld()
+
+   df = pd.DataFrame(pointlabels, columns=["label", "coord"])
+
+   def get_disp_coord(p):
+      coordinate.SetValue(*p)
+      return coordinate.GetComputedViewportValue(pl.renderer)
+   df["xy"] = df["coord"].apply(get_disp_coord)
+   df["left"] = df["xy"].apply(lambda xy: xy[0] > 620)
+   df["y"] = df["xy"].apply(lambda xy: xy[1])
+
+   def add_labels(df, pos, offset=0): 
+      y = 0
+      for _, row in df.sort_values("y").iterrows():
+         y = max([y + 50, row["y"]])
+         act = pl.add_text(row["label"], position=[pos[0], y], font_size=16)
+         c_world = act.GetActualPositionCoordinate().GetComputedWorldValue(pl.renderer)
+         #l = pv.Line(c_world, row["coord"])
+         vec = -np.array(c_world) + np.array(row["coord"])
+         l = pv.Arrow(c_world, direction=vec,
+                     scale=np.linalg.norm(vec)*0.98, shaft_radius=2e-3, tip_radius=0.8e-2,
+                     tip_length=5e-2)
+         pl.add_mesh(l, color="black")
+
+   #for _, row in df.iterrows():
+   #   pl.add_points(np.array(row["coord"]), render_points_as_spheres=True,
+   #                  point_size=20, opacity=0.5, color="yellow")
+
+   #add_labels(df[df["left"]], pos=np.array([1020, 200]))
+   #add_labels(df[df["left"]==False], pos=np.array([20, 200]))
+
+   def add_labels2d(ax, df, xpos=0, cs=None, offset=0):
+      y = 0 if offset>0 else df["y"].max()
+      op = max if offset>0 else min
+      for _, row in df.sort_values("y", ascending=True if offset>0 else False).iterrows():
+         y = op([y + offset, row["y"] + offset])
+         ax.annotate(text=row["label"],xy=row["xy"], 
+                     arrowprops=dict(facecolor='black',#width=1, shrink=0.02,headwidth=4,headlength=4,
+                                     arrowstyle="->",linewidth=2,
+                                       connectionstyle=cs),
+                      xytext=(xpos, y), fontsize=16)
+         
+
+   img = pl.screenshot(filename, transparent_background=True)
+   import matplotlib.pyplot as plt
+   fig, ax = plt.subplots(figsize=(16,12))
+   #fig.figimage(img, resize=True)
+   ax.set_axis_off()
+   ax.imshow(img, origin='upper', extent=[0, window_size[0], 0, window_size[1]])
+   add_labels2d(ax, df[(df["left"]) & (df["y"] > 300)], xpos=1100, cs ="angle,angleA=0,angleB=-110,rad=50", offset=40)
+   add_labels2d(ax, df[(df["left"]) & (df["y"] < 300)], xpos=1100, cs ="angle,angleA=0,angleB=110,rad=50",offset=-40)
+
+   add_labels2d(ax, df[(df["left"]==False) & (df["y"] > 120)], xpos=20, cs ="angle,angleA=0,angleB=-70,rad=50", offset=40)
+   add_labels2d(ax, df[(df["left"]==False) & (df["y"] < 120)], xpos=20, cs ="angle,angleA=0,angleB=70,rad=50", offset=-40)
+
+   ax.set_xmargin(0);ax.set_ymargin(0)
+   plt.savefig(filename, transparent=True, pad_inches=0.0,bbox_inches='tight', dpi=300)
+
    print(pl.camera.direction)
    pl.export_html(filename.replace("png", "html"))
