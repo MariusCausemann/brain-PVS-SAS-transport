@@ -40,12 +40,13 @@ def plot_timings(models:List[str]):
     namedict = {"modelA": "base", "modelA-strongVM":"base + VM",
                 "modelA-PVS-disp": "base + 10x disp",}
     print(models)
+    colors = [ "#3a0ca3","#f72585", "#4cc9f0"]
 
     for t, (pvsdf, outerdf) in zip(["fta", "peaktime"] , [(ftas, outerftas), (pts, otps)]):
-        fig,axes = plt.subplots(ncols=len(art_groups), figsize=(12,5.5))
+        fig, axes = plt.subplots(ncols=len(art_groups), figsize=(12,5.5))
 
         for i, (ax, (agn, ag))  in enumerate(zip(axes, art_groups.items())):
-            for m,c in zip(models,["olive", "purple", "blue"]):
+            for m,c in zip(models, colors):
                 group = pvsdf.loc[ag]
                 outergroup = outerdf.loc[ag]
                 ax.plot(group["dist"], group[m] / 3600, color=c, marker="o", markersize=8, ls="dashed",
