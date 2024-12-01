@@ -21,21 +21,21 @@ y7 = 44
 
 class Figure2_Panels(PanelsSpec):
     a: Panel = Panel(
-            RasterImage("plots/meshplots/labeled_arteries.png", ElemSize(9, 8, units)),
+            RasterImage("plots/meshplots/labeled_arteries.png", ElemSize(10.8, 7, units)),
             Location(xstart, y0),
-            content_offset=Location(-1,-1.3),
-            text=Text("Arterial network", **dict(textargs, x=4.5, y=1.2))
+            content_offset=Location(0,-0.5),
+            text=Text("Arterial network", **dict(textargs, x=4.5, y=0))
         )
     a2: Panel = Panel(
             RasterImage("paper/figures/peristaltic_flow.png", ElemSize(5, 2, units)),
-            Location(xstart + 8, y0),
+            Location(xstart + 11, y0),
             text=Text("Peristaltic flow", **dict(textargs, x=2, y=0))
         )
     b: Panel = Panel(
         RasterImage("plots/pvs_flow_prod/sas_flow-arteries/sas_flow-arteries_radius.png",
                      ElemSize(6, 6, units)),
-        Location(xstart + 8, 2.5),
-        content_offset=Location(-1,-0.8),
+        Location(xstart + 11, 2.5),
+        content_offset=Location(-0.5,-0.8),
         text=Text("radii of selected arteries", **dict(textargs, y=1.2, x=3))
     )
     c: Panel = Panel(
@@ -88,9 +88,16 @@ class Figure2_Panels(PanelsSpec):
         text=Text("model A total PVS tracer content", **dict(textargs, y=-0.3))
     )
     j: Panel = Panel(
-        RasterImage("plots/modelA-strongVM/modelA-strongVM_ridgeline_total_smoothed.png",
+        RasterImage("plots/modelA-PVS-disp/modelA-PVS-disp_ridgeline_total_smoothed.png",
                      ElemSize(6, 6, units)),
         Location(xstart + 6, y3),
+        #content_offset=Location(-1,-1.3),
+        text=Text("model A + PVS disp (10x) - total PVS tracer content", **dict(textargs, y=-0.3))
+    )
+    j2: Panel = Panel(
+        RasterImage("plots/modelA-strongVM/modelA-strongVM_ridgeline_total_smoothed.png",
+                     ElemSize(6, 6, units)),
+        Location(xstart + 12, y3),
         #content_offset=Location(-1,-1.3),
         text=Text("model A + VM total PVS tracer content", **dict(textargs, y=-0.3))
     )
@@ -102,7 +109,7 @@ class Figure2_Panels(PanelsSpec):
         text=Text("model A + VM", **dict(textargs, y=0.2, x= 3))
     )
     l: Panel = Panel(
-        RasterImage("plots/comparisons/modelA_modelA-strongVM/modelA_modelA-strongVM_fta.png",
+        RasterImage("plots/comparisons/modelA_modelA-strongVM_modelA-PVS-disp/modelA_modelA-strongVM_modelA-PVS-disp_fta.png",
                      ElemSize(14, 7, units)),
         Location(xstart, y5),
         #content_offset=Location(-1,-1.3),

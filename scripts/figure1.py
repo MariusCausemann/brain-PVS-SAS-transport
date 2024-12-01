@@ -20,6 +20,18 @@ class Figure2_Panels(PanelsSpec):
             content_offset=Location(0,-0.5),
         )
     b: Panel = Panel(
+            RasterImage("paper/figures/geometry_front.png",
+                         ElemSize(4.5, 4.5, units),),
+            Location(xstart + 9, y0),
+            content_offset=Location(0,-0.5),
+        )
+    c: Panel = Panel(
+            RasterImage("paper/figures/geometry_side.png",
+                         ElemSize(4.5, 4.5, units),),
+            Location(xstart + 13.5, y0),# auto_label=False,
+            content_offset=Location(0,-0.5),
+        )
+    d: Panel = Panel(
             RasterImage("plots/modelA/modelA_overview.png",
                          ElemSize(13, 8, units), crop=(0,100,0,0)),
             Location(xstart, y1),
