@@ -18,6 +18,7 @@ import yaml
 from branch_marking import color_branches
 from plotting_utils import minmax
 import ufl_legacy as ufl
+from cmap import Colormap 
 m2mm = 1e3
 m2mum = 1e6
 Pa2mPa = 1e3
@@ -27,7 +28,8 @@ def sig_to_space(sig, mesh):
     return FunctionSpace(mesh, elem)
 
 def compute_pvs_flow(pvs_flow_file):
-
+    artcolor = "#94221F"
+    color = "#95AAD3"
     mesh = Mesh()
 
     with HDF5File(MPI.comm_world, pvs_flow_file,'r') as f:
@@ -63,16 +65,14 @@ def compute_pvs_flow(pvs_flow_file):
         umed = np.median(abs(uvals))
         range = np.round(minmax([uvals], percentile=99.9), 1)
         nbins = 50
-        fig, ax = plt.subplots(figsize=(4,3))
+        fig, ax = plt.subplots(figsize=(3.5,3.5))
         counts, bins, containers = plt.hist(uvals, density=False, bins=nbins, histtype="bar",
                 range=range, edgecolor='black', linewidth=0.4, 
                         weights=lengths / lengths.sum())
         pos_share = max([0, range[1] / (range[1] - range[0])])
         print(pos_share)
-        for bar, ca in zip(containers, sns.color_palette("Purples_r",
-                                                         n_colors=int((1 - pos_share) * nbins)) + 
-                                       sns.color_palette("Greens",
-                                                       n_colors=int(pos_share * nbins))):
+        for bar, ca in zip(containers, list(Colormap("balance_blue").iter_colors(int((1 - pos_share) * nbins))) + 
+                                       list(Colormap("curl_pink_r").iter_colors(int(pos_share * nbins)))):
             bar.set_facecolor(ca)
         plt.axvline(uavg, color="black", linestyle=":", label=f"avg: {uavg:.2f} µm/s")
         #plt.axvline(umed, color="black", linestyle="-.", label=f"median: {umed:.2f} µm/s")
@@ -83,7 +83,8 @@ def compute_pvs_flow(pvs_flow_file):
         plt.xlim(range)
         plt.legend(frameon=False)
         ax.yaxis.set_major_formatter(PercentFormatter(1))
-        plt.savefig(f"{plot_dir}/{model}_velocity_histo_{variant}.png", dpi=300)
+        plt.savefig(f"{plot_dir}/{model}_velocity_histo_{variant}.png", dpi=300,
+                    transparent=True)
 
     points = np.array([c for n,c in pointlabels])
     cellidx = map_kdtree(FunctionSpace(mesh, "DG", 0).tabulate_dof_coordinates(),
@@ -105,32 +106,36 @@ def compute_pvs_flow(pvs_flow_file):
                         "R":radii})
 
     plt.figure(figsize=(4,3))
-    ax = sns.barplot(df, x="loc", y="p",)# palette="crest")
+    ax = sns.barplot(df, x="loc", y="p", color=color)# palette="crest")
     ax.set_xlabel("")
     ax.set_ylabel("pressure (mPa)")
     plt.xticks(rotation=45,ha='right', rotation_mode='anchor', size="10");plt.tight_layout()
-    plt.savefig(f"{plot_dir}/{model}_pressure.png")
+    plt.subplots_adjust(left=0.2, bottom=0.3, right=0.98)
+    plt.savefig(f"{plot_dir}/{model}_pressure.png", transparent=True)
 
     plt.figure(figsize=(4,3))
-    ax = sns.barplot(df, x="loc", y="u",)# palette="flare")
+    ax = sns.barplot(df, x="loc", y="u",color=color)# palette="flare")
     ax.set_xlabel("")
     ax.set_ylabel("flow velocity (μm/s)")
     plt.xticks(rotation=45,ha='right', rotation_mode='anchor', size="10");plt.tight_layout()
-    plt.savefig(f"{plot_dir}/{model}_velocity.png")
+    plt.subplots_adjust(left=0.2, bottom=0.3, right=0.98)
+    plt.savefig(f"{plot_dir}/{model}_velocity.png", transparent=True)
 
     plt.figure(figsize=(4,3))
-    ax = sns.barplot(df, x="loc", y="R",)# palette="blend:#7AB,#EDA")
+    ax = sns.barplot(df, x="loc", y="R",color=artcolor)# palette="blend:#7AB,#EDA")
     ax.set_xlabel("")
     ax.set_ylabel("radius (mm)")
     plt.xticks(rotation=45,ha='right', rotation_mode='anchor', size="10");plt.tight_layout()
-    plt.savefig(f"{plot_dir}/{model}_radius.png")
+    plt.subplots_adjust(left=0.2, bottom=0.3, right=0.98)
+    plt.savefig(f"{plot_dir}/{model}_radius.png", transparent=True)
 
     plt.figure(figsize=(4,3))
-    ax = sns.barplot(df, x="loc", y="L",)# palette="blend:#7AB,#EDA")
+    ax = sns.barplot(df, x="loc", y="L",color=color)# palette="blend:#7AB,#EDA")
     ax.set_xlabel("")
     ax.set_ylabel("segment length (mm)")
     plt.xticks(rotation=45,ha='right', rotation_mode='anchor', size="10");plt.tight_layout()
-    plt.savefig(f"{plot_dir}/{model}_length.png")
+    plt.subplots_adjust(left=0.2, bottom=0.3, right=0.98)
+    plt.savefig(f"{plot_dir}/{model}_length.png", transparent=True)
 
     length = assemble(1*dx(domain=mesh))
     umean = assemble(uh_mag*dx) / length

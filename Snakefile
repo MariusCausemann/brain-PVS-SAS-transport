@@ -5,7 +5,8 @@ from collections import defaultdict
 num_mumps_threads = 16
 mesh_refine_models = ["modelALowRes", "modelA", "modelAHighRes"]
 time_refine_models = ["modelA", "modelAsmalldt", "modelAlargedt"]
-model_variations = ["modelA" , "modelA-LowD", "modelA-OnlyDispersion",
+model_variations = ["modelA" , "modelA-LowD","modelA-HighD",
+                    "modelA-OnlyDispersion",
                     "modelA-woCT", "modelA-strongVM","modelA-PVS-disp",
                     #"modelB1-10", "modelB1-100", "modelB1-1000",
                     #"modelB2-1", "modelB2-10", "modelB2-100", "modelB2-1000",
@@ -47,7 +48,9 @@ rule all:
         expand("plots/comparisons/{c}/{c}_{type}.png",c=model_comparisons, type=types),
         expand("plots/{modelname}/{modelname}_tracer_vessel_dist.png", modelname=models),
         expand("plots/{modelname}/{modelname}_total_conc.png", modelname=models),
-        expand("plots/{modelname}/{modelname}_overview.png", modelname=models),
+        expand("plots/{modelname}/{modelname}_overview_1-6-12-24.png", modelname=models),
+        expand("plots/{modelname}/{modelname}_overview_1-3-6-9-12-24.png", modelname=models),
+        expand("plots/{modelname}/{modelname}_overview_4-6.png", modelname=models),
         expand("plots/{modelname}/{modelname}.mp4", modelname=models),
         "plots/pvs_flow_prod/sas_flow-arteries/",
         "plots/pvs_flow_peristaltic/vasomotion/",
@@ -179,7 +182,8 @@ rule totalTracer:
         plot="plots/{modelname}/{modelname}_total_conc.png",
         metrics_yaml="results/{modelname}/mean_concentrations.yml",
     shell:
-        "python scripts/mean_concentrations.py {wildcards.modelname}"
+        "python scripts/mean_concentrations.py {wildcards.modelname} && " +
+        "python scripts/plot_mean_concentrations.py {wildcards.modelname}"
 
 rule segmentT1:
     input:
@@ -307,9 +311,28 @@ rule generateT1OverviewPlot:
         art1="results/{m}/{m}_artery.xdmf",
         ven1="results/{m}/{m}_vein.xdmf",    
     output:
-        "plots/{m}/{m}_overview.png"
+        "plots/{m}/{m}_overview_{times}.png"
+    params:
+        times=lambda wildcards: wildcards.times.split("-")
     shell:
-        "python scripts/overview_plot.py {wildcards.m}"
+        "python scripts/overview_plot.py {wildcards.m} {params.times}"
+
+rule detailPlot:
+    conda:"environment.yml"
+    input:
+        sas1="results/{m}/{m}_sas.xdmf",
+        art1="results/{m}/{m}_artery.xdmf",
+        ven1="results/{m}/{m}_vein.xdmf",    
+    output:
+        "plots/{m}/{m}_{tstr}_{artstr}_{cmstr}_details.png",
+    params:
+        times=lambda wildcards: wildcards.tstr.split("-"),
+        artlabels=lambda wildcards: wildcards.artstr.split("-"),
+        cmax=lambda wildcards: wildcards.cmstr.split("-")
+    shell:
+        "python scripts/overview_plot.py {wildcards.m} " +
+        " --times  {params.times} --artlabels {params.artlabels}" +
+        " --cmax {params.cmax}"
 
 
 rule makeVideo:
