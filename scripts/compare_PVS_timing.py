@@ -68,7 +68,7 @@ def plot_timings(models:List[str]):
         plt.figlegend(loc='upper center', bbox_to_anchor=(0.5, 1.05), ncol=len(models)*2,
                 columnspacing=0.3, frameon=False)
         plt.tight_layout(w_pad=-0.5)
-        plt.savefig(f"plots/comparisons/{v}/{v}_{t}.png", bbox_inches='tight')
+        plt.savefig(f"plots/comparisons/{v}/{v}_{t}.svg", bbox_inches='tight')
 
 if __name__ == "__main__":
     typer.run(plot_timings)

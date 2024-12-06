@@ -40,7 +40,8 @@ def clip_closed_surface(surf, normal='x', origin=None, tolerance=1e-06,
     return result
 
 def generate_overview_plot(model:str, 
-                           times:List[int] = [3600, 21600, 43200, 86400]):
+                           times:List[int]):
+    times = np.array(times) * 3600
     cbar_title = "concentration (mmol/l)"
     m = model
     conf = read_config(f"configfiles/{m}.yml")
@@ -114,7 +115,8 @@ def generate_overview_plot(model:str,
             plt.colorbar(mpl.cm.ScalarMappable(norm=norm,cmap=mplcmap),
                         label=name + cbar_title, extend='max', cax=cax)
 
-        plt.savefig(f"plots/{model}/{model}_overview{'_dark' if style=='dark_background' else ''}.png",
+        tstr = "-".join([f"{t/3600:.0f}" for t in times])
+        plt.savefig(f"plots/{model}/{model}_overview_{tstr}{'_dark' if style=='dark_background' else ''}.png",
                         dpi=300, bbox_inches="tight",)
     
 if __name__ == "__main__":

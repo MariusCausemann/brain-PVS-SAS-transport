@@ -140,6 +140,15 @@ def extract_all_surfaces(configfile):
     par_surf.compute_normals(inplace=True, flip_normals=False)
     pv.save_meshio(f"{outdir}/parenchyma.ply", par_surf.scale(mm2m))
 
+    # generate cerebrum surface
+    cerebrum_mask = np.isin(img, [SYTNSEG_CEREBRUM])
+    cerebrum_mask = skim.remove_small_objects(cerebrum_mask, 1e3)
+    cerebrum_mask = skim.remove_small_holes(cerebrum_mask, 1e3)
+    cerebrum_surf = extract_surface(cerebrum_mask, resolution=resolution, origin=origin)
+    cerebrum_surf = cerebrum_surf.smooth_taubin(n_iter=10, pass_band=0.1)
+    cerebrum_surf.compute_normals(inplace=True, flip_normals=False)
+    pv.save_meshio(f"{outdir}/cerebrum.ply", cerebrum_surf.scale(mm2m))
+
     # make inferior lateral ventricle horns
 
     for LVINFID, LVID in zip(SYNTHSEG_LV_INF, SYNTHSEG_LV):

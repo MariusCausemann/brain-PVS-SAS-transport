@@ -36,7 +36,7 @@ def make_movie(modelname:str):
 
     pl = pv.Plotter(off_screen=True, window_size=(1200, 1200))
     pl.set_background("black")
-    pl.open_movie(f"plots/{modelname}/{modelname}_violet.mp4", framerate=24,
+    pl.open_movie(f"plots/{modelname}/{modelname}.mp4", framerate=24,
                   quality=8)
     pl.add_mesh(skull,style='points',point_size=0.1, opacity=0.6, show_scalar_bar=False,
                 color="silver", specular=1, render_points_as_spheres=True)
