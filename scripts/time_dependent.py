@@ -106,6 +106,7 @@ def run_simulation(configfile: str):
     File(results_dir + "subdomains.pvd") << vol_subdomains
 
     artery_shape = xii.Circle(radius=artery_radii, degree=40, quad_rule='midpoint')
+    artery_end_shape = xii.Disk(radius=artery_radii, degree=12)#, quad_rule='midpoint')
     vein_shape = xii.Circle(radius=vein_radii, degree=40, quad_rule='midpoint')
     csf_par_weights = {PARID:0.2, CSFID:0.8}
     artmarker = volmarker_to_networkmarker(vol_subdomains, artery, artery_shape,
@@ -143,6 +144,8 @@ def run_simulation(configfile: str):
 
     xi_a = get_xi(artmarker, art_xi_dict, artery_roots)
     xi_v = get_xi(veinmarker, ven_xi_dict, vein_roots)
+
+    xi_a_end = xi_a
 
     Da = Constant(arterial_pvs_diffusion) 
     Dv = Constant(venous_pvs_diffusion)
@@ -217,7 +220,11 @@ def run_simulation(configfile: str):
     pv_i = interpolate(pv_o, Qv)
     # Things for restriction
     dx_a = Measure('dx', domain=artery)
+    ds_a = Measure('ds', domain=artery)
     ua, va = (xii.Average(x, artery, artery_shape, normalize=True,
+     resolve_interfaces=priority) for x in (u, v))
+    
+    ua_end, va_end = (xii.Average(x, artery, artery_end_shape, normalize=True,
      resolve_interfaces=priority) for x in (u, v))
                                                
     dx_v = Measure('dx', domain=vein)
@@ -275,16 +282,22 @@ def run_simulation(configfile: str):
             + a_dg_adv_diff(u,v) \
             + beta*u*v*ds(UPPER_SKULL_ID) \
             + xi_a*(perm_artery)*inner(ua, va)*dx_a \
-            + xi_v*(perm_vein)*inner(uv, vv)*dx_v
+            + xi_v*(perm_vein)*inner(uv, vv)*dx_v \
+            + xi_a_end*(area_artery)*inner(ua_end, va_end)*dx_a \
 
-    a[0][1] = -xi_a*(perm_artery)*inner(pa, va)*dx_a
+    a[0][1] = -xi_a*(perm_artery)*inner(pa, va)*dx_a \
+             - xi_a_end*(area_artery)*inner(pa, va)*ds_a
+    
     a[0][2] = -xi_v*(perm_vein)*inner(pv, vv)*dx_v
 
-    a[1][0] =-xi_a*(perm_artery)*inner(qa, ua)*dx_a
+    a[1][0] =-xi_a*(perm_artery)*inner(qa, ua)*dx_a \
+            - xi_a_end*(area_artery)*inner(qa, ua)*ds_a
+
     a[1][1] = (1/dt)*area_artery*inner(pa,qa)*dx + Da*area_artery*inner(grad(pa), grad(qa))*dx \
             - area_artery*inner(pa, dot(velocity_a,grad(qa)))*dx  \
             + xi_a*(perm_artery)*inner(pa, qa)*dx \
-            + supg_stabilization(pa, area_artery*qa, velocity_a) 
+            + supg_stabilization(pa, area_artery*qa, velocity_a) \
+            + xi_a_end*(area_artery)*inner(pa, qa)*ds_a
 
 
     a[2][0] = -xi_v*(perm_vein)*inner(qv, uv)*dx_v
