@@ -36,15 +36,25 @@ def compare_concentrations(modelname:str):
 
     set_plotting_defaults()
     #sns.set_palette("BrBG", n_colors=4)
-    sns.set_palette(["#0a9396","#94d2bd", "#e9d8a6", "#ee9b00"])
+    #sns.set_palette(["#0a9396","#94d2bd", "#e9d8a6", "#ee9b00"])
+    sns.set_palette(["#0a9396","#81b8a5", "#ee6700", "#eea700"])
 
     fig, ax = plt.subplots(figsize=(5,4))
     tot = np.zeros_like(times)
-
+    prev = -100
     for q, l in zip(tot_values, labels):
         new_tot = tot + np.array(q)*mol2mmol
         fill = ax.fill_between(times/ (60*60), new_tot, tot, 
-                               alpha=0.7, label=l)
+                               alpha=1, label=l)
+        ypos =  max(tot[-1], prev+0.04)
+        final_tot = sum(t[-1] for t in tot_values)*mol2mmol
+        print(final_tot)
+        #plt.scatter(times[-1]/(60*60), ypos, marker="o", color=fill.get_facecolor())
+        plt.annotate(f"{100*mol2mmol*q[-1]/final_tot:.0f}%",(times[-1]/(60*60), ypos),
+                     color=fill.get_facecolor(),
+                     xytext=(2, 0), textcoords='offset points',
+                     xycoords="data",)
+        prev = ypos
         tot = new_tot
     
     plt.xlabel("time (h)")
