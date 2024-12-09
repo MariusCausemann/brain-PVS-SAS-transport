@@ -137,7 +137,7 @@ Ringstad~\cite{eide2024functional} and Yamamoto et
 al~\cite{yamamoto2024perivascular} independently demonstrated that
 PVSs define preferential pathways for molecular transport also in
 humans, with delayed periarterial enrichment in dementia
-subtypes~\cite{eide2024functional}. Perivascular flow of CSF clearly
+subtypes~\cite{eide2024functional}. \mar{mention that most data stems from rodent, or remove 'also'?} Perivascular flow of CSF clearly
 contributes to this transport, and is inherently associated with
 vascular pulsations~\cite{hadaczek2006perivascular, iliff2013cerebral,
   bedussi2018paravascular, mestre2018flow, boster2023artificial,
@@ -352,6 +352,22 @@ references in Background.
 \item
   Vary the PVS permeability $\xi$.
 \end{itemize}
+
+\begin{itemize}
+    \item we vary the permeability  $\xi$ for the baseline model and baseline + VM (1x, 10x, 100x, 1000x).
+    \item In \Cref{fig:compartmentalization}, we see small changes in mean concentration values, in both the arterial PVS and the surrounding tissue. Interestingly, the differences seem to become smaller for larger multiples of $\xi$. Consequently, also the change in the difference has a similar pattern - it is sensitive to changes in the permeablity for small values of $\xi$, but becomes increasingly robust with larger permeabilities.
+    \item In the difference plot, the dip at 2-3h disappears for larger $\xi$ in both models.
+    \item do we need to differentiate the jumps between PVS - PAR and PVS-CSF? Jumps between PVS - PAR should go the zero with $\xi \rightarrow \infty$.
+    \item we only look at the mean here - but especially at early time points we have larger concentrations in some PVS parts and zero in most of it
+    \item Is the conclusion that a purely functional compartmentalization is possible? If there was no structural barrier, would our velocity estimates still make sense?
+\end{itemize}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figures/figure4.png}
+    \caption{}
+    \label{fig:compartmentalization}
+\end{figure}
 
 \subsection*{Enlarged perivascular spaces yield ...}
 
