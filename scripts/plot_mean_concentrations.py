@@ -1,29 +1,16 @@
 from fenics import *
-from xii import *
-from plotting_utils import get_result_fenics
 import typer
-from typing import List
 import matplotlib.pyplot as plt
 from plotting_utils import set_plotting_defaults, read_config, minmax
-from solver import pcws_constant
 import numpy as np
 import seaborn as sns
-from IPython import embed
-import pandas as pd
-import yaml
-from branch_marking import color_branches
-from label_arteries import pointlabels
-from test_map_on_global_coords_shift import map_kdtree
-from peristalticflow import mesh_to_weighted_graph, nx
-from subdomain_ids import CSFID, PARID, LVID, V34ID, CSFNOFLOWID
-import joypy
-from cmap import Colormap
-from scipy.stats import binned_statistic
+import os
 
 mol2mmol = 1e3
 
 def compare_concentrations(modelname:str):
     config = read_config(f"configfiles/{modelname}.yml")
+    os.makedirs("plots/{modelname}", exist_ok=True)
     dt , T= config["dt"], config["T"]
     times = np.arange(0, T + dt, 3*dt*config["output_frequency"])
 
