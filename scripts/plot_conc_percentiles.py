@@ -8,7 +8,7 @@ from cmap import Colormap
 import itertools
 import seaborn as sns
 import pyvista as pv
-from generate_synthseg_mesh import CSFID, PARID
+from subdomain_ids import CSFID, PARID
 
 def plot_conc_percentiles(models:List[str]):
 

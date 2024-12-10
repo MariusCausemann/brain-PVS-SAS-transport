@@ -6,7 +6,7 @@ from typing import List
 from plotting_utils import (time_str, read_config, compute_ranges,
                     get_result, clip_plot, isosurf_plot, timesurf_plot)
 import cmocean
-from generate_synthseg_mesh import CSFID, CSFNOFLOWID, PARID, LVID, V34ID
+from subdomain_ids import CSFID, CSFNOFLOWID, PARID, LVID, V34ID
 import pyvista as pv
 from cmap import Colormap
 import nibabel

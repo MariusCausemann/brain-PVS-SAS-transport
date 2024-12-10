@@ -15,7 +15,7 @@ from branch_marking import color_branches
 from label_arteries import pointlabels
 from test_map_on_global_coords_shift import map_kdtree
 from peristalticflow import mesh_to_weighted_graph, nx
-from generate_synthseg_mesh import CSFID, PARID, LVID, V34ID, CSFNOFLOWID
+from subdomain_ids import CSFID, PARID, LVID, V34ID, CSFNOFLOWID
 import joypy
 from cmap import Colormap
 from scipy.stats import binned_statistic
