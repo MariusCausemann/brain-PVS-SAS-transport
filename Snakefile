@@ -8,8 +8,8 @@ time_refine_models = ["modelA", "modelAsmalldt", "modelAlargedt"]
 model_variations = ["modelA" , "modelA-LowD","modelA-HighD",
                     "modelA-OnlyDispersion",
                     "modelA-woCT", "modelA-strongVM","modelA-PVS-disp",
-                    #"modelB1-10", "modelB1-100", "modelB1-1000",
-                    #"modelB2-1", "modelB2-10", "modelB2-100", "modelB2-1000",
+                    "modelB1-10", "modelB1-100", "modelB1-1000",
+                    "modelB2-10", "modelB2-100", "modelB2-1000",
                     #"modelC", "modelA-NoResp", "modelA-NoDisp", "modelA-LowD",
                     "modelA-Venes"]
 

@@ -16,9 +16,6 @@ from label_arteries import pointlabels
 from test_map_on_global_coords_shift import map_kdtree
 from peristalticflow import mesh_to_weighted_graph, nx
 from generate_synthseg_mesh import CSFID, PARID, LVID, V34ID, CSFNOFLOWID
-import joypy
-from cmap import Colormap
-from scipy.stats import binned_statistic
 
 def ii_project(f, V):
     u = TrialFunction(V)
@@ -84,7 +81,7 @@ def compare_concentrations(modelname:str):
     pvs_shape = Circle(radius=pvs_radii, degree=40, quad_rule='midpoint')
     proximity_dist = 2e-3
     nearby_shape = Circle(radius=project(pvs_radii + proximity_dist, DG0a), degree=40, quad_rule='midpoint')
-    c_averages = [ii_project(Average(c, artery, pvs_shape, 
+    c_averages = [ii_project(Average(c, artery, pvs_shape, resolve_interfaces=priority,
                                      normalize=True), V) for c in sas_conc]
     nearby_averages = [ii_project(Average(c, artery, nearby_shape, 
                                      normalize=True), V) for c in sas_conc]
@@ -102,14 +99,12 @@ def compare_concentrations(modelname:str):
         conc_at_point[n] = [assemble(c*dxs(si))/l for c in art_conc]
         avg_conc_around_point[n] = [assemble(c*dxs(si))/l for c in c_averages]
         avg_conc_nearby_point[n] = [assemble(c*dxs(si))/l for c in nearby_averages]
-    artlabelsets = [["BA",],#["ICA-L", "ICA-R"], 
-                    ["MCA-L", "MCA-R"],["MCA2-L", "MCA2-R"], 
-                    #["ACA-A1-L", "ACA-A1-R"], 
-                    ["ACA-A2", "ACA-A3"],
-                    #["PCA-L", "PCA-R"], 
-                    #["PER-L", "PER-R"]
-                    ]
-    
+    metrics["avg_conc_around_point"] = avg_conc_around_point
+    metrics["avg_conc_nearby_point"] = avg_conc_nearby_point
+    metrics["conc_at_point"] = conc_at_point
+    metrics["c_averages"] = [interpolate(cavg, DG0a).vector()[:] for cavg in c_averages]
+    metrics["c_pvs"] = [interpolate(cpvs, DG0a).vector()[:] for cpvs in art_conc]
+
     pvsftadict, avgftadict = dict(),dict() 
     for n in artlabels:
         for c, d in zip([conc_at_point,avg_conc_around_point], [pvsftadict, avgftadict] ):
@@ -121,170 +116,32 @@ def compare_concentrations(modelname:str):
     pvspeaktimedict = {n:times[np.argmax(conc_at_point[n])]for n in artlabels }
     avgpeaktimedict = {n:times[np.argmax(avg_conc_around_point[n])] for n in artlabels}
     lagdict = {n: avgpeaktimedict[n] - pvspeaktimedict[n] for n in artlabels}
-    coldict = dict(zip(artlabels, sns.color_palette("dark", n_colors=len(artlabels))))
+
     for n in artlabels:
         metrics.update({f"{n}_fta":pvsftadict[n], f"{n}_avg_fta":avgftadict[n], 
                         f"{n}_lag":lagdict[n], 
                         f"{n}_pvs_peak_time":pvspeaktimedict[n],
                         f"{n}_avg_peak_time":avgpeaktimedict[n]})
-
-    nrows = 1
-    ncols = int(np.ceil(len(artlabelsets) / nrows))
-    fig, axes = plt.subplots(nrows, ncols, figsize=(int(ncols*3),nrows*3.5), constrained_layout=True)
-    for ax, al_set in zip(axes.flatten(), artlabelsets):
-        peaks, lags, ftas = [],[],[]
-        for n in al_set:
-            col = coldict[n]
-            h1 = ax.plot(times / 3600, conc_at_point[n], color=col, label=n)
-            h2 = ax.plot(times / 3600, avg_conc_around_point[n], color=col, ls="dashed")
-            #h3 = ax.plot(times / 3600, avg_conc_nearby_point[n], color=col, ls="dotted")
-            ax.fill_between(times / 3600, conc_at_point[n], avg_conc_around_point[n],
-                             alpha=0.2, color=col)
-            #ax.fill_between(times / 3600, avg_conc_around_point[n], avg_conc_nearby_point[n],
-            #                 alpha=0.1, color=col)
-
-            #ax.axvline(fta/3600,ls="-", ymax=0.2, color=col)
-            peaks.append(pvspeaktimedict[n]); lags.append(lagdict[n]), ftas.append(pvsftadict[n])
-        format_secs = lambda s: "{:1.0f}:{:02.0f}".format(*divmod(abs(s)/60, 60))
-        #format_secs = lambda s: f"{s/60} min"
-        nl = chr(10)
-        text = (f"peak: {(' /' + nl).join(format_secs(p) for p in peaks)} h" + nl +
-                f"Δt: {(' /' + nl).join(('+' if l>-60 else '-') + format_secs(l) for l in lags)} h" + nl +
-                f"FTA: {(' /' + nl).join(format_secs(p) for p in ftas if p is not None)} h")
-        x_text = 1 if np.mean(peaks) < 6*3600 else 0.5
-        ax.set_xlim((0, 12))
-        ax.text(x_text + (max(peaks) > 10*60*60)*0.05, 0.9,
-                text, transform=ax.transAxes, horizontalalignment='right',
-                verticalalignment="top")
-
-        ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.1), ncol=2, 
-                  columnspacing=0.3, frameon=False)
-        ax.set_xlabel("time (h)")
-        ax.set_ylabel("concentration (mmol/l)")
-    plt.figlegend(handles =[h1[0], h2[0]],# h3[0]],
-                  labels=["PVS", "outer PVS boundary"], 
-                          #f"PVS proximity (R + {int(proximity_dist*1e3)} mm)"],
-                  loc='lower center', #facecolor="white", 
-                  edgecolor="black", frameon=False,
-                  ncols=3, bbox_to_anchor=(0.5, 0.98))
-    plt.savefig(f"plots/{modelname}/{modelname}_conc_at_label.png",
-                bbox_inches='tight', dpi=300)
-    
-
-
+        
+    # compute values over distance
     G = mesh_to_weighted_graph(artery, art_radii.vector()[:])
     path_lengths = []
     for rootnode in np.where(art_roots.array()==2)[0]:
         pl = nx.single_source_dijkstra_path_length(G, rootnode, weight="length")
         path_lengths.append(nx.utils.dict_to_numpy_array(pl))
     idx = map_kdtree(artery.coordinates(), art_conc[0].function_space().tabulate_dof_coordinates())
-    dist_to_root = np.array(path_lengths).min(axis=0)[idx]
-    pointidx = map_kdtree(art_conc[0].function_space().tabulate_dof_coordinates(), points)
-    labeldist = {n:dist_to_root[pi] for n,pi in zip(artlabels, pointidx)}
+    dist_to_root = Function(art_conc[0].function_space())
+    dist_to_root.vector()[:] = np.array(path_lengths).min(axis=0)[idx]
+    dist_to_root = interpolate(dist_to_root, DG0a)
+    pointidx = map_kdtree(dist_to_root.function_space().tabulate_dof_coordinates(), points)
+    labeldist = {n:dist_to_root.vector()[pi] for n,pi in zip(artlabels, pointidx)}
     for ln, dist in labeldist.items():
         metrics[f"{ln}_root_dist"] = dist
-    cellvol = project(CellDiameter(artery)*area_artery, FunctionSpace(artery, "CG", 1)).vector()[:]
+    cellvol = project(CellDiameter(artery)*area_artery, DG0a).vector()[:]
+    metrics["cellvol"] = cellvol
+    metrics["dist_to_root"] = dist_to_root.vector()[:]
 
-    xrange = (0, 0.25)
-    timespoints = np.array([1,2, 3,4,5, 6, 9, 12])*3600
-    timeidx = np.where(np.isin(times, timespoints))[0]
-    binedges = np.linspace(*xrange, 80)
-    conc = [art_conc[i].vector()[:] for i in timeidx]
-    conc = [np.where(c > 0, c, 0) for c in conc]
-    weighted_conc = [c*cellvol for c in conc]
-    total_stats, _, _ = binned_statistic(dist_to_root, weighted_conc, statistic="sum", bins=binedges)
-    conc_stats, _, _ = binned_statistic(dist_to_root, conc, statistic="mean", bins=binedges)
-
-    from scipy.interpolate import pchip
-
-    binmid = 0.5*(binedges[1:] + binedges[:-1])
-    xsmooth = np.linspace(*binedges[[0,-1]], 500)
-    pchipsmooth = lambda x: pchip(binmid, x)(xsmooth)
-
-    for data, plottype in zip([total_stats, conc_stats],["total","conc"]):
-        for s in ["smoothed", "raw"]:
-            xdata = xsmooth if s=="smoothed" else binmid
-            ridge_data = pd.DataFrame({f"{int(t/3600)} h": pchipsmooth(d) if s=="smoothed" else d 
-                                    for t,d in zip(timespoints, data)}, index=xdata)
-            ridge_data = ridge_data[ridge_data.columns[::-1]]
-            fig, ax = joypy.joyplot(ridge_data, colormap=Colormap("Blues_r"), kind="values",
-                                    x_range=(0, len(xdata)), alpha=0.8, figsize=(6,6), overlap=1.5,
-                                    title="Total PVS tracer content", 
-                                    )
-            ax[-1].set_xlabel("distance from root (m)")
-            ax[-1].set_xticks(np.linspace(0, len(xdata), 5, endpoint=False),
-                            np.linspace(*xdata[[0, -1]], 5, endpoint=False).round(2))
-
-            secxa, secxb = ax[-1].secondary_xaxis(0.9), ax[-1].secondary_xaxis(0.9)
-            toplabels, bottomlabels = artlabels[0::2], artlabels[1::2]
-            for ln in ["ICA-L", "ACA-A1-L"]: toplabels.remove(ln)
-            for ln in ["ACA-A1-R"]: bottomlabels.remove(ln)
-            secxa.set_xticks([labeldist[ln]*len(xdata) / xdata[-1] for ln in toplabels],
-                            toplabels, rotation=45,)
-            secxb.set_xticks([labeldist[ln]*len(xdata) / xdata[-1] for ln in bottomlabels],
-                            bottomlabels, rotation=45)
-            secxb.tick_params(top=False, labeltop=False, bottom=True, labelbottom=True)
-            fig.savefig(f"plots/{modelname}/{modelname}_ridgeline_{plottype}_{s}.png",
-                        bbox_inches='tight')
-
-    timespoints = np.array([1,3,6,12,24])*3600
-    timeidx = np.where(np.isin(times, timespoints))[0]
-    times, c_averages, art_conc = times[timeidx], [c_averages[i] for i in timeidx], [art_conc[i] for i in timeidx]
-
-    conc_jump = [project((cavg - cart), DG0a) for  cavg, cart in zip(c_averages, art_conc)]
-    rel_conc_jump = [project(100*(cavg - cart)/(cavg  + 1e-16), DG0a) for cavg, cart in zip(c_averages, art_conc)]
-
-    pvdjump = File(f"results/{modelname}/{modelname}_rel_jump_artery.pvd") 
-    for rcj,t in zip(rel_conc_jump, times):
-        rcj.rename("rel c jump", "rel c jump")
-        pvdjump.write(rcj, t)
-
-    # mmol/l equals mol/m^3
-    xlabels = {"abs": "$\Delta c$ (mmol/l)", "rel":"$\Delta c_{rel}$ (%)"}
-    kdecut = {"abs": 0, "rel":0}
-    perclevel = {"abs": 80, "rel":95}
-    for mode, jump_data in zip(["abs", "rel"], [conc_jump, rel_conc_jump]):
-        cj_arr = [cj.vector() for cj in jump_data]
-        jumpminmax = minmax(cj_arr, percentile=perclevel[mode])
-
-        for cj,t in zip(jump_data, times):
-            plt.figure()
-            plt.hist(cj.vector()[:], range=jumpminmax, density=True, bins=100)
-            filename = f"plots/{modelname}/{modelname}_{mode}_conc_jump_{t}.png"
-            plt.savefig(filename)
-
-        plt.figure()
-        plt.hist(cj_arr, range=jumpminmax, density=True, bins=20)
-        filename = f"plots/{modelname}/{modelname}_{mode}_conc_jump.png"
-        plt.savefig(filename)
-
-        cjdf = pd.DataFrame({f"{int(t/3600)} h":cj for t,cj in zip(times, cj_arr)})
-        cjdfclipped = cjdf.copy()
-        jumpminmax = (jumpminmax[0], 100)
-        cjdfclipped[cjdf > jumpminmax[1]] = np.nan
-        cjdfclipped[cjdf < jumpminmax[0]] = np.nan
-
-        plt.figure()
-        sns.kdeplot(cjdfclipped, bw_adjust=1, cut=kdecut[mode], fill=True, common_norm=False,
-                    palette="magma", alpha=.3, linewidth=1,)
-        if mode=="abs":
-            plt.xlim(np.array(jumpminmax)*0.5)
-        plt.xlim((-50, 100))
-        filename = f"plots/{modelname}/{modelname}_{mode}_conc_jump_kde.png"
-        plt.xlabel(xlabels[mode])
-        plt.tight_layout()
-        plt.savefig(filename)
-
-        plt.figure()
-        sns.histplot(cjdfclipped, fill=True, common_norm=False, bins=50,
-                    palette="crest", alpha=.5, linewidth=1,multiple="dodge",)
-        plt.xlabel(xlabels[mode])
-        filename = f"plots/{modelname}/{modelname}_{mode}_conc_jump_hist.png"
-
-        plt.tight_layout()
-        plt.savefig(filename)
-
-        with open(f'results/{modelname}/mean_concentrations.yml', 'w') as outfile:
+    with open(f'results/{modelname}/mean_concentrations.yml', 'w') as outfile:
             yaml.dump(metrics, outfile, default_flow_style=False)
 
 
