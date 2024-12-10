@@ -6,13 +6,13 @@ import json
 import os
 import typer
 from pathlib import Path
-from plotting_utils import read_config
 import yaml
-CSFID = 1
-PARID = 2
-LVID = 3
-V34ID = 4
-CSFNOFLOWID = 5
+from subdomain_ids import CSFID, PARID, LVID, V34ID
+
+def read_config(configfile):
+    with open(configfile) as conf_file:
+        config = yaml.load(conf_file, Loader=yaml.UnsafeLoader)
+    return config
 
 def get_csg_tree(folder):
     tree = {"operation":"union",
