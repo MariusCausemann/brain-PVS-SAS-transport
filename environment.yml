@@ -24,6 +24,7 @@ dependencies:
   - mpich
   - gcc<13 # fTetWild install via pip requires gcc<13
   - k3d
+  - cmap
   - pip:
     - pyacvd
     - cmocean
