@@ -28,11 +28,8 @@ jobs:
       - name: Setup conda-forge
         uses: conda-incubator/setup-miniconda@v3
         with:
-          miniforge-variant: Mambaforge
-          miniforge-version: latest
-          activate-environment: transport
+          auto-update-conda: true
           python-version: "3.12"
-          use-mamba: true
       - name: Install snakemake
         run: |
           mamba install -c conda-forge -c bioconda snakemake snakemake-storage-plugin-http snakemake-executor-plugin-cluster-generic
