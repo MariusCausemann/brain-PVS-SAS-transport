@@ -35,7 +35,7 @@ jobs:
           conda install -c conda-forge -c bioconda snakemake snakemake-storage-plugin-http snakemake-executor-plugin-cluster-generic
       - name: snakemake dryrun
         run: |
-          snakemake --c1 -n -p plots/test/test_total_conc.png
+          snakemake -c1 -n -p plots/test/test_total_conc.png
       - name: Run snakemake
         run: |
           snakemake --use-conda --cores 2 -p plots/test/test_total_conc.png
