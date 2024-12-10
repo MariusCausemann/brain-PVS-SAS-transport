@@ -4,8 +4,9 @@ on:
   workflow_call:
   pull_request:
     branches: ["main"]
-  schedule:
-    - cron "3 37 * * *"
+  push:
+     branches: ["main"]
+
 env:
   DEB_PYTHON_INSTALL_LAYOUT: deb_system
 
