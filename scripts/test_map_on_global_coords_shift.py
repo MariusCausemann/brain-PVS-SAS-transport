@@ -1,7 +1,6 @@
 from fenics import *
 from xii import *
 import numpy as np
-import numpy_indexed as npi
 from pykdtree.kdtree import KDTree
 
 def map_kdtree(data_points, query_points, **kwargs):
