@@ -116,7 +116,8 @@ def run_simulation(configfile: str):
                                              weights=csf_par_weights)
 
     priority = xii.InterfaceResolution(subdomains=vol_subdomains,
-                                       resolve_conflicts={(CSFID, PARID): 4})
+                                       resolve_conflicts={(CSFID, PARID):
+                                                           csf_par_weights["CSFID"]/csf_par_weights["PARID"]})
     artmarker.rename("marker", "time")
     veinmarker.rename("marker", "time")
     vol_subdomains.rename("marker", "time")
