@@ -1,0 +1,14 @@
+name: pvs_transport_meshing_env
+channels:
+  - conda-forge
+dependencies:
+  - python=3.9    
+  - numpy
+  - pyvista
+  - meshio
+  - typer
+  - gcc<13 # fTetWild install via pip requires gcc<13
+  - pyaml
+  - pip
+  - pip:
+    - git+https://github.com/MariusCausemann/wildmeshing-python.git

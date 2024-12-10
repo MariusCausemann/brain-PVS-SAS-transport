@@ -1,6 +1,11 @@
 import numpy as np
-from scripts.plotting_utils import read_config
 from collections import defaultdict
+import yaml
+
+def read_config(configfile):
+    with open(configfile) as conf_file:
+        config = yaml.load(conf_file, Loader=yaml.UnsafeLoader)
+    return config
 
 num_mumps_threads = 16
 mesh_refine_models = ["modelALowRes", "modelA", "modelAHighRes"]
@@ -83,7 +88,7 @@ rule computeDispersionField:
     conda:"environment.yml"
     input:
         csf_pressure_file="results/csf_flow/{csf_flow_model}/flow.hdf",
-        bg="mesh/standard/standard.xdmf"
+        #bg="mesh/standard/standard.xdmf"
     output:
         csf_dispersion_file="results/csf_flow/{csf_flow_model}/R.xdmf",
         csf_dispersion_plot="results/csf_flow/{csf_flow_model}/R.png",
@@ -206,10 +211,19 @@ rule generateSurfaces:
         python scripts/extract_synthseg_surfaces.py {input.config}
         """
 
-rule generateMesh:
+rule generateIdealizedSurfaces:
     conda:"environment.yml"
+    output:
+        [f"mesh/idealized/surfaces/{n}.ply" for n in ["LV", "parenchyma_incl_ventr", "skull", "V34"]]
+    shell:
+        """
+        python scripts/generate_idealized_surfaces.py
+        """
+
+rule generateMesh:
+    conda:"mesh_environment.yml"
     input:
-        [f"mesh/{{meshname}}/surfaces/{n}.ply" for n in ["LV", "parenchyma", "skull", "V34"]],
+        [f"mesh/{{meshname}}/surfaces/{n}.ply" for n in ["LV", "parenchyma_incl_ventr", "skull", "V34"]],
         "configfiles/meshconfig/{meshname}.yml"
     output:
         "mesh/{meshname}/volmesh/mesh.xdmf",
@@ -248,10 +262,12 @@ rule computeSASFlow:
     threads: 4
     resources:
         ncpuspertask=64
+    params:
+        mpirun=lambda wildcards: "" if "idealized" in wildcards.csf_flow_model else "mpiexec -n 16"
     shell:
         """
         export OMP_NUM_THREADS={threads} && \
-        mpiexec -n 16 python scripts/sas_flow_Hdiv.py \
+        {params.mpirun} python scripts/sas_flow_Hdiv.py \
         configfiles/{wildcards.csf_flow_model}.yml && \
         python3 scripts/plot_csf_flow.py results/csf_flow/{wildcards.csf_flow_model}
         """
