@@ -23,6 +23,7 @@ dependencies:
   - mpich
   - k3d
   - cmap
+  - joypy
   - gcc<13 
   - pip:
     - cmocean
