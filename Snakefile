@@ -221,7 +221,7 @@ rule generateIdealizedSurfaces:
         """
 
 rule generateMesh:
-    conda:"environment.yml"
+    conda:"mesh_environment.yml"
     input:
         [f"mesh/{{meshname}}/surfaces/{n}.ply" for n in ["LV", "parenchyma_incl_ventr", "skull", "V34"]],
         "configfiles/meshconfig/{meshname}.yml"
