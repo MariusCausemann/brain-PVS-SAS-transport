@@ -37,6 +37,7 @@
 \newcommand{\rami}[1]{\textcolor{blue}{#1}}
 \newcommand{\mer}[1]{\textcolor{magenta}{#1}}
 \newcommand{\mar}[1]{\textcolor{violet}{#1}}
+\newcommand{\mk}[1]{\textcolor{orange}{#1}}
 \newcommand{\discuss}[1]{\textcolor{red}{#1}}
 \newcommand{\fixme}[1]{\textcolor{red}{#1}}
 \newcommand{\draft}[1]{\textcolor{gray}{#1}}
@@ -52,7 +53,6 @@
 %\affil[+]{these authors contributed equally to this work}
 
 %\keywords{Keyword1, Keyword2, Keyword3}
-
 
 %% The problem we are addressing here is that we would like to be able to
 %% understand, integrate and quantify the role of different mechanisms -
@@ -137,7 +137,7 @@ Ringstad~\cite{eide2024functional} and Yamamoto et
 al~\cite{yamamoto2024perivascular} independently demonstrated that
 PVSs define preferential pathways for molecular transport also in
 humans, with delayed periarterial enrichment in dementia
-subtypes~\cite{eide2024functional}. Perivascular flow of CSF clearly
+subtypes~\cite{eide2024functional}. \mar{mention that most data stems from rodent, or remove 'also'?} Perivascular flow of CSF clearly
 contributes to this transport, and is inherently associated with
 vascular pulsations~\cite{hadaczek2006perivascular, iliff2013cerebral,
   bedussi2018paravascular, mestre2018flow, boster2023artificial,
@@ -265,29 +265,24 @@ While cardiac- and respiratory induced oscillatory flow increases mixing, the pr
 We construct a 3D model of the SAS and the ventricular system (\Cref{fig:csf}A,B and C) and compute CSF flow fields for three different scenarios: CSF production in the choroid plexus, CSF flow at systolic peak blood inflow and CSF flow in response to free breathing.
 
 % production flow simulation
-To simulate the production-driven flow, we impose an inflow of $400\,$ml/day \cite{nilsson1992circadian} across the surface of the lateral ventricle and allow a resistive outflow across the upper convexity of the arachnoid mater, leading to a total pressure drop of $26\,$mPa between the production and outflow sites (\Cref{fig:csf}D). A maximum flow velocity of $1.8\,$mm/s is attained in the aqueduct, while the mean velocity in the SAS is $2.6\,\mu$m/s (\Cref{fig:csf} E).
-
-%The Stokes system is solved with the finite element software $FEniCS$, stored and then subsequently read for all the relevant solute transport simulations. See Figure~\ref{fig:csf} for a streamline visualization of the obtained velocity profile and \Cref{sec:details_numerical_method} for details on the numerical algorithm employed.
+To simulate the production-driven flow, we impose an inflow of $400\,$ml/day across the surface of the lateral ventricle and allow a resistive outflow across the upper convexity of the arachnoid mater, leading to a total pressure drop of $26\,$mPa between the production and outflow sites (\Cref{fig:csf}D). A maximum flow velocity of $1.8\,$mm/s is attained in the aqueduct, while the mean velocity in the SAS is $2.6\,\mu$m/s (\Cref{fig:csf} E).
 
 % cardiac pulsatility
-Assessing the effect of cardiac-driven dispersion, we compute a steady CSF flow field at peak systolic blood inflow. We mimic the resulting reduction of CSF space volume by imposing an inflow of $6\,$ml/s \cite{baledent2014imaging, causemann2022human} and $0.31\,$ml/s \cite{vinje2019respiratory} across the upper arachnoid mater ($\Gamma_{\rm AM-U}$) and the lateral ventricle ($\Gamma_{\rm VL}$) surface, respectively. We allow free outflow into the spinal SAS ($\Gamma_{\rm SSAS}$). In addition, we upscale the obtained pressure field to account for the lack of pulsatile inertial effects in our model (see \ref{sec:dispersion_details}). In this scenario, we observe a pressure drop of $10\,$Pa between lateral ventricles and the spinal SAS and a maximum flow velocity of $19.8\,$cm/s in the aqueduct (\Cref{fig:csf}F and J).
-Next, we estimate a spatially varying dispersion enhancement factor $R$ from cardiac-induced pulsatility by combining the computed pressure field with the theory of shear-augmented dispersion (see \Cref{sec:dispersion_details}). Assuming a cardiac frequency of $1\,$Hz, find that cardiac-induced pulsatile CSF flow increases the effective diffusion by up to two orders of magnitude in the aqueduct and around the cisterna magna, but has little effect in most of the SAS ($R < 1$) (\Cref{fig:csf} G and K). 
+Assessing the effect of cardiac-driven dispersion, we compute a steady CSF flow field at peak systolic blood inflow. We mimic the resulting reduction of CSF space volume by imposing an inflow of $6\,$ml/s \cite{baledent2014imaging, causemann2022human} and $0.31\,$ml/s \cite{vinje2019respiratory} across the upper arachnoid mater ($\Gamma_{\rm AM-U}$) and the lateral ventricle ($\Gamma_{\rm VL}$) surface, respectively. We allow free outflow into the spinal SAS ($\Gamma_{\rm SSAS}$). In addition, we upscale the obtained pressure field to account for the lack of pulsatile inertial effects in our model (see \Cref{sec:csf_dispersion}). In this scenario, we observe a pressure drop of $10\,$Pa between lateral ventricles and the spinal SAS and a maximum flow velocity of $19.8\,$cm/s in the aqueduct (\Cref{fig:csf}F and J).
+Next, we estimate a spatially varying dispersion enhancement factor $R$ from cardiac-induced pulsatility by combining the computed pressure field with the theory of shear-augmented dispersion (see \Cref{sec:csf_dispersion}). Assuming a cardiac frequency of $1\,$Hz, we find that cardiac-induced pulsatile CSF flow increases the effective diffusion by more than two orders of magnitude in the aqueduct and around the cisterna magna, but has little effect in most of the SAS ($R < 1$) (\Cref{fig:csf} G and K). 
 
 % respiratory pulsatility
-Employing the same methodology, we estimate the respiratory contribution to dispersive mixing by computing the CSF flow field driven by an inflow of $0.121\,$ml/s \cite{liu2024using} and $1\,$ml/s \cite{gutierrez2022effect} across the lateral ventricular wall and the arachnoid mater, respectively. This amounts to a respiratory peak flow volume of $1.121\,$ ml/s at the craniocervical junction \cite{gutierrez2022effect}. While the resulting flow velocities are only about one fourth of their cardiac-induced counterparts (see \Cref{fig:csf}H and L), respiratory dispersive mixing reaches a factor of up to 350 due the lower respiratory frequency ($0.25\,$Hz) (\Cref{fig:csf}I and M).
+Employing the same methodology, we estimate the respiratory contribution to dispersive mixing by computing the CSF flow field driven by an inflow of $0.121\,$ml/s \cite{liu2024using} and $1\,$ml/s \cite{gutierrez2022effect} across the lateral ventricular wall and the arachnoid mater, respectively. This amounts to a respiratory peak flow volume of $1.121\,$ ml/s at the craniocervical junction. While the resulting flow velocities are only about one fourth of their cardiac-induced counterparts (see \Cref{fig:csf}H and L), respiratory dispersive mixing reaches a factor of up to 350 due the lower respiratory frequency of $0.25\,$Hz (\Cref{fig:csf}I and M).
 
 
 % tracer trajectory of the standard model
-Next, we use the computed advective velocity field and dispersion enhancement factors to predict the spreading of $0.5\,$mmol intrathecally injected Gadobutrol in CSF-filled spaces, the parenchymal tissue and PVSs around arteries and veins. One hour post-injection, tracer moves upwards in the SAS frontally of the brainstem,  and quickly reaches supratentorial regions (\Cref{fig:csf}N). Here, it spreads both posteriorly through the longitudinal fissure and anteriorly through the outer SAS, reaching the top of the cerebral cortex after around 12 h. After 24h, the tracer covers most of the brains surface (with exception of some posterior regions) and has penetrated several centimeters into the parenchymal tissue.
+Next, we use the computed advective velocity field and dispersion enhancement factors to predict the spreading of $0.5\,$mmol intrathecally injected Gadobutrol in CSF-filled spaces, the parenchymal tissue and PVSs around arteries and veines. We assume pressure-driven flow in arterial and venous PVSs, and cardiac peristaltic flow in the arterial network (\Cref{sec:pvs_flow_results}). One hour post-injection, tracer moves upwards in the SAS frontally of the brainstem,  and quickly reaches supratentorial regions (\Cref{fig:csf}N). Here, it spreads both posteriorly through quadrigeminal cistern and longitudinal fissure, and anteriorly through the outer SAS, reaching the top of the cerebral cortex after around 12 h. After 24h, the tracer covers most of the brains surface (with exception of some posterior regions) and has penetrated several centimeters into the parenchymal tissue.
+This pattern of transport is reflected in the mean tracer concentrations in each compartment, where the CSF space reaches its peak of $1.4\,$mmol/l after 2 hours, followed by the the arterial PVS concentration peak ($2.9\,$mmol/l after 4 hours) (\Cref{fig:csf}P).  While the mean concentrations in these compartments fall quickly soon after their peaks, the parenchymal tissue slowly enriches with tracer over the first 24 hours, with a final value of $0.3\,$ mmol/l.
+Overall, about 40\,\% of the total amount of tracer remains in the cranium 24\,h post-injection, with the largest share in the CSF (53\,\%), followed by the parenchyma (35\,\%), the venous PVS (8\,\%) and the arterial PVS (5\,\%). (\cref{fig:csf}O).
 
 % tracer trajectory of model variations
 
-
-\begin{itemize}
-    \item only dispersion model: No production flow. Tracer remains in the subtentorial regions, in cerebellum, brain stem and surrounding CSF. In contrast to other models, it travels up the ventricular system - similar to what is observed in iNPH patients?
-    \item Low dispersion model: account for uncertainty (or pathologies with impaired pulsatile motion?) - tracer exclusively spreads in the frontal half of the brain. Bifurcation of CSF production flow field: flow bifurcates around the midbrain in two directions: a) through the quadrigeminal cistern into the longitudinal fissure and b) frontally around the brain through the outer SAS. Only models with "enough" dispersion enable tracer to follow trajectory a).
-    \item without tentorium: 
-\end{itemize}
+Finally, we illustrate the contribution of the respective transport mechanisms comparing the full model (production-driven advection, cardiac- and respiration enhanced dispersion) with three reduced models: No advective velocity field, decreased dispersion ($R \times 0.1$) and increased dispersion ($R \times 10$) (corresponding to lower and higher pulsatilty, respectively) (\Cref{fig:csf}N). Without production induced CSF flow, transport it considerably delayed. After $12\,$h tracer remains in the subtentorial regions around the cerebellum, the brain stem and in the surrounding CSF. Interestingly, the lack of CSF production allows tracer to travel upwards through the ventricular system, reaching the third ventricle after around $12\,$h. The low dispersion model exhibits simililarly rapid transport towards the upper convexity of the cranium as the full model, but predicts tracer spreading exclusively within the anterior regions of the brain. At the flow bifurcation around the midbrain, only the full and high dispersion models feature tracer movement through the quadrigeminal cistern and further upwards into the longitudinal fissure.
 
 \begin{figure}[h!]
 \centering 
@@ -313,31 +308,32 @@ P) mean tracer concentration in each compartment;
 \label{fig:csf}
 \end{figure}  
 
-\subsection*{The significance of perivascular spaces as flow highways}
-\begin{itemize}
-\item
-  Perivascular flow and transport has been identified as a key
-  mechanism and potential target for enhancing brain drug delivery and
-  metabolic waste clearance -- what are the global (intracranial)
-  effects of such intracranial highways? 
-\item
-  Do solutes move from PVS to the SAS, or both along the PVS and along
-  the SAS?
-\end{itemize}
+\subsection{The significance of perivascular spaces as flow highways}
+\label{sec:pvs_flow_results}
+
+Perivascular spaces have emerged as critical pathways for fluid flow and solute transport in the brain, making them potential targets for enhancing brain drug delivery and metabolic waste clearance. The question of potential drivers of rapid fluid flow in PVS and the effects on intracranial solute transport remains a key question in the field. We investigate the PVS flow velocities resulting from a transmantle pressure gradient, cardiac peristalsis and vasomotion-induced flow in a recontructed arterial network and illustrate the effect of the obtained PVS flow fields on the spreading patterns of intrathecally injected tracer. Further, we explore whether solutes move exclusively from the PVS to the SAS, or bidirectionally along both pathways by comparison of first-time arrival times along major cerebral arteries.
 
 \paragraph{PVS Flow velocities}
-\begin{itemize}
-    \item we consider three different PVS flow fields: PVS flow driven by production field pressure differences, cardiac peristaltic flow and vasomotion peristaltic flow. 
-\end{itemize}
+
+To investigate PVS flow velocities, we extract the the centerlines and associated radii of the arterial network from data \cite{hodneland2019new}, and label the main cerebral arteries (Figure 3A+C). We consider three different PVS flow fields: flow driven by CSF production-induced pressure differences, cardiac peristaltic flow, and vasomotion peristaltic flow (\Cref{fig:pvs}B). Pressure-driven flow velocities are computed by solving one-dimensional flow equations with pressure boundary conditions derived from the production field. Cardiac- and vasomotion-driven PVS flow velocities are obtained from semi-analytical estimates for peristaltic flow, assuming a frequency of 1\,Hz, a 1\,\% radius change, and a wavelength of 2 meters for cardiac flow, and a frequency of 0.1\,Hz, a 10\,\% radius change, and a wavelength of 2\,cm for vasomotion.
+
+The production-driven pressure gradient induces low flow velocities, with an average velocity of 0.08\,\textmu m and a maximum velocity of 0.55\,\textmu m (\Cref{fig:csf}D+H). In contrast, cardiac-driven velocities are approximately one order of magnitude higher, with an average velocity of 0.92\,\textmu m and a maximum velocity of 7.31\,\textmu m (\Cref{fig:pvs}E+H). Vasomotion-driven PVS flow reach substantially higher velocities, up to 54\,\textmu m, with an average of 13.05\,\textmu m. For all drivers of PVS flow, the majority of flow occurred in the direction of blood flow, with only a small fraction in the opposing direction (\Cref{fig:pvs}H).
+
+\paragraph{Differences in PVS flow velocities substantially alter tracer enrichment patterns around major cerebral arteries}
+
+Using the computed PVS flow velocities, we predict the effect of rapid PVS flow on intracranial transport by comparing a slow transport model (pressure-driven and cardiac-driven PVS flow) with a high-velocity model that accounts for all three mechanisms (pressure-, cardiac-, and vasomotion-driven). In both models, tracers were first observed 48 minutes after injection at the basal artery (\Cref{fig:pvs}G), defined by the first-time arrival (FTA), the time at which concentration first exceeds $0.1\,$mmol/l.
+
+At all upstream locations along the middle cerebral arteries (MCAs) and anterior cerebral artery (ACA), we found substantially reduced FTAs in the rapid PVS flow model (\Cref{fig:pvs}G+N). Furthermore, peak concentrations in the PVS were attained earlier than in the surrounding tissue (0:48h / 1:12h at the MCA and 1:00h / 1:48h at MCA2) in the vasomotion model, while concentrations peaked more simultaneously in the low-velocity model. The earlier occurrence and delay in peak time between the PVS and surrounding tissue indicate the directionality of tracer enrichment — it first arrives in the PVS and subsequently spreads into the tissue and SAS, especially in the vasomotion model.
+
+The difference in tracer spreading observed at the MCA/ACA points also holds on an aggregated level in the whole arterial PVS. Computing the total amount of tracer in the PVS depending on the distance to the arterial network's inlet nodes (basal artery (BA), left internal carotid artery (ICA-L), or right internal carotid artery (ICA-R)), we find more rapid transport of tracer in the vasomotion model. We also investigat the potential effect of increased dispersion in the PVS, finding that adding a dispersion enhancement factor of 100 in the PVS only induced minor changes in the global spreading rate (\Cref{fig:pvs}J). However, differences in tracer transport along the PVS translate to altered enrichment patterns on a whole-organ scale. For instance, after 4-6 hours, the faster-moving tracer in the PVS is clearly visible in the adjacent spaces of the ACA, MCA, and other arteries in sagittal, coronal, and axial planes of the whole organ (\Cref{fig:pvs}O). In contrast, the model with only pressure- and cardiac-driven PVS flow does not exhibit clear signs of accelerated tracer transport along the PVS.
 
 
 \begin{figure}
     \centering
     \includegraphics[height=\textheight]{figures/figure3.png}
-    \caption{\mer{MER: Put vasculature network illustration here. Many aspects actually. Marking of segments. Location relative to 3D. Radius etc. Marius will evaluate and suggest. Results: Group segments by logical order. For key arterial segments: average radius and length (can be moved to Supplementary if need be); pressure values; flow velocities; and then histograph with flow velocities for each mesh cell. Make sure to minorly note that ACA refers to a segment of the ACA and not the whole thing e.g.}}
+    \caption{}
     \label{fig:pvs}
 \end{figure}
-\Cref{fig:pvs}.
 
 \subsection*{Structural versus functional compartmentalization of perivascular spaces}
 
@@ -356,6 +352,22 @@ references in Background.
 \item
   Vary the PVS permeability $\xi$.
 \end{itemize}
+
+\begin{itemize}
+    \item we vary the permeability  $\xi$ for the baseline model and baseline + VM (1x, 10x, 100x, 1000x).
+    \item In \Cref{fig:compartmentalization}, we see small changes in mean concentration values, in both the arterial PVS and the surrounding tissue. Interestingly, the differences seem to become smaller for larger multiples of $\xi$. Consequently, also the change in the difference has a similar pattern - it is sensitive to changes in the permeablity for small values of $\xi$, but becomes increasingly robust with larger permeabilities.
+    \item In the difference plot, the dip at 2-3h disappears for larger $\xi$ in both models.
+    \item do we need to differentiate the jumps between PVS - PAR and PVS-CSF? Jumps between PVS - PAR should go the zero with $\xi \rightarrow \infty$.
+    \item we only look at the mean here - but especially at early time points we have larger concentrations in some PVS parts and zero in most of it
+    \item Is the conclusion that a purely functional compartmentalization is possible? If there was no structural barrier, would our velocity estimates still make sense?
+\end{itemize}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figures/figure4.png}
+    \caption{}
+    \label{fig:compartmentalization}
+\end{figure}
 
 \subsection*{Enlarged perivascular spaces yield ...}
 
@@ -386,7 +398,7 @@ references in Background.
 
 \bigskip
 
-\FloatBarrier
+Group\FloatBarrier
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -568,7 +580,7 @@ in the SAS with a rate constant $\beta_{\rm exit}$. We set a no-flux
 condition at the end nodes of the perivascular networks, not allowing
 for direct molecular clearance there.
 
-\subsection*{CSF flow in the SAS and ventricular system}
+\subsection{CSF flow in the SAS and ventricular system}
 \label{sec:csf_fluid_vel}
 
 We model CSF as an incompressible Newtonian fluid at low Reynolds and
@@ -587,7 +599,8 @@ directly model convection within the brain tissue (beyond the
 perivascular spaces), and thus set $\bm u = 0$ in $\Omega_{\rm PAR}$
 in~\eqref{eq:multi_transport}.
 
-\subsection*{Dispersion in the CSF spaces}
+\subsection{Dispersion in the CSF spaces}
+\label{sec:csf_dispersion}
 
 The pulsatile flow of CSF in the SAS and ventricular system,
 associated with the cardiac and respiratory cycles, substantially
