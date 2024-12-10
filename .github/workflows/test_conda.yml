@@ -36,7 +36,7 @@ jobs:
           python-version: "3.12"
       - name: Install snakemake
         run: |
-          conda install -c conda-forge -c bioconda snakemake==8.14.0 snakemake-storage-plugin-http snakemake-executor-plugin-cluster-generic
+          conda install -c conda-forge -c bioconda mamba snakemake==8.14.0 snakemake-storage-plugin-http snakemake-executor-plugin-cluster-generic
       - name: snakemake dryrun
         run: |
           snakemake -c1 -n -p plots/test/test_total_conc.png
