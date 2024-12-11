@@ -1,0 +1,47 @@
+name: Test PVS-Brain-Transport
+on:
+  workflow_dispatch: # allows manual triggering
+  workflow_call:
+  pull_request:
+    branches: ["main"]
+  #push:
+  #   branches: ["main"]
+  schedule:
+    - cron: "12 3 * * *"
+
+env:
+  DEB_PYTHON_INSTALL_LAYOUT: deb_system
+
+defaults:
+  run:
+    shell: bash -el {0}
+
+jobs:
+  test_scripts:
+    runs-on: ubuntu-latest
+    container: ubuntu:latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      #   - uses: actions/setup-python@v5
+      #     with:
+      #       python-version: "3.11"
+      - name: Install deps
+        run: |
+          DEBIAN_FRONTEND=noninteractive apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y unzip make build-essential git libgmp-dev
+      - name: Setup conda-forge
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-update-conda: true
+          python-version: "3.12"
+      - name: Install snakemake
+        run: |
+          conda install -c conda-forge -c bioconda snakemake==8.14.0 snakemake-storage-plugin-http snakemake-executor-plugin-cluster-generic
+      - name: snakemake dryrun
+        run: |
+          snakemake -c1 -n -p plots/test/test_total_conc.png
+      - name: Run snakemake
+        run: |
+          snakemake --conda-frontend conda --use-conda --cores 2 -p plots/test/test_total_conc.png --config meshing=False

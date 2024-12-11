@@ -81,7 +81,7 @@ def get_inflow_bcs(W, ds, inflow_bcs):
             area = 0
             for bid in bids: area += assemble(1*ds(bid))
             infl_func = get_normal_func(W.mesh(), 
-                scale=-Expression(infl, A=area, degree=3))
+                scale=-Expression(infl, A=area, degree=1))
         for bid in bids:
             bcs += [DirichletBC(W.sub(0), infl_func, 
                                 ds.subdomain_data(), bid)]

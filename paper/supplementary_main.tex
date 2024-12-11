@@ -59,6 +59,7 @@ the derivation and analysis of this 3D-1D model. Recall that we model
 a concentration field $c = c(x, t)$ for $x \in \Omega$ and $t > 0$
 defined in $\Omega_{\rm PAR}$ and $\Omega_{\rm CSF}$ separately. In
 each of these domains, $c$ satisfies
+\mer{MER: Rami asks if it should be a $\phi$ in the advective term here.}
 \begin{equation}
   \partial_t (\phi c) - \nabla \cdot (D \nabla (\phi c) ) + \nabla \cdot (\bm u c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma
   %= f
@@ -190,7 +191,7 @@ going in and out at nodes should add to zero, or more precisely, that
 for each $y \in \mathcal{B}$:
 \begin{equation}
   \sum_{\Lambda^i \in \mathcal{E}(y)}
-  \left (\hat{D}^i A^i \partial_s \hat{c}^i (y) - A^i \hat u^i(y) \hat{c}^i(y) \right ) ni(y)
+  \left (\hat{D}^i A^i \partial_s \hat{c}^i (y) - A^i \hat u^i(y) \hat{c}^i(y) \right ) n^i(y)
   = 0
   \label{eq:flux_conservation}
 \end{equation}
@@ -212,6 +213,7 @@ via a homogeneous Neumann condition augmenting~\eqref{eq:1d_pde}:
     \label{eq:1d_bcs}
 \end{equation}
 
+\mk{What is justification of \eqref{eq:1d_bcs}?}
 %% Both $\Omega$ and $\Lambda$ are fixed in time and we assume
 %% constant-in- time radii (despite varying radii to drive peristaltic
 %% flow, see \cref{sec:sup:peristalsis}). 
@@ -270,7 +272,7 @@ defined for each $\Lambda^i$ by solving:
 \end{alignat} 
 \label{eq:1d_flow}%
 \end{subequations}%
-where $A$ is the area of the PVS cross-sections, $\mu$ is the CSF viscosity as before, and $\kappa$ is derived from an assumption of Poiseuille flow in the annular cross-section of the PVS as~\cite{tithof2022network}: 
+where $A$ is the area of the PVS cross-sections, $\mu$ is the CSF viscosity as before, and $\kappa$ is derived from an assumption of Poiseuille flow in the annular cross-section of the PVS as~\cite{tithof2022network}:  \rami{Here,  we consider the steady state  case and we assume that the PVS domain is fixed and not pulsating  }
 \begin{equation}
 \kappa = \frac18 \left( R_2^2 + R_1^2 - \frac{1}{\ln(R_2/R_1)} (R_2^2- R_1^2) \right). 
 \end{equation}
@@ -323,7 +325,7 @@ interior facets (i.e.~triangular faces of the tetrahedral mesh cells)
 in $\mathcal{T}_{\rm PAR}$ and $\mathcal{T}_{\rm CSF}$ are denoted by
 $\mathcal{F}_{i, \rm PAR}$ and $\mathcal{F}_{i, \rm CSF}$,
 respectively. We define the union of facets interior both to
-$\mathcal{T}_{i, \rm PAR}$ and $\mathcal{T}_{i, \rm CSF}$ as
+$\mathcal{T}_{ \rm PAR}$ and $\mathcal{T}_{ \rm CSF}$ as
 $\mathcal{F}_i = \mathcal{F}_{i, \rm PAR} \cup \mathcal{F}_{i, \rm
   CSF}$. 
 
@@ -349,23 +351,23 @@ We first consider the discretization of~\eqref{eq:3d_pde} and
 introduce the discrete space
 \begin{equation}
   %V_h^k = \{c_h \in L^2(\Omega): \;  v_h \vert_E \in \mathbb{P}^k(E), \; E \in \mathcal{T}_h\}.
-  V_h^k = \{c \in L^2(\Omega): \;  c \vert_E \in \mathrm{P}^k(E), \; E \in \mathcal{T}\} ,
+  V_h = \{c \in L^2(\Omega): \;  c \vert_E \in \mathrm{P}^1(E), \; E \in \mathcal{T}\} ,
 \end{equation}
 where $L^2(\Omega)$ is the space of square-integrable functions
-defined over $\Omega$ and $\mathrm{P}^k(E)$ denotes the space of
-polynomials of degree $\leqslant k$ defined over the tetrahedra
+defined over $\Omega$ and $\mathrm{P}^1(E)$ denotes the space of
+polynomials of total degree $\leqslant 1$ defined over the tetrahedra
 $E$. To discretize the diffusion term in~\eqref{eq:3d_pde}, we use a
 symmetric weighted interior penalty DG formulation, referring
 to~\cite{ern2009discontinuous} and \cite[Section
   4.5.2.3]{di2011mathematical} for details on this
-method. \discuss{Recall that $\phi$ is constant in each domain
+method. Recall that $\phi$ is constant in each domain
   $\Omega_{\rm PAR}$ and $\Omega_{\rm CSF}$, and thus in particular
-  that $\nabla (\phi c) = \phi \nabla c$ on each $E \in \mathcal{T}$.}
+  that $\nabla (\phi c) = \phi \nabla c$ on each $E \in \mathcal{T}$.
 Define for $c, v \in V_h^k$:
 \begin{equation}
   a_h (c, v)
   =
-  \sum_{E \in \mathcal{T}} \int_{E} D \discuss{\phi} \nabla c \cdot \nabla v
+  \sum_{E \in \mathcal{T}} \int_{E} D\phi \nabla c \cdot \nabla v
   + \sum_{F \in \mathcal{F}_i} \eta \frac{\gamma_{D,F}}{h_F} \int_{F} [c][v] 
   - \sum_{F \in \mathcal{F}_i} \int_{F} \left( \{D \phi \nabla c \}_w \cdot \bm n_F [v]
   + \{D \phi \nabla v \}_w \cdot \bm n_F [c] \right).
@@ -373,17 +375,17 @@ Define for $c, v \in V_h^k$:
 \end{equation}
 In~\eqref{eq:dg_sip}, for each facet $F \in \mathcal{F}^i$ shared
 between cells $E^1$ and $E^2$ with facet normal vector $\bm n_F$
-pointing from $E^1$ to $E^2$, \discuss{$h_F$ denotes the facet diameter},
+pointing from $E^1$ to $E^2$, $h_F$ denotes the facet diameter,
 the jump $[\cdot]$ is given by $[v] = v|_{E^1} - v|_{E^2}$, and the
 unweighted average $\{ \cdot \}$ and weighed average $\{ \cdot \}_w$
 are defined as:
 \begin{equation}
   \{v\} = \frac12 v |_{E^1} + \frac12 v |_{E^2}, \qquad
   \{v\}_{w} = \frac{\kappa_2}{\kappa_1 + \kappa_2} v |_{E^1} + \frac{\kappa_1}{\kappa_1 + \kappa_2} v |_{E^2}
-  \quad \text{where} \quad \kappa_i = \phi D|_{E^i}.  
+  \quad \text{where} \quad \kappa_i = (D \phi) |_{E^i}.  
 \end{equation}
 The parameter $\gamma_{D,F}$ is the harmonic mean of the
-\discuss{porosity-weighted} diffusion coefficient given by
+porosity-weighted diffusion coefficient given by
 \begin{equation}
   \gamma_{D,F} = \frac{\kappa_1\kappa_2}{\kappa_1 + \kappa_2},
 \end{equation}
@@ -396,16 +398,16 @@ references therein. For $c, v \in V_h^k$, define
   + \sum_{F \in \mathcal{F}_i } \int_F \{ \bm u  c\} \cdot \bm{n}_F [v] +
   \sum_{F \in \mathcal{F}_i} \int_F \frac{|\bm u \cdot \bm n_F|}{2} [c] [v] .
 \end{equation}
-Our discrete formulation for \eqref{eq:3d_pde} with the interface conditions~\eqref{eq:3d_interface} and boundary conditions~\eqref{eq:3d_bcs} and given initial conditions $c_h^0$ then reads: for $n = 1, 2, \dots$, with $t^n - t^{n-1} = \tau$, find $c_h^n \in V_h^k$ such that for all $v \in V_h^k$:
-\begin{equation}
+Our discrete formulation for \eqref{eq:3d_pde} with the interface conditions~\eqref{eq:3d_interface} and boundary conditions~\eqref{eq:3d_bcs} and given initial conditions $c_h^0$ then reads: for $n = 1, 2, \dots$, with $t^n - t^{n-1} = \tau$, find $c_h^n \in V_h$ such that for all $v \in V_h$:
+\begin{equation} \label{eq:3d_dg_disc}
   \int_{\Omega} \frac{1}{\tau} (\phi c_h^n - \phi c_h^{n-1}) v
   + a_h(c_h^n, v) + a_h^{\mathrm{up}}(c_h^n,v)
-  + \int_{\Gamma_{\rm pia} \discuss{\cup \Gamma_{\rm LV}} } \beta_{\rm pia}[c_h^n][v] 
+  + \int_{\Gamma_{\rm pia} \cup \Gamma_{\rm LV}} \beta_{\rm pia}[c_h^n][v] 
   + \int_{\Gamma_{\rm AM-U}} \beta_{\rm exit} c_h^n v 
   + \int_{\Lambda} \xi  P \left (\overline{c_h^n} - \hat c_h^n \right) \overline{v} 
   = 
   %\int_{\Omega} f^n v +
-  \int_{\Gamma_{\rm \discuss{S}SAS}} g_{\rm influx} v
+  \int_{\Gamma_{\rm SSAS}} g_{\rm influx} v
   %, \quad \forall v \in V_h^k
   .
 \end{equation}
@@ -419,8 +421,20 @@ linear polynomials defined over $\Lambda$:
   \hat V_h
   = \{ v \in C^0(\Lambda), \; v \vert_{\Lambda^i} \in \mathrm{P}^1(\Lambda^i) \}, 
 \end{equation}
-where $\mathrm{P}^1(\Lambda^i)$ is the space of linear polynomials on each $\Lambda^i$. 
+where $\mathrm{P}^1(\Lambda^i)$ is the space of linear polynomials on each $\Lambda^i$. The discrete formulation then reads: for $n = 1,2,\ldots, $ find $\hat c_h^n \in \hat V_h$ such that for all $\hat v \in \hat V_h^k$: 
+\begin{align}\label{eq:1d_dg_disc}
+\int_{\Lambda}  \frac{1}{\tau}(A  \hat c_h^n - A \hat c_h^{n-1}) \hat v  + \int_{\Lambda} \hat D A \partial_s \hat c_h^n  \partial_s \hat v^n - \int_{\Lambda} A \hat u \hat c_h^n \partial_s \hat v   +  \int_{\Lambda} \xi P (\hat c_h^n - \overline{c_h^n}) +a_h^{\mathrm{stab}}(\hat u; \hat c, \hat v) = 0.  
+\end{align}
+ In the above, if $\hat u$ is non--zero on $\Lambda^i$, then the artificial diffusion stabilization term, for more details see for e.g. \cite[Section 12.6]{quarteroni2009numerical}: 
+ \begin{align}
+    a_h^{\mathrm{stab}}(\hat u; \hat c, \hat v) =  \frac{1}{\|\hat u\|_{L^2(\Lambda^i)}} 
+ h_{\Lambda^i} \int_{\Lambda^i} A (\hat u \partial_s \hat c_h  ) (\hat u \partial_s \hat v),  
+ \end{align}
+ where $h_{\Lambda^i}$ is the mesh--size of $\Lambda^i$.
 
+ \textit{Summary.} The discretization for \eqref{eq:3d_pde} and \eqref{eq:1d_pde} comlemented with boundary conditions (\eqref{eq:3d_bcs} and \eqref{eq:1d_bcs}), interface and bifurcation  conditions (\eqref{eq:3d_interface}, \eqref{eq:1d_flow:bifurcations}, and \eqref{eq:conc_continuity}), and intial conditions $c_h^0 =0 $ and $\hat c_h^0$ is the following: 
+
+ For $n = 1,2, \ldots $, find  $c_h^n \in V_h$ and $\hat c^n_h \in \hat V_h$ such that the coupled equations \eqref{eq:3d_dg_disc} and \eqref{eq:1d_dg_disc} hold for all $v \in V_h$ and for all $\hat v \in \hat V_h$. 
 \subsubsection{Finite element solution of the incompressible Stokes equations}
 
 We consider an H(div)-based finite element approximation of the incompressible Stokes equations~\eqref{eq:stokes} defined over $\Omega_{\rm CSF}$ with the boundary conditions~\eqref{eq:stokes_bcs}. Following\cite{hong2016robust}, we approximate the velocity field $\bm u$ and the pressure field $p$ with the following finite element spaces:
@@ -458,9 +472,9 @@ $\mathcal{F}_{\rm SSAS}$.} Now, define the form
   - %\sum_{F \in \mathcal{F}_{h,c} \cup \mathcal{F}_{\Gamma}}
   \int_{F} \mu \{\nabla \bm v\}\cdot \bm n_F \cdot [\bm u_t]
   + %\sum_{F \in \mathcal{F}_{h,c} \cup \mathcal{F}_{\Gamma}}
-  \frac{\sigma \mu}{h} \int_{F} [\bm u_t ] \cdot [\bm v_t] \right ),   
+\int_{F}   \frac{\sigma \mu}{h_F} [\bm u_t ] \cdot [\bm v_t] \right ),   
 \end{multline}
-where \discuss{$h$ denotes the element size} and on exterior facets \mer{the average and jump operators take the one-sided values}. We set the penalty parameter for the tangential continuity to be $\sigma = 20$. Our finite element discretization of the incompressible Stokes equations is then to find $(\bm u_h, p_h) \in \bm V_h \times Q_h$ such that 
+where on exterior facets \mer{the average and jump operators take the one-sided values}. We set the penalty parameter for the tangential continuity to be $\sigma = 20$. Our finite element discretization of the incompressible Stokes equations is then to find $(\bm u_h, p_h) \in \bm V_h \times Q_h$ such that 
 \begin{subequations}
 \begin{align}
   \mathcal{A}_h(\bm u_h, \bm v_h)

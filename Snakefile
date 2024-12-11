@@ -1,14 +1,20 @@
 import numpy as np
-from scripts.plotting_utils import read_config
 from collections import defaultdict
+import yaml
+
+def read_config(configfile):
+    with open(configfile) as conf_file:
+        config = yaml.load(conf_file, Loader=yaml.UnsafeLoader)
+    return config
 
 num_mumps_threads = 16
 mesh_refine_models = ["modelALowRes", "modelA", "modelAHighRes"]
 time_refine_models = ["modelA", "modelAsmalldt", "modelAlargedt"]
-model_variations = ["modelA" , "modelA-LowD", "modelA-OnlyDispersion",
+model_variations = ["modelA" , "modelA-LowD","modelA-HighD",
+                    "modelA-OnlyDispersion",
                     "modelA-woCT", "modelA-strongVM","modelA-PVS-disp",
-                    #"modelB1-10", "modelB1-100", "modelB1-1000",
-                    #"modelB2-1", "modelB2-10", "modelB2-100", "modelB2-1000",
+                    "modelB1-10", "modelB1-100", "modelB1-1000",
+                    "modelB2-10", "modelB2-100", "modelB2-1000",
                     #"modelC", "modelA-NoResp", "modelA-NoDisp", "modelA-LowD",
                     "modelA-Venes"]
 
@@ -47,7 +53,9 @@ rule all:
         expand("plots/comparisons/{c}/{c}_{type}.png",c=model_comparisons, type=types),
         expand("plots/{modelname}/{modelname}_tracer_vessel_dist.png", modelname=models),
         expand("plots/{modelname}/{modelname}_total_conc.png", modelname=models),
-        expand("plots/{modelname}/{modelname}_overview.png", modelname=models),
+        expand("plots/{modelname}/{modelname}_overview_1-6-12-24.png", modelname=models),
+        expand("plots/{modelname}/{modelname}_overview_1-3-6-9-12-24.png", modelname=models),
+        expand("plots/{modelname}/{modelname}_overview_4-6.png", modelname=models),
         expand("plots/{modelname}/{modelname}.mp4", modelname=models),
         "plots/pvs_flow_prod/sas_flow-arteries/",
         "plots/pvs_flow_peristaltic/vasomotion/",
@@ -80,7 +88,7 @@ rule computeDispersionField:
     conda:"environment.yml"
     input:
         csf_pressure_file="results/csf_flow/{csf_flow_model}/flow.hdf",
-        bg="mesh/standard/standard.xdmf"
+        #bg="mesh/standard/standard.xdmf"
     output:
         csf_dispersion_file="results/csf_flow/{csf_flow_model}/R.xdmf",
         csf_dispersion_plot="results/csf_flow/{csf_flow_model}/R.png",
@@ -179,7 +187,8 @@ rule totalTracer:
         plot="plots/{modelname}/{modelname}_total_conc.png",
         metrics_yaml="results/{modelname}/mean_concentrations.yml",
     shell:
-        "python scripts/mean_concentrations.py {wildcards.modelname}"
+        "python scripts/mean_concentrations.py {wildcards.modelname} && " +
+        "python scripts/plot_mean_concentrations.py {wildcards.modelname}"
 
 rule segmentT1:
     input:
@@ -202,19 +211,29 @@ rule generateSurfaces:
         python scripts/extract_synthseg_surfaces.py {input.config}
         """
 
-rule generateMesh:
+rule generateIdealizedSurfaces:
     conda:"environment.yml"
-    input:
-        [f"mesh/{{meshname}}/surfaces/{n}.ply" for n in ["LV", "parenchyma", "skull", "V34"]],
-        "configfiles/meshconfig/{meshname}.yml"
     output:
-        "mesh/{meshname}/volmesh/mesh.xdmf",
-    resources:
-        ncpuspertask=4
+        [f"mesh/idealized/surfaces/{n}.ply" for n in ["LV", "parenchyma_incl_ventr", "skull", "V34"]]
     shell:
         """
-        python scripts/generate_synthseg_mesh.py configfiles/meshconfig/{wildcards.meshname}.yml
+        python scripts/generate_idealized_surfaces.py
         """
+
+if config.get("meshing", True):
+    rule generateMesh:
+        conda:"mesh_environment.yml"
+        input:
+            [f"mesh/{{meshname}}/surfaces/{n}.ply" for n in ["LV", "parenchyma_incl_ventr", "skull", "V34"]],
+            "configfiles/meshconfig/{meshname}.yml"
+        output:
+            "mesh/{meshname}/volmesh/mesh.xdmf",
+        resources:
+            ncpuspertask=4
+        shell:
+            """
+            python scripts/generate_synthseg_mesh.py configfiles/meshconfig/{wildcards.meshname}.yml
+            """
 
 rule markAndRefineMesh:
     conda:"environment.yml"
@@ -244,10 +263,12 @@ rule computeSASFlow:
     threads: 4
     resources:
         ncpuspertask=64
+    params:
+        mpirun=lambda wildcards: "" if "idealized" in wildcards.csf_flow_model else "mpiexec -n 16"
     shell:
         """
         export OMP_NUM_THREADS={threads} && \
-        mpiexec -n 16 python scripts/sas_flow_Hdiv.py \
+        {params.mpirun} python scripts/sas_flow_Hdiv.py \
         configfiles/{wildcards.csf_flow_model}.yml && \
         python3 scripts/plot_csf_flow.py results/csf_flow/{wildcards.csf_flow_model}
         """
@@ -307,9 +328,28 @@ rule generateT1OverviewPlot:
         art1="results/{m}/{m}_artery.xdmf",
         ven1="results/{m}/{m}_vein.xdmf",    
     output:
-        "plots/{m}/{m}_overview.png"
+        "plots/{m}/{m}_overview_{times}.png"
+    params:
+        times=lambda wildcards: wildcards.times.split("-")
     shell:
-        "python scripts/overview_plot.py {wildcards.m}"
+        "python scripts/overview_plot.py {wildcards.m} {params.times}"
+
+rule detailPlot:
+    conda:"environment.yml"
+    input:
+        sas1="results/{m}/{m}_sas.xdmf",
+        art1="results/{m}/{m}_artery.xdmf",
+        ven1="results/{m}/{m}_vein.xdmf",    
+    output:
+        "plots/{m}/{m}_{tstr}_{artstr}_{cmstr}_details.png",
+    params:
+        times=lambda wildcards: wildcards.tstr.split("-"),
+        artlabels=lambda wildcards: wildcards.artstr.split("-"),
+        cmax=lambda wildcards: wildcards.cmstr.split("-")
+    shell:
+        "python scripts/overview_plot.py {wildcards.m} " +
+        " --times  {params.times} --artlabels {params.artlabels}" +
+        " --cmax {params.cmax}"
 
 
 rule makeVideo:

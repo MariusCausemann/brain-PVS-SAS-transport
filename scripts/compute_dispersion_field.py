@@ -4,8 +4,8 @@ import typer
 from pathlib import Path
 from vtk.util.numpy_support import numpy_to_vtk
 from plot_subdomains import get_camera
-from plotting_utils import set_plotting_defaults
-from generate_synthseg_mesh import CSFID, LVID, V34ID
+from plotting_utils import set_plotting_defaults, read_config
+from subdomain_ids import CSFID, LVID, V34ID
 import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib.ticker import PercentFormatter
@@ -46,10 +46,10 @@ def R_histo(sm, R, filename):
     plt.savefig(filename, bbox_inches='tight')
 
 
-def plot_R(R, filename):
+def plot_R(R, filename, background_mesh_file):
     from vtk_adapter import create_vtk_structures
     import pyvista as pv
-    from generate_synthseg_mesh import PARID
+    from subdomain_ids import PARID
 
     V = R.function_space()
     topology, cell_types, x = create_vtk_structures(V)
@@ -57,7 +57,7 @@ def plot_R(R, filename):
     grid["R"] = R.vector()[:]
 
     Rmin, Rmax = grid["R"].min(), grid["R"].max()
-    bg = pv.read_meshio("mesh/standard/standard.xdmf")
+    bg = pv.read_meshio(background_mesh_file)
     if "respiratory" in str(filename):
         cmap = sns.blend_palette(["black", "white", "#092f8d"],as_cmap=True)
     elif "cardiac" in str(filename):
@@ -167,8 +167,10 @@ def get_dispersion_enhancement(csf_pressure_file:str, outfile:str):
         file.write_checkpoint(R, "R", append=True)
         file.write_checkpoint(R_unsmoothed, "R_unsmoothed", append=True)
 
-    plot_R(R, Path(outfile).with_suffix(".png"))
-    #plot_R(R_unsmoothed, Path(outfile).with_suffix(".png"))
+    config = read_config(f"configfiles/{Path(csf_pressure_file).parent.name}.yml")
+    meshname = config["mesh"].removesuffix("_outer.xdmf")
+    background_mesh_file = f"{meshname}.xdmf"
+    plot_R(R, Path(outfile).with_suffix(".png"), background_mesh_file)
 
 
 if __name__ == "__main__":

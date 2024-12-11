@@ -1,6 +1,6 @@
 import pyvista as pv
 import os
-from generate_synthseg_mesh import PARID, CSFID, LVID,V34ID
+from subdomain_ids import PARID, CSFID, LVID,V34ID
 import seaborn as sns
 import numpy as np
 

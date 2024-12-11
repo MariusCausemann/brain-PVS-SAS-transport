@@ -5,7 +5,6 @@ import kimimaro
 import os
 import networkx as nx
 from cloudvolume import Bbox
-import pytetwild
 
 mm2m = 1e-3
 
@@ -154,10 +153,9 @@ def get_splines(netw, point_ratio=1):
     pvsegments = [netw.extract_cells(segments.array()[:]==si) for si in segids]
     return [seg_to_spline(pvs, point_ratio) for pvs in pvsegments]
 
-def get_tubes(netw, solidify=False, **kwargs):
+def get_tubes(netw):
     tubes = as_tubes(get_splines(netw)).combine()
-    if not solidify: return tubes
-    return pytetwild.tetrahedralize_pv(tubes.extract_surface(), **kwargs)
+    return tubes
 
 
 def smooth_radius(netw):
