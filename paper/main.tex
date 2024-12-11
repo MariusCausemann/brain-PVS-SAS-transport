@@ -251,58 +251,61 @@ embedded networks of topologically one-dimensional (1D) curves
 (\Cref{fig:results1}A--C). We consider a solute concentration field,
 varying in space and time, in the 3D domains and in the PVS networks,
 and assume that the solute can cross between these compartments
-through semi-permeable membranes. As the drivers and mechanisms of
+through semi-permeable membranes. As the drivers and modes of
 intracranial transport are under substantial
 debate\cite{smith2019going, proulx2021cerebrospinal,
   bohr2022glymphatic, hladky2022glymphatic, betsholtz2024advances},
-our first target is to establish a baseline model integrating and
-accounting for primary effects over a timescale of between several
-minutes and a few days. To this end, we assume that the solute will
-(i) diffuse within all compartments, with diffusivity depending on the
-effective properties of the relevant medium\cite{sykova2008diffusion};
-(ii) experience significant dispersive effects due to the pulsatile
-flow of CSF induced by the cardiac and respiratory
-cycles\cite{vinje2019respiratory, keith2019dispersion,
-  troyetsky2021dispersion}; (iii) be convected by a (small) net flow
-of CSF resulting from CSF production in the choroid plexues with CSF
-efflux across the upper convexity\cite{hornkjol2022csf} and the
-peristaltic pumping effect of cardiac arterial
-pulsations\cite{mestre2018flow, gjerde2023directional}
+our first target is to establish a baseline model accounting for a
+reasonably conservative set of mechanisms and their integrated effect
+over a timescale of several minutes to a few days. To this end, we
+assume that the solute will (i) diffuse within all compartments, with
+diffusivity depending on the effective properties of the relevant
+medium\cite{sykova2008diffusion}; (ii) experience significant
+dispersive effects due to the pulsatile flow of CSF induced by the
+cardiac and respiratory cycles\cite{vinje2019respiratory,
+  keith2019dispersion, troyetsky2021dispersion}; (iii) be convected by
+a (small) net flow of CSF resulting from CSF production in the choroid
+plexues with CSF efflux across the upper
+convexity\cite{hornkjol2022csf} and from the peristaltic pumping
+effect of pulse wave pulsations in surface periarterial
+spaces~\cite{mestre2018flow, gjerde2023directional}
 (\Cref{fig:results1}D). Mathematically, this model is represented by a
 mixed-dimensional system of coupled time-dependent partial
 differential equations\cite{masri2024modelling}, which we solve
 numerically with high accuracy using a mass-conserving finite element
 scheme and the FEniCS finite element software\cite{alnaes2015fenics,
-  kuchta2020assembly} (see Methods). The computational model and all
-associated software is openly available~\cite{ZENODO}.
+  kuchta2020assembly} (see Methods). The computational framework and
+associated software are all openly available~\cite{ZENODO}.
 
 %% We then simulated the intracranial distribution and evolution of a
 %% $0.5$ mmol intrathecal injection of Gadobutrol after the appearance of
 %% the solute at the craniocervical junction
 %% (\Cref{fig:results1}D).
 
-We then predict the spreading of $0.5$ mmol intrathecally injected
-Gadobutrol after the appearance of the solute at the craniocervical
-junction (\Cref{fig:results1}E--F). One hour post-injection, tracer
-moves upwards in the SAS frontally of the brainstem, and quickly
-reaches supratentorial regions (\Cref{fig:results1}E--G). Here, it
-spreads both posteriorly through quadrigeminal cistern and
-longitudinal fissure, and anteriorly through the outer SAS, reaching
-the top of the cerebral cortex after around 12 h. After 24h, the
-tracer covers most of the brain surface (with exception of some
-posterior regions) and has penetrated several centimeters into the
-parenchymal tissue. This pattern of transport is reflected in the mean
-tracer concentrations in each compartment, where the CSF space reaches
-its peak of $1.4\,$mmol/l after 2 hours, followed by the the arterial
-PVS concentration peak ($2.9\,$mmol/l after 4 hours)
+Simulating a glymphatic MRI protocol~\cite{ringstad2017glymphatic,
+  ringstad2018brain, eide2024functional}, we then predict the
+spreading of $0.5$ mmol intrathecally injected Gadobutrol after its
+appearance at the craniocervical junction
+(\Cref{fig:results1}E--G). One hour post-injection, the in-sillico
+tracer moves upwards in the SAS frontally of the brainstem, and
+quickly reaches the supratentorial regions. Here, it spreads both
+posteriorly through the quadrigeminal cistern and the longitudinal
+fissure, and anteriorly through the outer SAS, reaching the top of the
+cerebral cortex after around 12 hours. After 24 hours, the tracer
+covers most of the brain surface (with exception of some posterior
+regions) and has penetrated several centimeters into the parenchymal
+tissue. This pattern is reflected in the mean tracer concentrations in
+each compartment, where the CSF space reaches its peak of
+$1.4\,$mmol/l after 2 hours, followed by the arterial PVS
+concentration peak ($2.9\,$mmol/l after 4 hours)
 (\Cref{fig:results1}H). While the mean concentrations in these
-compartments fall quickly soon after their peaks, the parenchymal
-tissue slowly enriches with tracer over the first 24 hours, with a
-final value of $0.3\,$ mmol/l. Overall, about 40\,\% of the total
-amount of tracer remains in the cranium 24\,h post-injection, with the
-largest share in the CSF (53\,\%), followed by the parenchyma
-(35\,\%), the venous PVS (8\,\%) and the arterial PVS
-(5\,\%). (\Cref{fig:results1}I).
+compartments fall quickly soon after peaking, the parenchymal tissue
+slowly enriches with tracer over the first 24 hours, with a final
+value of $0.3$ mmol/l. Overall, about 40\% of the total amount of
+tracer remains in the cranium 24 hours post-injection, with the largest
+share in the CSF (53\%), followed by the parenchyma (35\%), the
+venous PVS (8\%) and the arterial PVS
+(5\%) (\Cref{fig:results1}I).
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{figures/figure1.png}
@@ -500,7 +503,10 @@ penetrating vessel.
   work. We here ignore PVS-blood exchange, and thus only model the
   perivascular concentration at the network level (in addition to the
   SAS/brain concentration in the surroundings).
-
+\item
+  Not all of the injected tracer get to the craniocerival
+  junction. What is the impact of this. Linear effect, just scale the
+  our predicted values e.g.~in \Cref{fig:results1}.
 \end{itemize}
 
 \subsection*{Outlook}
