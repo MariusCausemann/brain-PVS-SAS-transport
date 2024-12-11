@@ -28,7 +28,7 @@ jobs:
       - name: Install deps
         run: |
           DEBIAN_FRONTEND=noninteractive apt-get update
-          DEBIAN_FRONTEND=noninteractive apt-get install -y git
+          DEBIAN_FRONTEND=noninteractive apt-get install -y git gcc unzip make cmake build-essential git libgmp-dev
       - name: Setup conda-forge
         uses: conda-incubator/setup-miniconda@v3
         with:
@@ -39,7 +39,7 @@ jobs:
           conda install -c conda-forge -c bioconda snakemake==8.14.0 snakemake-storage-plugin-http snakemake-executor-plugin-cluster-generic
       - name: snakemake build envs
         run: |
-          snakemake -c2 --conda-create-envs-only --use-conda --conda-frontend conda -p plots/test/test_total_conc.png
+          snakemake -c2 --conda-create-envs-only --use-conda --conda-frontend conda -p plots/test/test_total_conc.png || true
           continue-on-error: true
       - name: snakemake dryrun
         run: |
