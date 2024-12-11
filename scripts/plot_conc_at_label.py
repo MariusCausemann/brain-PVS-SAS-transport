@@ -1,12 +1,7 @@
-import yaml
 import matplotlib.pyplot as plt
 from plotting_utils import set_plotting_defaults, read_config
 import typer
-from typing import List
 import os
-from label_arteries import pointlabels
-import pandas as pd
-import seaborn as sns
 import numpy as np
 
 def plot_conc_at_label(model:str):
