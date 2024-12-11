@@ -1,3 +1,4 @@
+![Actions Status](https://github.com/mariuscausemann/brain-PVS-SAS-transport/actions/workflows/test_conda.yml/badge.svg)
 
 #### Installation and dependencies
 

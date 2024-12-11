@@ -135,13 +135,13 @@ this context~\cite{rennels1985evidence, zhang1990interrelationships,
   foley2012realtime, hannocks2018molecular}. Recently, Eide and
 Ringstad~\cite{eide2024functional} and Yamamoto et
 al~\cite{yamamoto2024perivascular} independently demonstrated that
-PVSs define preferential pathways for molecular transport also in
+PVSs define preferential pathways for molecular transport in
 humans, with delayed periarterial enrichment in dementia
-subtypes~\cite{eide2024functional}. \mar{mention that most data stems from rodent, or remove 'also'?} Perivascular flow of CSF clearly
+subtypes~\cite{eide2024functional}. Perivascular flow of CSF clearly
 contributes to this transport, and is inherently associated with
 vascular pulsations~\cite{hadaczek2006perivascular, iliff2013cerebral,
   bedussi2018paravascular, mestre2018flow, boster2023artificial,
-  hirschler2024region}. Fluid mechanics point at intracranial pressure
+  hirschler2024region}. Fluid mechanical considerations point at intracranial pressure
 differences and shorter wavelength vascular wall pulsations as drivers
 of directional net flow and convection in the
 PVS~\cite{bilston2003arterial, rey2018pulsatile,
@@ -174,7 +174,7 @@ prerequisite for effective perivascular transport.
 % What are our research questions and how do we answer them
 In this study, by leveraging geometric model reduction and
 mixed-dimensional modelling, high performance computing, and
-structural magnetic resonance imaging~\cite{masri2024modelling,
+structural magnetic resonance imaging (MRI)~\cite{masri2024modelling,
   hodneland2019new}, we introduce an integrated computational model of
 intracranial molecular enrichment and clearance. Focusing on the
 interplay between perivascular pathways, pulsatility and CSF flow
@@ -217,46 +217,76 @@ Main findings and outlook \textcolor{lightgray}{\lipsum[1]} Outlook:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Results}
-\mer{Update: ~2800 words and 7 subsections - around 300-450 words each?}
-\begin{enumerate}
-\item
-  ``A digital twin'' for molecular enrichment and clearance in human intracranial spaces
-\item
-  CSF flow, the role of production versus no/cardiac/respiratory
-  dispersive effects on tracer trajectories, flow bifurcation. With and without tentorium cerebellum.
-\item
-  ``The role'' of PVS flow speed
-\item
-  ``The role'' of PVS sheaths and permeability - does functional separation entail structural separation?
-\item
-  ``The role'' of PVS size (motivated by pathologies)
-\item
-  Clearance from the CSF spaces - with and without low pressure veins, but keeping the intrathecal source of solute. 
-\item
-  Clearance from the parenchyma: $c_0 = 1.0$. Different substances?
-\end{enumerate}
+%% \mer{Update: ~2800 words and 7 subsections - around 300-450 words each?}
+%% \begin{enumerate}
+%% \item
+%%   ``A digital twin'' for molecular enrichment and clearance in human intracranial spaces
+%% \item
+%%   CSF flow, the role of production versus no/cardiac/respiratory
+%%   dispersive effects on tracer trajectories, flow bifurcation. With and without tentorium cerebellum.
+%% \item
+%%   ``The role'' of PVS flow speed
+%% \item
+%%   ``The role'' of PVS sheaths and permeability - does functional separation entail structural separation?
+%% \item
+%%   ``The role'' of PVS size (motivated by pathologies)
+%% \item
+%%   Clearance from the CSF spaces - with and without low pressure veins, but keeping the intrathecal source of solute. 
+%% \item
+%%   Clearance from the parenchyma: $c_0 = 1.0$. Different substances?
+%% \end{enumerate}
+
+
+
+\subsection*{In-silico predictions of molecular enrichment and clearance after injection}
+
+We used previously published multi-modal MRI
+data~\cite{hodneland2019new, FIXME} to construct a mixed-dimensional
+(3D-1D) computational model of the human intracranial compartments
+including the 3D CSF spaces (ventricular system, cisterns, SAS) and
+the brain parenchyma, and in addition a topologically 1D network
+representation of PVSs surrounding major arteries and veins embedded
+in the SAS (\Cref{fig:results1}A--C).
+
+With the aim of integrate current knowledge from clinical,
+experimental and previous in-silico studies to represent the four
+major physical and physiological factors influencing the distribution
+and evolution of solute within these spaces: (i) diffusion of the
+solute in the CSF spaces and parenchyma; (ii) the dispersive effects
+of pulsatile CSF flow in the SAS induced by the cardiac and
+respiratory effects, (iii) net CSF flow induced by pressure
+differences in the bulk spaces and the PVSs induced by CSF production
+in the choroid plexues with CSF efflux across the outer cavity, and
+net PVS flow induced by peristaltic pumping. 
+
+We numerically simulated the distribution and evolution of a solute
+concentration representative of Gadobutrol assuming that the solute
+appears in the CSF space at the craniocervical junction. Assumed no
+transport accross the BBB. 
+
+Finite elements, \# degrees of freedom.
+
+Computational model based on the FEniCS finite element suite and is
+openly available~\cite{ZENODO}.
+
+What we observe. 
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{figures/figure1.png}
      \caption{a) Illustration of the different intracranial domains
        considered with labels;}
-     \label{fig:intracranial_domains}
+     \label{fig:results1}
 \end{figure}
 
-
-\subsection*{High-fidelity in-silico predictions of intracranial solute transport and exchange}
-
-\begin{itemize}
-\item
-  Present mathematical and computational model and geometries (\Cref{tab:scenarios}). 
-\item
-  Highlight computational model availability, open source code.
-\item
-  Provides an interactive in-silico platform for studying intracranial solute transport -- distribute such that anyone can run (possibly try to recruit MinRK if advantageous).
-\item
-  \mer{MER: Remember to report on how much concentration enters into the brain?}
-\end{itemize}
+%% \begin{itemize}
+%% \item
+%%   Present mathematical and computational model and geometries (\Cref{tab:scenarios}). 
+%% \item
+%%   Highlight computational model availability, open source code.
+%% \item
+%%   Provides an interactive in-silico platform for studying intracranial solute transport -- distribute such that anyone can run (possibly try to recruit MinRK if advantageous).
+%% \end{itemize}
 
 \subsection*{CSF flow and dispersion shifts enrichment patterns}
 

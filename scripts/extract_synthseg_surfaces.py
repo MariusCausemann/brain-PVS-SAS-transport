@@ -8,7 +8,6 @@ import scipy.ndimage as ndi
 from scipy.ndimage import distance_transform_edt
 from plotting_utils import read_config
 from pathlib import Path
-from overview_plot import clip_closed_surface
 import typer
 
 SYNTHSEG_V3 = 14
@@ -222,24 +221,3 @@ def extract_all_surfaces(configfile):
 
 if __name__ == "__main__":
     typer.run(extract_all_surfaces)
-
-
-"""
-os.makedirs("mesh/T1/box_surfaces/", exist_ok=True)
-c = skull_surf.center_of_mass()*mm2m
-r = 0.1
-z = np.array([0,0,1])
-skull = pv.Box(skull_surf.bounds).scale(mm2m)
-par = pv.Sphere(r*0.6, center=c)
-LV = pv.Sphere(r*0.2, center=c)
-V34 = pv.Cylinder(c -0.4*r*z, direction=z, height=r*0.42, radius=0.06*r)
-
-for s,n in zip([V34, LV, par, skull],
-                ["V34", "LV", "parenchyma_incl_ventr", "skull"]):
-    pv.save_meshio(f"mesh/T1/box_surfaces/{n}.ply",s)
-
-l = pv.lines_from_points([c -r*z, c -0.5*r*z, c])
-l["radius"] = 0.01*np.ones(l.n_points)
-l["root"] = [2, 0, 1]
-l.save("mesh/networks/simple_line.vtk")
-"""

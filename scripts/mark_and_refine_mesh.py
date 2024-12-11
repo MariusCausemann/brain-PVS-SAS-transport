@@ -1,8 +1,5 @@
 import pyvista as pv
 import numpy as np
-import meshio
-import json
-import os
 import dolfin as df
 import networkx as nx
 import xii
@@ -127,7 +124,7 @@ def mark_and_refine(configfile : str):
     meshname = Path(configfile).stem
 
     # compute distance to interface for later refinement
-    parenchyma_surf = pv.read("mesh/T1/surfaces/parenchyma_incl_ventr.ply")
+    parenchyma_surf = pv.read(f"mesh/{meshname}/surfaces/parenchyma_incl_ventr.ply")
 
     # read in again and use fenics to exclude problematic parts 
     # of the CSF space from the Stokes computation (disconnected domains)
@@ -139,61 +136,47 @@ def mark_and_refine(configfile : str):
         label = df.MeshFunction('size_t', sas, gdim, 0)
         f.read(label, 'label')
 
-    # refine V3 and V4
-    sas, label = refine_region(sas, label, labelids=[V34ID])
+    if config.get("refine", True):
+        # refine V3 and V4
+        sas, label = refine_region(sas, label, labelids=[V34ID])
 
-    # refine AQ
-    #AQ_coords = (0.0837, 0.08, 0.065) 
-    #sas, label = refine_sphere(sas, AQ_coords, 0.007, label)
+        # refine AQ
+        #AQ_coords = (0.0837, 0.08, 0.065) 
+        #sas, label = refine_sphere(sas, AQ_coords, 0.007, label)
 
-    # refine Par boundary
-    print("======================")
-    print("refining pia boundary...")
-    bottom_refine_coords = (0.0847, 0.11, 0.001)
-    for i in range(2):
+        # refine Par boundary
         print("======================")
-        crit = abs(get_surface_dist(sas, parenchyma_surf)) < 0.003
-        print(sas.num_cells())
-        sas, label = refine_sphere(sas, bottom_refine_coords, 0.08, label, 
-                                    criterion=crit, min_size=config["edge_length_r"] / 3)
-        print(sas.num_cells())
+        print("refining pia boundary...")
+        bottom_refine_coords = (0.0847, 0.11, 0.001)
+        for i in range(2):
+            print("======================")
+            crit = abs(get_surface_dist(sas, parenchyma_surf)) < 0.003
+            print(sas.num_cells())
+            sas, label = refine_sphere(sas, bottom_refine_coords, 0.08, label, 
+                                        criterion=crit, min_size=config["edge_length_r"] / 3)
+            print(sas.num_cells())
 
-    # refine inlet area
-    print("======================")
-    print("refining inlet area...")
-    inlet_coords = (0.0847, 0.0833, 0.001)
-    for i in range(2):
+        # refine inlet area
         print("======================")
-        print(sas.num_cells())
-        crit = abs(get_surface_dist(sas, parenchyma_surf)) < 0.002
-        sas, label = refine_sphere(sas, inlet_coords, 0.01, label, criterion=crit,
-                                    min_size=config["edge_length_r"] / 8)
-        print(sas.num_cells())
+        print("refining inlet area...")
+        inlet_coords = (0.0847, 0.0833, 0.001)
+        for i in range(2):
+            print("======================")
+            print(sas.num_cells())
+            crit = abs(get_surface_dist(sas, parenchyma_surf)) < 0.002
+            sas, label = refine_sphere(sas, inlet_coords, 0.01, label, criterion=crit,
+                                        min_size=config["edge_length_r"] / 8)
+            print(sas.num_cells())
 
-    # refine AQ area
-    print("======================")
-    print("refining AQ area...")
-    aq_coords = (0.0815, 0.082, 0.0665)
-    for i in range(1):
+        # refine AQ area
         print("======================")
-        print(sas.num_cells())
-        sas, label = refine_sphere(sas, aq_coords, 0.005, label)
-        print(sas.num_cells())
-
-    # refine interpeduncular
-    #print("======================")
-    #print("refining interpeduncular area...")
-    #interpeduncular_coords = (0.084, 0.11, 0.052)
-    #sas, label = refine_sphere(sas, interpeduncular_coords, 0.03, label,
-    #                            min_size=config["epsilon"] * 3)
-    #for i in range(2):
-    #    print("======================")
-    #    dist = get_surface_dist(sas, parenchyma_surf)
-    #    crit = (dist > -0.002) & (dist < 0)
-    #    print(sas.num_cells())
-    #    sas, label = refine_sphere(sas, interpeduncular_coords, 0.03, label, 
-    #                                criterion=crit, min_size=config["epsilon"]*3)
-    #    print(sas.num_cells())
+        print("refining AQ area...")
+        aq_coords = (0.0815, 0.082, 0.0665)
+        for i in range(1):
+            print("======================")
+            print(sas.num_cells())
+            sas, label = refine_sphere(sas, aq_coords, 0.005, label)
+            print(sas.num_cells())
 
     # remove unconnected components of the CSF space
     sas_outer = xii.EmbeddedMesh(label, [CSFID,LVID,V34ID])

@@ -6,7 +6,6 @@ dependencies:
   - fenics-dolfin=2019.2.0.dev
   - python=3.9    
   - numpy
-  - numpy-indexed
   - ipython
   - matplotlib
   - pyvista
@@ -22,14 +21,13 @@ dependencies:
   - libopenblas=*=*openmp*
   - mumps-mpi>=5.7.3
   - mpich
-  - gcc<13 # fTetWild install via pip requires gcc<13
   - k3d
+  - cmap
+  - joypy
+  - gcc<13 
   - pip:
-    - pyacvd
     - cmocean
-    - dufte
     - kimimaro
     - git+https://github.com/MiroK/ulfy.git@ufl_legacy
     - git+https://github.com/MiroK/fenics_ii.git@ufl_legacy
     - git+https://github.com/blocknics/cbc.block.git@mirok/ufl_legacy
-    - git+https://github.com/MariusCausemann/wildmeshing-python.git

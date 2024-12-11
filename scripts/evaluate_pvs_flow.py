@@ -5,7 +5,7 @@ import numpy as np
 import os
 from pvs_flow import pvs_flow_system
 from test_map_on_global_coords_shift import map_kdtree, map_dg_on_global
-from generate_synthseg_mesh import CSFID, V34ID, PARID, LVID, CSFNOFLOWID
+from subdomain_ids import CSFID, V34ID, PARID, LVID, CSFNOFLOWID
 import typer
 from plotting_utils import read_config, set_plotting_defaults
 import seaborn as sns

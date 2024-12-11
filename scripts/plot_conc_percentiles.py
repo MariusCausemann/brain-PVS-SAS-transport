@@ -8,8 +8,12 @@ from cmap import Colormap
 import itertools
 import seaborn as sns
 import pyvista as pv
+<<<<<<< HEAD
 from label_arteries import pointlabels
 from generate_synthseg_mesh import CSFID, PARID
+=======
+from subdomain_ids import CSFID, PARID
+>>>>>>> 06c4f4f903e1d3d48838274c2369d8e4d69571e9
 
 flip = lambda items, ncol: itertools.chain(*[items[i::ncol] for i in range(ncol)])
 

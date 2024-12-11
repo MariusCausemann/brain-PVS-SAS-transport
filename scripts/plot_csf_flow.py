@@ -9,7 +9,7 @@ import matplotlib
 import k3d.colormaps.paraview_color_maps as pcm
 from compute_dispersion_field import alpha_cardiac, alpha_respiratory
 from plotting_utils import set_plotting_defaults, minmax
-from generate_synthseg_mesh import CSFID, LVID, V34ID
+from subdomain_ids import CSFID, LVID, V34ID
 import matplotlib.pyplot as plt
 from matplotlib.ticker import PercentFormatter
 import seaborn as sns

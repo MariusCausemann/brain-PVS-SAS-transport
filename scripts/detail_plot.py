@@ -10,7 +10,7 @@ import cmocean
 from label_arteries import pointlabels
 from test_map_on_global_coords_shift import map_kdtree
 import pyvista as pv
-from generate_synthseg_mesh import PARID
+from subdomain_ids import PARID
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import argparse
 
