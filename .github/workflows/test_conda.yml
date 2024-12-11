@@ -28,7 +28,7 @@ jobs:
       - name: Install deps
         run: |
           DEBIAN_FRONTEND=noninteractive apt-get update
-          DEBIAN_FRONTEND=noninteractive apt-get install -y git gcc unzip make cmake build-essential git libgmp-dev
+          DEBIAN_FRONTEND=noninteractive apt-get install -y unzip make build-essential git libgmp-dev
       - name: Setup conda-forge
         uses: conda-incubator/setup-miniconda@v3
         with:
