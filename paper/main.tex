@@ -265,20 +265,44 @@ flow of CSF induced by the cardiac and respiratory
 cycles\cite{vinje2019respiratory, keith2019dispersion,
   troyetsky2021dispersion}; (iii) be convected by a (small) net flow
 of CSF resulting from CSF production in the choroid plexues with CSF
-efflux across the outer cavity\cite{hornkjol2022csf} and the
+efflux across the upper convexity\cite{hornkjol2022csf} and the
 peristaltic pumping effect of cardiac arterial
-pulsations\cite{mestre2018flow,
-  gjerde2023directional}. Mathematically, this model is represented by
-a mixed-dimensional system of coupled time-dependent partial
+pulsations\cite{mestre2018flow, gjerde2023directional}
+(\Cref{fig:results1}D). Mathematically, this model is represented by a
+mixed-dimensional system of coupled time-dependent partial
 differential equations\cite{masri2024modelling}, which we solve
 numerically with high accuracy using a mass-conserving finite element
 scheme and the FEniCS finite element software\cite{alnaes2015fenics,
   kuchta2020assembly} (see Methods). The computational model and all
 associated software is openly available~\cite{ZENODO}.
 
-We numerically simulated the distribution and evolution of a solute
-concentration representative of Gadobutrol assuming that the solute
-appears in the CSF space at the craniocervical junction. What we observe. 
+%% We then simulated the intracranial distribution and evolution of a
+%% $0.5$ mmol intrathecal injection of Gadobutrol after the appearance of
+%% the solute at the craniocervical junction
+%% (\Cref{fig:results1}D).
+
+We then predict the spreading of $0.5$ mmol intrathecally injected
+Gadobutrol after the appearance of the solute at the craniocervical
+junction (\Cref{fig:results1}E--F). One hour post-injection, tracer
+moves upwards in the SAS frontally of the brainstem, and quickly
+reaches supratentorial regions (\Cref{fig:results1}E--G). Here, it
+spreads both posteriorly through quadrigeminal cistern and
+longitudinal fissure, and anteriorly through the outer SAS, reaching
+the top of the cerebral cortex after around 12 h. After 24h, the
+tracer covers most of the brain surface (with exception of some
+posterior regions) and has penetrated several centimeters into the
+parenchymal tissue. This pattern of transport is reflected in the mean
+tracer concentrations in each compartment, where the CSF space reaches
+its peak of $1.4\,$mmol/l after 2 hours, followed by the the arterial
+PVS concentration peak ($2.9\,$mmol/l after 4 hours)
+(\Cref{fig:results1}H). While the mean concentrations in these
+compartments fall quickly soon after their peaks, the parenchymal
+tissue slowly enriches with tracer over the first 24 hours, with a
+final value of $0.3\,$ mmol/l. Overall, about 40\,\% of the total
+amount of tracer remains in the cranium 24\,h post-injection, with the
+largest share in the CSF (53\,\%), followed by the parenchyma
+(35\,\%), the venous PVS (8\,\%) and the arterial PVS
+(5\,\%). (\Cref{fig:results1}I).
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{figures/figure1.png}
@@ -304,9 +328,10 @@ Employing the same methodology, we estimate the respiratory contribution to disp
 
 
 % tracer trajectory of the standard model
-Next, we use the computed advective velocity field and dispersion enhancement factors to predict the spreading of $0.5\,$mmol intrathecally injected Gadobutrol in CSF-filled spaces, the parenchymal tissue and PVSs around arteries and veines. We assume pressure-driven flow in arterial and venous PVSs, and cardiac peristaltic flow in the arterial network (\Cref{sec:pvs_flow_results}). One hour post-injection, tracer moves upwards in the SAS frontally of the brainstem,  and quickly reaches supratentorial regions (\Cref{fig:csf}N). Here, it spreads both posteriorly through quadrigeminal cistern and longitudinal fissure, and anteriorly through the outer SAS, reaching the top of the cerebral cortex after around 12 h. After 24h, the tracer covers most of the brains surface (with exception of some posterior regions) and has penetrated several centimeters into the parenchymal tissue.
+\mer{MER: I moved this to Results 1 and condensed it a little bit}
+\mar{Next, we use the computed advective velocity field and dispersion enhancement factors to predict the spreading of $0.5\,$mmol intrathecally injected Gadobutrol in CSF-filled spaces, the parenchymal tissue and PVSs around arteries and veines. We assume pressure-driven flow in arterial and venous PVSs, and cardiac peristaltic flow in the arterial network (\Cref{sec:pvs_flow_results}). One hour post-injection, tracer moves upwards in the SAS frontally of the brainstem,  and quickly reaches supratentorial regions (\Cref{fig:csf}N). Here, it spreads both posteriorly through quadrigeminal cistern and longitudinal fissure, and anteriorly through the outer SAS, reaching the top of the cerebral cortex after around 12 h. After 24h, the tracer covers most of the brains surface (with exception of some posterior regions) and has penetrated several centimeters into the parenchymal tissue.
 This pattern of transport is reflected in the mean tracer concentrations in each compartment, where the CSF space reaches its peak of $1.4\,$mmol/l after 2 hours, followed by the the arterial PVS concentration peak ($2.9\,$mmol/l after 4 hours) (\Cref{fig:csf}P).  While the mean concentrations in these compartments fall quickly soon after their peaks, the parenchymal tissue slowly enriches with tracer over the first 24 hours, with a final value of $0.3\,$ mmol/l.
-Overall, about 40\,\% of the total amount of tracer remains in the cranium 24\,h post-injection, with the largest share in the CSF (53\,\%), followed by the parenchyma (35\,\%), the venous PVS (8\,\%) and the arterial PVS (5\,\%). (\cref{fig:csf}O).
+Overall, about 40\,\% of the total amount of tracer remains in the cranium 24\,h post-injection, with the largest share in the CSF (53\,\%), followed by the parenchyma (35\,\%), the venous PVS (8\,\%) and the arterial PVS (5\,\%). (\cref{fig:csf}O).}
 
 % tracer trajectory of model variations
 
