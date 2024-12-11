@@ -47,10 +47,18 @@ def compute_pvs_flow(pvs_flow_file):
     os.makedirs(plot_dir, exist_ok=True)
     segments, segids ,_ = color_branches(mesh)
     dxs = Measure("dx", mesh, subdomain_data=segments)
-
-    seglengths = np.array([assemble(1*dxs(si)) for si in segids])
+    segs = segments.array().copy()
+    seglengths, umag = [], []
+    for si in segids:
+        segments.array()[:] = np.where(segs==si, 1, 0)
+        length = assemble(1*dxs(1))
+        mag = assemble(m2mum*uh_mag*dxs(1))/ length
+        umag.append(mag)
+        seglengths.append(length)
+    segments.array()[:] = segs
+    seglengths = np.array(seglengths)
+    umag = np.array(umag)
     assert (seglengths > 0).all()
-    umag = np.array([assemble(m2mum*uh_mag*dxs(si))/ l for si,l in zip(segids, seglengths)])
     umagabs = abs(umag)
 
 
@@ -95,12 +103,14 @@ def compute_pvs_flow(pvs_flow_file):
 
     # plot pressure, velocity and radius at main arteries
     pressures, velocities, radii, lengths = [], [], [], []
+    segs = segments.array().copy()
     for si in artsegids:
-        length = assemble(1*dxs(si))
+        segments.array()[:] = np.where(segs==si, 1, 0)
+        length = assemble(1*dxs(1))
         assert length > 0
-        pressures.append(assemble(Pa2mPa*p*dxs(si)) / length)
-        velocities.append(assemble(m2mum*uh_mag*dxs(si))/ length)
-        radii.append(assemble(m2mm*artery_radii*dxs(si))/ length)
+        pressures.append(assemble(Pa2mPa*p*dxs(1)) / length)
+        velocities.append(assemble(m2mum*uh_mag*dxs(1))/ length)
+        radii.append(assemble(m2mm*artery_radii*dxs(1))/ length)
         lengths.append(length*m2mm)
     df = pd.DataFrame({"p":pressures, "u":velocities, "loc":artlabels, "L":lengths,
                         "R":radii})
