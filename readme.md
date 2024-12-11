@@ -19,7 +19,11 @@ To reproduce all results on N cores, run:
 
 `snakemake --conda-frontend conda --use-conda --cores N`
 
-Note that this requires significant computational resources (around ~ 500GB mem, 64 cores minimum). Snakemake supports job submission systems like `slurm`. Adjust our profile in `ex3/config.yaml` to your needs and start with:
+Note that this requires significant computational resources (around ~ 500GB RAM, 64 cores minimum). Snakemake supports job submission systems like `slurm`. Adjust our profile in `ex3/config.yaml` to your needs, install the generic executor plugin with
+
+`conda install -c conda-forge -c bioconda snakemake-executor-plugin-cluster-generic`
+
+and start with:
 
 `snakemake --profile ex3`
 
