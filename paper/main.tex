@@ -175,10 +175,10 @@ prerequisite for effective perivascular transport.
  
 % What are our research questions and how do we answer them
 In this study, by leveraging geometric model reduction and
-mixed-dimensional modelling, high performance computing, and
-structural magnetic resonance imaging (MRI)~\cite{masri2024modelling,
-  hodneland2019new}, we introduce an integrated computational model of
-intracranial molecular enrichment and clearance. Focusing on the
+mixed-dimensional modelling~\cite{masri2024modelling}, structural
+magnetic resonance (MR) images~\cite{hodneland2019new}, and high
+performance computing, we introduce an integrated computational model
+of intracranial molecular enrichment and clearance. Focusing on the
 interplay between perivascular pathways, pulsatility and CSF flow
 dynamics, the model predicts the temporal evolution and spatial
 distribution of a solute concentration with a detailed geometric
@@ -242,24 +242,64 @@ Main findings and outlook \textcolor{lightgray}{\lipsum[1]} Outlook:
 
 \subsection*{In-silico predictions of molecular enrichment and clearance after injection}
 
-We used previously published multi-modal MRI
-data~\cite{hodneland2019new, FIXME} to construct a mixed-dimensional
-(3D-1D) computational model of the human intracranial compartments
-including the 3D CSF spaces (ventricular system, cisterns, SAS) and
-the brain parenchyma, and in addition a topologically 1D network
-representation of PVSs surrounding major arteries and veins embedded
-in the SAS (\Cref{fig:results1}A--C).
+Using previously published multi-modal MRI
+data~\cite{hodneland2019new, deistung2009tof,
+  schweser2012quantitative, reichenbach2012future,
+  deistung2017overview}, we construct a multiscale computational
+representation of human intracranial compartments consisting of the
+CSF spaces and brain parenchyma as 3D domains and with the PVSs
+surrounding major surface arteries and veins as networks of
+topologically 1D curves embedded within the SAS
+(\Cref{fig:results1}A--C, Methods). In order to investigate the
+
+Within these spaces, we study a solute concentration that can
+distribute within
+
+~\cite{masri2024modelling}
+
+We model a solute concentration within the 3D domains and an averaged
+
+
+
+Solute concentration (Gadubutrol) in the 3D volumes and concent
+
+
+Within these spaces, a solute concentration will experience (i)
+hindered diffusion depending on the diffusivity of the solute and the
+effective properties of the medium\cite{sykova2008diffusion}; (ii)
+dispersive effects induced by pulsatile flow of CSF; (iii) 
+
+Within these spaces, a solute concentration
+will experience (i) hindered diffusion depending on the diffusivity of
+the solute and the effective properties of the medium; (ii) the
+dispersive effects induced by pulsatile flow in the CSF spaces 
+
+; (ii) the dispersive effects of pulsatile CSF flow in the SAS induced
+by the cardiac and respiratory effects, (iii) net CSF flow induced by
+pressure differences in the bulk spaces and the PVSs induced by CSF
+production in the choroid plexues with CSF efflux across the outer
+cavity, and net PVS flow induced by peristaltic pumping.
+
+The distribution and evolution of a solute concentration within these
+spaces is
+
+Solute transport within these spaces is  
+
+hypothesized to be modulated by at least four major physical and
+physiological factors:
+
+Integrating observations from clinical, experimental and computationl
+studies
+
+hypothesized to be modulated by at least four major physical and
+physiological factors:
+
+and partial differential equations~\cite{masri2024modelling}
 
 With the aim of integrate current knowledge from clinical,
 experimental and previous in-silico studies to represent the four
 major physical and physiological factors influencing the distribution
-and evolution of solute within these spaces: (i) diffusion of the
-solute in the CSF spaces and parenchyma; (ii) the dispersive effects
-of pulsatile CSF flow in the SAS induced by the cardiac and
-respiratory effects, (iii) net CSF flow induced by pressure
-differences in the bulk spaces and the PVSs induced by CSF production
-in the choroid plexues with CSF efflux across the outer cavity, and
-net PVS flow induced by peristaltic pumping. 
+and evolution of solute within these spaces:
 
 We numerically simulated the distribution and evolution of a solute
 concentration representative of Gadobutrol assuming that the solute
@@ -272,6 +312,37 @@ Computational model based on the FEniCS finite element suite and is
 openly available~\cite{ZENODO}.
 
 What we observe. 
+
+%% We used previously published multi-modal MRI
+%% data~\cite{hodneland2019new, FIXME} to construct a mixed-dimensional
+%% (3D-1D) computational model of the human intracranial compartments
+%% including the 3D CSF spaces (ventricular system, cisterns, SAS) and
+%% the brain parenchyma, and in addition a topologically 1D network
+%% representation of PVSs surrounding major arteries and veins embedded
+%% in the SAS (\Cref{fig:results1}A--C).
+
+%% With the aim of integrate current knowledge from clinical,
+%% experimental and previous in-silico studies to represent the four
+%% major physical and physiological factors influencing the distribution
+%% and evolution of solute within these spaces: (i) diffusion of the
+%% solute in the CSF spaces and parenchyma; (ii) the dispersive effects
+%% of pulsatile CSF flow in the SAS induced by the cardiac and
+%% respiratory effects, (iii) net CSF flow induced by pressure
+%% differences in the bulk spaces and the PVSs induced by CSF production
+%% in the choroid plexues with CSF efflux across the outer cavity, and
+%% net PVS flow induced by peristaltic pumping. 
+
+%% We numerically simulated the distribution and evolution of a solute
+%% concentration representative of Gadobutrol assuming that the solute
+%% appears in the CSF space at the craniocervical junction. Assumed no
+%% transport accross the BBB. 
+
+%% Finite elements, \# degrees of freedom.
+
+%% Computational model based on the FEniCS finite element suite and is
+%% openly available~\cite{ZENODO}.
+
+%% What we observe. 
 
 \begin{figure}
     \centering
