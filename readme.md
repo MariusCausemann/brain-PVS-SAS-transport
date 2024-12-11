@@ -2,19 +2,17 @@
 
 #### Installation and dependencies
 
-To install all dependencies with mamba:
+The workflow is managed with the workflow management system [Snakemake](https://snakemake.readthedocs.io/en/stable/). To install snakemake using conda, run:
 
-`mamba env create -f environment.yml`
+`conda install -c conda-forge -c bioconda snakemake==8.14.0`
 
-This will create the environment 'pvs_transport_env'. Activate with:
+Next you can test the workflow with a small scale example with:
 
-`mamba activate pvs_transport_env`
+`snakemake --conda-frontend conda --use-conda --cores 2 -p plots/test/test_total_conc.png --config meshing=False`
 
-To use conda instead of mamba, replace mamba with conda in the above.
+This will automatically install all required dependencies (from environment.yml), and run all required jobs on two cores. Since the meshing tool fTetWild requires compilation and can be hard to install, we disable the meshing part of the pipeline here and run the example on a pregenerated mesh. To test the whole pipline (including meshing), run:
 
-Sidenote: to remove (for some reason or the other) your existing mamba environent, do
-
-`mamba env remove -n pvs_transport_env`
+`snakemake --conda-frontend conda --use-conda --cores 2 -p plots/test/test_total_conc.png --force-all`
 
 
 #### Brain and vasculature imaging data 
