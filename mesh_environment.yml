@@ -8,6 +8,7 @@ dependencies:
   - meshio
   - typer
   - gcc<13 # fTetWild install via pip requires gcc<13
+  - cmake
   - pyaml
   - pip
   - pip:
