@@ -229,16 +229,14 @@ Main findings and outlook \textcolor{lightgray}{\lipsum[1]} Outlook:
 %% \item
 %%   ``The role'' of PVS flow speed
 %% \item
-%%   ``The role'' of PVS sheaths and permeability - does functional separation entail structural separation?
+%%   ``The role'' of PVS sheaths and permeability - does functional separation entail structural separation? %Different molecular sizes?
 %% \item
 %%   ``The role'' of PVS size (motivated by pathologies)
 %% \item
 %%   Clearance from the CSF spaces - with and without low pressure veins, but keeping the intrathecal source of solute. 
-%% \item
-%%   Clearance from the parenchyma: $c_0 = 1.0$. Different substances?
+%% %% \item
+%% %%   Clearance from the parenchyma: $c_0 = 1.0$. Different substances? Save for different paper. 
 %% \end{enumerate}
-
-
 
 \subsection*{In-silico predictions of molecular enrichment and clearance after injection}
 
@@ -246,23 +244,11 @@ Using previously published multi-modal MRI
 data~\cite{hodneland2019new, deistung2009tof,
   schweser2012quantitative, reichenbach2012future,
   deistung2017overview}, we construct a multiscale computational
-representation of human intracranial compartments consisting of the
-CSF spaces and brain parenchyma as 3D domains and with the PVSs
+representation of the human intracranial compartments consisting of
+the CSF spaces and brain parenchyma as 3D domains and with the PVSs
 surrounding major surface arteries and veins as networks of
 topologically 1D curves embedded within the SAS
-(\Cref{fig:results1}A--C, Methods). In order to investigate the
-
-Within these spaces, we study a solute concentration that can
-distribute within
-
-~\cite{masri2024modelling}
-
-We model a solute concentration within the 3D domains and an averaged
-
-
-
-Solute concentration (Gadubutrol) in the 3D volumes and concent
-
+(\Cref{fig:results1}A--C). 
 
 Within these spaces, a solute concentration will experience (i)
 hindered diffusion depending on the diffusivity of the solute and the
@@ -282,14 +268,6 @@ cavity, and net PVS flow induced by peristaltic pumping.
 
 The distribution and evolution of a solute concentration within these
 spaces is
-
-Solute transport within these spaces is  
-
-hypothesized to be modulated by at least four major physical and
-physiological factors:
-
-Integrating observations from clinical, experimental and computationl
-studies
 
 hypothesized to be modulated by at least four major physical and
 physiological factors:
@@ -559,6 +537,9 @@ penetrating vessel.
 \end{itemize}
 
 \newpage
+
+\mer{MER: Update Methods to simplify $u_{\rm PAR} = 0$, and $u_0 = 0$ in $\Omega_{\rm PAR}$.}
+
 \section*{Methods}
 
 %\mer{MER: I recommend writing each (sub)section of Methods as a nearly stand-alone paragraph. Let's see if we can avoid subsubsections/paragraphs. If you need to add more detail than you think is appropriate, put it in a Supplementary Methods section in the Appendix.} 
@@ -781,7 +762,8 @@ spaces ($\xi = \xi_{\rm CSF}$) or parenchyma ($\xi = \xi_{\rm EF}$),
 or neither (\Cref{sec:more_maths}). Additionally, we increase the
 permeability $\xi$ ($100\times$) near the leaf nodes of $\Lambda_a$ to
 account for the transition from explicitly resolved PVSs to their
-unresolved continuation in the CSF spaces and parenchyma.
+unresolved continuation in the CSF spaces and parenchyma. \mer{MER:
+Could this be made more clear - what is near? Why a 100?}
 
 \begin{table}
   \begin{center}
@@ -889,6 +871,9 @@ For the 3D transport problem, we use the interior penalty discontinuous Galerkin
 
 \newpage
 \section*{Acknowledgments (not compulsory)}
+
+\mer{Thanks to Erlend Hodneland for facilitation and Prof. Jürgen
+  Reichenbach for generously sharing the multi-modal human MR data.}
 
 Acknowledgments should be brief, and should not include thanks to anonymous referees and editors, or effusive comments. Grant or contribution numbers may be acknowledged.
 
