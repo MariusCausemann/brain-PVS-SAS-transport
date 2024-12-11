@@ -6,14 +6,22 @@ The workflow is managed with the workflow management system [Snakemake](https://
 
 `conda install -c conda-forge -c bioconda snakemake==8.14.0`
 
-Next you can test the workflow with a small scale example with:
+Next, you can test the workflow with a small scale example with:
 
 `snakemake --conda-frontend conda --use-conda --cores 2 -p plots/test/test_total_conc.png --config meshing=False`
 
-This will automatically install all required dependencies (from environment.yml), and run all required jobs on two cores. Since the meshing tool fTetWild requires compilation and can be hard to install, we disable the meshing part of the pipeline here and run the example on a pregenerated mesh. To test the whole pipline (including meshing), run:
+This will automatically install all required dependencies (from environment.yml), and run all required jobs on two cores. Since the meshing tool fTetWild requires compilation and can be hard to install, we disable the meshing part of the pipeline here and run the example on a pregenerated mesh. Expected run time for setting up the environment and running all steps is ~ 30min.
+To test the whole pipline (including meshing), run:
 
 `snakemake --conda-frontend conda --use-conda --cores 2 -p plots/test/test_total_conc.png --force-all`
 
+To reproduce all results on N cores, run:
+
+`snakemake --conda-frontend conda --use-conda --cores N`
+
+Note that this requires significant computational resources (around ~ 500GB mem, 64 cores minimum). Snakemake supports job submission systems like `slurm`. Adjust our profile in `ex3/config.yaml` to your needs and start with:
+
+`snakemake --profile ex3`
 
 #### Brain and vasculature imaging data 
 
@@ -62,12 +70,3 @@ For networks/, there is the original, a smoothened and a tube representation of 
 For surfaces/, there is the white matter (pial) surface (wm.ply), the white-gray matter interface (gm.ply) and parenchyma.ply, all in .ply format. 
 
 For volmesh/, there is the generated volumetric mesh of the parenchyma, including both white and gray matter (mesh.xdmf+h5).
-
-
-#### Steps to run CSF flow on ex3
-* login on ex3
-* clone git repo
-* install environment with conda/mamba - `mamba env create -f environment.yml`
-* activate environment - `conda activate pvs_transport_env`
-* run scrpt with slurm - `srun python scripts/sas_flow.py`
-
