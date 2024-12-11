@@ -22,7 +22,6 @@ dependencies:
   - libopenblas=*=*openmp*
   - mumps-mpi>=5.7.3
   - mpich
-  - gcc<13 # fTetWild install via pip requires gcc<13
   - k3d
   - pip:
     - pyacvd
