@@ -38,8 +38,7 @@ jobs:
         run: |
           conda install -c conda-forge -c bioconda snakemake==8.14.0 snakemake-storage-plugin-http snakemake-executor-plugin-cluster-generic
       - name: snakemake build envs
-        run: |
-          snakemake -c2 --conda-create-envs-only --use-conda --conda-frontend conda -p plots/test/test_total_conc.png || true
+        run: (snakemake -c2 --conda-create-envs-only --use-conda --conda-frontend conda -p plots/test/test_total_conc.png) || true
       - name: snakemake dryrun
         run: |
           snakemake -c1 -n -p plots/test/test_total_conc.png
