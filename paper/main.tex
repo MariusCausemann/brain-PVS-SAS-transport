@@ -245,83 +245,41 @@ data~\cite{hodneland2019new, deistung2009tof,
   schweser2012quantitative, reichenbach2012future,
   deistung2017overview}, we construct a multiscale computational
 representation of the human intracranial compartments consisting of
-the CSF spaces and brain parenchyma as 3D domains and with the PVSs
-surrounding major surface arteries and veins as networks of
-topologically 1D curves embedded within the SAS
-(\Cref{fig:results1}A--C). 
-
-Within these spaces, a solute concentration will experience (i)
-hindered diffusion depending on the diffusivity of the solute and the
-effective properties of the medium\cite{sykova2008diffusion}; (ii)
-dispersive effects induced by pulsatile flow of CSF; (iii) 
-
-Within these spaces, a solute concentration
-will experience (i) hindered diffusion depending on the diffusivity of
-the solute and the effective properties of the medium; (ii) the
-dispersive effects induced by pulsatile flow in the CSF spaces 
-
-; (ii) the dispersive effects of pulsatile CSF flow in the SAS induced
-by the cardiac and respiratory effects, (iii) net CSF flow induced by
-pressure differences in the bulk spaces and the PVSs induced by CSF
-production in the choroid plexues with CSF efflux across the outer
-cavity, and net PVS flow induced by peristaltic pumping.
-
-The distribution and evolution of a solute concentration within these
-spaces is
-
-hypothesized to be modulated by at least four major physical and
-physiological factors:
-
-and partial differential equations~\cite{masri2024modelling}
-
-With the aim of integrate current knowledge from clinical,
-experimental and previous in-silico studies to represent the four
-major physical and physiological factors influencing the distribution
-and evolution of solute within these spaces:
+the CSF spaces and brain parenchyma as three-dimensional (3D) domains
+and with the PVSs surrounding major surface arteries and veins as
+embedded networks of topologically one-dimensional (1D) curves
+(\Cref{fig:results1}A--C). We consider a solute concentration field,
+varying in space and time, in the 3D domains and in the PVS networks,
+and assume that the solute can cross between these compartments
+through semi-permeable membranes. As the drivers and mechanisms of
+intracranial transport are under substantial
+debate\cite{smith2019going, proulx2021cerebrospinal,
+  bohr2022glymphatic, hladky2022glymphatic, betsholtz2024advances},
+our first target is to establish a baseline model accounting for
+primary effects over a timescale of between several minutes and a few
+days. To this end, we assume that the solute will (i) diffuse within
+all compartments, with diffusivity depending on the effective
+properties of the relevant medium\cite{sykova2008diffusion}; (ii)
+experience significant dispersive effects due to the pulsatile flow of
+CSF induced by the cardiac and respiratory
+cycles\cite{vinje2019respiratory, keith2019dispersion,
+  troyetsky2021dispersion}; (iii) be convected by a (small) net flow
+of CSF resulting from CSF production in the choroid plexues with CSF
+efflux across the outer cavity\cite{hornkjol2022csf} and the
+peristaltic pumping effect of cardiac arterial
+pulsations\cite{mestre2018flow,
+  gjerde2023directional}. Mathematically, this model is represented by
+a mixed-dimensional system of coupled time-dependent partial
+differential equations\cite{masri2024modelling}, which we solve
+numerically with high accuracy using a mass-conserving finite element
+scheme and the FEniCS finite element software\cite{alnaes2015fenics,
+  kuchta2020assembly}. The computational model and all associated
+software is openly available~\cite{ZENODO}.
 
 We numerically simulated the distribution and evolution of a solute
 concentration representative of Gadobutrol assuming that the solute
 appears in the CSF space at the craniocervical junction. Assumed no
-transport accross the BBB. 
-
-Finite elements, \# degrees of freedom.
-
-Computational model based on the FEniCS finite element suite and is
-openly available~\cite{ZENODO}.
-
-What we observe. 
-
-%% We used previously published multi-modal MRI
-%% data~\cite{hodneland2019new, FIXME} to construct a mixed-dimensional
-%% (3D-1D) computational model of the human intracranial compartments
-%% including the 3D CSF spaces (ventricular system, cisterns, SAS) and
-%% the brain parenchyma, and in addition a topologically 1D network
-%% representation of PVSs surrounding major arteries and veins embedded
-%% in the SAS (\Cref{fig:results1}A--C).
-
-%% With the aim of integrate current knowledge from clinical,
-%% experimental and previous in-silico studies to represent the four
-%% major physical and physiological factors influencing the distribution
-%% and evolution of solute within these spaces: (i) diffusion of the
-%% solute in the CSF spaces and parenchyma; (ii) the dispersive effects
-%% of pulsatile CSF flow in the SAS induced by the cardiac and
-%% respiratory effects, (iii) net CSF flow induced by pressure
-%% differences in the bulk spaces and the PVSs induced by CSF production
-%% in the choroid plexues with CSF efflux across the outer cavity, and
-%% net PVS flow induced by peristaltic pumping. 
-
-%% We numerically simulated the distribution and evolution of a solute
-%% concentration representative of Gadobutrol assuming that the solute
-%% appears in the CSF space at the craniocervical junction. Assumed no
-%% transport accross the BBB. 
-
-%% Finite elements, \# degrees of freedom.
-
-%% Computational model based on the FEniCS finite element suite and is
-%% openly available~\cite{ZENODO}.
-
-%% What we observe. 
-
+transport accross the BBB.  What we observe. 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{figures/figure1.png}
@@ -329,15 +287,6 @@ What we observe.
        considered with labels;}
      \label{fig:results1}
 \end{figure}
-
-%% \begin{itemize}
-%% \item
-%%   Present mathematical and computational model and geometries (\Cref{tab:scenarios}). 
-%% \item
-%%   Highlight computational model availability, open source code.
-%% \item
-%%   Provides an interactive in-silico platform for studying intracranial solute transport -- distribute such that anyone can run (possibly try to recruit MinRK if advantageous).
-%% \end{itemize}
 
 \subsection*{CSF flow and dispersion shifts enrichment patterns}
 
