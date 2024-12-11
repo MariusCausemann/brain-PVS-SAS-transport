@@ -255,13 +255,13 @@ through semi-permeable membranes. As the drivers and mechanisms of
 intracranial transport are under substantial
 debate\cite{smith2019going, proulx2021cerebrospinal,
   bohr2022glymphatic, hladky2022glymphatic, betsholtz2024advances},
-our first target is to establish a baseline model accounting for
-primary effects over a timescale of between several minutes and a few
-days. To this end, we assume that the solute will (i) diffuse within
-all compartments, with diffusivity depending on the effective
-properties of the relevant medium\cite{sykova2008diffusion}; (ii)
-experience significant dispersive effects due to the pulsatile flow of
-CSF induced by the cardiac and respiratory
+our first target is to establish a baseline model integrating and
+accounting for primary effects over a timescale of between several
+minutes and a few days. To this end, we assume that the solute will
+(i) diffuse within all compartments, with diffusivity depending on the
+effective properties of the relevant medium\cite{sykova2008diffusion};
+(ii) experience significant dispersive effects due to the pulsatile
+flow of CSF induced by the cardiac and respiratory
 cycles\cite{vinje2019respiratory, keith2019dispersion,
   troyetsky2021dispersion}; (iii) be convected by a (small) net flow
 of CSF resulting from CSF production in the choroid plexues with CSF
@@ -278,13 +278,11 @@ associated software is openly available~\cite{ZENODO}.
 
 We numerically simulated the distribution and evolution of a solute
 concentration representative of Gadobutrol assuming that the solute
-appears in the CSF space at the craniocervical junction. Assumed no
-transport accross the BBB.  What we observe. 
+appears in the CSF space at the craniocervical junction. What we observe. 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{figures/figure1.png}
-     \caption{a) Illustration of the different intracranial domains
-       considered with labels;}
+     \caption{}
      \label{fig:results1}
 \end{figure}
 
@@ -472,7 +470,11 @@ penetrating vessel.
 \item
   Permeability and stiffness of the pial membrane
 \item
-  PVS-blood exchange and BBB leakage. Natural to consider in model variation here, or follow-up work. We here ignore PVS-blood exchange, and thus only model the perivascular concentration at the network level (in addition to the SAS/brain concentration in the surroundings).
+  Assumed no transport accross the BBB. PVS-blood exchange and BBB
+  leakage. Natural to consider in model variation here, or follow-up
+  work. We here ignore PVS-blood exchange, and thus only model the
+  perivascular concentration at the network level (in addition to the
+  SAS/brain concentration in the surroundings).
 
 \end{itemize}
 
