@@ -220,19 +220,20 @@ rule generateIdealizedSurfaces:
         python scripts/generate_idealized_surfaces.py
         """
 
-rule generateMesh:
-    conda:"mesh_environment.yml"
-    input:
-        [f"mesh/{{meshname}}/surfaces/{n}.ply" for n in ["LV", "parenchyma_incl_ventr", "skull", "V34"]],
-        "configfiles/meshconfig/{meshname}.yml"
-    output:
-        "mesh/{meshname}/volmesh/mesh.xdmf",
-    resources:
-        ncpuspertask=4
-    shell:
-        """
-        python scripts/generate_synthseg_mesh.py configfiles/meshconfig/{wildcards.meshname}.yml
-        """
+if config.get("meshing", True):
+    rule generateMesh:
+        conda:"mesh_environment.yml"
+        input:
+            [f"mesh/{{meshname}}/surfaces/{n}.ply" for n in ["LV", "parenchyma_incl_ventr", "skull", "V34"]],
+            "configfiles/meshconfig/{meshname}.yml"
+        output:
+            "mesh/{meshname}/volmesh/mesh.xdmf",
+        resources:
+            ncpuspertask=4
+        shell:
+            """
+            python scripts/generate_synthseg_mesh.py configfiles/meshconfig/{wildcards.meshname}.yml
+            """
 
 rule markAndRefineMesh:
     conda:"environment.yml"
