@@ -157,15 +157,16 @@ choroid plexus~\cite{damkier2013cerebrospinal,
   steffensen2018cotransporter, liu2020direct}, pulsates through the
 ventricular system, cisterns, and subarachnoid space (SAS) in
 synchrony with cardiac, respiratory, and neural
-waves~\cite{wagshul2011pulsating, sweetman2011cerebrospinal,
-  fultz2019coupled, vinje2019respiratory, eide2021direction,
-  causemann2022human, williams2023neural, zimmermann2023total}, and
-drains via the dural sinuses, meningeal lymphatics, cranial nerves, or
-other efflux pathways~\cite{proulx2021cerebrospinal}. However, how
-these physiological factors and physical mechanisms integrate to
-enhance (or impair) human intracranial molecular transport over larger
-spatial scales and longer time scales remain unknown. A related key
-question is to what extent surface PVSs are separated from the SAS by
+waves~\cite{greitz1993pulsatile, wagshul2011pulsating,
+  sweetman2011cerebrospinal, fultz2019coupled, vinje2019respiratory,
+  eide2021direction, causemann2022human, williams2023neural,
+  zimmermann2023total}, and drains via the dural sinuses, meningeal
+lymphatics, cranial nerves, or other efflux
+pathways~\cite{proulx2021cerebrospinal}. However, how these
+physiological factors and physical mechanisms integrate to enhance (or
+impair) human intracranial molecular transport over larger spatial
+scales and longer time scales remain unknown. A related key question
+is to what extent surface PVSs are separated from the SAS by
 structural barriers~\cite{zhang1990interrelationships,
   weller2005microscopic, bedussi2017paravascular,
   pizzo2018intrathecal, mestre2022periarteriolar,
@@ -239,7 +240,12 @@ Main findings and outlook \textcolor{lightgray}{\lipsum[1]} Outlook:
 %% \end{enumerate}
 
 \subsection*{In-silico predictions of molecular enrichment and clearance after injection}
-
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figures/figure1.png}
+     \caption{}
+     \label{fig:results1}
+\end{figure}
 Using previously published multi-modal MRI
 data~\cite{hodneland2019new, deistung2009tof,
   schweser2012quantitative, reichenbach2012future,
@@ -306,15 +312,8 @@ tracer remains in the cranium 24 hours post-injection, with the largest
 share in the CSF (53\%), followed by the parenchyma (35\%), the
 venous PVS (8\%) and the arterial PVS
 (5\%) (\Cref{fig:results1}I).
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{figures/figure1.png}
-     \caption{}
-     \label{fig:results1}
-\end{figure}
 
-\subsection*{CSF flow and dispersion shifts enrichment patterns}
-
+\subsection*{Reduced CSF pulsatility strongly shifts the intracranial enrichment patterns}
 \begin{figure}%[h!]
 \centering 
 \includegraphics[width = 0.9\linewidth]{figures/figure2.png}
@@ -338,6 +337,20 @@ P) mean tracer concentration in each compartment;
 }
 \label{fig:csf}
 \end{figure}  
+
+The enrichment patterns observed clinically after intrathecal
+injection of Gadobutrol differ substantially between subjects and
+between pathological conditions~\cite{ringstad2018brain,
+  eide2021direction, eide2021impaired, eide2022altered}. These
+neurological conditions are also associated with alterations in the
+pulsatile flow of CSF in the ventricular system and
+SAS~\cite{eide2021direction}. Clearly, key physiological factors such
+as cardiac pulsatility and respiration easily differ between
+individuals and between (patho)physiological states. We therefore next
+asked to what extent -- and how -- variations in CSF pulsatility would
+affect the intracranial enrichment characteristics.
+
+\bigskip
 
 Flow of CSF through the SAS and the ventricular system is a crucial driver of transport in the human brain environment.
 While cardiac- and respiratory induced oscillatory flow increases mixing, the production of CSF in the choroid plexus creates a steady advective flow within the CSF-filled spaces of the cranium \cite{hornkjol2022csf}. 
@@ -363,6 +376,7 @@ Employing the same methodology, we estimate the respiratory contribution to disp
 % tracer trajectory of model variations
 
 Finally, we illustrate the contribution of the respective transport mechanisms comparing the full model (production-driven advection, cardiac- and respiration enhanced dispersion) with three reduced models: No advective velocity field, decreased dispersion ($R \times 0.1$) and increased dispersion ($R \times 10$) (corresponding to lower and higher pulsatilty, respectively) (\Cref{fig:csf}N). Without production induced CSF flow, transport it considerably delayed. After $12\,$h tracer remains in the subtentorial regions around the cerebellum, the brain stem and in the surrounding CSF. Interestingly, the lack of CSF production allows tracer to travel upwards through the ventricular system, reaching the third ventricle after around $12\,$h. The low dispersion model exhibits simililarly rapid transport towards the upper convexity of the cranium as the full model, but predicts tracer spreading exclusively within the anterior regions of the brain. At the flow bifurcation around the midbrain, only the full and high dispersion models feature tracer movement through the quadrigeminal cistern and further upwards into the longitudinal fissure.
+
 
 \subsection{The significance of perivascular spaces as flow highways}
 \label{sec:pvs_flow_results}
