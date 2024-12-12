@@ -23,10 +23,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
-      #   - uses: actions/setup-python@v5
-      #     with:
-      #       python-version: "3.11"
+      - name: Install deps
+        run: |
+          DEBIAN_FRONTEND=noninteractive apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y unzip make build-essential git libgmp-dev
       - name: Setup conda-forge
         uses: conda-incubator/setup-miniconda@v3
         with:
