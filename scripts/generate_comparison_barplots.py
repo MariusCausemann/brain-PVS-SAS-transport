@@ -55,16 +55,16 @@ def compare_models(models: List[str]):
         results[m] = md
 
     df = pd.DataFrame(results)
-    dfstr = df.applymap('{:,.3g}'.format)
-    fig, ax = plt.subplots(figsize=(6,22))
-    ax.axis('tight')
-    ax.axis('off')
-    the_table = ax.table(cellText=dfstr.values,
-                            rowLabels=dfstr.index,
-                            colLabels=dfstr.columns,
-                            loc="center")
-    fig.tight_layout()
-    fig.savefig(f"plots/comparisons/{v}/table.png")
+    #dfstr = df.applymap('{:,.3g}'.format)
+    #fig, ax = plt.subplots(figsize=(6,22))
+    #ax.axis('tight')
+    #ax.axis('off')
+    #the_table = ax.table(cellText=dfstr.values,
+    #                        rowLabels=dfstr.index,
+    #                        colLabels=dfstr.columns,
+    #                        loc="center")
+    #fig.tight_layout()
+    #fig.savefig(f"plots/comparisons/{v}/table.png")
 
     set_plotting_defaults()
 
@@ -94,7 +94,6 @@ def compare_models(models: List[str]):
 
     nfigs = len(barplot_groups)
     fig_width = [ 1  + int(len(bp["vars"]) / 4) for bp in barplot_groups]
-    from IPython import embed; embed()
     nrows, ncols = 4,4
     fig = plt.figure(figsize=(7, 8))
     gs = plt.GridSpec(nrows, ncols, figure=fig)

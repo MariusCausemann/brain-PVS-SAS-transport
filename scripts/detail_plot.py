@@ -65,10 +65,11 @@ def generate_plot(
     times:List[int],
     cmax: List[float],
 ):
-
+    if len(cmax)==1 and cmax[0]==0:
+        cmax = 0
     times = np.array(times)*3600
     pointdict = {l:p for l,p in pointlabels}
-    if selected_artlabels is None:
+    if selected_artlabels[0]=="all":
         artlabels = list(pointdict.keys())
     else:
         artlabels = selected_artlabels
@@ -130,14 +131,10 @@ def generate_plot(
         ax = grid.axes_row[j][0]
         ax.text( -0.13, 0.5, label, va="center",
          transform=ax.transAxes, fontsize=fontsize, rotation=90)
-    tstr = "-".join([f"{t/3600:.0f}" for t in times])
-    if selected_artlabels:
-        artstr = "-".join(selected_artlabels) + "-"
-    else: 
-        artstr = ""
-    if cmax:
-        cmstr = "-".join([str(cm) for cm in cmax])+"_"
-    else: cmstr=""
+    tstr = "+".join([f"{t/3600:.0f}" for t in times])
+    artstr = "+".join(selected_artlabels) + "_"
+    artstr = ""
+    cmstr = "+".join([str(cm) for cm in cmax])+"_"
 
     plt.savefig(f"plots/{modelname}/{modelname}_{tstr}_{artstr}{cmstr}details.png",
                  dpi=200, transparent=True,bbox_inches="tight")
@@ -150,8 +147,8 @@ def main():
     parser.add_argument("modelname", type=str, help="The name of the model")
     # Optional arguments
     parser.add_argument("--times", type=int, nargs='+', default=[1,3,6,12,24], help="List of times as integers")
-    parser.add_argument("--cmax", type=float, nargs='+', default=None, help="List of cmax values as floats")
-    parser.add_argument("--artlabels", type=str, nargs='+', default=None, help="List of art labels as strings")
+    parser.add_argument("--cmax", type=float, nargs='+', default=0, help="List of cmax values as floats")
+    parser.add_argument("--artlabels", type=str, nargs='+', default="all", help="List of art labels as strings")
     
     args = parser.parse_args()
     

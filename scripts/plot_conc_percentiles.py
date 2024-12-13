@@ -113,7 +113,7 @@ def plot_conc_percentiles(models:List[str]):
                     xis.append(results[m]["config"]["arterial_pvs_csf_permability"])
                     r.append(results[m][q] / (3600 if "(h)" in ylabeldict[q] else 1))
                 ax.scatter(xis,r, color=col, label=labeld[gr[0]], marker=markerd[gr[0]],
-                          s=5)
+                          s=50)
                 ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol=2, 
                         columnspacing=0.3, frameon=False)        
             plt.xlabel("PVS-CSF permeability (m/s)")

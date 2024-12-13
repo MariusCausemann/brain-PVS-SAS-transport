@@ -29,7 +29,8 @@ def get_tangent(v, n):
     return v - np.dot(np.dot(v,n), n)
 
 if __name__=="__main__":
-   filename = "plots/meshplots/labeled_arteries.png"
+   filename = "plots/meshplots/arteries.png"
+   filename_labeled = "plots/meshplots/labeled_arteries.png"
    art = pv.read("mesh/networks/arteries_tubes.vtk").triangulate()
 
    art["radius"] *= 1e3
@@ -118,7 +119,7 @@ if __name__=="__main__":
    add_labels2d(ax, df[(df["left"]==False) & (df["y"] < 120)], xpos=20, cs ="angle,angleA=0,angleB=70,rad=50", offset=-40)
 
    ax.set_xmargin(0);ax.set_ymargin(0)
-   plt.savefig(filename, transparent=True, pad_inches=0.0,bbox_inches='tight', dpi=300)
+   plt.savefig(filename_labeled, transparent=True, pad_inches=0.0,bbox_inches='tight', dpi=300)
 
    print(pl.camera.direction)
    pl.export_html(filename.replace("png", "html"))

@@ -12,7 +12,7 @@ mesh_refine_models = ["modelALowRes", "modelA", "modelAHighRes"]
 time_refine_models = ["modelA", "modelAsmalldt", "modelAlargedt"]
 model_variations = ["modelA" , "modelA-LowD","modelA-HighD",
                     "modelA-OnlyDispersion",
-                    "modelA-woCT", "modelA-strongVM","modelA-PVS-disp",
+                    "modelA-strongVM","modelA-PVS-disp",
                     "modelB1-10", "modelB1-100", "modelB1-1000",
                     "modelB2-10", "modelB2-100", "modelB2-1000",
                     #"modelC", "modelA-NoResp", "modelA-NoDisp", "modelA-LowD",
@@ -23,7 +23,6 @@ model_comparisons = [
                     #"modelA_modelB2-1", "modelA_modelB2-10", "modelA_modelB2-100",
                     # "modelA_modelB2-1000", "modelA_modelC",
                     # "modelA_modelA-NoResp",
-                    "modelA_modelA-woCT",
                     "modelA_modelA-strongVM",
                     "modelA_modelA-PVS-disp"            
                     ]
@@ -57,11 +56,18 @@ rule all:
         expand("plots/{modelname}/{modelname}_overview_1-3-6-9-12-24.png", modelname=models),
         expand("plots/{modelname}/{modelname}_overview_4-6.png", modelname=models),
         expand("plots/{modelname}/{modelname}.mp4", modelname=models),
+        expand("plots/{modelname}/{modelname}_1+2+3+6+9+12_all_0_details.png", modelname=models),
         "plots/pvs_flow_prod/sas_flow-arteries/",
         "plots/pvs_flow_peristaltic/vasomotion/",
         "plots/pvs_flow_peristaltic/cardiac_pvs_oscillation/",
         #expand("plots/{modelname}/{modelname}_{tp}_{t}.png", modelname=models, t=times, tp=types)
-
+        expand("plots/{m}/{m}_{tstr}_{artstr_cmstr}_details.png", 
+            m=["modelA", "modelB1-10", "modelB1-100", "modelB1-1000"] +
+             ["modelA-strongVM", "modelB2-10", "modelB2-100", "modelB2-1000"],
+             tstr=["1+2+3+4", "2+4+6+8"],
+             artstr_cmstr=["MCA-R_0.1+5.0+20.0+20.0", "MCA-L_0.1+5.0+20.0+20.0",
+                            "BA_3.0+40.0+40.0+10.0","ACA-A3_0.1+2.0+10.0+10.0",
+                            "ACA-A2_0.1+2.0+5.0+5.0"])
 
 rule runSimuation:
     conda:"environment.yml"
@@ -316,7 +322,7 @@ rule evaluatePVSFlow:
     input:
         hdf='results/{flow_type}/{pvs_flow_model}-{netw}/pvs_flow.hdf',
     output:
-        directory("plots/{flow_type}/{pvs_flow_model}-{netw}/")
+        plots="plots/{flow_type}/{pvs_flow_model}-{netw}/{pvs_flow_model}-{netw}_velocity.png"
     shell:
         "python scripts/evaluate_pvs_flow.py {input.hdf}"
 
@@ -342,12 +348,15 @@ rule detailPlot:
         ven1="results/{m}/{m}_vein.xdmf",    
     output:
         "plots/{m}/{m}_{tstr}_{artstr}_{cmstr}_details.png",
+    wildcard_constraints: 
+        artstr=".*",
+        cmstr=".*"
     params:
-        times=lambda wildcards: wildcards.tstr.split("-"),
-        artlabels=lambda wildcards: wildcards.artstr.split("-"),
-        cmax=lambda wildcards: wildcards.cmstr.split("-")
+        times=lambda wildcards: wildcards.tstr.split("+"),
+        artlabels=lambda wildcards: wildcards.artstr.split("+"),
+        cmax=lambda wildcards: wildcards.cmstr.split("+")
     shell:
-        "python scripts/overview_plot.py {wildcards.m} " +
+        "python scripts/detail_plot.py {wildcards.m} " +
         " --times  {params.times} --artlabels {params.artlabels}" +
         " --cmax {params.cmax}"
 
