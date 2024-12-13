@@ -245,6 +245,7 @@ rule markAndRefineMesh:
     conda:"environment.yml"
     input:
         "mesh/{meshname}/volmesh/mesh.xdmf",
+        surf= lambda wildcards: "mesh/{meshname}/surfaces/parenchyma_incl_ventr.ply" if getconfig(f"meshconfig/{wildcards.meshname}", "refine") else []
     output:
         "mesh/{meshname}/{meshname}.xdmf",
         "mesh/{meshname}/{meshname}.h5",

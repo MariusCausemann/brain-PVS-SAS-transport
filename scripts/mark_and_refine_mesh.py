@@ -123,9 +123,6 @@ def mark_and_refine(configfile : str):
     config = read_config(configfile)
     meshname = Path(configfile).stem
 
-    # compute distance to interface for later refinement
-    parenchyma_surf = pv.read(f"mesh/{meshname}/surfaces/parenchyma_incl_ventr.ply")
-
     # read in again and use fenics to exclude problematic parts 
     # of the CSF space from the Stokes computation (disconnected domains)
 
@@ -137,6 +134,9 @@ def mark_and_refine(configfile : str):
         f.read(label, 'label')
 
     if config.get("refine", True):
+        # compute distance to interface for later refinement
+        parenchyma_surf = pv.read(f"mesh/{meshname}/surfaces/parenchyma_incl_ventr.ply")
+
         # refine V3 and V4
         sas, label = refine_region(sas, label, labelids=[V34ID])
 
