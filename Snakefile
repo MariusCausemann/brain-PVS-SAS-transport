@@ -211,7 +211,7 @@ rule generateSurfaces:
         "data/T1_synthseg.nii.gz",
         config="configfiles/meshconfig/{meshname}.yml"
     output:
-        [f"mesh/{{meshname}}/surfaces/{n}.ply" for n in ["LV", "parenchyma", "skull", "V34"]]
+        [f"mesh/{{meshname}}/surfaces/{n}.ply" for n in ["LV", "parenchyma_incl_ventr", "skull", "V34"]]
     shell:
         """
         python scripts/extract_synthseg_surfaces.py {input.config}
@@ -270,7 +270,7 @@ rule computeSASFlow:
     resources:
         ncpuspertask=64
     params:
-        mpirun=lambda wildcards: "" if "idealized" in wildcards.csf_flow_model else "mpiexec -n 16"
+        mpirun=lambda wildcards: "" if "idealized" in wildcards.csf_flow_model or "LowRes" in wildcards.csf_flow_model else "mpiexec -n 16"
     shell:
         """
         export OMP_NUM_THREADS={threads} && \
