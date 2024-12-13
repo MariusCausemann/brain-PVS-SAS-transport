@@ -110,8 +110,8 @@ def mark_boundaries(label):
     mark_internal_interface(mesh, label, bm, CSF_NO_FLOW_CSF_ID,
                             doms=[CSFID, CSFNOFLOWID])
     # mark spinal outlet
-    mark_inlet(mesh, bm, SPINAL_OUTLET_ID, (0 ,0,-1), 0.8,
-               zmin=mesh.coordinates()[:,2].min() + 0.5e-3)
+    mark_inlet(mesh, bm, SPINAL_OUTLET_ID, (0 ,0,-1), 0.75,
+               zmin=mesh.coordinates()[:,2].min() + 0.7e-3)
 
     # mark spinal cord
     mark_external_boundary(mesh, label, bm, SPINAL_CORD_ID,
