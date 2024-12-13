@@ -1,4 +1,5 @@
 mesh : "mesh/LowRes/LowRes_outer.xdmf"
+out-of-core-factorization : 1
 discretization : BDM
 mu : 0.7e-3 
 no_slip_bcs : [1,2,3,4,6]
