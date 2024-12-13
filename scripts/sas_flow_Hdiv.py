@@ -42,9 +42,7 @@ def directsolve(a, L, bcs, W):
 
 PETScOptions.set("mat_mumps_icntl_4", 3)  # mumps verbosity
 #PETScOptions.set("mat_mumps_icntl_24", 1)  # null pivot detection
-PETScOptions.set("mat_mumps_icntl_35", 1)  # BLR feature
 #PETScOptions.set("mat_mumps_cntl_7", 1e-8)  # BLR eps
-#PETScOptions.set("mat_mumps_icntl_22", 1)  # out-of-core to reduce memory
 #PETScOptions.set("mat_mumps_icntl_25", 2)  # turn on null space basis#
 PETScOptions.set("mat_mumps_icntl_28", 2)  # parallel ordering
 
@@ -157,6 +155,11 @@ def get_TH_problem(mesh, ds, order_k, mu, resistance_bcs,
 def compute_sas_flow(configfile : str):
     config = read_config(configfile)
     modelname = Path(configfile).stem
+    if config.get("out-of-core-factorization", 0):
+        PETScOptions.set("mat_mumps_icntl_22", )
+    else:
+        PETScOptions.set("mat_mumps_icntl_35", 1)  # BLR feature
+
     meshname = config["mesh"]
     if config["discretization"] == "BDM": 
         parameters["ghost_mode"] = "shared_facet"
