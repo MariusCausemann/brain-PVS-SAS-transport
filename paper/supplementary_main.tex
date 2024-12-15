@@ -439,20 +439,21 @@ where $\mathrm{P}^1(\Lambda^i)$ is the space of linear polynomials on each $\Lam
 
 We consider an H(div)-based finite element approximation of the incompressible Stokes equations~\eqref{eq:stokes} defined over $\Omega_{\rm CSF}$ with the boundary conditions~\eqref{eq:stokes_bcs}. Following\cite{hong2016robust}, we approximate the velocity field $\bm u$ and the pressure field $p$ with the following finite element spaces:
 \begin{align*}
-  \bm V_h &= \{ \bm v  \in H(\mathrm{div}, \Omega_{\mathrm{CSF}}): \;
+  \bm V_{h,g} &= \{ \bm v  \in H(\mathrm{div}, \Omega_{\mathrm{CSF}}): \;
   \bm v \vert_{E} \in \mathrm{BDM}^2(E), \; E \in \mathcal{T}_{\rm CSF}; \;
   \bm v \cdot \bm n = 0
-  \text{ on } \Gamma_{\rm{pia}} \cup \Gamma_{\rm AM-L} \cup \Gamma_{\rm{SSAS}}, \;\; \bm v \cdot \bm n = \frac{1}{|\Gamma_{\mathrm{LV}}|} u_{\mathrm{in}} \text{ on } \Gamma_{\mathrm{LV}} \}  \\ 
+  \text{ on } \Gamma_{\rm{pia}} \cup \Gamma_{\rm AM-L} \cup \Gamma_{\rm{SSAS}}, \;\; \bm v \cdot \bm n =  g %\frac{1}{|\Gamma_{\mathrm{LV}}|} u_{\mathrm{in}} 
+  \text{ on } \Gamma_{\mathrm{LV}} \}  \\ 
   Q_h  &= \{q \in L^2(\Omega_{\rm CSF}): \; q \vert_E \in \mathrm{P}^1(E),
   \; E \in \mathcal{T}_{\rm CSF} \}. 
 \end{align*}
-\mer{MER: How about the homogenized version of $\bm V_h$? - to distinguish for test space?} Here, $H(\mathrm{div}, \Omega)$ is the space of $L^2(\Omega)$ vector fields with $L^2(\Omega)$ divergence, $\mathrm{BDM}^2$ is the Brezzi-Douglas--Marini element~\cite{brezzi1987mixed} of degree 2, and $\bm n$ and $\bm \tau$ are the unit outward normal and unit tangent vectors to each facet, respectively. Given any vector $\bm v$, the normal and tangential components on each facet are denoted and given by 
+Here, $H(\mathrm{div}, \Omega_{\rm{CSF}})$ is the space of $L^2(\Omega_{\rm{CSF}})$ vector fields with $L^2(\Omega_{\rm{CSF}})$ divergence, $\mathrm{BDM}^2$ is the Brezzi-Douglas--Marini element~\cite{brezzi1987mixed} of degree 2, and $\bm n$ and $\bm \tau$ are the unit outward normal and unit tangent vectors to each facet, respectively. Given any vector $\bm v$, the normal and tangential components on each facet are denoted and given by 
 \begin{equation}
 \bm v_n = (\bm v \cdot \bm n) \bm n, \quad \bm v_t = \bm v - \bm v_n. 
 \end{equation}
-Since $\bm V_h \subset H(\mathrm{div}, \Omega_{\rm CSF})$, then $[\bm
+Since $\bm V_{h,g} \subset H(\mathrm{div}, \Omega_{\rm CSF})$, then $[\bm
   v_n] = 0 $ on $\mathcal{F}_{i, \rm CSF}$. Continuity in the
-tangential component is enforced weakly via interior penalization. \mer{For
+tangential component is enforced weakly via interior penalization. For
 convenience, we collect all facets exterior to the CSF space but not
 on the (Neumann) boundary $\Gamma_{\rm AM-U}$ in the set
 $\mathcal{F}_{e} = \mathcal{F}_{\rm pia} \cup \mathcal{F}_{\rm LV}
@@ -463,23 +464,23 @@ $\Gamma_{\rm AM-L}$ and $\Gamma_{\rm AM-U}$ by $\mathcal{F}_{\rm AM-L}$ and $\ma
 interface $\Gamma_{\rm LV}$ by $\mathcal{F}_{\rm LV}$,
 %on the boundary toward the spinal cord $\Gamma_{\rm SC}$ by $\mathcal{F}_{\rm SC}$
 and on the boundary towards the spinal SAS $\Gamma_{\rm SSAS}$ by
-$\mathcal{F}_{\rm SSAS}$.} Now, define the form 
+$\mathcal{F}_{\rm SSAS}$. Now, define the form 
 \begin{multline}
   \mathcal{A}_h(\bm u, \bm v)
   = \sum_{E \in \mathcal{T}_{\rm CSF}} \int_{E} \mu \nabla \bm u : \nabla \bm v
-  - \sum_{F \in \mer{\mathcal{F}_{i, \rm CSF} \cup \mathcal{F}_{e}}} \left (
+  - \sum_{F \in \mathcal{F}_{i, \rm CSF} \cup \mathcal{F}_{e}} \left (
   \int_{F} \mu \{\nabla \bm u\} \cdot \bm n_F \cdot [\bm v_t] 
   - %\sum_{F \in \mathcal{F}_{h,c} \cup \mathcal{F}_{\Gamma}}
   \int_{F} \mu \{\nabla \bm v\}\cdot \bm n_F \cdot [\bm u_t]
   + %\sum_{F \in \mathcal{F}_{h,c} \cup \mathcal{F}_{\Gamma}}
 \int_{F}   \frac{\sigma \mu}{h_F} [\bm u_t ] \cdot [\bm v_t] \right ),   
 \end{multline}
-where on exterior facets \mer{the average and jump operators take the one-sided values}. We set the penalty parameter for the tangential continuity to be $\sigma = 20$. Our finite element discretization of the incompressible Stokes equations is then to find $(\bm u_h, p_h) \in \bm V_h \times Q_h$ such that 
+where on exterior facets the average and jump operators take the one-sided values. We set the penalty parameter for the tangential continuity to be $\sigma = 20$. Our finite element discretization of the incompressible Stokes equations is then to find $(\bm u_h, p_h) \in \bm V_{h,g} \times Q_h$ with $g  = \frac{1}{|\Gamma_{\mathrm{LV}}|} u_{\mathrm{in}}$  such that 
 \begin{subequations}
 \begin{align}
   \mathcal{A}_h(\bm u_h, \bm v_h)
   + \sum_{F \in \mathcal{F}_{\rm AM-U}} \int_{F} R_0 (\bm u_h \cdot \bm n) (\bm v_h \cdot \bm n)
-  - \int_{\Omega_{\rm CSF}} \nabla \cdot \bm v_h \, p_h  &= 0 \qquad \foralls \bm v_h \in \bm V_h, \\ 
+  - \int_{\Omega_{\rm CSF}} \nabla \cdot \bm v_h \, p_h  &= 0 \qquad \foralls \bm v_h \in \bm V_{h,0} \\ 
 \int_{\Omega_{\rm CSF}} \nabla \cdot \bm u_h \, q_h  &= 0 \qquad \foralls q_h \in Q_h.
 \end{align}
 \end{subequations}
