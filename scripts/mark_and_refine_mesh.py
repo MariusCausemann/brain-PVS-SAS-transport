@@ -110,8 +110,8 @@ def mark_boundaries(label):
     mark_internal_interface(mesh, label, bm, CSF_NO_FLOW_CSF_ID,
                             doms=[CSFID, CSFNOFLOWID])
     # mark spinal outlet
-    mark_inlet(mesh, bm, SPINAL_OUTLET_ID, (0 ,0,-1), 0.8,
-               zmin=mesh.coordinates()[:,2].min() + 0.5e-3)
+    mark_inlet(mesh, bm, SPINAL_OUTLET_ID, (0 ,0,-1), 0.75,
+               zmin=mesh.coordinates()[:,2].min() + 0.7e-3)
 
     # mark spinal cord
     mark_external_boundary(mesh, label, bm, SPINAL_CORD_ID,
@@ -122,9 +122,6 @@ def mark_and_refine(configfile : str):
 
     config = read_config(configfile)
     meshname = Path(configfile).stem
-
-    # compute distance to interface for later refinement
-    parenchyma_surf = pv.read(f"mesh/{meshname}/surfaces/parenchyma_incl_ventr.ply")
 
     # read in again and use fenics to exclude problematic parts 
     # of the CSF space from the Stokes computation (disconnected domains)
@@ -137,6 +134,9 @@ def mark_and_refine(configfile : str):
         f.read(label, 'label')
 
     if config.get("refine", True):
+        # compute distance to interface for later refinement
+        parenchyma_surf = pv.read(f"mesh/{meshname}/surfaces/parenchyma_incl_ventr.ply")
+
         # refine V3 and V4
         sas, label = refine_region(sas, label, labelids=[V34ID])
 
