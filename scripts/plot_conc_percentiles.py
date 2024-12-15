@@ -17,7 +17,7 @@ flip = lambda items, ncol: itertools.chain(*[items[i::ncol] for i in range(ncol)
 def plot_conc_percentiles(models:List[str]):
     dpi = 500
     group_a = ["modelA", ]#"modelB1-10", "modelB1-100", "modelB1-1000"]
-    group_b = ["modelA-strongVM", "modelB2-10",]# "modelB2-100", "modelB2-1000"]
+    group_b = ["modelA-strongVM", "modelB2-10", "modelB2-100",]# "modelB2-1000"]
     blues = sns.color_palette("Blues_d", n_colors=len(group_a))
     oranges = sns.color_palette("Oranges_d", n_colors=len(group_b))
     artlabels = [l for l,p in pointlabels]
@@ -95,30 +95,32 @@ def plot_conc_percentiles(models:List[str]):
             plt.close()
             
     qois = [f"_fta", f"_lag", f"_pvs_peak_time", f"_c_peak", f"_delta_c_peak"]
-    for q in qois:
-        fig, ax = plt.subplots(figsize=(4,3))
-        # plot qois over xi
-        for art in ["BA","MCA-R", "MCA-L", "ACA-A2", "ACA-A3"]:
-            ylabeldict = {f"{art}_fta" : f"{art} FTA (h)", f"{art}_lag" : f"{art} Δt (h)",
-                        f"{art}_pvs_peak_time": f"{art} peak time (h)", 
-                        f"{art}_c_peak": f"{art} " + r"$c_{\rm peak}$ (mmol/l)",
-                        f"{art}_delta_c_peak":f"{art} " + r"$\Delta c_{\rm peak}$  (mmol/l)"}
-            labeld = {group_a[0]: "baseline", group_b[0]:"baseline + VM"}
-            markerd = {group_a[0]: "d", group_b[0]:"o"}
+    ylabeldict = {f"_fta" : f"FTA (h)", f"_lag" : f"Δt (h)",
+                            f"_pvs_peak_time": f"peak time (h)", 
+                            f"_c_peak": r"$c_{\rm peak}$ (mmol/l)",
+                            f"_delta_c_peak":r"$\Delta c_{\rm peak}$  (mmol/l)"}
+    for gr in [group_b]:
+        va = "_".join(gr)
+        os.makedirs(f"plots/comparisons/{va}/", exist_ok=True)
+        for q in qois:
+            sns.set_palette("tab10")
+            fig, ax = plt.subplots(figsize=(4,3))
             ax.set_xscale('log')
-            for gr in [group_a, group_b]:
+            # plot qois over xi
+            for art in ["BA","MCA-R", "MCA-L", "ACA-A2", "ACA-A3"]:
+                
                 col, xis, r = coldict[gr[0]], [], []
                 for m in gr:
                     xis.append(results[m]["config"]["arterial_pvs_csf_permability"])
-                    r.append(results[m][art + q] / (3600 if "(h)" in ylabeldict[art + q] else 1))
-                ax.scatter(xis,r, color=col, label=labeld[gr[0]], marker=markerd[gr[0]],
-                          s=50)
-                ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol=2, 
+                    r.append(results[m][art + q] / (3600 if "(h)" in ylabeldict[q] else 1))
+                ax.plot(xis,r, label=art, ls=":", marker="d",
+                        markersize=5)
+                ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.25), ncol=3, 
                         columnspacing=0.3, frameon=False)        
-            plt.xlabel("PVS-CSF permeability (m/s)")
-            plt.ylabel(ylabeldict[art + q])
-            plt.savefig(f"plots/comparisons/{v}/{v}_{q}.png", 
-                            bbox_inches='tight', dpi=dpi)
+                plt.xlabel("PVS-CSF permeability (m/s)")
+                plt.ylabel(ylabeldict[q])
+            plt.savefig(f"plots/comparisons/{va}/{va}_{q}.png", 
+                                bbox_inches='tight', dpi=dpi)
             plt.close()
 
     conc_types = {"conc_at_point":"pvs", "avg_conc_around_point":"outer","jump_at_point":"jump"}    
