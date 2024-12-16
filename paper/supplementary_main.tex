@@ -158,7 +158,7 @@ perivenous networks ($s \in \Lambda_a, s \in \Lambda_v$), entering
 in~\eqref{eq:3d_pde}, represents the concentration in the perivascular
 space averaged over each perivascular cross-section and is governed by 
 \begin{equation}
-  \partial_t (A  \hat c) - \partial_s( \hat D A \partial_s (\hat c) ) + \partial_s(A \hat u \hat c )  +  \xi P (\hat c - \overline{c}) = 0
+  \partial_t (A  \hat c) - \partial_s( \hat D A \partial_s \hat c  ) + \partial_s(A \hat u \hat c )  +  \xi P (\hat c - \overline{c}) = 0
   \qquad \text{in} \quad \Lambda_a, \Lambda_v ,
 \label{eq:1d_pde}
 \end{equation}
@@ -423,16 +423,16 @@ linear polynomials defined over $\Lambda$:
 \end{equation}
 where $\mathrm{P}^1(\Lambda^i)$ is the space of linear polynomials on each $\Lambda^i$. The discrete formulation then reads: for $n = 1,2,\ldots, $ find $\hat c_h^n \in \hat V_h$ such that for all $\hat v \in \hat V_h^k$: 
 \begin{align}\label{eq:1d_dg_disc}
-\int_{\Lambda}  \frac{1}{\tau}(A  \hat c_h^n - A \hat c_h^{n-1}) \hat v  + \int_{\Lambda} \hat D A \partial_s \hat c_h^n  \partial_s \hat v^n - \int_{\Lambda} A \hat u \hat c_h^n \partial_s \hat v   +  \int_{\Lambda} \xi P (\hat c_h^n - \overline{c_h^n}) +a_h^{\mathrm{stab}}(\hat u; \hat c, \hat v) = 0.  
+\int_{\Lambda}  \frac{1}{\tau}(A  \hat c_h^n - A \hat c_h^{n-1}) \hat v  + \int_{\Lambda} \hat D A \partial_s \hat c_h^n  \partial_s \hat v^n - \int_{\Lambda} A \hat u \hat c_h^n \partial_s \hat v   +  \int_{\Lambda} \xi P (\hat c_h^n - \overline{c_h^n}) \hat v +a_h^{\mathrm{stab}}(\hat u; \hat c, \hat v) = 0.  
 \end{align}
- In the above, if $\hat u$ is non--zero on $\Lambda^i$, then the artificial diffusion stabilization term, for more details see for e.g. \cite[Section 12.6]{quarteroni2009numerical}: 
+ In the above, if $\hat u$ is non--zero on $\Lambda^i$, then the artificial diffusion $a_h^{\mathrm{stab}}$ stabilization term is nonzero  and is given below, for more details see for  \cite[Section 12.6]{quarteroni2009numerical}. 
  \begin{align}
     a_h^{\mathrm{stab}}(\hat u; \hat c, \hat v) =  \frac{1}{\|\hat u\|_{L^2(\Lambda^i)}} 
  h_{\Lambda^i} \int_{\Lambda^i} A (\hat u \partial_s \hat c_h  ) (\hat u \partial_s \hat v),  
  \end{align}
  where $h_{\Lambda^i}$ is the mesh--size of $\Lambda^i$.
 
- \textit{Summary.} The discretization for \eqref{eq:3d_pde} and \eqref{eq:1d_pde} comlemented with boundary conditions (\eqref{eq:3d_bcs} and \eqref{eq:1d_bcs}), interface and bifurcation  conditions (\eqref{eq:3d_interface}, \eqref{eq:1d_flow:bifurcations}, and \eqref{eq:conc_continuity}), and intial conditions $c_h^0 =0 $ and $\hat c_h^0$ is the following: 
+ \textit{Summary.} The discretization for \eqref{eq:3d_pde} and \eqref{eq:1d_pde} comlemented with boundary conditions (\eqref{eq:3d_bcs} and \eqref{eq:1d_bcs}), interface and bifurcation  conditions (\eqref{eq:3d_interface}, \eqref{eq:1d_flow:bifurcations}, and \eqref{eq:conc_continuity}), and intial conditions $c_h^0 =0 $ and $\hat c_h^0 = 0 $ is the following: 
 
  For $n = 1,2, \ldots $, find  $c_h^n \in V_h$ and $\hat c^n_h \in \hat V_h$ such that the coupled equations \eqref{eq:3d_dg_disc} and \eqref{eq:1d_dg_disc} hold for all $v \in V_h$ and for all $\hat v \in \hat V_h$. 
 \subsubsection{Finite element solution of the incompressible Stokes equations}
