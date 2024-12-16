@@ -108,52 +108,39 @@ class Figure2_Panels(PanelsSpec):
             text=Text("respiratory dispersion enhancement", **textargs_histo)
         )
     n: Panel = Panel(
-            RasterImage("plots/modelA/modelA_overview.png",
+            RasterImage("plots/modelA/modelA_overview_1-6-12-24.png",
                          ElemSize(3, hn, units), crop=(1420, 100, 1350, 0)),
             Location(xstart, y3), auto_label=True,
             content_offset=Location(0,0),
             text=Text("baseline", **dict(textargs, y=-0.1, x=1.5))
         )
     n2: Panel = Panel(
-            RasterImage("plots/modelA-OnlyDispersion/modelA-OnlyDispersion_overview.png",
+            RasterImage("plots/modelA-OnlyDispersion/modelA-OnlyDispersion_overview_1-6-12-24.png",
                          ElemSize(3, hn, units), crop=(1420, 100, 1350, 0)),
             Location(xstart + compwidth, y3), auto_label=False,
             content_offset=Location(0,0),
             text=Text("no advection (12 h)", **dict(textargs, y=-0.1, x=1.5))
         )
     n3: Panel = Panel(
-            RasterImage("plots/modelA-LowD/modelA-LowD_overview.png",
+            RasterImage("plots/modelA-LowD/modelA-LowD_overview_1-6-12-24.png",
                          ElemSize(3, hn, units), crop=(1420, 100, 1350, 0)),
             Location(xstart + 2*compwidth, y3), auto_label=False,
             content_offset=Location(0,0),
             text=Text("low dispersion (12 h)", **dict(textargs, y=-0.1, x=1.5))
         )
     n4: Panel = Panel(
-            RasterImage("plots/modelA-HighD/modelA-HighD_overview.png",
+            RasterImage("plots/modelA-HighD/modelA-HighD_overview_1-6-12-24.png",
                          ElemSize(3, hn, units), crop=(1420, 100, 1350, 0)),
             Location(xstart + 3*compwidth, y3), auto_label=False,
             content_offset=Location(0,0),
             text=Text("high dispersion (12 h)", **dict(textargs, y=-0.1, x=1.5))
         )
     n5: Panel = Panel(
-            RasterImage("plots/modelA-OnlyDispersion/modelA-OnlyDispersion_overview.png",
+            RasterImage("plots/modelA-OnlyDispersion/modelA-OnlyDispersion_overview_1-6-12-24.png",
                          ElemSize(3, hn, units), crop=(2850, 100, 20, 0)),
             Location(xstart + 4*compwidth, y3), auto_label=False,
             content_offset=Location(0,0),
         )
-    o:Panel = Panel(
-            RasterImage("plots/modelA/modelA_total_conc.png",
-                         ElemSize(5,4, units)),
-            Location(13, y3),
-            text=Text("Total tracer content", **textargs_histo)
-        )
-    p:Panel = Panel(
-            RasterImage("plots/modelA/modelA_mean_conc.png",
-                         ElemSize(5,4, units)),
-            Location(13, y3 + 4),
-            text=Text("Tracer concentrations", **textargs_histo)
-        )
-
 
 class Figure2(FigureSpec):
     figure_size = ElemSize(18.2, 24, units)
