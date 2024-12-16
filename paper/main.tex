@@ -242,7 +242,7 @@ Main findings and outlook \textcolor{lightgray}{\lipsum[1]} Outlook:
 \subsection*{In-silico predictions of molecular enrichment and clearance after injection}
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{figures/figure1.png}
+    \includegraphics[width=0.95 \textwidth]{figures/figure1.png}
      \caption{A) Illustration of the spatial domains of the model: CSF-filled space (ventricles and SAS) $\Omega_{\rm CSF}$, parenchyma $\Omega_{\rm PAR}$ and the PVS surrounding arteries $\Lambda_{\rm artery}$ and the veins $\Lambda_{\rm vein}$ and their interfaces and boundaries (see Methods); B) 3D rendering of the actual geometry used in this study (parenchyma (pink), CSF (clipped, blue), arterial network (red), venous network (blue)); C) arterial network (red) and venous network (blue); D) illustration of the modelled clinical tracer injection procedure; E) Time of simulated first tracer arrival after intrathecal injection (concentration exceeds $0.1\,$mol/l); F) time of first tracer arrival in the arterial PVS (top) and venous PVS (bottom); G) sagittal, coronal and axial view of computed tracer concentrations over T1-image 1, 6, 12 and 24\,h after injection (low concentrations transparent, pial surface in pink, arachnoid membrane in cyan, and arteries in dark red); H) total amount of tracer in each cranial compartment over the first 24\,h; I) average tracer concentration in each compartment over the first 24\,h. }
      \label{fig:results1}
 \end{figure}
@@ -318,8 +318,8 @@ venous PVS (8\%) and the arterial PVS
 \centering 
 \includegraphics[width = 0.9\linewidth]{figures/figure2.png}
 \caption{\mer{MER: @MC, will you update the caption please?}
-A) Illustration of 3D-domains; 
-B) Illustration of relevant boundaries; 
+A) Illustration of the CSF-filled compartments: third and fourth ventricle (V3\&4), lateral ventricles (LV) and SAS; 
+B) Illustration of the models boundaries: spinal subarachnoid space (SSAS), upper and lower arachnoid membrane (AM-U and AM-L), pia (Pia) and lateral ventricles (LV); 
 C) schematic illustration of the model, its domains and boundaries; 
 D) CSF flow induced by CSF production; with resistive outflow across the
 upper convexity of the arachnoid mater; 
@@ -333,8 +333,6 @@ K) cardiac-induced dispersion enhancement factor;
 L) respiratory flow velocities;
 M) respiratory dispersion enhancement factor;
 N) sagittal, coronal and axial planes of tracer concentration after 12h in different model variations. The outer model boundaries is shown in cyan, the pial membrane in purple and the arteries in red.;
-O) total content of tracer in each compartment;
-P) mean tracer concentration in each compartment;
 }
 \label{fig:csf}
 \end{figure}  
@@ -698,10 +696,9 @@ To represent molecular influx into the intracranial compartments
 following intrathecal injection, without modelling the spinal
 compartment explicitly, we prescribe a time-dependent molecular influx
 over the interface towards the spinal compartment with the condition
-$(D \nabla c - \bm u c ) \cdot \bm{n} = g_{\mathrm{influx}}$ on
-$\Gamma_{\mathrm{SSAS}}$. We set
+$$(D \nabla c - \bm u c ) \cdot \bm{n} = g_{\mathrm{influx}},  \quad \mathrm{on}  \quad \Gamma_{\mathrm{SSAS}}. $$ In the above, we set
 \begin{equation}
-  g_\mathrm{influx}(t) = \frac{m_{\rm tot}}{T_{\rm max}^2 |\Gamma_{\rm SSAS}|} \max(0, T_{\rm max} - |t - T_{\rm max}|)
+  g_\mathrm{influx}(t) = \frac{m_{\rm tot}}{T_{\rm max}^2 |\Gamma_{\rm SSAS}|} \max(0, T_{\rm max} - |t - T_{\rm max}|), 
 \end{equation}
 which expresses a hat-shaped influx function with a peak at $T_{\rm max}$ and a total tracer injection of $m_{\rm tot}$ (\Cref{tab:parameters}).
 
