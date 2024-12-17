@@ -65,9 +65,9 @@ rule all:
             m=["modelA", "modelB1-10", "modelB1-100", "modelB1-1000"] +
              ["modelA-strongVM", "modelB2-10", "modelB2-100", "modelB2-1000"],
              tstr=["1+2+3+4", "2+4+6+8"],
-             artstr_cmstr=["MCA-R_0.1+5.0+20.0+20.0", "MCA-L_0.1+5.0+20.0+20.0",
-                            "BA_3.0+40.0+40.0+10.0","ACA-A3_0.1+2.0+10.0+10.0",
-                            "ACA-A2_0.1+2.0+5.0+5.0"])
+             artstr_cmstr=["MCA-R_0.2+5.0+20.0+20.0", "MCA-L_0.2+5.0+20.0+20.0",
+                            "BA_3.0+40.0+40.0+10.0","ACA-A3_0.2+2.0+12.0+10.0",
+                            "ACA-A2_0.2+4.0+12.0+10.0"])
 
 rule runSimuation:
     conda:"environment.yml"
