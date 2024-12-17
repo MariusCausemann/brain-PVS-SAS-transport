@@ -438,9 +438,9 @@ clearance\cite{}. However, whether CSF flows more rapidly in PVSs and
 what the forces and mechanisms required to drive such flow are, remain
 as key points of debate~\cite{bohr2022glymphatic,
   van2024caa}. Motivated by experimental observations in animal
-models~\cite{iliff2012paravascular, iliff2013cerebral,mestre2018flow,
-  bedussi2018flow}, there is now a remarkable body of literature on
-modelling perivascular fluid flow and
+models~\cite{iliff2012paravascular, iliff2013cerebral, mestre2018flow,
+  bedussi2018paravascular}, there is now a remarkable body of
+literature on modelling perivascular fluid flow and
 transport~\cite{bilston2003arterial, asgari2016glymphatic,
   rey2018pulsatile, daversin2020mechanisms, sharp2019dispersion,
   kedarasetti2020functional, kedarasetti2020arterial,
@@ -450,9 +450,19 @@ would translate from idealized geometries to human vascular networks
 and further evaluate their integrated effect in the context of
 intracranial solute transport.
 
+Our periarterial network extends from the internal carotid arteries
+and basilar artery through \discuss{$\leqslant$ N} generations to
+upstream network ends within the SAS or just inside the parenchyma
+(\Cref{fig:results1}A--C, \Cref{fig:results3}A) and includes major
+surface arteries of radius \discuss{$0.5-1.3$ mm}
+(\Cref{fig:results3}C). Imposing the pressure field induced by CSF
+production at the periarterial network ends induces ultraslow flow of
+CSF in the PVS, with an average velocity of 0.08 $\mu$m/s and a
+maximum velocity of 0.55 $\mu$m/s (\Cref{fig:results3}D, H)
+
+
 \mer{WIP.}
 
-The pressure gradients induced by CSF production (\Cref{fig:csf}D) 
 
 We investigate the PVS flow velocities resulting from a transmantle pressure gradient, cardiac peristalsis and vasomotion-induced flow in a reconstructed arterial network and illustrate the effect of the obtained PVS flow fields on the spreading patterns of intrathecally injected tracer. Further, we explore whether solutes move exclusively from the PVS to the SAS, or bidirectionally along both pathways by comparison of first-time arrival times along major cerebral arteries.
 
@@ -716,7 +726,10 @@ To represent molecular influx into the intracranial compartments
 following intrathecal injection, without modelling the spinal
 compartment explicitly, we prescribe a time-dependent molecular influx
 over the interface towards the spinal compartment with the condition
-$$(D \nabla c - \bm u c ) \cdot \bm{n} = g_{\mathrm{influx}},  \quad \mathrm{on}  \quad \Gamma_{\mathrm{SSAS}}. $$ In the above, we set
+\begin{equation}
+  (D \nabla c - \bm u c ) \cdot \bm{n} = g_{\mathrm{influx}},  \quad \mathrm{on}  \quad \Gamma_{\mathrm{SSAS}}.
+\end{equation}
+In the above, we set
 \begin{equation}
   g_\mathrm{influx}(t) = \frac{m_{\rm tot}}{T_{\rm max}^2 |\Gamma_{\rm SSAS}|} \max(0, T_{\rm max} - |t - T_{\rm max}|), 
 \end{equation}
@@ -727,13 +740,13 @@ which expresses a hat-shaped influx function with a peak at $T_{\rm max}$ and a 
 
 We model molecular clearance, into the meningeal lymphatics or other
 pathways, across the upper, outer (arachnoid) boundary
-(\Cref{fig:intracranial_domains}), proportional to the concentration
-in the SAS with a rate constant $\beta_{\rm exit}$. We set a no-flux
-condition at the end nodes of the perivascular networks, not allowing
-for direct molecular clearance there.
+(\Cref{fig:results1}), proportional to the concentration in the SAS
+with a rate constant $\beta_{\rm exit}$. We set a no-flux condition at
+the end nodes of the perivascular networks, not allowing for direct
+molecular clearance there.
 
-\subsection{CSF flow in the SAS and ventricular system}
-\label{sec:csf_fluid_vel}
+\subsection*{CSF flow in the SAS and ventricular system}
+%\label{sec:csf_fluid_vel}
 
 We model CSF as an incompressible Newtonian fluid at low Reynolds and
 Womersley numbers via the Stokes equations with viscosity $\mu$, and
@@ -745,14 +758,14 @@ rate of $u_{\rm in}$ across the lateral ventricle walls and with
 efflux across the upper, outer (arachnoid) boundary with efflux
 resistance $R_0$; and then set $\bm u = \bm u_{\rm CSF}$ in
 $\Omega_{\rm CSF}$ in~\eqref{eq:multi_transport}
-(\Cref{tab:parameters}, \Cref{fig:intracranial_domains},
-\Cref{fig:csf_flow_prod}, see also \Cref{sec:more_maths}). We do not
-directly model convection within the brain tissue (beyond the
-perivascular spaces), and thus set $\bm u = 0$ in $\Omega_{\rm PAR}$
-in~\eqref{eq:multi_transport}.
+(\Cref{tab:parameters}, \Cref{fig:csf}, see also
+\Cref{sec:more_maths}). We do not directly model convection within the
+brain tissue (beyond the perivascular spaces), and thus set $\bm u =
+0$ in $\Omega_{\rm PAR}$ in~\eqref{eq:multi_transport}.
 
-\subsection{Dispersion in the CSF spaces}
-\label{sec:csf_dispersion}
+\subsection*{Dispersion in the CSF spaces}
+
+%\label{sec:csf_dispersion}
 
 The pulsatile flow of CSF in the SAS and ventricular system,
 associated with the cardiac and respiratory cycles, substantially
@@ -775,6 +788,24 @@ Next, we estimate a spatially varying dispersion enhancement factor $R$ from car
 % respiratory pulsatility
 \mar{Employing the same methodology, we estimate the respiratory contribution to dispersive mixing by computing the CSF flow field driven by an inflow of $0.121\,$ml/s \cite{liu2024using} and $1\,$ml/s \cite{gutierrez2022effect} across the lateral ventricular wall and the arachnoid mater, respectively. This amounts to a respiratory peak flow volume of $1.121\,$ ml/s at the craniocervical junction. While the resulting flow velocities are only about one fourth of their cardiac-induced counterparts (see \Cref{fig:csf}H and L), respiratory dispersive mixing reaches a factor of up to 350 due the lower respiratory frequency of $0.25\,$Hz (\Cref{fig:csf}I and M).}
 
+\subsection*{Perivascular fluid flow induced by CSF pressure differences}
+
+To estimate the contribution to perivascular fluid flow from CSF
+production, we impose the fluid pressure $p_{\rm CSF}$ induced by CSF
+production, computed in the SAS and ventricular system, at the network
+end nodes: $\hat{p}(n) = p_{\rm CSF}(n)$ for network end nodes $n$
+located within the SAS. For the network end nodes located within the
+parenchyma, we compute a harmonic extension of the CSF pressure field
+(by solving a Laplace equation in $\Omega_{\rm PAR}$ with $p_{\rm
+  CSF}$ as the boundary value), and set the corresponding value at
+these end nodes. \mer{One sentence about network flow model (Darcy
+  flow here). Both arterial and venous networks.}
+
+%% For that reason, we apply a simple extension technique to map the CSF
+%% pressure field into $\Omega_{\rm PAR}$. In particular, we solve a
+%% Laplace equation on $\Omega_{\rm PAR}$ with the CSF pressure on the
+%% Pial membrane ($\Gamma_{\rm Pia}$) as a boundary condition.
+
 
 \subsection*{Dispersion in the PVS}
 
@@ -785,15 +816,6 @@ Similar to the CSF spaces, dispersion due to cardiac and respiratory pulsation h
 %  \cite{bojarskaite2023sleep} numerical simulations show that the enhancement factor is likely in the range of 10 - 50 \%
 %\cite{asgari2016glymphatic} numerical simulations show increase of 16% to 50%  in distribution lengths
 %\cite{troyetsky2021dispersion}:   maximum enhancement of diffusion of only about 5%
-
-
-\subsection*{Perivascular fluid flow induced by CSF pressure differences}
-
-Since the pressure gradient the caused by the steady production-driven CSF flow (see \cref{sec:csf_fluid_vel}), we impose the precomputed fluid pressure $p_{\rm CSF}$ on the networks root nodes:
-\begin{equation}
-    \hat{p} = p_{\rm CSF} \quad \text{ on } \Lambda^{\rm out}
-\end{equation}
-In case that the root does not lie within the CSF-space but the parenchyma, the CSF pressure is not yet computed. For that reason, we apply a simple extension technique to map the CSF pressure field into $\Omega_{\rm PAR}$. In particular, we solve a Laplace equation on $\Omega_{\rm PAR}$ with the CSF pressure on the Pial membrane ($\Gamma_{\rm Pia}$) as a boundary condition.
 
 
 \subsection*{Perivascular fluid flow induced by vascular wall motion}
