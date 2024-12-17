@@ -123,27 +123,26 @@ between patient cohorts~\cite{ringstad2018brain, eide2021direction,
 distinct opportunities (and challenges) for personalized medicine
 e.g.~for tailored intrathecal delivery of
 chemotherapy~\cite{lohela2022glymphatic} and for early diagnostics of
-impaired brain clearance~\cite{eide2021clinical,
-  van2024human}. \textcolor{lightgray}{In spite of their importance,
-  our understanding of these mechanisms is incomplete with open
-  challenges and controversies -- in part relating to the transfer of
-  knowledge between species, experiments/studies, cohorts, individual
-  variations}
+impaired brain clearance~\cite{eide2021clinical, van2024human}. In
+spite of their importance, our understanding of these mechanisms is
+incomplete with open challenges and significant debate -- in part
+relating to the transfer of knowledge between species, experimental
+protocols, clinical cohorts, and individuals.
 
 Perivascular pathways along the brain surface and within the brain
 parenchyma have long been hypothesized to serve a designated role in
 this context~\cite{rennels1985evidence, zhang1990interrelationships,
   ichimura1991distribution, carare2008solutes, iliff2012paravascular,
-  foley2012realtime, hannocks2018molecular}. Recently, Eide and
+  foley2012realtime, hannocks2018molecular, van2024caa}. Recently, Eide and
 Ringstad~\cite{eide2024functional} and Yamamoto et
-al~\cite{yamamoto2024perivascular} independently demonstrated that
-perivascular spaces (PVSs) define preferential pathways for molecular
-transport in humans, with delayed periarterial enrichment in dementia
+al~\cite{yamamoto2024perivascular} demonstrated that perivascular
+spaces (PVSs) define preferential pathways for molecular transport in
+humans, with delayed periarterial enrichment in dementia
 subtypes~\cite{eide2024functional}. Perivascular flow of cerebrospinal
 fluid (CSF) clearly contributes to this transport, and is inherently
 associated with vascular pulsations~\cite{hadaczek2006perivascular,
   iliff2013cerebral, bedussi2018paravascular, mestre2018flow,
-  boster2023artificial, hirschler2024region}. Fluid mechanical
+  boster2023artificial, hirschler2024region}. Fluid mechanics
 considerations point at intracranial pressure differences and shorter
 wavelength vascular wall pulsations as drivers of directional net flow
 and convection in the PVS~\cite{bilston2003arterial, rey2018pulsatile,
@@ -239,7 +238,7 @@ Main findings and outlook \textcolor{lightgray}{\lipsum[1]} Outlook:
 %% %%   Clearance from the parenchyma: $c_0 = 1.0$. Different substances? Save for different paper. 
 %% \end{enumerate}
 
-\subsection*{In-silico predictions of molecular enrichment and clearance after injection}
+\subsection*{In-silico predictions of intracranial molecular enrichment and clearance after intrathecal injection}
 \begin{figure}
     \centering
     \includegraphics[width=0.95 \textwidth]{figures/figure1.png}
@@ -346,9 +345,9 @@ neurological conditions are also associated with alterations in the
 pulsatile flow of CSF in the ventricular system and
 SAS~\cite{eide2021direction}. Clearly, key physiological factors such
 as cardiac pulsatility and respiration easily differ between
-individuals and between (patho-)physiological states. We therefore next
-asked to what extent -- and how -- variations in CSF pulsatility would
-affect the intracranial enrichment characteristics.
+individuals and between both pathological and physiological states. We
+therefore next asked to what extent -- and how -- variations in CSF
+pulsatility would affect the intracranial enrichment characteristics.
 
 For the CSF dynamics in our baseline model, we combine the net
 contribution to CSF flow induced by CSF production with the integrated
@@ -398,13 +397,13 @@ to travel upwards through the ventricular system, reaching the third
 ventricle after around $12$ hours. On the other hand, if the CSF
 pulsatility is reduced, we observe rapid transport towards the upper
 convexity of the cranium, as in the baseline model, but the tracer
-spreads exclusively within the anterior regions of the brain. This
-feature can be attributed to the CSF flow bifurcation
-\discuss{posterior to the ambient cistern (\Cref{fig:csf}D); without
-  sufficient diffusion, the tracer is unable to cross into the
-  posterior SAS.} Indeed, with higher dispersion, the tracer moves
-through the quadrigeminal cistern and further upwards into the
-longitudinal fissure, with also enrichment of the cerebellum.
+spreads exclusively within the anterior regions. This feature can be
+attributed to the CSF flow bifurcation \discuss{posterior to the
+  ambient cistern (\Cref{fig:csf}D); without sufficient diffusion, the
+  tracer is unable to cross into the posterior SAS.} Indeed, with
+higher dispersion, the tracer moves through the quadrigeminal cistern
+and further upwards into the longitudinal fissure, with also
+enrichment of the cerebellum.
 
 %Flow of CSF through the SAS and the ventricular system is a crucial driver of transport in the human brain environment.
 %While cardiac- and respiratory induced oscillatory flow increases mixing, the production of CSF in the choroid plexus creates a steady advective flow within the CSF-filled spaces of the cranium \cite{hornkjol2022csf}. 
@@ -412,7 +411,6 @@ longitudinal fissure, with also enrichment of the cerebellum.
 
 % production flow simulation
 %% To simulate the production-driven flow, we impose an inflow of $400\,$ml/day across the surface of the lateral ventricle and allow a resistive outflow across the upper convexity of the arachnoid mater, leading to a total pressure drop of $26\,$mPa between the production and outflow sites (\Cref{fig:csf}D). A maximum flow velocity of $1.8\,$mm/s is attained in the aqueduct, while the mean velocity in the SAS is $2.6\,\mu$m/s (\Cref{fig:csf} E).
-
 
 
 %% % cardiac pulsatility
@@ -430,11 +428,32 @@ longitudinal fissure, with also enrichment of the cerebellum.
 %% Overall, about 40\,\% of the total amount of tracer remains in the cranium 24\,h post-injection, with the largest share in the CSF (53\,\%), followed by the parenchyma (35\,\%), the venous PVS (8\,\%) and the arterial PVS (5\,\%). (\cref{fig:csf}O).}
 
 
-
 \subsection*{The significance of perivascular spaces as flow highways}
 \label{sec:pvs_flow_results}
 
-Perivascular spaces have emerged as critical pathways for fluid flow and solute transport in the brain, making them potential targets for enhancing brain drug delivery and metabolic waste clearance. The question of potential drivers of rapid fluid flow in PVS and the effects on intracranial solute transport remains a key question in the field. We investigate the PVS flow velocities resulting from a transmantle pressure gradient, cardiac peristalsis and vasomotion-induced flow in a reconstructed arterial network and illustrate the effect of the obtained PVS flow fields on the spreading patterns of intrathecally injected tracer. Further, we explore whether solutes move exclusively from the PVS to the SAS, or bidirectionally along both pathways by comparison of first-time arrival times along major cerebral arteries.
+%Now turning to the PVSs, these are
+The PVSs are recognized across species as critical pathways for solute
+transport in and around the brain\cite{}, and thus as potential
+targets for enhancing brain drug delivery and metabolic waste
+clearance\cite{}. However, whether CSF flows more rapidly in PVSs and
+what the forces and mechanisms required to drive such flow are, remain
+as key points of debate~\cite{bohr2022glymphatic,
+  van2024caa}. Motivated by experimental observations in animal
+models~\cite{iliff2012paravascular, iliff2013cerebral,mestre2018flow,
+  bedussi2018flow}, there is now a remarkable body of modelling
+literature on the mechanisms of perivascular fluid flow and
+transport~\cite{bilston2003arterial, asgari2016glymphatic,
+  rey2018pulsatile, daversin2020mechanisms, sharp2019dispersion,
+  kedarasetti2020functional, kedarasetti2020arterial,
+  troyetsky2021dispersion, martinac2021phase, gjerde2023directional,
+  nozaleda2024arterial}. Here, we ask how these proposed mechanisms
+would translate from idealized geometries to human vascular networks
+and further evaluate their integrated effect in the context of
+intracranial solute transport.
+
+\mer{WIP here.}
+
+We investigate the PVS flow velocities resulting from a transmantle pressure gradient, cardiac peristalsis and vasomotion-induced flow in a reconstructed arterial network and illustrate the effect of the obtained PVS flow fields on the spreading patterns of intrathecally injected tracer. Further, we explore whether solutes move exclusively from the PVS to the SAS, or bidirectionally along both pathways by comparison of first-time arrival times along major cerebral arteries.
 
 %\paragraph{PVS Flow velocities}
 
