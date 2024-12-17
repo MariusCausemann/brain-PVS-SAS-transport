@@ -81,9 +81,15 @@ def compare_concentrations(modelname:str):
     pvs_shape = Circle(radius=pvs_radii, degree=40, quad_rule='midpoint')
     proximity_dist = 2e-3
     nearby_shape = Circle(radius=project(pvs_radii + proximity_dist, DG0a), degree=40, quad_rule='midpoint')
+    csf_prio = InterfaceResolution(subdomains=subd_marker,
+                                       resolve_conflicts={(CSFID, PARID): 1e6})
     c_averages = [ii_project(Average(c, artery, pvs_shape, resolve_interfaces=priority,
                                      normalize=True), V) for c in sas_conc]
-    nearby_averages = [ii_project(Average(c, artery, nearby_shape, 
+    nearby_averages = [ii_project(Average(c, artery, nearby_shape, resolve_interfaces=priority,
+                                     normalize=True), V) for c in sas_conc]
+    c_averages_csf = [ii_project(Average(c, artery, pvs_shape, resolve_interfaces=csf_prio,
+                                     normalize=True), V) for c in sas_conc]
+    nearby_averages_csf = [ii_project(Average(c, artery, nearby_shape, resolve_interfaces=csf_prio,
                                      normalize=True), V) for c in sas_conc]
     
     segments, segids ,_ = color_branches(artery)
@@ -97,8 +103,8 @@ def compare_concentrations(modelname:str):
     conc_at_point, avg_conc_around_point, avg_conc_nearby_point= {}, {}, {}
     for n, si,l in zip(artlabels, artsegids, seglengths):
         conc_at_point[n] = [assemble(c*dxs(si))/l for c in art_conc]
-        avg_conc_around_point[n] = [assemble(c*dxs(si))/l for c in c_averages]
-        avg_conc_nearby_point[n] = [assemble(c*dxs(si))/l for c in nearby_averages]
+        avg_conc_around_point[n] = [assemble(c*dxs(si))/l for c in c_averages_csf]
+        avg_conc_nearby_point[n] = [assemble(c*dxs(si))/l for c in nearby_averages_csf]
     metrics["avg_conc_around_point"] = avg_conc_around_point
     metrics["avg_conc_nearby_point"] = avg_conc_nearby_point
     metrics["conc_at_point"] = conc_at_point

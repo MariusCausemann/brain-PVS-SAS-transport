@@ -99,51 +99,77 @@ def plot_conc_percentiles(models:List[str]):
                             f"_pvs_peak_time": f"peak time (h)", 
                             f"_c_peak": r"$c_{\rm peak}$ (mmol/l)",
                             f"_delta_c_peak":r"$\Delta c_{\rm peak}$  (mmol/l)"}
+    titledict = {f"_fta" : f"first-time arrival", f"_lag" : f"peak time difference",
+                            f"_pvs_peak_time": f"PVS peak time", 
+                            f"_c_peak": "peak PVS concentration",
+                            f"_delta_c_peak":"peak concentration difference"}
+    colors = ['#5d16a6','#9683ec','#f7b801','#f18701','#f35b04']
     for gr in [group_b]:
         va = "_".join(gr)
         os.makedirs(f"plots/comparisons/{va}/", exist_ok=True)
-        for q in qois:
+        fig, axes = plt.subplots(1, len(qois), figsize=(3*len(qois),3))
+        plt.subplots_adjust(left=0.05, bottom=0.18, right=0.98, top=0.82, wspace=0.3, hspace=None)
+        for q,ax in zip(qois, axes):
             sns.set_palette("tab10")
-            fig, ax = plt.subplots(figsize=(4,3))
             ax.set_xscale('log')
             # plot qois over xi
-            for art in ["BA","MCA-R", "MCA-L", "ACA-A2", "ACA-A3"]:
-                
-                col, xis, r = coldict[gr[0]], [], []
+            for art, col in zip(["BA","MCA-R", "MCA-L", "ACA-A2", "ACA-A3"], colors):
+                xis, r =  [], []
                 for m in gr:
                     xis.append(results[m]["config"]["arterial_pvs_csf_permability"])
                     r.append(results[m][art + q] / (3600 if "(h)" in ylabeldict[q] else 1))
-                ax.plot(xis,r, label=art, ls=":", marker="d",
-                        markersize=5)
-                ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.25), ncol=3, 
-                        columnspacing=0.3, frameon=False)        
-                plt.xlabel("PVS-CSF permeability (m/s)")
-                plt.ylabel(ylabeldict[q])
-            plt.savefig(f"plots/comparisons/{va}/{va}_{q}.png", 
-                                bbox_inches='tight', dpi=dpi)
-            plt.close()
+                ax.plot(xis,r, label=art if q==qois[0] else None, ls=":", marker="d",
+                        markersize=5, color=col)
+                ax.set_xlabel("PVS-CSF permeability (m/s)")
+                ax.set_ylabel(ylabeldict[q])
+                ax.set_title(titledict[q], y=0.98)
+        plt.figlegend(loc='upper center', bbox_to_anchor=(0.5, 1.01), ncol=len(art), 
+                        columnspacing=2, frameon=False)            
+        plt.savefig(f"plots/comparisons/{va}/{va}.png", dpi=dpi, transparent=True,
+                )
+        plt.close()
 
-    conc_types = {"conc_at_point":"pvs", "avg_conc_around_point":"outer","jump_at_point":"jump"}    
-    for conc_type, abbr in conc_types.items():
-        for art in ["MCA-R", "MCA-L", "ACA-A2", "ACA-A3"]:
-            fig, ax = plt.subplots(figsize=(4,3))
-            for m in models:
-                ax.plot(times / 3600, results[m][conc_type][art],
-                        color=coldict[m], lw=2,
-                        label=labeldict[m])
-                #ax.fill_between(times / 3600, results[m]["avg_conc_around_point"][art],
-                #                 results[m]["conc_at_point"][art],
-                #                 color=coldict[m], alpha=0.2)
-            ncol=len(group_a)
-            handles, labels = ax.get_legend_handles_labels()
-            ax.legend(flip(handles, ncol), flip(labels, ncol),
-                    loc='upper center', bbox_to_anchor=(0.5, 1.25), ncol=ncol, 
-                    columnspacing=0.1, frameon=False)        
-            ax.set_xlabel("time (h)")
-            ax.set_ylabel("concentration (mmol/l)")
-            plt.savefig(f"plots/comparisons/{v}/{v}_conc_{abbr}_{art}.png", 
-                                bbox_inches='tight',dpi=dpi)
-            plt.close()
+
+    #from IPython import embed; embed()
+    models = ["modelA-strongVM", "modelB2-100"]
+    coldict = {"modelA-strongVM":"#F7B801","modelB2-100":"#5D16A6"}
+    conc_types = {"conc_at_point":"pvs", "avg_conc_around_point":"outer",
+                  "jump_at_point":"jump"}   
+    base_xi =  results["modelA-strongVM"]['config']['arterial_pvs_csf_permability']
+    labeldict = {m:f"ξ x {int(results[m]['config']['arterial_pvs_csf_permability']/base_xi)}" 
+                 for m in  models}
+
+    arteries = ["BA","MCA-R", "MCA-L", "ACA-A2", "ACA-A3"]
+    fig, axes = plt.subplots(1, len(arteries), figsize=(3*len(arteries),3))
+    plt.subplots_adjust(left=0.05, bottom=0.18, right=0.98, top=0.82, wspace=0.3, hspace=None)
+
+    for art, ax in zip(arteries, axes):
+        for m in models:
+            ax.plot(times / 3600, results[m]["conc_at_point"][art],
+                    color=coldict[m], lw=2, ls="dashed",
+                    label=labeldict[m] + " (PVS)" if art==arteries[0] else None)
+            ax.plot(times / 3600, results[m]["avg_conc_around_point"][art],ls=":", 
+                    color=coldict[m], lw=2,
+                      label=labeldict[m] + " (outer)" if art==arteries[0] else None)
+            #ax.plot(times / 3600, results[m]["avg_conc_nearby_point"][art],ls="-.", 
+            #        color=coldict[m], lw=2, label=labeldict[m] + " (nearby)")
+            ax.fill_between(times / 3600, results[m]["avg_conc_around_point"][art],
+                             results[m]["conc_at_point"][art],
+                             color=coldict[m], alpha=0.3)
+        ncol=len(group_a)
+        handles, labels = ax.get_legend_handles_labels()
+        plt.figlegend(loc='upper center', bbox_to_anchor=(0.5, 1.01), ncol=4, 
+                columnspacing=2, frameon=False)        
+        ax.set_xlabel("time (h)")
+        ax.set_ylabel("concentration (mmol/l)")
+        ax.set_title(art, y=0.98)
+        ax.set_xlim(0, 12)
+
+    plt.savefig(f"plots/comparisons/{v}/{v}_conc.png", 
+                transparent=True,dpi=dpi)
+    plt.close()
+
+    from IPython import embed; embed()
 
 
 

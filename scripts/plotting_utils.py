@@ -231,6 +231,8 @@ def detail_plot(sas, networks, objects, filename, center, normal, clim, cmap, cb
     #pl.add_legend_scale()
     #pl.add_axes()
     #pl.enable_parallel_projection()
-    pl.camera_position = [center + normal, center, (0,0,1)]
+    pl.camera.position = center + normal
+    pl.camera.focal_point = center
+    pl.camera.up = (0,0, 1)
 
     return slice.active_scalars.max(), pl.screenshot(filename, transparent_background=True, return_img=True)
