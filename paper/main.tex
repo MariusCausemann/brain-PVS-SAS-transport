@@ -603,6 +603,31 @@ This indicates that fast transport along the PVS might not hinge upon a structur
 
 \subsection*{Comparison with others}
 
+\begin{itemize}
+\item
+  Model validation: While the glymphatic system is well-studied in
+  animal models especially in rodents, there are much fewer reports in
+  glymphatic MRI human subjects; we therefore mainly compare with the
+  series of papers by Eide and colleagues.
+  \begin{itemize}
+  \item
+    tracer enrichment timings compared with~\cite{eide2024functional,
+      yamamoto2024perivascular},
+  \item tracer enrichment patterns compared with
+    \cite{ringstad2017brain, ringstad2018brain, ringstad2021sleep},
+    cohort variations, individual variations, physiological factor
+    variations (sleep, exercise -- cardiac/respiratory)
+  \item
+    CSF flow predictions due to production~\cite{hornkjol2022csf}, and
+    pulsatility~\cite{vinje2019respiratory, baledent2014imaging, linninger2007cerebrospinal}.
+  \item
+    Dispersive factor predictions~\cite{sharp2019dispersion, ray2021quantitative}
+  \end{itemize}
+\item
+  Magnitude of PVS flow~\cite{mestre2018flow,
+    bedussi2018paravascular}. Antegrade versus retrograde PVS flow
+\end{itemize}
+
 \draft{\lipsum[1-5]}
 
 \iffalse
@@ -625,39 +650,66 @@ penetrating vessel.
 \fi
 
 
-
 \subsection*{Limitations}
 
-\draft{\lipsum[1-2]}
+In terms of limitations, ...
 
-\iffalse
 \begin{itemize}
-%\item
-%  \mer{MER/MC: How about dispersion in the PVS?}
+\item
+  Not all of the injected tracer get to the craniocervical
+  junction. What is the impact of this. Linear effect, just scale the
+  our predicted values e.g.~in \Cref{fig:results1}.
 \item 
-  Inaccuracies in vascular geometry representation - and consequences downstream for e.g. numerical integration.
+  Inaccuracies in vascular geometry representation - and consequences
+  downstream for e.g. numerical integration. PVS geometry assumptions
+  and approximations. Humans different from mice. Limitations in
+  resolution. No vasculature in the cerebellum, and of course no
+  vasculature below certain resolution.
 \item
-  PVS geometry assumptions and approximations. Humans different from mice. Limitations in resolution.
-\item
-  No vasculature in the cerebellum, and of course no vasculature below certain resolution.
-%\item
-%  Only partially accounting for pulsatility. 
-\item
-  Accounting for brain diffusive anisotropy. Little effect expected. Maybe something to consider in small follow-up work.
-\item
-  Permeability and stiffness of the pial membrane
+  Very simplified model of transport in the parenchyma, no PVS there,
+  no glymphatics there. Clearly have an effect on the later stage
+  transport in the brain, though the current model provides a baseline
+  for comparison, accounting for isotropic diffusion alone.
+  Accounting for brain diffusive anisotropy. Little effect
+  expected. Maybe something to consider in small follow-up
+  work. Interestingly, blobs match observations of large molecular
+  tracer observations.
 \item
   Assumed no transport across the BBB. PVS-blood exchange and BBB
   leakage. Natural to consider in model variation here, or follow-up
   work. We here ignore PVS-blood exchange, and thus only model the
   perivascular concentration at the network level (in addition to the
   SAS/brain concentration in the surroundings).
-\item
-  Not all of the injected tracer get to the craniocervical
-  junction. What is the impact of this. Linear effect, just scale the
-  our predicted values e.g.~in \Cref{fig:results1}.
 \end{itemize}
-\fi
+
+\draft{\lipsum[1-2]}
+
+%% \begin{itemize}
+%% %\item
+%% %  \mer{MER/MC: How about dispersion in the PVS?}
+%% \item 
+%%   Inaccuracies in vascular geometry representation - and consequences downstream for e.g. numerical integration.
+%% \item
+%%   PVS geometry assumptions and approximations. Humans different from mice. Limitations in resolution.
+%% \item
+%%   No vasculature in the cerebellum, and of course no vasculature below certain resolution.
+%% %\item
+%% %  Only partially accounting for pulsatility. 
+%% \item
+%%   Accounting for brain diffusive anisotropy. Little effect expected. Maybe something to consider in small follow-up work.
+%% \item
+%%   Permeability and stiffness of the pial membrane
+%% \item
+%%   Assumed no transport across the BBB. PVS-blood exchange and BBB
+%%   leakage. Natural to consider in model variation here, or follow-up
+%%   work. We here ignore PVS-blood exchange, and thus only model the
+%%   perivascular concentration at the network level (in addition to the
+%%   SAS/brain concentration in the surroundings).
+%% \item
+%%   Not all of the injected tracer get to the craniocervical
+%%   junction. What is the impact of this. Linear effect, just scale the
+%%   our predicted values e.g.~in \Cref{fig:results1}.
+%% \end{itemize}
 
 \subsection*{Outlook}
 
