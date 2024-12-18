@@ -219,26 +219,9 @@ Main findings and outlook \textcolor{lightgray}{\lipsum[1]} Outlook:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Results}
-%% \mer{Update: ~2800 words and 6 subsections - around 400-500 words each?}
-%% \begin{enumerate}
-%% \item
-%%   ``A digital twin'' for molecular enrichment and clearance in human intracranial spaces
-%% \item
-%%   CSF flow, the role of production versus no/cardiac/respiratory
-%%   dispersive effects on tracer trajectories, flow bifurcation. With and without tentorium cerebellum.
-%% \item
-%%   ``The role'' of PVS flow speed
-%% \item
-%%   ``The role'' of PVS sheaths and permeability - does functional separation entail structural separation? %Different molecular sizes?
-%% \item
-%%   ``The role'' of PVS size (motivated by pathologies)
-%% \item
-%%   Clearance from the CSF spaces - with and without low pressure veins, but keeping the intrathecal source of solute. 
-%% %% \item
-%% %%   Clearance from the parenchyma: $c_0 = 1.0$. Different substances? Save for different paper. 
-%% \end{enumerate}
+%% \mer{MER: Target ~3100 words in 6 subsections}
 
-% MER: Results #1 is about 500 words
+%% \mer{MER: Results #1 is about 500 words}
 \subsection*{In-silico predictions of intracranial molecular enrichment and clearance after intrathecal injection}
 \begin{figure}
     \centering
@@ -283,11 +266,6 @@ scheme and the FEniCS finite element software\cite{alnaes2015fenics,
   kuchta2020assembly} (see Methods). The computational framework and
 associated software are all openly available~\cite{ZENODO}.
 
-%% We then simulated the intracranial distribution and evolution of a
-%% $0.5$ mmol intrathecal injection of Gadobutrol after the appearance of
-%% the solute at the craniocervical junction
-%% (\Cref{fig:results1}D).
-
 Simulating a glymphatic MRI protocol~\cite{ringstad2017glymphatic,
   ringstad2018brain, eide2024functional}, we then predict the
 spreading of $0.5$ mmol intrathecally injected Gadobutrol after its
@@ -313,7 +291,7 @@ share in the CSF (53\%), followed by the parenchyma (35\%), the
 venous PVS (8\%) and the arterial PVS
 (5\%) (\Cref{fig:results1}I).
 
-% MER: Results #1 is about 600 words
+% \mer{MER: Results #2 is about 600 words}
 \subsection*{Reduced CSF pulsatility strongly shifts intracranial enrichment patterns}
 \begin{figure}%[h!]
 \centering 
@@ -338,7 +316,6 @@ N) sagittal, coronal and axial planes of tracer concentration after 12h in diffe
 \label{fig:csf}
 \end{figure}  
 
-% but the relationship is not clear/well-defined.
 The enrichment patterns observed clinically after intrathecal
 injection of Gadobutrol differ substantially between subjects and
 between pathological conditions~\cite{ringstad2018brain,
@@ -386,7 +363,6 @@ cardiac-induced counterparts (see \Cref{fig:csf}H, L), respiratory
 dispersive mixing reaches a factor of up to 350 due the lower
 respiratory frequency of $0.25\,$Hz (\Cref{fig:csf}I, M).
 
-% tracer trajectory of model variations
 Now, to examine how CSF pulsatility affects the enrichment patterns,
 we consider three variations of the baseline: no CSF production,
 reduced pulsatility and thus decreased dispersion ($0.1 \times R$) and
@@ -407,30 +383,7 @@ higher dispersion, the tracer moves through the quadrigeminal cistern
 and further upwards into the longitudinal fissure, with also
 enrichment of the cerebellum.
 
-%Flow of CSF through the SAS and the ventricular system is a crucial driver of transport in the human brain environment.
-%While cardiac- and respiratory induced oscillatory flow increases mixing, the production of CSF in the choroid plexus creates a steady advective flow within the CSF-filled spaces of the cranium \cite{hornkjol2022csf}. 
-%We construct a 3D model of the SAS and the ventricular system (\Cref{fig:csf}A,B and C) and compute CSF flow fields for three different scenarios: CSF production in the choroid plexus, CSF flow at systolic peak blood inflow and CSF flow in response to free breathing.
-
-% production flow simulation
-%% To simulate the production-driven flow, we impose an inflow of $400\,$ml/day across the surface of the lateral ventricle and allow a resistive outflow across the upper convexity of the arachnoid mater, leading to a total pressure drop of $26\,$mPa between the production and outflow sites (\Cref{fig:csf}D). A maximum flow velocity of $1.8\,$mm/s is attained in the aqueduct, while the mean velocity in the SAS is $2.6\,\mu$m/s (\Cref{fig:csf} E).
-
-
-%% % cardiac pulsatility
-%% Assessing the effect of cardiac-driven dispersion, we compute a steady CSF flow field at peak systolic blood inflow. We mimic the resulting reduction of CSF space volume by imposing an inflow of $6\,$ml/s \cite{baledent2014imaging, causemann2022human} and $0.31\,$ml/s \cite{vinje2019respiratory} across the upper arachnoid mater ($\Gamma_{\rm AM-U}$) and the lateral ventricle ($\Gamma_{\rm VL}$) surface, respectively. We allow free outflow into the spinal SAS ($\Gamma_{\rm SSAS}$). In addition, we upscale the obtained pressure field to account for the lack of pulsatile inertial effects in our model (see \Cref{sec:csf_dispersion}). In this scenario, we observe a pressure drop of $10\,$Pa between lateral ventricles and the spinal SAS and a maximum flow velocity of $19.8\,$cm/s in the aqueduct (\Cref{fig:csf}F and J).
-%% Next, we estimate a spatially varying dispersion enhancement factor $R$ from cardiac-induced pulsatility by combining the computed pressure field with the theory of shear-augmented dispersion (see \Cref{sec:csf_dispersion}). Assuming a cardiac frequency of $1\,$Hz, we find that cardiac-induced pulsatile CSF flow increases the effective diffusion by more than two orders of magnitude in the aqueduct and around the cisterna magna, but has little effect in most of the SAS ($R < 1$) (\Cref{fig:csf} G and K). 
-
-%% % respiratory pulsatility
-%% Employing the same methodology, we estimate the respiratory contribution to dispersive mixing by computing the CSF flow field driven by an inflow of $0.121\,$ml/s \cite{liu2024using} and $1\,$ml/s \cite{gutierrez2022effect} across the lateral ventricular wall and the arachnoid mater, respectively. This amounts to a respiratory peak flow volume of $1.121\,$ ml/s at the craniocervical junction. While the resulting flow velocities are only about one fourth of their cardiac-induced counterparts (see \Cref{fig:csf}H and L), respiratory dispersive mixing reaches a factor of up to 350 due the lower respiratory frequency of $0.25\,$Hz (\Cref{fig:csf}I and M).
-
-
-%% % tracer trajectory of the standard model
-%% \mer{MER: I moved this to Results 1 and condensed it a little bit}
-%% \mar{Next, we use the computed advective velocity field and dispersion enhancement factors to predict the spreading of $0.5\,$mmol intrathecally injected Gadobutrol in CSF-filled spaces, the parenchymal tissue and PVSs around arteries and veines. We assume pressure-driven flow in arterial and venous PVSs, and cardiac peristaltic flow in the arterial network (\Cref{sec:pvs_flow_results}). One hour post-injection, tracer moves upwards in the SAS frontally of the brainstem,  and quickly reaches supratentorial regions (\Cref{fig:csf}N). Here, it spreads both posteriorly through quadrigeminal cistern and longitudinal fissure, and anteriorly through the outer SAS, reaching the top of the cerebral cortex after around 12 h. After 24h, the tracer covers most of the brains surface (with exception of some posterior regions) and has penetrated several centimeters into the parenchymal tissue.
-%% This pattern of transport is reflected in the mean tracer concentrations in each compartment, where the CSF space reaches its peak of $1.4\,$mmol/l after 2 hours, followed by the the arterial PVS concentration peak ($2.9\,$mmol/l after 4 hours) (\Cref{fig:csf}P).  While the mean concentrations in these compartments fall quickly soon after their peaks, the parenchymal tissue slowly enriches with tracer over the first 24 hours, with a final value of $0.3\,$ mmol/l.
-%% Overall, about 40\,\% of the total amount of tracer remains in the cranium 24\,h post-injection, with the largest share in the CSF (53\,\%), followed by the parenchyma (35\,\%), the venous PVS (8\,\%) and the arterial PVS (5\,\%). (\cref{fig:csf}O).}
-
-
-% MER: Results #3 is about 800 words
+% \mer{MER: Results #3 is about 800 words}
 \subsection*{Perivascular flow shapes and accelerates molecular enrichment}
 \label{sec:pvs_flow_results}
 
@@ -544,6 +497,7 @@ negative answer to this question.
 
 %% The difference in tracer spreading observed at the MCA/ACA points also holds on an aggregated level in the whole arterial PVS. Computing the total amount of tracer in the PVS depending on the distance to the arterial network's inlet nodes (basal artery (BA), left internal carotid artery (ICA-L), or right internal carotid artery (ICA-R)), we find more rapid transport of tracer in the vasomotion model. We also investigate the potential effect of increased dispersion in the PVS, finding that adding a dispersion enhancement factor of 100 in the PVS only induced minor changes in the global spreading rate (\Cref{fig:pvs}J). However, differences in tracer transport along the PVS translate to altered enrichment patterns on a whole-organ scale. For instance, after 4-6 hours, the faster-moving tracer in the PVS is clearly visible in the adjacent spaces of the ACA, MCA, and other arteries in sagittal, coronal, and axial planes of the whole organ (\Cref{fig:pvs}O). In contrast, the model with only pressure- and cardiac-driven PVS flow does not exhibit clear signs of accelerated tracer transport along the PVS.
 
+% \mer{MER: Results #4 is about 500 words}
 \subsection*{Structural versus functional compartmentalization of perivascular spaces}
 
 Human and rodent observations indicate that tracers concentrate in perivascular spaces surrounding the pial and subarachnoid vasculature \cite{zhang1990interrelationships,zhang1992directional,eide2024functional, mestre2018flow}. However, it remains unclear whether such enrichment patterns necessitate a structural barrier, such as a semi-permeable membrane, or if they could result from enhanced flow or mixing (\Cref{fig:compartmentalization}A). Here, we investigate how the permeability of the interface between the PVS and surrounding CSF affects tracer enrichment around the major arterial trunks (\Cref{fig:compartmentalization}B).
@@ -576,12 +530,14 @@ This indicates that fast transport along the PVS might not hinge upon a structur
     \label{fig:compartmentalization}
 \end{figure}
 
+% \mer{MER: Target Results 5 300 words}
 \subsection*{Enlarged perivascular spaces yield ...}
 
 \begin{itemize}
   \item Take $R_2 = 3 R_1$ instead of $2 R_1$.
 \end{itemize}
 
+% \mer{MER: Target Results 6 400 words}
 \subsection*{The perivenous contribution to molecular clearance of CSF tracers}
 
 \begin{itemize}
