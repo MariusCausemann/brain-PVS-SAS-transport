@@ -520,20 +520,63 @@ bifurcation points, while the conservation of flux is enforced
 \end{subequations}%
 where $\langle \cdot, \cdot \rangle$ denotes the $L^2(\mathcal{I})$-inner product and defined segment-wise. For a stability and convergence analysis of this discrete model, we refer to the reference\cite{gjerde2024directional}. 
 
-\mer{MER: Stopped here.}
-
-\subsection{Modelling dispersion in the CSF spaces}
+\subsection{Estimating dispersion factors from pulsatile CSF flow}
 \label{sec:app:dispersion}
 
-\mer{MER: Moved the below from Results.}
+The cardiac and respiratory cycles (typically 0.25--1.0 Hz in humans)
+induce pulsatile flow of CSF in the ventricular system and in the
+cranial and spinal SAS. Pulsatile flow leads to dispersion which in
+turn may enhance molecular transport~\cite{taylor1953dispersion,
+  watson1983diffusion, asgari2016glymphatic, keith2019dispersion,
+  ray2021quantitative, troyetsky2021dispersion}. To account for the
+dispersive effects over a longer time scale (hours to days) and with
+spatial differences, we propose the following four-step approach for
+the cardiac and respiratory contributions separately.
+\begin{enumerate}%[\label=\roman]
+\item
+  To account for viscous forces, we compute spatially-varying CSF
+  pressure fields $p^0_c, p^0_r$ in $\Omega_{\rm CSF}$ corresponding to the
+  Stokes flow induced by the peak volumetric reduction of the CSF
+  space in the respective cycle. This step is described in further
+  detail below.
+\item
+  Next, we estimate the Womersley numbers $\alpha_c, \alpha_r$
+  associated with the cardiac and respiratory flow patterns by the
+  definition
+  \begin{equation}
+    \alpha^2_i = \frac{h^2 \omega_i \rho}{\mu} \qquad i \in \{c, r\},
+  \end{equation}
+  with CSF density $\rho = 10^3$ kg/m$^3$, a mean CSF space width $h =
+  1.5$mm, and CSF viscosity $\mu$ given in~\Cref{tab:parameters}.  For
+  the cardiac cycle, we consider an angular frequency $\omega_c = 2
+  \pi$, while for the respiratory cycle, we set $\omega_r = 0.5
+  \pi$. The resulting (square) Womersley numbers are $\alpha_c^2 = 20.2$
+  for the cardiac cycle and $\alpha_r^2 = 5.05$ for the respiratory
+  cycle.
+\item
+  To account for inertial forces in addition to the viscous forces, we
+  use the respective Womersley number $\alpha_i$ to calculate an
+  upscaled pressure field $p^1$ from $p^0$:
+  \begin{equation}
+    p^1_i(x) = \left ( 1 + \frac{\alpha_i^2}{8} \right ) p_i^0(x)
+    \qquad \text{for } x \in \Omega_{\rm CSF} .
+  \end{equation}
+\item
+  Further, assuming unsteady dispersion, we follow Sharp et
+  al.~\cite{keith2019dispersion} to estimate local enhancement factors
+  $S_i$ from the non-dimensionalized pressure gradients:
+  \begin{equation}
+    S_i = \frac{1}{\alpha_i^3} \frac{1}{\omega_i \mu/h} | \nabla p_i^1 |.
+  \end{equation}
+\item
+  Finally, we account for the non-local nature of dispersion by
+  smoothing ...
+\end{enumerate}
+
 \mar{To examine cardiac-driven dispersion, we compute a steady CSF flow field at peak systolic blood inflow. We mimic the resulting reduction of CSF space volume by imposing an inflow of $6\,$ml/s \cite{baledent2014imaging, causemann2022human} and $0.31\,$ml/s \cite{vinje2019respiratory} across the upper arachnoid mater ($\Gamma_{\rm AM-U}$) and the lateral ventricle ($\Gamma_{\rm LV}$) surface, respectively. We allow free outflow into the spinal SAS ($\Gamma_{\rm SSAS}$). In addition, we upscale the obtained pressure field to account for the lack of pulsatile inertial effects in our model.}
 
 % respiratory pulsatility
 \mar{Employing the same methodology, we estimate the respiratory contribution to dispersive mixing by computing the CSF flow field driven by an inflow of $0.121\,$ml/s \cite{liu2024using} and $1\,$ml/s \cite{gutierrez2022effect} across the lateral ventricular wall and the arachnoid mater, respectively.}
-
-
-
-CSF pulsates in the SAS and ventricular system with each cardiac and respiratory cycle, leading to an increase in effective solute diffusivity via a process known as Taylor dispersion \cite{taylor1953dispersion, watson1983diffusion}. Previous estimates of the magnitude of this effect in the CSF-filled space range from an enhancement factor of 5.8 \cite{keith2019dispersion} up to $10^4$ \cite{ray2021quantitative}. The large discrepancies in reported estimates can (at least partly) be attributed to different assumptions on representative values for local width, pressure differences and fluid velocities in the SAS, which reflect the diverse flow characteristics in the different regions of the intracranial CSF-filled space.
 
 Taking the large spatial differences of pulsatile CSF flow into account, we estimate a spatially varying diffusion enhancement factor $R$ in the CSF-filled space $\Omega_{\rm CSF}$ by combining a computational model of cardiac- and respiration-induced pulsatile CSF flow with theoretical estimates for shear-augmented (Taylor) dispersion \cite{taylor1953dispersion, watson1983diffusion}. These estimates are are derived under simplifying assumptions on the problem geometry, the flow field and concentration profiles \cite{watson1983diffusion, keith2019dispersion}. Therefore such an estimate is heuristic; however, our computational results qualitatively agree with observed data. 
 
