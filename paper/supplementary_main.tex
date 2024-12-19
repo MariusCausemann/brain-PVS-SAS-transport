@@ -3,7 +3,7 @@
 These sections provide more detailed descriptions of the mathematical models and numerical approximations considered.
 
 \subsection{Mixed-dimensional transport and flow equations}
-\label{sec:more_maths}
+\label{sec:app:more_maths}
 
 \subsubsection{Notation}
 
@@ -186,7 +186,7 @@ concentrations when viewed from each edge must match at nodes:
   \qquad \foralls y \in \mathcal{B} .
   \label{eq:conc_continuity}
 \end{equation}
-Moreover, to ensure \discuss{mass conservation}, we set that the flux
+Moreover, to ensure mass conservation, we set that the flux
 going in and out at nodes should add to zero, or more precisely, that
 for each $y \in \mathcal{B}$:
 \begin{equation}
@@ -239,7 +239,7 @@ the pressure field $p : \Omega_{\rm CSF} \rightarrow \R$ such that
 \begin{subequations}
   \begin{alignat}{2}
     - \mu \Delta \bm u  + \nabla p &=  0 \quad && \text{ in } \Omega_{\rm CSF},
-    \label{eq:momnetum_equation} \\ 
+    \label{eq:momentum_equation} \\ 
     \nabla \cdot \bm u &= 0 \quad && \text{ in } \Omega_{\rm CSF},
     \label{eq:divergence_equation} .
   \end{alignat}
@@ -258,7 +258,7 @@ induced by CSF production in the choroid plexus with $\Gamma_{\rm AM-U}$ as the 
   \end{alignat}
   \label{eq:stokes_bcs}%
 \end{subequations}%
-where $\bm n$ denotes the unit outward normal to the boundary, $\mu$ is the (dynamic) CSF viscosity, $R_0 > 0$ is a resistance parameter for CSF efflux, and $u_{\rm in}$ is a given fluid influx, here across the lateral ventricle wall $\Gamma_{\rm LV}$. We consider alternative variations of these boundary conditions in connection with estimating dispersion effects induced by CSF pulsatility, see~\Cref{sec:supp:dispersion}.
+where $\bm n$ denotes the unit outward normal to the boundary, $\mu$ is the (dynamic) CSF viscosity, $R_0 > 0$ is a resistance parameter for CSF efflux, and $u_{\rm in}$ is a given fluid influx, here across the lateral ventricle wall $\Gamma_{\rm LV}$. We consider alternative variations of these boundary conditions in connection with estimating dispersion effects induced by CSF pulsatility, see~\Cref{sec:app:dispersion}.
 
 %% We consider non-zero convection in the CSF space $u_{\rm CSF} \not = 0$ in \eqref{eq:multi_transport_3d} resulting from steady state CSF production.  Recall that $\Omega_{\mathrm{CSF}}$ represents the CSF space and that $\Gamma_{\mathrm{skull^{u/l}}}$ and $\Gamma_{\mathrm{pia}}$, $\Gamma_{\mathrm{LV}}$ represent the boundaries facing the upper and lower parts of the dura, the pia and the lateral ventricles, respectively.  Assuming CSF production in the choroid plexus located at the lateral ventricle wall, we solve the  steady state Stokes equations for the velocity and the pressure $(\bm u_{\mathrm{CSF}}, p_{\mathrm{CSF}})$ in the CSF domain: 
 
@@ -319,7 +319,7 @@ fluid pressures $p_0$.
 \subsection{Numerical solution of the transport and flow equations}
 \label{sec:details_numerical_method}
 
-We solve the models presented in~\Cref{sec:more_maths} numerically
+We solve the models presented in~\Cref{sec:app:more_maths} numerically
 using finite element methods. The following subsections provide more
 details, model-by-model.
 
@@ -526,10 +526,10 @@ where $\langle \cdot, \cdot \rangle$ denotes the $L^2(\mathcal{I})$-inner produc
 \mer{MER: Stopped here.}
 
 \subsection{Modelling dispersion in the CSF spaces}
-\label{sec:supp:dispersion}
+\label{sec:app:dispersion}
 
 \mer{MER: Moved the below from Results.}
-\mar{To examine cardiac-driven dispersion, we compute a steady CSF flow field at peak systolic blood inflow. We mimic the resulting reduction of CSF space volume by imposing an inflow of $6\,$ml/s \cite{baledent2014imaging, causemann2022human} and $0.31\,$ml/s \cite{vinje2019respiratory} across the upper arachnoid mater ($\Gamma_{\rm AM-U}$) and the lateral ventricle ($\Gamma_{\rm LV}$) surface, respectively. We allow free outflow into the spinal SAS ($\Gamma_{\rm SSAS}$). In addition, we upscale the obtained pressure field to account for the lack of pulsatile inertial effects in our model (see \Cref{sec:csf_dispersion}).}
+\mar{To examine cardiac-driven dispersion, we compute a steady CSF flow field at peak systolic blood inflow. We mimic the resulting reduction of CSF space volume by imposing an inflow of $6\,$ml/s \cite{baledent2014imaging, causemann2022human} and $0.31\,$ml/s \cite{vinje2019respiratory} across the upper arachnoid mater ($\Gamma_{\rm AM-U}$) and the lateral ventricle ($\Gamma_{\rm LV}$) surface, respectively. We allow free outflow into the spinal SAS ($\Gamma_{\rm SSAS}$). In addition, we upscale the obtained pressure field to account for the lack of pulsatile inertial effects in our model.}
 
 % respiratory pulsatility
 \mar{Employing the same methodology, we estimate the respiratory contribution to dispersive mixing by computing the CSF flow field driven by an inflow of $0.121\,$ml/s \cite{liu2024using} and $1\,$ml/s \cite{gutierrez2022effect} across the lateral ventricular wall and the arachnoid mater, respectively.}
@@ -541,7 +541,7 @@ CSF pulsates in the SAS and ventricular system with each cardiac and respiratory
 Taking the large spatial differences of pulsatile CSF flow into account, we estimate a spatially varying diffusion enhancement factor $R$ in the CSF-filled space $\Omega_{\rm CSF}$ by combining a computational model of cardiac- and respiration-induced pulsatile CSF flow with theoretical estimates for shear-augmented (Taylor) dispersion \cite{taylor1953dispersion, watson1983diffusion}. These estimates are are derived under simplifying assumptions on the problem geometry, the flow field and concentration profiles \cite{watson1983diffusion, keith2019dispersion}. Therefore such an estimate is heuristic; however, our computational results qualitatively agree with observed data. 
 
 Similar to the case of CSF flow driven by production introduced in \Cref{sec:csf_flow}, we employ a Stokes flow model to predict CSF velocities corresponding to the peak cardiac and respiratory blood inflow rates. In particular, we enforce a uniformly distributed inflow of $u^{\rm in}_{\rm AM}$ and $u^{\rm in}_{\rm LV}$ across the arachnoid mater ($\Gamma_{\rm AM}$) and lateral ventricular surfaces ($\Gamma_{\rm LV}$) respectively, mimicking the effect of reduced CSF volume due to blood inflow. We set $u^{\rm in}_{\rm AM} = 6\,$ml/s \cite{causemann2022human,baledent2014imaging} and $u^{\rm in}_{\rm LV}=0.31\,$ml/s \cite{vinje2019respiratory} in the cardiac case, and $u^{\rm{in}}_{\rm{AM}} = 1\,$ml/s \cite{gutierrez2022effect} and $u^{\rm in}_{\rm{LV}}=0.121\,$ml/s \cite{liu2024using} in the respiratory case, respectively.
-We prescribe a no-slip boundary condition on the pial surface $\Gamma_{\rm Pia}$ and zero-traction on the spinal boundary $\Gamma_{\rm SSAS}$, making the spinal compartment the only outflow route of CSF. Thus, we compute the pulsatile flow fields by augmenting the Stokes flow model (eq. \ref{eq:momnetum_equation} and \ref{eq:divergence_equation}) with the following boundary conditions:
+We prescribe a no-slip boundary condition on the pial surface $\Gamma_{\rm Pia}$ and zero-traction on the spinal boundary $\Gamma_{\rm SSAS}$, making the spinal compartment the only outflow route of CSF. Thus, we compute the pulsatile flow fields by augmenting the Stokes flow model (\eqref{eq:momentum_equation} and \ref{eq:divergence_equation}) with the following boundary conditions:
 \begin{equation}\label{eq:cardiac_flow_bcs}
     \bm u = 0 \text{ on } \Gamma_{\rm Pia}; \quad 
     \mu \nabla \bm u \cdot \bm n - p \bm n = 0 \text{ on } \Gamma_{\rm SSAS}; \quad 

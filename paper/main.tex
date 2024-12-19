@@ -621,7 +621,7 @@ This indicates that fast transport along the PVS might not hinge upon a structur
     tracer enrichment timings compared with~\cite{eide2024functional,
       yamamoto2024perivascular},
   \item tracer enrichment patterns compared with
-    \cite{ringstad2017brain, ringstad2018brain, ringstad2021sleep},
+    \cite{ringstad2017glymphatic, ringstad2018brain, eide2021sleep},
     cohort variations, individual variations, physiological factor
     variations (sleep, exercise -- cardiac/respiratory)
   \item
@@ -838,7 +838,7 @@ perivenous networks and their surroundings.  Moreover, we model the
 membrane between the parenchyma and the CSF spaces as a semi-permeable
 membrane with permeability coefficient $\beta_{\rm pia}$. For a
 complete description of this mathematical model, see
-\Cref{sec:more_maths}. The initial concentrations in the
+\Cref{sec:app:more_maths}. The initial concentrations in the
 three-dimensional domain $\Omega$ and networks $\Lambda_a, \Lambda_v$
 are set to zero for all simulation scenarios.
 
@@ -879,7 +879,7 @@ efflux across the upper, outer (arachnoid) boundary with efflux
 resistance $R_0$; and then set $\bm u = \bm u_{\rm CSF}$ in
 $\Omega_{\rm CSF}$ in~\eqref{eq:multi_transport}
 (\Cref{tab:parameters}, \Cref{fig:csf}A--E, see also
-\Cref{sec:more_maths}). We do not model bulk flow within the brain
+\Cref{sec:app:more_maths}). We do not model bulk flow within the brain
 parenchyma, except within the perivascular network segments extending
 below the pial surface, and thus set $\bm u = 0$ in $\Omega_{\rm PAR}$
 in~\eqref{eq:multi_transport}.
@@ -901,7 +901,7 @@ spatially-varying, in $\Omega_{\rm CSF}$ (\Cref{fig:csf}A) by
 combining computational estimates of the respective peak CSF pressure
 gradients with theoretical estimates for shear-augmented (Taylor)
 dispersion \cite{taylor1953dispersion, watson1983diffusion,
-  keith2019dispersion} (see \Cref{sec:more_maths} for a complete
+  keith2019dispersion} (see \Cref{sec:app:dispersion} for a complete
 description). Combining these effects, we then set $R = R_c + R_r$ and
 define the effective diffusion coefficient $D = (1 + R) D^{\rm Gad}$
 in $\Omega_{\rm CSF}$ in~\eqref{eq:multi_transport}.
@@ -975,7 +975,7 @@ porosity and tortuosity ($\lambda = 1.78$) in the parenchyma:
 $D|_{\Omega_{\rm PAR}} = D^{\rm Gad}_{\rm PAR}$. We set $\xi$
 depending on whether the PVS segment is fully embedded within the CSF
 spaces ($\xi = \xi_{\rm CSF}$) or parenchyma ($\xi = \xi_{\rm EF}$),
-or neither (\Cref{sec:more_maths}). Additionally, we increase the
+or neither (\Cref{sec:app:more_maths}). Additionally, we increase the
 permeability $\xi$ ($100\times$) near the leaf nodes of $\Lambda_a$ to
 account for the transition from explicitly resolved PVSs to their
 unresolved continuation in the CSF spaces and parenchyma. \mer{MER:
