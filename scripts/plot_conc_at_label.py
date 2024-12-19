@@ -16,22 +16,18 @@ def plot_conc_at_label(model:str):
     set_plotting_defaults()
 
     artlabelsets = [["BA",],#["ICA-L", "ICA-R"], 
-                    ["MCA-L", "MCA-R"],["MCA2-L", "MCA2-R"], 
+                    ["MCA-L"],["MCA-R"],["MCA2-L"],["MCA2-R"], 
                     #["ACA-A1-L", "ACA-A1-R"], 
-                    ["ACA-A2", "ACA-A3"],
+                    ["ACA-A2"],["ACA-A3"],
                     #["PCA-L", "PCA-R"], 
                     #["PER-L", "PER-R"]
                     ]
-    
+
     #from IPython import embed; embed()
     artlabels = sum(artlabelsets, [])
 
-    coldict = dict()
-    colors = ["#f72585", "#3a0ca3", "#4cc9f0"]
-
-    for al in artlabelsets:
-        coldict.update(dict(zip(al, colors)))
-    print(coldict)
+    coldict = {"modelA-strongVM":"#6610f2","modelA":"#0b774d"}
+    col = coldict[model]
     pvspeaktimedict = {n:results[f"{n}_pvs_peak_time"] for n in artlabels}
     pvsftadict = {n:results[f"{n}_fta"] for n in artlabels}
     lagdict = {n:results[f"{n}_lag"] for n in artlabels}
@@ -44,13 +40,12 @@ def plot_conc_at_label(model:str):
     nrows = 1
     ncols = int(np.ceil(len(artlabelsets) / nrows))
     for annotate in [True, False]:
-        fig, axes = plt.subplots(nrows, ncols, figsize=(int(ncols*3),nrows*3.5), constrained_layout=True)
+        fig, axes = plt.subplots(nrows, ncols, figsize=(int(ncols*2.8),nrows*2.8), constrained_layout=True)
         for ax, al_set in zip(axes.flatten(), artlabelsets):
             peaks, lags, ftas = [],[],[]
             for n in al_set:
-                col = coldict[n]
-                h1 = ax.plot(times / 3600, conc_at_point[n], color=col, label=n)
-                h2 = ax.plot(times / 3600, avg_conc_around_point[n], color=col, ls="dashed")
+                h1 = ax.plot(times / 3600, conc_at_point[n], color=col, ls="dashed")
+                h2 = ax.plot(times / 3600, avg_conc_around_point[n], color=col, ls="dotted")
                 ax.fill_between(times / 3600, conc_at_point[n], avg_conc_around_point[n],
                                 alpha=0.2, color=col)
                 peaks.append(pvspeaktimedict[n]); lags.append(lagdict[n]), ftas.append(pvsftadict[n])
@@ -86,24 +81,26 @@ def plot_conc_at_label(model:str):
             text = (f"peak: {('/' + nl).join(format_secs(p) for p in peaks)}h" + nl +
                     f"Δt: {('/' + nl).join(('' if l>-60 else '-') + format_secs(l) for l in lags)}h" + nl +
                     f"FTA: {('/' + nl).join(format_secs(p) for p in ftas if p is not None)}h")
-            textleft =  np.mean(peaks) > 5*3600
+            textleft =  np.mean(peaks) > 12*3600
             x_text = 0.03 if textleft else 1
             ax.set_xlim((0, 12))
-            ax.text(x_text, 0.92,
+            if al_set[0]=="BA":
+                ax.set_ylim((-5, 62))
+            else: ax.set_ylim((-1, 16))
+
+            ax.text(x_text, 0.95,
                     text, transform=ax.transAxes, horizontalalignment='left' if textleft else "right",
                     verticalalignment="top")
 
-            ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.1), ncol=2, 
-                    columnspacing=0.3, frameon=False)
+            ax.set_title(" ".join(al_set), loc='center', y=1)
             ax.set_xlabel("time (h)")
-            ax.set_ylabel("concentration (mmol/l)")
+            if al_set== artlabelsets[0]: ax.set_ylabel("concentration (mmol/l)")
         leg = plt.figlegend(handles =[h1[0], h2[0]],# h3[0]],
-                    labels=["PVS", "outside PVS"], 
+                    labels=[ "PVS", "outside PVS"],
                             #f"PVS proximity (R + {int(proximity_dist*1e3)} mm)"],
-                    loc='lower center', #facecolor="white", 
-                    edgecolor="black", frameon=False,
-                    ncols=3, bbox_to_anchor=(0.5, 0.98))
-        for lh in leg.legend_handles: lh.set_color('black')
+                    loc='lower center', #facecolor="white", edgecolor="black",
+                    frameon=False, ncols=2, bbox_to_anchor=(0.5, 0.98))
+        #for lh in leg.legend_handles: lh.set_color('black')
 
         plt.savefig(f"plots/{model}/{model}_conc_at_label{'_annotated' if annotate else ''}.png",
                     bbox_inches='tight', dpi=300)

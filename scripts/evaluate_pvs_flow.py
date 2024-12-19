@@ -73,7 +73,7 @@ def compute_pvs_flow(pvs_flow_file):
         umed = np.median(abs(uvals))
         range = np.round(minmax([uvals], percentile=99.9), 1)
         nbins = 50
-        fig, ax = plt.subplots(figsize=(3.5,3.5))
+        fig, ax = plt.subplots(figsize=(5,2.8))
         counts, bins, containers = plt.hist(uvals, density=False, bins=nbins, histtype="bar",
                 range=range, edgecolor='black', linewidth=0.4, 
                         weights=lengths / lengths.sum())
