@@ -2,6 +2,70 @@
 
 These sections provide more detailed descriptions of the mathematical models and numerical approximations considered.
 
+\subsection*{Overview of in-silico scenarios and experiments considered}
+
+See~\Cref{tab:scenarios} for an overview of the different in-silico
+scenarios and computational models considered.
+\begin{table}
+  \begin{center}
+  \begin{tabular}{ll|llllll|ll}
+    \toprule
+    & Description & $R_1, R_2$ & $\xi_{\rm PVS-SAS}$ &  $\beta_{\rm efflux}$ & $D$ & $\hat{u}$ & $\mathbf{u}_{SAS}$ & $c_0$ \\
+    \midrule
+    A & Baseline with sheaths & $R_2 = 2 R_1$ & $\xi$ & $10^{-4}$ mm$^2$/s\cite{hornkjol2022csf} & $\phi R D^{\rm gad}_{\rm eff}$\cite{sykova2008diffusion, valnes2020apparent} & $\hat{u}_{\rm prod} + \hat{u}_{\rm cardiac}$ & $\mathbf{u}_{\rm prod}$ & 0 \\ 
+    B1 & Sheath permeability & $R_2 = 2 R_1$ & $0, \xi, 10 \xi, 100 \xi, 1000 \xi$ & $10^{-4}$ mm$^2$/s\cite{hornkjol2022csf} & $\phi R D^{\rm gad}_{\rm eff}$\cite{sykova2008diffusion, valnes2020apparent} & $\hat{u}_{\rm prod} + \hat{u}_{\rm cardiac}$ & $\mathbf{u}_{\rm prod}$ & 0 \\ 
+    B2 & Health permeability & $R_2 = 2 R_1$ & $0, \xi, 10 \xi, 100 \xi, 1000 \xi$ & $10^{-4}$ mm$^2$/s\cite{hornkjol2022csf} & $\phi R D^{\rm gad}_{\rm eff}$\cite{sykova2008diffusion, valnes2020apparent} & $\hat{u}_{\rm prod} +  \hat{u}_{\rm cardiac} + \hat{u}_{\rm vaso}$ & $\mathbf{u}_{\rm prod}$ & 0 \\ 
+    %C & Larger PVS & $R_2 = N R_1$ & -- & -- & --  &  --  & -- &  -- \\
+    C & Higher PVS flow & -- & $\xi$ & -- & --  & $\hat{u}_{\rm prod} +  \hat{u}_{\rm cardiac} + \hat{u}_{\rm vaso}$  & -- & --  \\
+    AA & PVS size & $R_2 = x \beta R_1$ & $\xi$ & -- & -- & -- &  -- & 0 \\ 
+    %C & Larger PVS & $R_2 = N R_1$ & -- & -- & --  &  --  & -- &  -- \\
+    B & PVS flow & -- & $\xi$ & -- & --  & $\hat{u}_{\rm prod} + \hat{u}_{\rm vaso}$  & -- & --  \\
+    C & Clearance & -- & -- & -- & $\alpha D^{\rm gad, \tau, A\beta}$  & $\hat{u}_{\rm prod}$ & -- & 1 \\
+    %E & PVS II & $R_2 = 2 R_1$ & $\xi$, -- & -- & --  &  $\hat{u} = \hat{u}_{\rm prod} + \uparrow\uparrow$  & -- & --  \\
+    %F & PVS III & $R_2 = 2 R_1$ & $\xi$, -- & -- & $10 D_{\rm PVS}$ &  $\hat{u} = \hat{u}_{\rm prod}$  & -- & --  \\
+    %G & Glymphatics & $R_2 = 2 R_1$ & $\xi$, -- & -- & \cite{sykova2008diffusion, valnes2020apparent} &  $\hat{u} = \hat{u}_{\rm prod} + \uparrow$  & $\mathbf{u}_{\rm PAR}$ > 0 & --  \\
+    \bottomrule
+    \end{tabular}
+    \end{center}
+  \caption{Overview of models (-- denotes as immediately above). Each
+    PVS cross-section is modelled as a concentric annulus with inner
+    radius $R_1$ and outer radius $R_2$ and such that $R_2 = \beta
+    R_1$ with $\beta = 2.0$ based on~\cite{eide2024functional}. Let
+    $\xi = \dots$ denote the permeability estimated by Koch et
+    al.~\cite{koch2023estimates}. Model A and its variations aims to
+    quantify the effect of PVS sheaths by varying the permeability
+    $\xi$ between the PVS and its surroundings. We consider a fixed
+    permeability $\xi_{\rm PVS-PAR}$ based
+    on~\cite{koch2023estimates}. \mer{The permeability between the PVS
+      and the SAS $\xi_{\rm PVS-SAS}$ must likely be estimated by a
+      bit of trial-error from the observations of timings of PVS-SAS
+      and SAS from~\cite{eide2024functional}.} \discuss{The
+      extracranial solute efflux permeability $\beta_{\rm efflux}$ is
+      uniformly distributed over the outer SAS boundary with a
+      reasonable rate as baseline\cite{hornkjol2022csf,
+        eide2021clinical, ringstad2024glymphatic}.} At baseline, the
+    effective diffusion coefficients $D^{\rm x}_{\rm SAS} = D^{\rm
+      x}_{\rm PVS}$ of the SAS and PVS represent the free diffusion
+    coefficient of Gadubutrol (${\rm x} = {\rm gad}$) in CSF (water),
+    and $D^{\rm x}_{\rm PAR}$ the effective diffusion coefficient of
+    human cortical tissue, all at body temperature; weighted by a
+    dispersion factor $\alpha$ (see Methods). At baseline, we consider
+    net flow due to CSF-production in the SAS and PVS:
+    $\mathbf{u}_{\rm SAS} > 0$ and $\hat{u} > 0$ (see Methods) but no
+    bulk flow in the parenchyma $\mathbf{u}_{\rm PAR} = 0$. Due to the
+    timescale for human intracranial tracer transport (minutes to
+    hours) compared to typical (cardiac, respiratory, slow vasomotion)
+    human intracranial pulsatility (0.1 -- 1 Hz), we consider net
+    (constant-in-time) flow fields only in subsequent model variations
+    (but see dispersion factor above).  Model B represents
+    perivascular pathway scenarios with more rapid flow in the PVS
+    induced by vasomotion (PVS I)~\cite{gjerde2023directional}.
+    Models C represents a version of the aforementioned scenarios but
+    for studying metabolite clearance (instead of solute influx).}
+\label{tab:scenarios}
+\end{table}
+
+
 \subsection{Mixed-dimensional transport and flow equations}
 \label{sec:app:more_maths}
 
@@ -258,6 +322,7 @@ where $\bm n$ denotes the unit outward normal to the boundary, $\mu$ is the (dyn
 %% We consider non-zero convection in the CSF space $u_{\rm CSF} \not = 0$ in \eqref{eq:multi_transport_3d} resulting from steady state CSF production.  Recall that $\Omega_{\mathrm{CSF}}$ represents the CSF space and that $\Gamma_{\mathrm{skull^{u/l}}}$ and $\Gamma_{\mathrm{pia}}$, $\Gamma_{\mathrm{LV}}$ represent the boundaries facing the upper and lower parts of the dura, the pia and the lateral ventricles, respectively.  Assuming CSF production in the choroid plexus located at the lateral ventricle wall, we solve the  steady state Stokes equations for the velocity and the pressure $(\bm u_{\mathrm{CSF}}, p_{\mathrm{CSF}})$ in the CSF domain: 
 
 \subsubsection{Steady flow in perivascular networks induced by pressure differences}
+\label{sec:app:hydraulic_network}
 
 To model steady flow induced by pressure differences between end nodes
 in a perivascular network $\Lambda$, with edges $\{\Lambda^i\}_i$,
@@ -755,31 +820,3 @@ Considering the mean tracer concentrations in the CSF, parenchyma and arterial a
     \end{subfigure}
     \caption{Mean tracer concentrations over the first 24\,h after injection on the CSF and parenchyma (a), and the arterial and venous PVS (b) computed on the standard resolution mesh for timesteps $dt \in \{60, 120, 240 \}$\,s.}    \label{fig:time_convergence_concentrations}
 \end{figure}
-
-
-\newpage
-\section{Notes}
-
-Various notes associated with \cite{eide2024functional}:
-\begin{itemize}
-  \item
-    Can observations of tracer indicate compartmentalization without
-    the existence of physical barriers but in the presence of
-    e.g.~substantial flow? We made observations in this direction in
-    \cite{vinje2021brain}, relating to the then-active
-    shape-of-perivascular-spaces discussion. We can address this by
-    trying to quantify and evaluate the permeability of the PVS-SAS
-    interface - comparing model predictions with the timings and
-    patterns presented by \cite{eide2024functional}.
-  \item
-    Do the tracer primarily move from the PVS into the SAS or along
-    (more slowly) along the SAS? This is left as an open question by
-    \cite{eide2024functional} (page 3)
-  \item
-    How do altered ICP affect transport? Note that PVSAS transport is
-    impaired (delayed) with increasing mean wave amplitude in the ICP
-    signal and for iNPH patients (with enlarged PVSAS spaces).
-  \item
-    Very useful reference for PVS sizes (10--20 mm$^2$ in reference
-    patients, 15-70 mm$^2$ in iNPH), and average propagation speeds.
-\end{itemize}
