@@ -10,7 +10,7 @@ These sections provide more detailed descriptions of the mathematical models and
 In terms of geometrical domains, we consider the parenchyma
 $\Omega_{\rm PAR} \subset \R^3$ and CSF spaces $\Omega_{\rm CSF}
 \subset \R^3$ with $\Omega = \Omega_{\rm PAR} \cup \Omega_{\rm CSF}$
-(see also \Cref{fig:intracranial_domains}). The coordinates in these
+(\Cref{fig:results1}A, \Cref{fig:csf}A--C). The coordinates in these
 3D domains is denoted by $x$. The interface between the parenchyma and
 CSF spaces is given by $\partial \Omega_{\rm PAR} \cap \partial
 \Omega_{\rm CSF}$ and we separate it as two parts: the surface of the
@@ -36,9 +36,9 @@ union of cylindrical vessels of radius $R_1^i$ surrounding the
 centerlines $\Lambda^i$. Moreover, we consider the surrounding
 perivascular spaces as the union of annular cylinders $\Omega^i$ of
 inner radius $R_1^i$ and outer radius $R_2^i > R_1^i$ and thus of
-width $R_2^i - R_1^i$. We denote the outer lateral surface of the
+width $R_2^i - R_1^i$. \discuss{We denote the outer lateral surface of the
 periarterial and perivenous spaces by $\Gamma_a$ and $\Gamma_v$,
-respectively. We omit the subscript $a$ or $v$ when referring to any
+respectively.} We omit the subscript $a$ or $v$ when referring to any
 such network, vessel segment or perivascular outer surface. We assume
 that $\Lambda$ is parametrized by the coordinate $s$, and with a minor
 abuse of notation, simply write $s \in \Lambda$ to represent the point
@@ -59,7 +59,7 @@ the derivation and analysis of this 3D-1D model. Recall that we model
 a concentration field $c = c(x, t)$ for $x \in \Omega$ and $t > 0$
 defined in $\Omega_{\rm PAR}$ and $\Omega_{\rm CSF}$ separately. In
 each of these domains, $c$ satisfies
-\mer{MER: Rami asks if it should be a $\phi$ in the advective term here.}
+%\mer{MER: Rami asks if it should be a $\phi$ in the advective term here. We can include it, or drop it, but in the latter case, perhaps we should clarify that u is an average/superficial/Darcy velocity.}
 \begin{equation}
   \partial_t (\phi c) - \nabla \cdot (D \nabla (\phi c) ) + \nabla \cdot (\bm u c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma
   %= f
@@ -67,7 +67,7 @@ each of these domains, $c$ satisfies
   \quad \quad \mathrm{in} \quad \Omega_{\rm CSF}, \Omega_{\rm{PAR}}.
   \label{eq:3d_pde}
 \end{equation}
-In~\eqref{eq:3d_pde}, $\phi$ is the fluid volume fraction (also known as the porosity) defined in the parenchyma ($\phi \ll 1$ in $\Omega_{\rm PAR}$) and in the CSF spaces ($\phi = 1$ in $\Omega_{\rm CSF}$). In the parenchyma, $\phi$ represents the extracellular space volume fraction. Moreover, $D$ is the effective diffusion coefficient of the relevant solute in the respective media which takes different values over the CSF spaces and the parenchyma, depending on tortuosity~\cite{sykova2008diffusion} and dispersive effects; and $\bm u$ is a convective velocity field representing the flow of CSF in $\Omega_{\rm CSF}$ and the flow of ISF in $\Omega_{\rm PAR}$. $\xi$ models a transfer or exchange parameter between the 3D domain ($\Omega_{\rm PAR}$ or $\Omega_{\rm CSF}$) and the perivacular networks $\Lambda_a, \Lambda_v$. To summarize,
+In~\eqref{eq:3d_pde}, $\phi$ is the fluid volume fraction (also known as the porosity) defined in the parenchyma ($\phi \ll 1$ in $\Omega_{\rm PAR}$) and in the CSF spaces ($\phi = 1$ in $\Omega_{\rm CSF}$). In the parenchyma, $\phi$ represents the extracellular space volume fraction, and thus $c$ here generally represents the intrinsic (in contrast to the superficial) concentration~\cite{sykova2008diffusion}. Moreover, $D$ is the effective diffusion coefficient of the relevant solute in the respective media which takes different values over the CSF spaces and the parenchyma, depending on tortuosity~\cite{sykova2008diffusion} and dispersive effects; and $\bm u$ is a convective velocity field representing the flow of CSF in $\Omega_{\rm CSF}$ and the flow of ISF in $\Omega_{\rm PAR}$. $\xi$ models a transfer or exchange parameter between the 3D domain ($\Omega_{\rm PAR}$ or $\Omega_{\rm CSF}$) and the perivacular networks $\Lambda_a, \Lambda_v$. To summarize,
 \begin{equation*}
 \phi =  \begin{cases}
   1  & \mathrm{in} \;  \Omega_{\rm{CSF}} \\ 
@@ -206,14 +206,25 @@ edges. Specifically, for an edge $\Lambda^i$ from $y_{\rm in}$ to $y_{\rm out}$
   \label{eq:def:sign}
 \end{equation}
 
-Finally, we assume no molecular efflux at all end nodes $\mathcal{N}$
-via a homogeneous Neumann condition augmenting~\eqref{eq:1d_pde}:
+Finally, we impose a homogogenous Neumann condition at all network end
+nodes to augment~\eqref{eq:1d_pde}:
 \begin{equation}
     \hat D A \partial_s (\phi \hat c) - A \hat u \hat c  = 0 \quad \mathrm{on} \quad \mathcal{N}.
     \label{eq:1d_bcs}
 \end{equation}
+This no-flux condition states that the network end nodes represent
+barriers for molecular efflux into or out of the perivascular network,
+and thus that all solute exchange between the PVSs and their
+surroundings takes place via the lateral outer PVS surface and is
+regulated by the exchange parameter $\xi$ cf.~\eqref{eq:3d_pde}
+and~\eqref{eq:1d_pde}. Larger particles have been observed to
+accumulate within the PVS as the surface arteries penetrate into the
+brain parenchyma~\cite{mestre2018flow, bedussi2018paravascular},
+and~\eqref{eq:1d_bcs} is appropriate to represent such
+behavior. However, to represent a continuously extending PVSs also
+along penetrating vessels, this condition should be revisited.
 
-\mk{What is justification of \eqref{eq:1d_bcs}?}
+%\mk{What is justification of \eqref{eq:1d_bcs}?}
 %% Both $\Omega$ and $\Lambda$ are fixed in time and we assume
 %% constant-in- time radii (despite varying radii to drive peristaltic
 %% flow, see \cref{sec:sup:peristalsis}). 
