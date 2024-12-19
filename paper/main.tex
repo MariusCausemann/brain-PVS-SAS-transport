@@ -877,8 +877,8 @@ below the pial surface, and thus set $\bm u = 0$ in $\Omega_{\rm PAR}$
 in~\eqref{eq:multi_transport}.
 
 \subsection*{Dispersion in the CSF spaces}
-
 %\label{sec:csf_dispersion}
+%% MER: I'm commenting out labels as long as there is no numbering
 
 The pulsatile flow of CSF in the SAS and ventricular system,
 associated with the cardiac and respiratory cycles, substantially
@@ -886,20 +886,17 @@ enhances molecular diffusion through
 dispersion~\cite{taylor1953dispersion, watson1983diffusion,
   asgari2016glymphatic, keith2019dispersion, ray2021quantitative,
   troyetsky2021dispersion}. To account for these dispersive effects,
-we compute a spatially-varying dispersion factor $R$ in $\Omega_{\rm
-  CSF}$ (\Cref{fig:csf_flow_R}) by combining a computational model of
-the CSF pressure gradient at peak arterial dilation with theoretical
-estimates for shear-augmented (Taylor) dispersion
-\cite{taylor1953dispersion, watson1983diffusion, keith2019dispersion}. \mer{Include 1-2 sentences from Supplementary Methods here -- but which? And also revisit references with MC.}
-
-\mer{MER: Stopped here. WIP in Supplementary Methods. }
-
-\mer{MER: Moved the below from Results.}
-\mar{To examine cardiac-driven dispersion, we compute a steady CSF flow field at peak systolic blood inflow. We mimic the resulting reduction of CSF space volume by imposing an inflow of $6\,$ml/s \cite{baledent2014imaging, causemann2022human} and $0.31\,$ml/s \cite{vinje2019respiratory} across the upper arachnoid mater ($\Gamma_{\rm AM-U}$) and the lateral ventricle ($\Gamma_{\rm LV}$) surface, respectively. We allow free outflow into the spinal SAS ($\Gamma_{\rm SSAS}$). In addition, we upscale the obtained pressure field to account for the lack of pulsatile inertial effects in our model (see \Cref{sec:csf_dispersion}). In this scenario, we observe a pressure drop of $10\,$Pa between lateral ventricles and the spinal SAS and a maximum flow velocity of $19.8\,$cm/s in the aqueduct (\Cref{fig:csf}F and J).
-Next, we estimate a spatially varying dispersion enhancement factor $R$ from cardiac-induced pulsatility by combining the computed pressure field with the theory of shear-augmented dispersion (see \Cref{sec:csf_dispersion}). Assuming a cardiac frequency of $1\,$Hz, we find that cardiac-induced pulsatile CSF flow increases the effective diffusion by more than two orders of magnitude in the aqueduct and around the cisterna magna, but has little effect in most of the SAS ($R < 1$) (\Cref{fig:csf} G and K). }
-
-% respiratory pulsatility
-\mar{Employing the same methodology, we estimate the respiratory contribution to dispersive mixing by computing the CSF flow field driven by an inflow of $0.121\,$ml/s \cite{liu2024using} and $1\,$ml/s \cite{gutierrez2022effect} across the lateral ventricular wall and the arachnoid mater, respectively. This amounts to a respiratory peak flow volume of $1.121\,$ ml/s at the craniocervical junction. While the resulting flow velocities are only about one fourth of their cardiac-induced counterparts (see \Cref{fig:csf}H and L), respiratory dispersive mixing reaches a factor of up to 350 due the lower respiratory frequency of $0.25\,$Hz (\Cref{fig:csf}I and M).}
+while bridging from the pulsatile flow time scale of seconds to a
+molecular transport time scale of hours, we compute cardiac and
+respiratory dispersion factors $R_c$ and $R_r$, both
+spatially-varying, in $\Omega_{\rm CSF}$ (\Cref{fig:csf}A) by
+combining computational estimates of the respective peak CSF pressure
+gradients with theoretical estimates for shear-augmented (Taylor)
+dispersion \cite{taylor1953dispersion, watson1983diffusion,
+  keith2019dispersion} (see \Cref{sec:more_maths} for a complete
+description). Combining these effects, we then set $R = R_c + R_r$ and
+define the effective diffusion coefficient $D = (1 + R) D^{\rm Gad}$
+in $\Omega_{\rm CSF}$ in~\eqref{eq:multi_transport}.
 
 \subsection*{Perivascular fluid flow induced by CSF pressure differences}
 

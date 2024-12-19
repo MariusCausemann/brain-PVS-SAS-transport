@@ -517,6 +517,14 @@ where $\langle \cdot, \cdot \rangle$ denotes the $L^2(\mathcal{I})$-inner produc
 \subsection{Modelling dispersion in the CSF spaces}
 \label{sec:supp:dispersion}
 
+\mer{MER: Moved the below from Results.}
+\mar{To examine cardiac-driven dispersion, we compute a steady CSF flow field at peak systolic blood inflow. We mimic the resulting reduction of CSF space volume by imposing an inflow of $6\,$ml/s \cite{baledent2014imaging, causemann2022human} and $0.31\,$ml/s \cite{vinje2019respiratory} across the upper arachnoid mater ($\Gamma_{\rm AM-U}$) and the lateral ventricle ($\Gamma_{\rm LV}$) surface, respectively. We allow free outflow into the spinal SAS ($\Gamma_{\rm SSAS}$). In addition, we upscale the obtained pressure field to account for the lack of pulsatile inertial effects in our model (see \Cref{sec:csf_dispersion}).}
+
+% respiratory pulsatility
+\mar{Employing the same methodology, we estimate the respiratory contribution to dispersive mixing by computing the CSF flow field driven by an inflow of $0.121\,$ml/s \cite{liu2024using} and $1\,$ml/s \cite{gutierrez2022effect} across the lateral ventricular wall and the arachnoid mater, respectively.}
+
+
+
 CSF pulsates in the SAS and ventricular system with each cardiac and respiratory cycle, leading to an increase in effective solute diffusivity via a process known as Taylor dispersion \cite{taylor1953dispersion, watson1983diffusion}. Previous estimates of the magnitude of this effect in the CSF-filled space range from an enhancement factor of 5.8 \cite{keith2019dispersion} up to $10^4$ \cite{ray2021quantitative}. The large discrepancies in reported estimates can (at least partly) be attributed to different assumptions on representative values for local width, pressure differences and fluid velocities in the SAS, which reflect the diverse flow characteristics in the different regions of the intracranial CSF-filled space.
 
 Taking the large spatial differences of pulsatile CSF flow into account, we estimate a spatially varying diffusion enhancement factor $R$ in the CSF-filled space $\Omega_{\rm CSF}$ by combining a computational model of cardiac- and respiration-induced pulsatile CSF flow with theoretical estimates for shear-augmented (Taylor) dispersion \cite{taylor1953dispersion, watson1983diffusion}. These estimates are are derived under simplifying assumptions on the problem geometry, the flow field and concentration profiles \cite{watson1983diffusion, keith2019dispersion}. Therefore such an estimate is heuristic; however, our computational results qualitatively agree with observed data. 
@@ -538,6 +546,7 @@ Finally, we account for the non-local nature of the dispersion mechanism and smo
 - 10^{-4} \Delta R_i + R_i = dP_i^2/\alpha_i^3 \quad \text{ on } \Omega_{\rm CSF} \qquad \text{ and } \quad \nabla R_i \cdot \bm n = 0, \quad \text{ on } \partial \Omega_{\rm CSF}
 \end{equation}
 to obtain the locally averaged, spatially varying diffusion enhancement factor $R_i$. The diffusion enhancement factor $R$ in $D^{\mathrm{eff}} = D^{\mathrm{Gad}}( 1 +R)$ is then estimated by $R \approx R_{\rm{cardiac}} + R_{\rm{resp}}$. 
+
 % %\subsubsection{Cardiac Dispersion Factor Estimation}
 % %\label{sec:dispersion_details}
 
