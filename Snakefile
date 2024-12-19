@@ -16,7 +16,7 @@ model_variations = ["modelA" , "modelA-LowD","modelA-HighD",
                     "modelB1-10", "modelB1-100", "modelB1-1000",
                     "modelB2-10", "modelB2-100", "modelB2-1000",
                     #"modelC", "modelA-NoResp", "modelA-NoDisp", "modelA-LowD",
-                    "modelA-Venes"]
+                    "LargePVS", ]
 
 model_comparisons = [
                     #"modelA_modelB1-10","modelA_modelB1-100", "modelA_modelB1-1000",
@@ -67,7 +67,8 @@ rule all:
              tstr=["1+2+3+4", "2+4+6+8"],
              artstr_cmstr=["MCA-R_0.2+5.0+20.0+20.0", "MCA-L_0.2+5.0+20.0+20.0",
                             "BA_3.0+40.0+40.0+10.0","ACA-A3_0.2+2.0+12.0+10.0",
-                            "ACA-A2_0.2+4.0+12.0+10.0"])
+                            "ACA-A2_0.2+4.0+12.0+10.0","MCA2-L_0.2+8.0+8.0+5.0",
+                            "MCA2-R_0.2+8.0+8.0+5.0"])
 
 rule runSimuation:
     conda:"environment.yml"
@@ -286,11 +287,11 @@ rule computeProdPVSFlow:
     input:
         "results/csf_flow/{csf_flow_model}/flow.hdf",
     output:
-        hdf='results/pvs_flow_prod/{csf_flow_model}-{network}/pvs_flow.hdf',
-        outputdir=directory("results/pvs_flow_prod/{csf_flow_model}-{network}"),
+        hdf='results/pvs_flow_prod/{csf_flow_model}-{network}-{radius}/pvs_flow.hdf',
+        outputdir=directory("results/pvs_flow_prod/{csf_flow_model}-{network}-{radius}"),
     shell:
         """
-        python scripts/pvs_flow_prod.py {wildcards.csf_flow_model} {wildcards.network}
+        python scripts/pvs_flow_prod.py {wildcards.csf_flow_model} {wildcards.network} {wildcards.radius}
         python scripts/evaluate_pvs_flow.py {output.hdf}
         """
 
