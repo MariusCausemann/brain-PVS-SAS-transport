@@ -728,33 +728,29 @@ the total amount of tracer.
 \end{itemize}
 \fi
 
-\newpage
-
-\mer{MER: Update Methods to simplify $u_{\rm PAR} = 0$, and $u_0 = 0$ in $\Omega_{\rm PAR}$.}
-
 \section*{Methods}
-
-%\mer{MER: I recommend writing each (sub)section of Methods as a nearly stand-alone paragraph. Let's see if we can avoid subsubsections/paragraphs. If you need to add more detail than you think is appropriate, put it in a Supplementary Methods section in the Appendix.} 
 
 \subsection*{Intracranial compartments: ventricular system, SAS, and brain parenchyma}
 
 From T1-weighted MR images of a human subject~\cite{hodneland2019new},
 we first automatically segment the brain parenchyma and CSF spaces,
 including the ventricular system and SAS, using
-Synthseg~\cite{billot2023robust,billot2023synthseg}. We next manually
-adjust the segmentation to accurately represent the connections
-between CSF spaces (aqueduct, median aperture, tentorium cerebelli), smoothen, and finally
-extract surface representations of the outer (arachnoid) boundary, the
-pial membrane and other interfaces. Conforming to these surface and
+Synthseg~\cite{billot2023robust,billot2023synthseg}
+(\Cref{fig:results1}A--B). We next manually adjust the segmentation to
+accurately represent the connections between CSF spaces (aqueduct,
+median aperture, tentorium cerebelli), smoothen, and finally extract
+surface representations of the outer (arachnoid) boundary, the pial
+membrane and other interfaces. Conforming to these surface and
 interface representations, we generate a tetrahedral mesh $\Omega$
 representing the complete intracranial volume as the union of the
 parenchyma $\Omega_{\rm PAR}$ and CSF spaces $\Omega_{\rm CSF}$, using
-fTetWild~\cite{hu2020fast}. The resulting computational mesh consists
-of $221\,988$ vertices and $1\,225\,774$ mesh cells, which vary between
-$0.24$ mm and $1.29$ cm in mesh cell diameter. The parenchyma has a
-total volume of $1318$ ml, whereas the ventricles and the outer SAS
-contribute $32$ ml and $328$ ml, respectively, to a total CSF volume
-of $360$ml, in agreement with recent estimates~\cite{hladky2024regulation}.
+fTetWild~\cite{hu2020fast} (\Cref{fig:csf}A--B). The resulting
+computational mesh consists of $221\,988$ vertices and $1\,225\,774$
+mesh cells, which vary between $0.24$ mm and $1.29$ cm in mesh cell
+diameter. The parenchyma has a total volume of $1318$ ml, whereas the
+ventricles and the outer SAS contribute $32$ ml and $328$ ml,
+respectively, to a total CSF volume of $360$ml, in agreement with
+recent estimates~\cite{hladky2024regulation}.
 
 %% In addition, we slightly modify the segmentation to ensure correct
 %% connectivity of the ventricular system. In particular, we elongate
@@ -778,19 +774,20 @@ susceptibility mapping (QSM) images from the same human
 subject~\cite{hodneland2019new}. This technique yields networks of
 one-dimensional curves, each curve $\Lambda^i$ indicating the
 centerline of a blood vessel segment and labeled with its lumen radius
-$R_1^i$. We also assign an outer radius $R_2^i > R_1^i$ to each
-segment $i$, form the annular cylinder ensheathing $\Lambda^i$ and
-define the union of these as the PVS. The periarterial network graph
-consists of $12\,708$ edges connected at $12\,562$ inner nodes and
-with $147$ end nodes, and the associated domain is denoted by
-$\Lambda_a$. We identify three of the end nodes -- corresponding to
-the two internal carotid arteries (ICAs) and the basilar artery (BA)
--- as root nodes, and designate the other ends as leaf nodes. The
-resulting perivenous network graph consists of $\fixme{N}$ edges
-connected at $\fixme{N}$ inner nodes and with $\fixme{N}$ end nodes,
-and the associated domain is denoted by $\Lambda_v$. \fixme{Finally, we label
-the outer surface of the PVS associated with $\Lambda_a$ and
-$\Lambda_v$, by $\Gamma_a$ and $\Gamma_v$ respectively.}
+$R_1^i$ (\Cref{fig:results1}C, \Cref{fig:pvs}A). We also assign an
+outer radius $R_2^i > R_1^i$ to each segment $i$, form the annular
+cylinder ensheathing $\Lambda^i$ and define the union of these as the
+PVS. The periarterial network graph consists of $12\,708$ edges
+connected at $12\,562$ inner nodes and with $147$ end nodes, and the
+associated domain is denoted by $\Lambda_a$. We identify three of the
+end nodes -- corresponding to the two internal carotid arteries (ICAs)
+and the basilar artery (BA) -- as root nodes, and designate the other
+ends as leaf nodes. The resulting perivenous network graph consists of
+$\fixme{N}$ edges connected at $\fixme{N}$ inner nodes and with
+$\fixme{N}$ end nodes, and the associated domain is denoted by
+$\Lambda_v$. \discuss{Finally, we label the outer surface of the PVSs
+  associated with $\Lambda_a$ and $\Lambda_v$, by $\Gamma_a$ and
+  $\Gamma_v$ respectively.}
 
 %% The resulting vascular networks are further smoothened using a
 %% spline interpolation technique, and represented as graphs with
@@ -802,8 +799,9 @@ We model diffusion, convection, and exchange of a molecular solute in
 the PVS networks $\Lambda_a$ and $\Lambda_v$, in the CSF spaces
 $\Omega_{\rm CSF}$ and in the brain parenchyma $\Omega_{\rm PAR}$ via
 a mixed-dimensional transport model~\cite{masri2023modelling} over a
-timescale of minutes to hours. Specifically, for $t > 0$, we solve for
-a concentration $c = c(x, t)$ in the 3D intracranial compartments ($x
+timescale of minutes to hours (\Cref{fig:results1}A--C,
+\Cref{fig:csf}A--C). Specifically, for $t > 0$, we solve for a
+concentration $c = c(x, t)$ in the 3D intracranial compartments ($x
 \in \Omega_{\rm CSF}, x \in \Omega_{\rm PAR}$) and for a cross-section
 averaged concentration $\hat{c} = \hat{c}(s, t)$ in the periarterial
 and perivenous networks ($s \in \Lambda_a, s \in \Lambda_v$) such that
@@ -823,40 +821,41 @@ volume fraction, $D$ and $\hat{D}$ are effective diffusion
 coefficients, and $\bm u$ and $\hat{u}$ are fluid (CSF/ISF)
 velocities, all defined in the respective compartments; $P = 2 \pi
 R_2$ is the perimeter and $A = \pi (R_2^2 - R_1^2)$ the area of the
-PVS cross-sections, $\delta_{\Gamma}$ is the Dirac delta function
-concentrated on the interfaces $\Gamma_a, \Gamma_v$, the overlined
-$\overline{c}$ denotes the average of $c$ over cross-sections of
-$\Gamma_a, \Gamma_v$, and $\xi$ is a permeability allowing for
-transfer/exchange over the interfaces $\Gamma_a, \Gamma_v$ between the
-periarterial and perivenous networks and their surroundings.
-Moreover, we model the membrane between the parenchyma and the CSF
-spaces as a semi-permeable membrane with permeability coefficient
-$\beta_{\rm pia}$. For a complete description of this mathematical
-model, see \Cref{sec:more_maths}.
+PVS cross-sections, $\delta_{\Gamma}$ is a Dirac term concentrated on
+the interfaces $\Gamma_a, \Gamma_v$, the overlined $\overline{c}$
+denotes the average of $c$ over cross-sections of $\Gamma_a,
+\Gamma_v$, and $\xi$ is a permeability allowing for transfer/exchange
+over the interfaces $\Gamma_a, \Gamma_v$ between the periarterial and
+perivenous networks and their surroundings.  Moreover, we model the
+membrane between the parenchyma and the CSF spaces as a semi-permeable
+membrane with permeability coefficient $\beta_{\rm pia}$. For a
+complete description of this mathematical model, see
+\Cref{sec:more_maths}. The initial concentrations in the
+three-dimensional domain $\Omega$ and networks $\Lambda_a, \Lambda_v$
+are set to zero for all simulation scenarios.
 
 \subsection*{Intracranial influx after intrathecal injection}
 To represent molecular influx into the intracranial compartments
 following intrathecal injection, without modelling the spinal
 compartment explicitly, we prescribe a time-dependent molecular influx
-over the interface towards the spinal compartment with the condition
+over the interface towards the spinal CSF compartment with the condition
 \begin{equation}
   (D \nabla c - \bm u c ) \cdot \bm{n} = g_{\mathrm{influx}},  \quad \mathrm{on}  \quad \Gamma_{\mathrm{SSAS}}.
 \end{equation}
-In the above, we set
+Here we set
 \begin{equation}
   g_\mathrm{influx}(t) = \frac{m_{\rm tot}}{T_{\rm max}^2 |\Gamma_{\rm SSAS}|} \max(0, T_{\rm max} - |t - T_{\rm max}|), 
 \end{equation}
 which expresses a hat-shaped influx function with a peak at $T_{\rm max}$ and a total tracer injection of $m_{\rm tot}$ (\Cref{tab:parameters}).
 
 \subsection*{Molecular clearance from the intracranial space and perivascular network ends}
-%\subsection*{Boundary conditions: extracranial efflux and perivascular parenchymal influx}
 
 We model molecular clearance, into the meningeal lymphatics or other
 pathways, across the upper, outer (arachnoid) boundary
-(\Cref{fig:results1}), proportional to the concentration in the SAS
-with a rate constant $\beta_{\rm exit}$. We set a no-flux condition at
-the end nodes of the perivascular networks, not allowing for direct
-molecular clearance there.
+(\Cref{fig:results1}A, \Cref{fig:csf}C), proportional to the
+concentration in the SAS with a rate constant $\beta_{\rm exit}$. We
+set a no-flux condition at the end nodes of the perivascular networks,
+not allowing for direct molecular clearance there.
 
 \subsection*{CSF flow in the SAS and ventricular system}
 %\label{sec:csf_fluid_vel}
@@ -975,6 +974,8 @@ permeability $\xi$ ($100\times$) near the leaf nodes of $\Lambda_a$ to
 account for the transition from explicitly resolved PVSs to their
 unresolved continuation in the CSF spaces and parenchyma. \mer{MER:
 Could this be made more clear - what is near? Why a 100?}
+\mer{MER: Update Methods to simplify $u_{\rm PAR} = 0$, and $u_0 = 0$ in $\Omega_{\rm PAR}$.}
+
 
 \begin{table}
   \begin{center}
@@ -1001,12 +1002,6 @@ Could this be made more clear - what is near? Why a 100?}
   \label{tab:parameters}
 \end{table}
 
-\subsection*{Initial conditions}
-
-We set the initial concentrations $c_0, \hat{c}_0$ in the
-three-dimensional domain $\Omega$ and networks $\Lambda_a, \Lambda_v$
-to be zero for all influx scenarios. For parenchymal
-clearance scenarios, we set $c_0 = 1, \hat{c}_0 = 0$.
 
 \subsection*{Numerical approximation of multi-dimensional transport and CSF flow}
 
