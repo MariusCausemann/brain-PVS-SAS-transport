@@ -35,13 +35,13 @@ def get_blood_flow_orientation(tau, radius_f, root_marker):
     return uh_sign
 # --------------------------------------------------------------------
 
-def compute_pvs_flow(csf_flow_model:  str, network: str):
+def compute_pvs_flow(csf_flow_model:  str, network: str, radius_ratio:str):
 
-    radius_ratio = 2
     networkfile = f"mesh/networks/{network}_smooth.vtk"
     mesh, artery_radii, artery_roots = read_vtk_network(networkfile, rescale_mm2m=False)
     pressure_file = f"results/csf_flow/{csf_flow_model}/flow.hdf"
-    results_dir = f"results/pvs_flow_prod/{csf_flow_model}-{network}/"
+    results_dir = f"results/pvs_flow_prod/{csf_flow_model}-{network}-{radius_ratio}/"
+    radius_ratio = float(radius_ratio)
     csf_flow_config = read_config(f"configfiles/{csf_flow_model}.yml")
     radius_f = as_P0_function(artery_radii)
     

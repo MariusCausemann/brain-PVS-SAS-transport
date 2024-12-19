@@ -1,33 +1,88 @@
-<style>
-    .svg-container text {
-      font-size: 16px;
-    }
-  </style>
-<img src="plots/meshplots/labeled_arteries.png" style="position:absolute;left:10px;top:25px;width:490px;height:380px;filter:hue-rotate(-00deg);object-fit:contain;">
-<img src="paper/figures/peristaltic_flow.png" style="position:relative;left:530px;top:10px;width:344px;height:90px;object-fit:contain;">
-<img src="plots/pvs_flow_prod/sas_flow-arteries/sas_flow-arteries_radius.png" style="position:absolute;left:480px;top:100px;width:230px;height:150px;object-fit:contain;">
-<img src="plots/pvs_flow_prod/sas_flow-arteries/sas_flow-arteries_velocity.png" style="position:absolute;left:680px;top:100px;width:230px;height:150px;object-fit:contain;">
-<img src="plots/pvs_flow_peristaltic/cardiac_pvs_oscillation/cardiac_pvs_oscillation_velocity.png" style="position:absolute;left:480px;top:230px;width:230px;height:150px;object-fit:contain;">
-<img src="plots/pvs_flow_peristaltic/vasomotion-strong/vasomotion-strong_velocity.png" style="position:absolute;left:680px;top:230px;width:230px;height:150px;object-fit:contain;">
-<img src="plots/modelA/modelA_conc_at_label.png" style="position:absolute;left:0px;top:370px;width:450px;height:160px;object-fit:contain;">
-<img src="plots/modelA-strongVM/modelA-strongVM_conc_at_label.png" style="position:absolute;left:0px;top:501px;width:450px;height:160px;object-fit:contain;clip-path:inset(30px 0px 0px 0px);filter:hue-rotate(200deg);">
-<img src="plots/pvs_flow_prod/sas_flow-arteries/sas_flow-arteries_velocity_histo_cell.png" style="position:absolute;left:450px;top:380px;width:170px;height:149px;">
-<img src="plots/pvs_flow_peristaltic/cardiac_pvs_oscillation/cardiac_pvs_oscillation_velocity_histo_cell.png" style="position:absolute;left:600px;top:380px;width:180px;height:150px;">
-<img src="plots/pvs_flow_peristaltic/vasomotion-strong/vasomotion-strong_velocity_histo_cell.png" style="position:absolute;left:750px;top:380px;width:176px;height:150px;">
-<img src="plots/modelA/modelA_ridgeline_total_smoothed.png" style="position:absolute;left:450px;top:550px;width:152px;height:200px;">
-<img src="plots/modelA-PVS-disp/modelA-PVS-disp_ridgeline_total_smoothed.png" style="position:absolute;left:610px;top:550px;width:152px;height:200px;">
-<img src="plots/modelA-strongVM/modelA-strongVM_ridgeline_total_smoothed.png" style="position:absolute;left:770px;top:550px;width:150px;height:200px;">
-<img src="plots/modelA/modelA_1-2-3-4_MCA-R-0.1-2.0-8.0-12.0_details.png" style="position:absolute;left:0px;top:630px;width:450px;height:160px;object-fit:contain;clip-path:inset(0px 0px 50px 0px);filter:hue-rotate(200deg);">
-<img src="plots/modelA-strongVM/modelA-strongVM_1-2-3-4_MCA-R-0.1-2.0-8.0-12.0_details.png" style="position:absolute;left:0px;top:712px;width:450px;height:160px;object-fit:contain;clip-path:inset(30px 0px 0px 0px);filter:hue-rotate(-200deg);">
-<img src="plots/modelA/modelA_2-4-6-8_ACA-A4-0.1-0.2-1.0-2.0_details.png" style="position:absolute;left:0px;top:830px;width:450px;height:160px;object-fit:contain;clip-path:inset(0px 0px 50px 0px);filter:hue-rotate(-200deg);">
-<img src="plots/modelA-strongVM/modelA-strongVM_2-4-6-8_ACA-A4-0.1-0.2-1.0-2.0_details.png" style="position:absolute;left:0px;top:910px;width:450px;height:160px;object-fit:contain;clip-path:inset(30px 0px 0px 0px);filter:hue-rotate(-200deg);">
-<img src="plots/modelA/modelA_overview_4-6.png" style="position:absolute;left:-10px;top:1055px;width:440px;height:440px;object-fit:contain;clip-path:inset(0px 90px 0px 0px);">
-<img src="plots/modelA-PVS-disp/modelA-PVS-disp_overview_4-6.png" style="position:absolute;left:270px;top:1055px;width:410px;height:440px;object-fit:contain;clip-path:inset(0px 90px 0px 0px);">
-<img src="plots/modelA-strongVM/modelA-strongVM_overview_4-6.png" style="position:absolute;left:530px;top:1055px;width:410px;height:440px;object-fit:contain;clip-path:inset(0px 0px 0px 0px);">
-<object type="image/svg+xml" data="plots/comparisons/modelA_modelA-strongVM_modelA-PVS-disp/modelA_modelA-strongVM_modelA-PVS-disp_fta.svg" style="position:absolute;left:450px;top:750px;width:480px;height:300px;"></object>
-<h2 style="position:absolute;left:500px;top:-13px;width:px;height:32px;transform-origin:15px 16px;translate:0px 0px;">A</h2>
-<h2 style="position:absolute;left:500px;top:59px;width:px;height:32px;transform-origin:663px 626px;translate:0px 0px;">B</h2>
-<h2 style="position:absolute;left:697px;top:64px;width:px;height:32px;transform-origin:15px 16px;translate:0px 0px;">C</h2>
-<h2 style="position:absolute;left:702px;top:200px;width:px;height:32px;transform-origin:15px 16px;translate:0px 0px;">D</h2>
-<h2 style="position:absolute;left:5px;top:330px;width:px;height:32px;transform-origin:15px 16px;translate:0px 0px;">E</h2>
-<h2 style="position:absolute;left:495px;top:200px;width:px;height:32px;transform-origin:15px 16px;translate:0px 0px;">F</h2>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Figure 3</title>
+        <style>
+        @page {
+            size: A4;
+            margin: 1cm;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        h5 {
+            color: black;
+            text-align: center;
+            font-size: 9pt;
+            font-family: Helvetica;
+        }
+        h4 {
+            color: black;
+            text-align: left;
+            font-size: 8pt;
+            font-family: Helvetica;
+        }
+
+        p {
+            font-family: "Arial";
+            text-align: center;
+            font-size: 7pt;
+            font-weight: normal;
+        }
+    </style>
+    </head>
+</html>
+<img src="plots/meshplots/labeled_arteries.png" style="position:absolute;left:16px;top:18px;width:490px;height:380px;object-fit:contain;">
+<img src="paper/figures/peristaltic_flow_vertical.png" style="position:absolute;left:516px;top:165px;width:68px;height:211px;object-fit:contain;rotate:0deg;">
+<img src="plots/modelA/modelA_conc_at_label_annotated.png" style="position:absolute;left:16px;top:366px;width:794px;height:171px;object-fit:contain;clip-path:inset(0px 0px 30px 0px);filter:hue-rotate(0deg);">
+<img src="plots/modelA-strongVM/modelA-strongVM_conc_at_label.png" style="position:absolute;left:16px;top:467px;width:794px;height:160px;object-fit:contain;clip-path:inset(39px 0px 0px 0px);filter:hue-rotate(00deg);">
+<img src="plots/pvs_flow_prod/sas_flow-arteries/sas_flow-arteries_velocity_histo_cell.png" style="filter:hue-rotate(-100deg);clip-path:inset(0px 0px 25px 0px);object-fit:contain;position:absolute;left:600px;top:22px;width:220px;height:140px;">
+<img src="plots/modelA/modelA_overview_4-6.png" style="position:absolute;left:-22px;top:1002px;width:401px;height:380px;object-fit:contain;clip-path:inset(0px 90px 0px 0px);">
+<img src="plots/modelA-strongVM//modelA-strongVM_overview_4-6.png" style="position:absolute;left:229px;top:1002px;width:379px;height:380px;object-fit:contain;clip-path:inset(0px 90px 0px 0px);">
+<img src="plots/modelA-PVS-disp/modelA-PVS-disp_overview_4-6.png" style="position:absolute;left:472px;top:1002px;width:375px;height:380px;object-fit:contain;clip-path:inset(0px 0px 0px 0px);">
+<img src="paper/figures/csf_v_prod.png" style="position:absolute;left:499px;top:42px;width:101px;height:96px;object-fit:contain;rotate:0deg;">
+<img src="plots/pvs_flow_peristaltic/cardiac_pvs_oscillation/cardiac_pvs_oscillation_velocity_histo_cell.png" style="filter:hue-rotate(-100deg);clip-path:inset(0px 0px 25px 0px);object-fit:contain;position:absolute;left:600px;top:148px;width:220px;height:140px;">
+<img src="plots/comparisons/modelA_modelA-strongVM_modelA-PVS-disp/modelA_modelA-strongVM_modelA-PVS-disp_fta.png" style="position:absolute;left:1px;top:598px;width:400px;height:219px;object-fit:contain;clip-path:inset(0px 0px 0px 0px);filter:hue-rotate(00deg);">
+<img src="plots/modelA/modelA_ridgeline_pvs_total_smoothed.png" style="position:absolute;left:0px;top:803px;width:205px;height:200px;object-fit:contain;clip-path:inset(0px 0px 0px 0px);filter:hue-rotate(-30deg);">
+<img src="plots/modelA-strongVM/modelA-strongVM_ridgeline_pvs_total_smoothed.png" style="position:absolute;left:197px;top:803px;width:205px;height:200px;object-fit:contain;clip-path:inset(0px 0px 0px 0px);filter:hue-rotate(40deg);">
+<img src="plots/modelA/modelA_1+2+3+4_MCA-R_0.2+5.0+20.0+20.0_details.png" style="position:absolute;left:401px;top:583px;width:414px;height:163px;object-fit:contain;clip-path:inset(0px 0px 50px 15px);filter:hue-rotate(200deg);">
+<img src="plots/modelA-strongVM/modelA-strongVM_1+2+3+4_MCA-R_0.2+5.0+20.0+20.0_details.png" style="position:absolute;left:401px;top:662px;width:414px;height:161px;object-fit:contain;clip-path:inset(38px 0px 37px 15px);filter:hue-rotate(200deg);">
+<img src="plots/modelA/modelA_2+4+6+8_MCA2-R_0.2+8.0+8.0+5.0_details.png" style="position:absolute;left:401px;top:775px;width:413px;height:163px;object-fit:contain;clip-path:inset(0px 0px 50px 15px);filter:hue-rotate(200deg);">
+<img src="plots/modelA-strongVM/modelA-strongVM_2+4+6+8_MCA2-R_0.2+8.0+8.0+5.0_details.png" style="position:absolute;left:401px;top:854px;width:413px;height:161px;object-fit:contain;clip-path:inset(38px 0px 0px 15px);filter:hue-rotate(200deg);">
+<img src="plots/pvs_flow_peristaltic/vasomotion-strong/vasomotion-strong_velocity_histo_cell.png" style="filter:hue-rotate(-100deg);object-fit:contain;position:absolute;left:599px;top:274px;width:220px;height:140px;">
+<p style="position:absolute;left:639px;top:12px;width:171px;height:20px;">pressure-driven flow</p>
+<p style="position:absolute;left:639px;top:133px;width:171px;height:20px;">cardiac-driven flow</p>
+<p style="position:absolute;left:639px;top:260px;width:171px;height:20px;">vasomotion-driven flow</p>
+<p style="position:absolute;left:46px;top:986px;width:160px;height:20px;transform-origin:83px 10px;translate:0px 0px;">baseline</p>
+<p style="position:absolute;left:218px;top:793px;width:184px;height:20px;">high PVS flow</p>
+<h3 style="position:absolute;left:11px;top:8px;width:22px;height:21px;">A</h3>
+<h3 style="position:absolute;left:6px;top:350px;width:22px;height:21px;">G</h3>
+<h3 style="position:absolute;left:499px;top:5px;width:22px;height:21px;">B</h3>
+<h3 style="position:absolute;left:587px;top:5px;width:22px;height:21px;">C</h3>
+<h3 style="position:absolute;left:499px;top:5px;width:22px;height:21px;">B</h3>
+<h3 style="position:absolute;left:499px;top:5px;width:22px;height:21px;">B</h3>
+<h3 style="position:absolute;left:499px;top:124px;width:22px;height:21px;">D</h3>
+<h3 style="position:absolute;left:587px;top:123px;width:22px;height:21px;">E</h3>
+<h3 style="position:absolute;left:587px;top:249px;width:22px;height:21px;">F</h3>
+<h3 style="position:absolute;left:6px;top:590px;width:22px;height:21px;">H</h3>
+<h3 style="position:absolute;left:403px;top:590px;width:22px;height:21px;">I</h3>
+<h3 style="position:absolute;left:402px;top:776px;width:22px;height:21px;">J</h3>
+<h3 style="position:absolute;left:6px;top:776px;width:22px;height:21px;">K</h3>
+<h3 style="position:absolute;left:6px;top:975px;width:22px;height:21px;">L</h3>
+<h3 style="position:absolute;left:243px;top:975px;width:22px;height:21px;">M</h3>
+<h3 style="position:absolute;left:484px;top:975px;width:22px;height:21px;">N</h3>
+<p style="position:absolute;left:281px;top:986px;width:181px;height:20px;transform-origin:83px 10px;translate:0px 0px;">high PVS flow</p>
+<p style="position:absolute;left:521px;top:987px;width:181px;height:20px;transform-origin:83px 10px;translate:0px 0px;">high PVS dispersion</p>
+<p style="position:absolute;left:20px;top:793px;width:177px;height:20px;">baseline</p>
+<p style="position:absolute;left:381px;top:663px;width:64px;height:20px;rotate:270deg;">baseline</p>
+<p style="position:absolute;left:369px;top:741px;width:88px;height:20px;rotate:270deg;">High PVS flow</p>
+<p style="position:absolute;left:370px;top:913px;width:88px;height:20px;rotate:270deg;">High PVS flow</p>
+<p style="position:absolute;left:381px;top:834px;width:64px;height:20px;rotate:270deg;">baseline</p>
+<p style="position:absolute;left:-30px;top:530px;width:88px;height:20px;rotate:270deg;">High PVS flow</p>
+<p style="position:absolute;left:-18px;top:434px;width:64px;height:20px;rotate:270deg;">baseline</p>
+<p style="position:absolute;left:587px;top:621px;width:65px;height:20px;transform-origin:83px 10px;translate:0px 0px;">MCA-R</p>
+<p style="position:absolute;left:587px;top:818px;width:65px;height:20px;transform-origin:83px 10px;translate:0px 0px;">MCA2-R</p>
+<p style="position:absolute;left:16px;top:787px;width:383px;height:20px;">total PVS tracer content</p>
