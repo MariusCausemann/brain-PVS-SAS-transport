@@ -1005,16 +1005,43 @@ unresolved continuation in the CSF spaces and parenchyma.
 \end{table}
 
 
-\subsection*{Numerical approximation of multi-dimensional transport and CSF flow}
+\subsection*{Numerical approximation, implementation, and  verification}
 
-\mer{@Rami: Could you draft one paragraph here describing the essential bits of the numerical scheme? I recommend ``describing with words'' to reach relevant audiences. Refer to the Supplementary Methods for details. Mention theoretical expected convergence order.} 
+A complete description of the numerical methods used is provided in
+\Cref{sec:details_numerical_method}, while a condensed summary is
+given here. To solve~\eqref{eq:multi_transport} numerically, we use
+the interior penalty discontinuous Galerkin (DG) method with weighted
+averages and upwinding for the convection term in the 3D
+domains~\cite{ern2009discontinuous} -- to ensure numerical stability
+and minimize the artificial presence of negative concentation
+values. For the 1D domain, we use continuous finite element spaces
+defined over each of the networks and stabilized with numerical
+diffusion when $\hat{u}$ is non--zero. Note that the 3D--1D coupling
+in~\eqref{eq:multi_transport} induces a singularity in the solution
+$c$ and one can only expect lower-order error convergence near
+$\Lambda_a$ and $\Lambda_v$. Away from these 1D networks, almost
+optimal approximation is expected~\cite{masri2023discontinuous,
+  koppl2016local}. To numerically solve the Stokes equations to
+compute the CSF flow velocity and pressure in the ventricular system
+and SAS, we use finite element spaces that preserve the
+incompressibility condition on the discrete
+level~\cite{hong2016robust}. This requirement is important for
+numerical stability when later
+solving~\eqref{eq:multi_transport}\cite{cesmelioglu2022compatible}. The
+spaces we used for the velocity are continuous along the normal
+direction; continuity of the tangential component is enforced via
+interior penalty approaches~\cite{hong2016robust}. Optimal
+approximation properties are expected for this scheme. These numerical
+methods were implemented using the FEniCS finite element
+framework~\cite{alnaes2015fenics}, and the 3D-1D coupling is handled
+by the extension
+FEniCS\textsubscript{ii}~\cite{kuchta2020assembly}. The correctness
+and accuracy of the numerical solutions were verified by a series of
+numerical verification experiments (see \Cref{sec:app:verification}).
 
-In this section, we provide a brief overview on the employed numerical discretization.  
-We refer to \Cref{sec:details_numerical_method} for details. 
-Our implementation relies on the FEniCS finite element framework \cite{logg2012automated}; the 3D-1D coupling is handled by its extension FEniCS\textsubscript{ii} \cite{kuchta2020assembly}.
-The numerical scheme for the CSF flow equations utilizes polynomial spaces that preserve the divergence free condition \eqref{eq:divergence_equation} on the discrete level \cite{hong2016robust}. This requirement is important for stability in the transport equation, see for example \cite{cesmelioglu2022compatible}. The spaces we used for the velocity are continuous along the normal direction; continuity of the tangential component is enforced via interior penalty approaches \cite{hong2016robust}.  If the exact solution of \eqref{eq:momentum_equation}--\eqref{eq:divergence_equation} is smooth, then one expects optimal error convergence rates for this approximation. 
-
-For the 3D transport problem, we use the interior penalty discontinuous Galerkin (DG) method with weighted averages and upwinding for the convection term \cite{ern2009discontinuous}.  We remark that the choice of DG in the 3D domain is necessary here since  continuous Galerkin methods even when supplemented with artificial diffusion stabilization terms were unstable in our experiments. For the 1D transport problem, we use continuous Galerkin spaces defined over the entire network with additional artificial diffusion stabilization when the 1D velocity is non--zero.  DG methods for the coupled 3D--1D problem have been recently analyzed  where convergence of the method for the elliptic case is established \cite{masri2024discontinuous}. While the analysis is for DG methods for both the 3D and the 1D problem, we expect similar arguments to hold here. However, note that the 3D--1D coupling induces a singularity in the 3D solution and one can only expect suboptimal error rates near the 1D network. In subdomains excluding the 1D lines, almost optimal rates can be expected for both DG methods \cite{masri2023discontinuous} and CG methods \cite{koppl2016local}.  Extension of the convergence analysis to convection--diffusion problems is an interesting future research direction. 
+%% The choice this scheme was is necessary here since continuous Galerkin
+%% methods even when supplemented with artificial diffusion stabilization
+%% terms were unstable in our experiments.
 
 \section*{Acknowledgments}
 
