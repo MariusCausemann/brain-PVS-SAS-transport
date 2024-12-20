@@ -24,6 +24,7 @@ dependencies:
   - k3d
   - cmap
   - joypy 
+  - imageio-ffmpeg
   - pip:
     - cmocean
     - kimimaro
