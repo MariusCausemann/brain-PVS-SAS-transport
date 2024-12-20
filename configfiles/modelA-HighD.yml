@@ -18,9 +18,9 @@ pvs_ratio_artery : 2
 pvs_ratio_venes: 2
 initial_concentration : 0.0
 molecular_outflow_resistance : 8.0e-7
-arterial_velocity_file : ["results/pvs_flow_prod/sas_flow-arteries/pvs_flow.hdf",
+arterial_velocity_file : ["results/pvs_flow_prod/sas_flow-arteries-2/pvs_flow.hdf",
                           "results/pvs_flow_peristaltic/cardiac_pvs_oscillation/pvs_flow.hdf"]
-venous_velocity_file : ["results/pvs_flow_prod/sas_flow-venes/pvs_flow.hdf"]
+venous_velocity_file : ["results/pvs_flow_prod/sas_flow-venes-2/pvs_flow.hdf"]
 csf_velocity_file : "results/csf_flow/sas_flow/flow.hdf"
 csf_dispersion_file : ["results/csf_flow/cardiac_sas_flow/R.xdmf",
                        "results/csf_flow/respiratory_sas_flow/R.xdmf"]
