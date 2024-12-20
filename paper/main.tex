@@ -40,7 +40,7 @@
 \newcommand{\mk}[1]{\textcolor{orange}{#1}}
 \newcommand{\discuss}[1]{\textcolor{red}{#1}}
 \newcommand{\fixme}[1]{\textcolor{red}{#1}}
-\newcommand{\draft}[1]{\textcolor{gray}{#1}}
+\newcommand{\draft}[1]{\textcolor{lightgray}{#1}}
 %\newcommand{\brain}{\Omega_{\rm{PAR}}} 
 %\newcommand{\sas}{\Omega_{\rm CSF}}
 %\newcommand{\spinal}{\Gamma_{\rm SAS}}
@@ -65,15 +65,15 @@
 %% disease.
 
 \begin{abstract}
-``The abstract — which should be no more than 200 words long and contain
+\draft{The abstract — which should be no more than 200 words long and contain
 no references — should serve both as a general introduction to the
 topic and as a brief, non-technical summary of the main results and
-their implications.''
+their implications.}
 
-A molecular agent injected into the spinal canal will spread into the
-cerebrospinal fluid spaces surrounding the human brain and into
-the brain parenchyma, preferentially along perivascular spaces,
-and eventually appear in the systemic blood. 
+%% A molecular agent injected into the spinal canal will spread into the
+%% cerebrospinal fluid spaces surrounding the human brain and into
+%% the brain parenchyma, preferentially along perivascular spaces,
+%% and eventually appear in the systemic blood. 
 \end{abstract}
 \begin{document}
 
@@ -184,7 +184,7 @@ dynamics, the model predicts the temporal evolution and spatial
 distribution of a solute concentration with a detailed geometric
 representation of the human SAS and ventricular system, networks of
 surface PVSs and the brain
-parenchyma. \textcolor{lightgray}{\lipsum[2]}
+parenchyma. \draft{\lipsum[2]}
 
 % Recent developments on 3D-1D modelling of transport in PVS and
 % tissue. ``Digital twin for molecular enrichment and clearance in
@@ -194,7 +194,7 @@ parenchyma. \textcolor{lightgray}{\lipsum[2]}
 % humans?
 
 % Main findings and outlook
-Main findings and outlook \textcolor{lightgray}{\lipsum[1]} Outlook:
+Main findings and outlook \draft{\lipsum[1]} Outlook:
   Avenue to (i) integrate separate observations e.g. on diffusion in
   neuropil, PVS flow, net flow, effect of dispersion (ii) to transfer
   and integrate insights from animal models, computational models and
@@ -408,31 +408,32 @@ intracranial solute transport.
 
 Our periarterial network extends from the internal carotid arteries
 and basilar artery through up to 18 bifurcations to reach upstream
-network ends located within the SAS or up to 6 mm inside the parenchyma
-(\Cref{fig:results1}A--C, \Cref{fig:pvs}A) and includes major surface
-arteries of radius \discuss{0.5--1.4 mm} (\Cref{fig:pvs}C). Imposing
-the pressure field induced by CSF production at the periarterial
-network ends induces ultraslow CSF flow of variable direction in these
-PVSs, with an average velocity of 0.08 $\mu$m/s (antegrade) and a
-maximum velocity of 0.55 $\mu$m/s (\Cref{fig:pvs}D, H). On the other
-hand, traveling waves of arterial wall motion (\Cref{fig:pvs}B), such
-as the pulse wave or other vasomotion~\cite{vanveluw2020vasomotion,
-  munting2023spontaneous, bojarskaite2023sleep, broggini2024long},
-also induce net directional flow in the
-PVS~\cite{kedarasetti2020arterial, kedarasetti2020functional,
-  coenen2021lubrication, gjerde2023directional, nozaleda2024arterial}
--- of magnitude and direction depending on the amplitude, frequency,
-and length of the waves and the characteristics of the perivascular
+network ends located within the SAS or up to 6 mm inside the
+parenchyma (\Cref{fig:results1}A--C, \Cref{fig:pvs}A) and includes
+major surface arteries of radius \discuss{0.5--1.4 mm}
+(\Cref{fig:pvs}C). Imposing the pressure field induced by CSF
+production at the periarterial network ends induces ultraslow CSF flow
+of variable direction in these PVSs, with an average velocity of 0.08
+$\mu$m/s (antegrade) and a maximum velocity of 0.55 $\mu$m/s
+(\Cref{fig:pvs}D, H). On the other hand, traveling waves of arterial
+wall motion (\Cref{fig:pvs}B), such as the pulse wave or other
+vasomotion~\cite{vanveluw2020vasomotion, munting2023spontaneous,
+  bojarskaite2023sleep, broggini2024long}, also induce net directional
+flow in the PVS~\cite{kedarasetti2020arterial,
+  kedarasetti2020functional, coenen2021lubrication,
+  gjerde2023directional, nozaleda2024arterial} -- of magnitude and
+direction depending on the amplitude, frequency, and length of the
+waves and the characteristics of the perivascular
 network~\cite{gjerde2023directional}. Applying a semi-analytic model
 of the net flow induced by peristalsis in perivascular
-networks~\cite{gjerde2023directional}, we estimate that the cardiac
-pulse wave alone, traveling at a frequency of 1 Hz with a wavelength
-of 2.0 m and a 1\% wall displacement~\cite{jung2021novel}, will induce
-mainly antegrade PVS flow with an average net velocity of 0.92
-$\mu$m/s while reaching up to 7.31 $\mu$m/s near larger, ventral
+networks~\cite{gjerde2023directional} (see Methods), we estimate that
+the cardiac pulse wave alone, traveling at a frequency of 1 Hz with a
+wavelength of 2.0 m and a 1\% wall displacement~\cite{jung2021novel},
+will induce mainly antegrade PVS flow with an average net velocity of
+0.92 $\mu$m/s while reaching up to 7.31 $\mu$m/s near larger, ventral
 vessels such as the MCA (\Cref{fig:pvs}E, H). The same theory predicts
 that strong ultraslow vasomotions, if traveling antegrade at 0.1Hz
-with a wavelength of 0.02m and a 10\%
+with a wavelength of 0.02 m and a 10\%
 displacement~\cite{broggini2024long}, will induce both retrograde and
 antegrade net PVS flow with an average velocity of 13.05 $\mu$m/s and
 maximum velocity $54.44$ $\mu$m/s (\Cref{fig:pvs}F, H).
@@ -470,14 +471,22 @@ signs of early enrichment surrounding the PVS in the baseline model
 
 A natural question is whether early PVS enrichment could be the result
 of increased dispersion rather than net flow in the
-PVS. Interestingly, adding an effective dispersion of $100 \times$ in
+PVS\cite{asgari2016glymphatic,keith2019dispersion,bojarskaite2023sleep,asgari2016glymphatic,troyetsky2021dispersion}. Interestingly, even increasing the dispersion factor by $100 \times$ in
 the PVS only induced minor changes in the global spreading rate
 compared to the baseline (\Cref{fig:pvs}J, O), thus indicating a
 negative answer to this question.
 \begin{figure}
     \centering
-    \includegraphics[height=\textheight]{figures/figure3.png}
-    \caption{}
+    \includegraphics[width=0.85 \textwidth]{figures/figure3.png}
+    \caption{\textbf{Perivascular flow shapes and accelerates molecular enrichment.}
+    A) illustration of the arterial network;
+    B) CSF production-driven flow field used to compute pressure-driven PVS flow (from \Cref{fig:csf});
+    C) PVS flow velocities induced by a production-driven transmantle pressure gradient(positive values - antegrade, negative values - retrograde PVS flow);
+    D) illustration of the concept of peristaltic pumping;
+    E) PVS flow velocities induced by cardiac peristaltic pumping;
+    F) PVS flow velocities induced by vasomotion peristaltic pumping;
+    G) concentration in the PVS and mean concentration on the outer PVS surface over time an selected segments of the arterial tree for the baseline and high PVS flow models;
+    }
     \label{fig:pvs}
 \end{figure}
 
@@ -613,7 +622,7 @@ This indicates that fast transport along the PVS might not hinge upon a structur
     tracer enrichment timings compared with~\cite{eide2024functional,
       yamamoto2024perivascular},
   \item tracer enrichment patterns compared with
-    \cite{ringstad2017brain, ringstad2018brain, ringstad2021sleep},
+    \cite{ringstad2017glymphatic, ringstad2018brain, eide2021sleep},
     cohort variations, individual variations, physiological factor
     variations (sleep, exercise -- cardiac/respiratory)
   \item
@@ -621,6 +630,8 @@ This indicates that fast transport along the PVS might not hinge upon a structur
     pulsatility~\cite{vinje2019respiratory, baledent2014imaging, linninger2007cerebrospinal}.
   \item
     Dispersive factor predictions~\cite{sharp2019dispersion, ray2021quantitative}
+\mar{CSF pulsates in the SAS and ventricular system with each cardiac and respiratory cycle, leading to an increase in effective solute diffusivity via a process known as Taylor dispersion \cite{taylor1953dispersion, watson1983diffusion}. Previous estimates of the magnitude of this effect in the CSF-filled space range from an enhancement factor of 5.8 \cite{keith2019dispersion} up to $10^4$ \cite{ray2021quantitative}. The large discrepancies in reported estimates can (at least partly) be attributed to different assumptions on representative values for local width, pressure differences and fluid velocities in the SAS, which reflect the diverse flow characteristics in the different regions of the intracranial CSF-filled space.}
+
   \end{itemize}
 \item
   Magnitude of PVS flow~\cite{mestre2018flow,
@@ -829,23 +840,23 @@ over the interfaces $\Gamma_a, \Gamma_v$ between the periarterial and
 perivenous networks and their surroundings.  Moreover, we model the
 membrane between the parenchyma and the CSF spaces as a semi-permeable
 membrane with permeability coefficient $\beta_{\rm pia}$. For a
-complete description of this mathematical model, see
-\Cref{sec:more_maths}. The initial concentrations in the
-three-dimensional domain $\Omega$ and networks $\Lambda_a, \Lambda_v$
-are set to zero for all simulation scenarios.
+complete description of this mathematical model and simulation
+scenarios, see \Cref{sec:app:more_maths}. The initial concentrations
+in the three-dimensional domain $\Omega$ and networks $\Lambda_a,
+\Lambda_v$ are all set to zero.
 
 \subsection*{Intracranial influx after intrathecal injection}
 To represent molecular influx into the intracranial compartments
 following intrathecal injection, without modelling the spinal
 compartment explicitly, we prescribe a time-dependent molecular influx
 over the interface towards the spinal CSF compartment with the condition
-\begin{equation}
+\begin{equation*}
   (D \nabla c - \bm u c ) \cdot \bm{n} = g_{\mathrm{influx}},  \quad \mathrm{on}  \quad \Gamma_{\mathrm{SSAS}}.
-\end{equation}
+\end{equation*}
 Here we set
-\begin{equation}
+\begin{equation*}
   g_\mathrm{influx}(t) = \frac{m_{\rm tot}}{T_{\rm max}^2 |\Gamma_{\rm SSAS}|} \max(0, T_{\rm max} - |t - T_{\rm max}|), 
-\end{equation}
+\end{equation*}
 which expresses a hat-shaped influx function with a peak at $T_{\rm max}$ and a total tracer injection of $m_{\rm tot}$ (\Cref{tab:parameters}).
 
 \subsection*{Molecular clearance from the intracranial space and perivascular network ends}
@@ -871,7 +882,7 @@ efflux across the upper, outer (arachnoid) boundary with efflux
 resistance $R_0$; and then set $\bm u = \bm u_{\rm CSF}$ in
 $\Omega_{\rm CSF}$ in~\eqref{eq:multi_transport}
 (\Cref{tab:parameters}, \Cref{fig:csf}A--E, see also
-\Cref{sec:more_maths}). We do not model bulk flow within the brain
+\Cref{sec:app:more_maths}). We do not model bulk flow within the brain
 parenchyma, except within the perivascular network segments extending
 below the pial surface, and thus set $\bm u = 0$ in $\Omega_{\rm PAR}$
 in~\eqref{eq:multi_transport}.
@@ -893,64 +904,62 @@ spatially-varying, in $\Omega_{\rm CSF}$ (\Cref{fig:csf}A) by
 combining computational estimates of the respective peak CSF pressure
 gradients with theoretical estimates for shear-augmented (Taylor)
 dispersion \cite{taylor1953dispersion, watson1983diffusion,
-  keith2019dispersion} (see \Cref{sec:more_maths} for a complete
+  keith2019dispersion} (see \Cref{sec:app:dispersion} for a complete
 description). Combining these effects, we then set $R = R_c + R_r$ and
 define the effective diffusion coefficient $D = (1 + R) D^{\rm Gad}$
-in $\Omega_{\rm CSF}$ in~\eqref{eq:multi_transport}.
+in $\Omega_{\rm CSF}$ in~\eqref{eq:multi_transport} in the baseline model.
 
 \subsection*{Perivascular fluid flow induced by CSF pressure differences}
 
-To estimate the contribution to perivascular fluid flow from CSF
+To estimate the contribution also to perivascular fluid flow from CSF
 production, we impose the fluid pressure $p_{\rm CSF}$ induced by CSF
-production, computed in the SAS and ventricular system, at the network
-end nodes: $\hat{p}(n) = p_{\rm CSF}(n)$ for network end nodes $n$
-located within the SAS. For the network end nodes located within the
-parenchyma, we compute a harmonic extension of the CSF pressure field
-(by solving a Laplace equation in $\Omega_{\rm PAR}$ with $p_{\rm
-  CSF}$ as the boundary value), and set the corresponding value at
-these end nodes. \mer{One sentence about network flow model (Darcy
-  flow here). Both arterial and venous networks.}
+production, computed in the SAS and ventricular system, at the end
+nodes of the periarterial network located within the SAS. For the
+network end nodes located within the parenchyma, we compute a harmonic
+extension of the CSF pressure field (by solving a Laplace equation in
+$\Omega_{\rm PAR}$ with $p_{\rm CSF}$ as the boundary value), and set
+the corresponding value at these end nodes. We then numerically solve
+a system of hydraulic network equations to compute $\hat{u}^p_a$
+defined over $\Lambda_a$; i.e., the pressure-difference induced CSF
+flow velocity in the periarterial network (see
+also~\Cref{sec:app:hydraulic_network}). We repeat this procedure to
+compute a corresponding velocity $\hat{u}^p_v$ in the perivenous
+network $\Lambda_v$.
 
-%% For that reason, we apply a simple extension technique to map the CSF
-%% pressure field into $\Omega_{\rm PAR}$. In particular, we solve a
-%% Laplace equation on $\Omega_{\rm PAR}$ with the CSF pressure on the
-%% Pial membrane ($\Gamma_{\rm Pia}$) as a boundary condition.
+%% \subsection*{Dispersion in the PVS}
 
-
-\subsection*{Dispersion in the PVS}
-
-Similar to the CSF spaces, dispersion due to cardiac and respiratory pulsation has been hypothesized to enhance transport in the perivascular spaces. However, recent estimates indicate that the effect of dispersion does not exceed a factor of 2 compared to diffusion alone \cite{asgari2016glymphatic,keith2019dispersion,bojarskaite2023sleep,asgari2016glymphatic,troyetsky2021dispersion}, and we thus do not model dispersive effects in the PVS. 
-\mar{Maybe we should just take a factor of 2 as the upper bound?}
+%% Similar to the CSF spaces, dispersion due to cardiac and respiratory pulsation has been hypothesized to enhance transport in the perivascular spaces. However, recent estimates indicate that the effect of dispersion does not exceed a factor of 2 compared to diffusion alone \cite{asgari2016glymphatic,keith2019dispersion,bojarskaite2023sleep,asgari2016glymphatic,troyetsky2021dispersion}.
 
 % \cite{keith2019dispersion}: dispersion in PVS is negligiable in porous PVS, but might be relevant in open PVS (R=220) (theoretical estimates)
 %  \cite{bojarskaite2023sleep} numerical simulations show that the enhancement factor is likely in the range of 10 - 50 \%
 %\cite{asgari2016glymphatic} numerical simulations show increase of 16% to 50%  in distribution lengths
 %\cite{troyetsky2021dispersion}:   maximum enhancement of diffusion of only about 5%
 
-
-\subsection*{Perivascular fluid flow induced by vascular wall motion}
+\subsection*{Perivascular fluid flow induced by arterial wall motion}
 
 Using the theoretical framework introduced by Gjerde et
-al.~\cite{gjerde2023directional}, we compute analytic estimates for
-the time-average perivascular flow rate $\langle Q' \rangle$ induced
-by rhythmic vascular wall motions for different frequencies $f$,
-amplitudes $\varepsilon$ and wave lengths $\lambda$ in the arterial
-network $\Lambda^a$ (see also Supplementary
-Methods~\ref{sec:sup:peristalsis}). The corresponding contribution to
-the convective velocity $\hat{u}_{\rm x}$ is defined vessel-wise as
-$\hat{u}_{\rm x}|_{\Lambda_i} = \langle Q'_i \rangle/A_i$ where $A_i$
-is the cross-section area of the PVS segment ($A_i = \pi (R_2^i -
-R_1^i$)) and $\langle Q_i' \rangle$ is its mean flow rate. Two wall
-motion patterns are considered: \emph{cardiac} pulsations with $f =
-1.0$ (Hz), $\lambda = 2000$ (mm) and $\varepsilon = 1\%$, and very
-low-frequency \emph{vasomotion} with $f = 0.1$ (Hz), $\lambda = 20$
-(mm), and $\varepsilon = 10\%$. \mer{The corresponding net convective
-velocities (in the antegrade direction) are for \emph{vasomotion}:
-$9.345 \pm 6.695$ $\mu$m/s, range: $(-65.81, 63.96) \mu$m/s, and for
-\emph{cardiac}: $0.475 \pm 0.5115 \mu$m/s, range: $(- 3.825, 4.861)
-\mu$m/s, where negative velocities correspond to retrograde flow
-(\Cref{fig:pvs}\mer{X}).} No perivascular fluid flow induced by wall
-motion is considered for the venous network.
+al.~\cite{gjerde2023directional}, we also compute analytic estimates
+for the time-average perivascular flow rate $\langle Q' \rangle$
+induced by peristalsis in the arterial network $\Lambda_a$; i.e.~the
+net flow induced by travelling waves of arterial wall motion of
+frequency $f$, amplitude $\varepsilon$ and wave lengths $\lambda$
+(\Cref{fig:pvs}D). The corresponding contribution to the periarterial
+flow velocity is defined for each segment $\Lambda_i$ as $\langle Q'_i
+\rangle/A_i$ where $A_i = \pi (R_2^i - R_1^i)$ is the cross-section
+area of the PVS segment and $\langle Q_i' \rangle$ is the estimated
+mean flow rate (see Supplementary Methods~\ref{sec:app:peristalsis}
+for more details). Two wall motion patterns are considered, yielding
+$\hat{u}_a^c$ and $\hat{u}_a^v$ respectively: \emph{cardiac}
+pulsations with $f = 1.0$Hz, $\lambda = 2$ m and $\varepsilon = 1\%$
+(\Cref{fig:pvs}E), and very low-frequency \emph{vasomotion} with $f =
+0.1$Hz, $\lambda = 0.02$m, and $\varepsilon = 10\%$
+(\Cref{fig:pvs}F). No flow induced by peristalsis is considered for
+the perivenous network. In the baseline model, we combine the
+contributions from CSF production and cardiac peristalsis to set
+$\hat{u}$ in~\eqref{eq:multi_transport} as $\hat{u}_a = \hat{u}_a^p +
+\hat{u}_a^c$ in $\Lambda_a$, and $\hat{u}_v = \hat{u}_v^p$ in
+$\Lambda_v$.
+
 
 
 \subsection*{Model and material parameters}
@@ -958,8 +967,7 @@ motion is considered for the venous network.
 Model and material parameters are summarized in \Cref{tab:parameters}.
 We assume that the porosity equals the extracellular space volume
 fraction $\phi = \phi_{\rm PAR}$ within the parenchyma and $\phi = 1$
-elsewhere. In influx scenarios, we model the concentration of
-Gadubutrol with effective diffusion coefficient equal to that of
+elsewhere. The effective diffusion coefficient is set equal to that of
 Gadubutrol in free water in the PVS networks: $\hat{D} = D^{\rm Gad}$;
 weighted by a dispersion factor $R$ in the CSF spaces:
 $D|_{\Omega_{\rm CSF}} = ( 1 + R) D^{\rm Gad}$; and modulated by the
@@ -967,14 +975,10 @@ porosity and tortuosity ($\lambda = 1.78$) in the parenchyma:
 $D|_{\Omega_{\rm PAR}} = D^{\rm Gad}_{\rm PAR}$. We set $\xi$
 depending on whether the PVS segment is fully embedded within the CSF
 spaces ($\xi = \xi_{\rm CSF}$) or parenchyma ($\xi = \xi_{\rm EF}$),
-or neither (\Cref{sec:more_maths}). Additionally, we increase the
-permeability $\xi$ ($100\times$) near the leaf nodes of $\Lambda_a$ to
+or neither (\Cref{sec:app:more_maths}). Additionally, we increase the
+permeability $\xi$ ($100\times$) \fixme{near} the leaf nodes of $\Lambda_a$ to
 account for the transition from explicitly resolved PVSs to their
-unresolved continuation in the CSF spaces and parenchyma. \mer{MER:
-Could this be made more clear - what is near? Why a 100?}
-\mer{MER: Update Methods to simplify $u_{\rm PAR} = 0$, and $u_0 = 0$ in $\Omega_{\rm PAR}$.}
-
-
+unresolved continuation in the CSF spaces and parenchyma.
 \begin{table}
   \begin{center}
     \begin{tabular}{ll|ccc}
@@ -1001,101 +1005,78 @@ Could this be made more clear - what is near? Why a 100?}
 \end{table}
 
 
-\subsection*{Numerical approximation of multi-dimensional transport and CSF flow}
+\subsection*{Numerical approximation, implementation, and  verification}
 
-\mer{@Rami: Could you draft one paragraph here describing the essential bits of the numerical scheme? I recommend ``describing with words'' to reach relevant audiences. Refer to the Supplementary Methods for details. Mention theoretical expected convergence order.} 
+A complete description of the numerical methods used is provided in
+\Cref{sec:details_numerical_method}, while a condensed summary is
+given here. To solve~\eqref{eq:multi_transport} numerically, we use
+the interior penalty discontinuous Galerkin (DG) method with weighted
+averages and upwinding for the convection term in the 3D
+domains~\cite{ern2009discontinuous} -- to ensure numerical stability
+and minimize the artificial presence of negative concentation
+values. For the 1D domain, we use continuous finite element spaces
+defined over each of the networks and stabilized with numerical
+diffusion when $\hat{u}$ is non--zero. Note that the 3D--1D coupling
+in~\eqref{eq:multi_transport} induces a singularity in the solution
+$c$ and one can only expect lower-order error convergence near
+$\Lambda_a$ and $\Lambda_v$. Away from these 1D networks, almost
+optimal approximation is expected~\cite{masri2023discontinuous,
+  koppl2016local}. To numerically solve the Stokes equations to
+compute the CSF flow velocity and pressure in the ventricular system
+and SAS, we use finite element spaces that preserve the
+incompressibility condition on the discrete
+level~\cite{hong2016robust}. This requirement is important for
+numerical stability when later
+solving~\eqref{eq:multi_transport}\cite{cesmelioglu2022compatible}. The
+spaces we used for the velocity are continuous along the normal
+direction; continuity of the tangential component is enforced via
+interior penalty approaches~\cite{hong2016robust}. Optimal
+approximation properties are expected for this scheme. These numerical
+methods were implemented using the FEniCS finite element
+framework~\cite{alnaes2015fenics}, and the 3D-1D coupling is handled
+by the extension
+FEniCS\textsubscript{ii}~\cite{kuchta2020assembly}. The correctness
+and accuracy of the numerical solutions were verified by a series of
+numerical verification experiments (see \Cref{sec:app:verification}).
 
-In this section, we provide a brief overview on the employed numerical discretization.  
-We refer to \Cref{sec:details_numerical_method} for details. 
-Our implementation relies on the FEniCS finite element framework \cite{logg2012automated}; the 3D-1D coupling is handled by its extension FEniCS\textsubscript{ii} \cite{kuchta2020assembly}.
-The numerical scheme for the CSF flow equations utilizes polynomial spaces that preserve the divergence free condition \eqref{eq:divergence_equation} on the discrete level \cite{hong2016robust}. This requirement is important for stability in the transport equation, see for example \cite{cesmelioglu2022compatible}. The spaces we used for the velocity are continuous along the normal direction; continuity of the tangential component is enforced via interior penalty approaches \cite{hong2016robust}.  If the exact solution of \eqref{eq:momentum_equation}--\eqref{eq:divergence_equation} is smooth, then one expects optimal error convergence rates for this approximation. 
+%% The choice this scheme was is necessary here since continuous Galerkin
+%% methods even when supplemented with artificial diffusion stabilization
+%% terms were unstable in our experiments.
 
-For the 3D transport problem, we use the interior penalty discontinuous Galerkin (DG) method with weighted averages and upwinding for the convection term \cite{ern2009discontinuous}.  We remark that the choice of DG in the 3D domain is necessary here since  continuous Galerkin methods even when supplemented with artificial diffusion stabilization terms were unstable in our experiments. For the 1D transport problem, we use continuous Galerkin spaces defined over the entire network with additional artificial diffusion stabilization when the 1D velocity is non--zero.  DG methods for the coupled 3D--1D problem have been recently analyzed  where convergence of the method for the elliptic case is established \cite{masri2024discontinuous}. While the analysis is for DG methods for both the 3D and the 1D problem, we expect similar arguments to hold here. However, note that the 3D--1D coupling induces a singularity in the 3D solution and one can only expect suboptimal error rates near the 1D network. In subdomains excluding the 1D lines, almost optimal rates can be expected for both DG methods \cite{masri2023discontinuous} and CG methods \cite{koppl2016local}.  Extension of the convergence analysis to convection--diffusion problems is an interesting future research direction. 
+\section*{Acknowledgments}
 
-\begin{table}
-  \begin{center}
-  \begin{tabular}{ll|llllll|ll}
-    \toprule
-    & Description & $R_1, R_2$ & $\xi_{\rm PVS-SAS}$ &  $\beta_{\rm efflux}$ & $D$ & $\hat{u}$ & $\mathbf{u}_{SAS}$ & $c_0$ \\
-    \midrule
-    A & Baseline with sheaths & $R_2 = 2 R_1$ & $\xi$ & $10^{-4}$ mm$^2$/s\cite{hornkjol2022csf} & $\phi R D^{\rm gad}_{\rm eff}$\cite{sykova2008diffusion, valnes2020apparent} & $\hat{u}_{\rm prod} + \hat{u}_{\rm cardiac}$ & $\mathbf{u}_{\rm prod}$ & 0 \\ 
-    B1 & Sheath permeability & $R_2 = 2 R_1$ & $0, \xi, 10 \xi, 100 \xi, 1000 \xi$ & $10^{-4}$ mm$^2$/s\cite{hornkjol2022csf} & $\phi R D^{\rm gad}_{\rm eff}$\cite{sykova2008diffusion, valnes2020apparent} & $\hat{u}_{\rm prod} + \hat{u}_{\rm cardiac}$ & $\mathbf{u}_{\rm prod}$ & 0 \\ 
-    B2 & Health permeability & $R_2 = 2 R_1$ & $0, \xi, 10 \xi, 100 \xi, 1000 \xi$ & $10^{-4}$ mm$^2$/s\cite{hornkjol2022csf} & $\phi R D^{\rm gad}_{\rm eff}$\cite{sykova2008diffusion, valnes2020apparent} & $\hat{u}_{\rm prod} +  \hat{u}_{\rm cardiac} + \hat{u}_{\rm vaso}$ & $\mathbf{u}_{\rm prod}$ & 0 \\ 
-    %C & Larger PVS & $R_2 = N R_1$ & -- & -- & --  &  --  & -- &  -- \\
-    C & Higher PVS flow & -- & $\xi$ & -- & --  & $\hat{u}_{\rm prod} +  \hat{u}_{\rm cardiac} + \hat{u}_{\rm vaso}$  & -- & --  \\
-    AA & PVS size & $R_2 = x \beta R_1$ & $\xi$ & -- & -- & -- &  -- & 0 \\ 
-    %C & Larger PVS & $R_2 = N R_1$ & -- & -- & --  &  --  & -- &  -- \\
-    B & PVS flow & -- & $\xi$ & -- & --  & $\hat{u}_{\rm prod} + \hat{u}_{\rm vaso}$  & -- & --  \\
-    C & Clearance & -- & -- & -- & $\alpha D^{\rm gad, \tau, A\beta}$  & $\hat{u}_{\rm prod}$ & -- & 1 \\
-    %E & PVS II & $R_2 = 2 R_1$ & $\xi$, -- & -- & --  &  $\hat{u} = \hat{u}_{\rm prod} + \uparrow\uparrow$  & -- & --  \\
-    %F & PVS III & $R_2 = 2 R_1$ & $\xi$, -- & -- & $10 D_{\rm PVS}$ &  $\hat{u} = \hat{u}_{\rm prod}$  & -- & --  \\
-    %G & Glymphatics & $R_2 = 2 R_1$ & $\xi$, -- & -- & \cite{sykova2008diffusion, valnes2020apparent} &  $\hat{u} = \hat{u}_{\rm prod} + \uparrow$  & $\mathbf{u}_{\rm PAR}$ > 0 & --  \\
-    \bottomrule
-    \end{tabular}
-    \end{center}
-  \caption{Overview of models (-- denotes as immediately above). Each
-    PVS cross-section is modelled as a concentric annulus with inner
-    radius $R_1$ and outer radius $R_2$ and such that $R_2 = \beta
-    R_1$ with $\beta = 2.0$ based on~\cite{eide2024functional}. Let
-    $\xi = \dots$ denote the permeability estimated by Koch et
-    al.~\cite{koch2023estimates}. Model A and its variations aims to
-    quantify the effect of PVS sheaths by varying the permeability
-    $\xi$ between the PVS and its surroundings. We consider a fixed
-    permeability $\xi_{\rm PVS-PAR}$ based
-    on~\cite{koch2023estimates}. \mer{The permeability between the PVS
-      and the SAS $\xi_{\rm PVS-SAS}$ must likely be estimated by a
-      bit of trial-error from the observations of timings of PVS-SAS
-      and SAS from~\cite{eide2024functional}.} \discuss{The
-      extracranial solute efflux permeability $\beta_{\rm efflux}$ is
-      uniformly distributed over the outer SAS boundary with a
-      reasonable rate as baseline\cite{hornkjol2022csf,
-        eide2021clinical, ringstad2024glymphatic}.} At baseline, the
-    effective diffusion coefficients $D^{\rm x}_{\rm SAS} = D^{\rm
-      x}_{\rm PVS}$ of the SAS and PVS represent the free diffusion
-    coefficient of Gadubutrol (${\rm x} = {\rm gad}$) in CSF (water),
-    and $D^{\rm x}_{\rm PAR}$ the effective diffusion coefficient of
-    human cortical tissue, all at body temperature; weighted by a
-    dispersion factor $\alpha$ (see Methods). At baseline, we consider
-    net flow due to CSF-production in the SAS and PVS:
-    $\mathbf{u}_{\rm SAS} > 0$ and $\hat{u} > 0$ (see Methods) but no
-    bulk flow in the parenchyma $\mathbf{u}_{\rm PAR} = 0$. Due to the
-    timescale for human intracranial tracer transport (minutes to
-    hours) compared to typical (cardiac, respiratory, slow vasomotion)
-    human intracranial pulsatility (0.1 -- 1 Hz), we consider net
-    (constant-in-time) flow fields only in subsequent model variations
-    (but see dispersion factor above).  Model B represents
-    perivascular pathway scenarios with more rapid flow in the PVS
-    induced by vasomotion (PVS I)~\cite{gjerde2023directional}.
-    Models C represents a version of the aforementioned scenarios but
-    for studying metabolite clearance (instead of solute influx).}
-\label{tab:scenarios}
-\end{table}
+All authors express their gratitude to Prof.~Jürgen Reichenbach for
+generously sharing the multi-modal human MR data, and to Prof. Erlend
+Hodneland for facilitating this data exchange. M.E.R. acknowledges the
+support of the Foundation Kristian Gerhard Jebsen via the K.~G.~Jebsen
+Center for Brain Fluid Research and the Research Council of Norway via
+grant \#324239 (EMIx). Simulations were performed on the Experimental
+Infrastructure for Exploration of Exascale Computing (eX3), which is
+financially supported by the Research Council of Norway under contract
+270053.
+
+\section*{Author contributions statement}
+
+M.C., M.K, R.M., and M.E.R. conceived and designed the project.
+M.C., M.K, R.M., and M.E.R. contributed to software development. 
+M.C., M.K, and R.M. conducted the experiments.
+M.C. analyzed the results and prepared the figures.
+M.C. M.K. and R.M and M.E.R wrote the manuscript. 
+All authors edited and reviewed the manuscript.
+
+\section*{Competing interests}
+
+The authors declare no competing interests.
 
 \bibliography{references}
 
 \newpage
-\section*{Acknowledgments (not compulsory)}
-
-\mer{Thanks to Erlend Hodneland for facilitation and Prof. Jürgen
-  Reichenbach for generously sharing the multi-modal human MR data.}
-
-Acknowledgments should be brief, and should not include thanks to anonymous referees and editors, or effusive comments. Grant or contribution numbers may be acknowledged.
-
-\section*{Author contributions statement}
-
-Must include all authors, identified by initials, for example:
-A.A. conceived the experiment(s),  A.A. and B.A. conducted the experiment(s), C.A. and D.A. analysed the results.  All authors reviewed the manuscript. 
-
-\section*{Additional information}
-
-To include, in this order: \textbf{Accession codes} (where applicable); \textbf{Competing interests} (mandatory statement). 
-
-The corresponding author is responsible for submitting a \href{http://www.nature.com/srep/policies/index.html#competing}{competing interests statement} on behalf of all authors of the paper. This statement must be included in the submitted article file.
-
-\newpage
+\FloatBarrier
 \appendix
 \input{supplementary_main.tex}
 
+\newpage
+\FloatBarrier
 \input{background.tex}
 
 \end{document}
