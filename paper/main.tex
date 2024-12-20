@@ -972,21 +972,23 @@ $\Lambda_v$.
 
 \subsection*{Model and material parameters}
 
-Model and material parameters are summarized in \Cref{tab:parameters}.
-We assume that the porosity equals the extracellular space volume
-fraction $\phi = \phi_{\rm PAR}$ within the parenchyma and $\phi = 1$
-elsewhere. The effective diffusion coefficient is set equal to that of
-Gadubutrol in free water in the PVS networks: $\hat{D} = D^{\rm Gad}$;
-weighted by a dispersion factor $R$ in the CSF spaces:
+Model and material parameters are summarized in \Cref{tab:parameters},
+and~\Cref{tab:scenarios} gives an overview of the different in-silico
+scenarios. We assume that the porosity equals the extracellular space
+volume fraction $\phi = \phi_{\rm PAR}$ within the parenchyma and
+$\phi = 1$ elsewhere. The effective diffusion coefficient is set equal
+to that of Gadubutrol in free water in the PVS networks: $\hat{D} =
+D^{\rm Gad}$; weighted by a dispersion factor $R$ in the CSF spaces:
 $D|_{\Omega_{\rm CSF}} = ( 1 + R) D^{\rm Gad}$; and modulated by the
 porosity and tortuosity ($\lambda = 1.78$) in the parenchyma:
 $D|_{\Omega_{\rm PAR}} = D^{\rm Gad}_{\rm PAR}$. We set $\xi$
 depending on whether the PVS segment is fully embedded within the CSF
 spaces ($\xi = \xi_{\rm CSF}$) or parenchyma ($\xi = \xi_{\rm EF}$),
 or neither (\Cref{sec:app:more_maths}). Additionally, we increase the
-permeability $\xi$ ($100\times$) \fixme{near} the leaf nodes of $\Lambda_a$ to
-account for the transition from explicitly resolved PVSs to their
-unresolved continuation in the CSF spaces and parenchyma.
+permeability $\xi$ ($100\times$) \fixme{near} the leaf nodes of
+$\Lambda_a$ to account for the transition from explicitly resolved
+PVSs to their unresolved continuation in the CSF spaces and
+parenchyma.
 \begin{table}
   \begin{center}
     \begin{tabular}{ll|ccc}
@@ -1010,6 +1012,45 @@ unresolved continuation in the CSF spaces and parenchyma.
   \end{center}
   \caption{Model parameters. $\dagger$/$\ast$ denotes computed/estimated within this work.}
   \label{tab:parameters}
+\end{table}
+\subsection*{Overview of in-silico scenarios and experiments considered}
+\begin{table}
+  \begin{center}
+  \begin{tabular}{ll|llll|lll}
+    \toprule
+    & Description & $R_1, R_2$ & $\xi_{\rm PVS-SAS}$ & $D|_{\Omega_{\rm CSF}}$ & $D|_{\Omega_{\rm PAR}}$ & $\mathbf{u}|_{\Omega_{\rm CSF}}$ & $\hat{u}|_{\Lambda_a}$ & $\hat{u}|_{\Lambda_v}$  \\
+    \midrule
+     & baseline & $R_2 = 2 R_1$ & $\xi$ & $(1 + R) D^{\rm Gad}$ & $D^{\rm Gad}_{\rm PAR}$ & $\mathbf{u}_{\rm CSF}$ & $\hat{u}_a^p + \hat{u}_a^c$  & $\hat{u}_v^p$ \\ 
+    & no CSF production & $-$ & $-$ & $-$ & $-$ & $\mathbf{0}$ & $\hat{u}_a^c$ & $0$ \\ 
+    & reduced pulsatility & $-$ & $-$ & $ (1 + 0.1 R) D^{\rm Gad}$ & $-$ & $-$ & $-$  & $-$ \\ 
+    & increased CSF dispersion & $-$ & $-$ & $ (1 + 10 R) D^{\rm Gad}$ & $-$ & $-$ & $-$  & $-$ \\ 
+    & higher PVS flow & $-$ & $-$ & $-$ & $-$ & $-$ & $\hat{u}_a^p + \hat{u}_a^c + \hat{u}_a^v$  & $-$ \\ 
+    & higher PVS exchange & $-$ & 100$\xi$  &  $-$ & $-$ & $-$ & $-$  & $-$ \\ 
+    & dilated PVS & $R_2 = 3 R_1$ & $-$ & $-$ & $-$ & $-$ & $\tilde{u}_a^p + \tilde{u}_a^c$  & $-$ \\ 
+    \bottomrule
+    \end{tabular}
+    \end{center}
+  \caption{Overview of models and model variations. ($-$ denotes equal
+    to the corresponding baseline value). Each PVS cross-section is
+    modelled as a concentric annulus with inner radius $R_1$ and outer
+    radius $R_2$ and such that $R_2 = \beta R_1$. Let $\xi$ denote the
+    astrocytic endfeet permeability estimated by Koch et
+    al.~\cite{koch2023estimates}. The diffusion coefficients $D^{\rm
+      Gad}$ represent the (free) diffusion coefficient of Gadubutrol
+    in CSF (water), and $D^{\rm Gad}_{\rm PAR}$ its effective
+    diffusion coefficient in human cortical tissue, all at body
+    temperature~\cite{sykova2008diffusion, valnes2020apparent}. $R$ is
+    the combined cardiac and respiratory dispersion enhancement field
+    (see Methods). $\mathbf{u}_{\rm CSF}$ is the CSF velocity field
+    induced by CSF production in $\Omega_{\rm CSF}$, and $\hat{u}_a^p$
+    and $\hat{u}_v^p$ the axial velocity induced in the periarterial
+    and perivenous networks, respectively, by the corresponding
+    pressure differences. $\hat{u}_a^c$ and $\hat{u}_a^v$ is the
+    periarterial velocity induced by arterial pulse wave wall motion
+    and slow vasomotion, respectively. Last, $\tilde{u}_a^c$ and
+    $\tilde{u}_a^p$ are as $\hat{u}_a^c$ and $\hat{u}_a^p$,
+    respectively, but with dilated PVS.}
+\label{tab:scenarios}
 \end{table}
 
 
