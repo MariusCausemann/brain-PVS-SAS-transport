@@ -531,7 +531,10 @@ def compute_pvs_flow(meshfile, output, args):
         f.write(mesh, "mesh")
         f.write(u_directed, "u")
         f.write(u, "umag")
+
         f.write(mf_to_dg(radii), "radii")
+        radii.array()[:] *= beta
+        f.write(mf_to_dg(radii), "pvs_radii")
         f.write(df.Function(u.function_space()), "p")
             
 def run_all_tests():
