@@ -1,9 +1,6 @@
 from dolfin import *
-import xii
-from solver import read_vtk_network, as_P0_function, get_mesh
 import numpy as np
 import os
-from pvs_flow import pvs_flow_system
 from test_map_on_global_coords_shift import map_kdtree, map_dg_on_global
 from subdomain_ids import CSFID, V34ID, PARID, LVID, CSFNOFLOWID
 import typer
@@ -17,11 +14,38 @@ import pandas as pd
 import yaml
 from branch_marking import color_branches
 from plotting_utils import minmax
-import ufl_legacy as ufl
 from cmap import Colormap 
+from vtk_adapter import create_vtk_structures
+from extract_vessels import get_tubes
+import ufl_legacy as ufl
+
 m2mm = 1e3
 m2mum = 1e6
 Pa2mPa = 1e3
+
+def plot_pvs_velocity(mesh, uh_mag, artery_radii, filename):
+    CG1 = FunctionSpace(mesh, "CG", 1)
+    bar_args=dict(title="velocity (μm/s)", vertical=False,
+                    height=0.07, width=0.6, position_x=0.2,
+                    position_y=0.0, title_font_size=28, font_family="arial",
+                    label_font_size=28, fmt="%.0f")
+    topology, cell_types, x = create_vtk_structures(CG1)
+    grid = pv.UnstructuredGrid(topology, cell_types, x)
+    grid["u"] = uh_mag.vector()[:] *m2mum
+    umax = abs(grid["u"]).max() 
+    grid["radius"] = artery_radii.vector()[:]
+    tubes = get_tubes(grid.ctp())
+    pl = pv.Plotter()
+    pl = pv.Plotter(off_screen=True, window_size=(1200, 800))
+    pl.add_mesh(tubes,scalars="u", cmap="curl", clim=(-umax, umax),
+                scalar_bar_args=bar_args)
+    pl.camera_position = 'xz'
+    #pl.camera.roll += 5
+    pl.camera.azimuth += 165
+    pl.camera.elevation += 10
+    pl.camera.zoom(1.85)
+    pl.camera.focal_point = np.array(pl.camera.focal_point) + np.array([0,0,-0.008])
+    img = pl.screenshot(filename, transparent_background=True)
 
 def sig_to_space(sig, mesh):
     elem = eval(sig.replace("Cell", "ufl.Cell"))
@@ -38,13 +62,18 @@ def compute_pvs_flow(pvs_flow_file):
         umag_sig = f.attributes("/umag").to_dict()["signature"]
         r_sig = f.attributes("/radii").to_dict()["signature"]
         p_space, umag_space, r_space = map(lambda sig: sig_to_space(sig, mesh), [p_sig, umag_sig, r_sig])
-        p, uh_mag, artery_radii = map(Function, [p_space, umag_space, r_space])
-        for u,n in zip([p, uh_mag, artery_radii], ["p", "umag", "radii"]):
+        p, uh_mag, artery_radii, pvs_radii = map(Function, [p_space, umag_space, r_space, r_space])
+        for u,n in zip([p, uh_mag, artery_radii, pvs_radii], 
+                       ["p", "umag", "radii", "pvs_radii"]):
             f.read(u, n)
     modelstr = pvs_flow_file.split('/')[1:-1]
     model = modelstr[-1]
     plot_dir = f"plots/{'/'.join(modelstr)}"
     os.makedirs(plot_dir, exist_ok=True)
+
+    plot_pvs_velocity(mesh, uh_mag, pvs_radii,
+                      plot_dir + "/vel3D.png")
+
     segments, segids ,_ = color_branches(mesh)
     dxs = Measure("dx", mesh, subdomain_data=segments)
     segs = segments.array().copy()

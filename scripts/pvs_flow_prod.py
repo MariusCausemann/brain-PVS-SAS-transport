@@ -110,6 +110,8 @@ def compute_pvs_flow(csf_flow_model:  str, network: str, radius_ratio:str):
         f.write(uh_mag, "umag")
         f.write(ph, "p")
         f.write(radius_f, "radii")
+        radius_f.vector()[:] *= radius_ratio
+        f.write(radius_f, "pvs_radii")
 
     with XDMFFile(f'{results_dir}/pvs_flow_vis.xdmf') as xdmf:
         xdmf.write(pvs_flow_vec, t=0)

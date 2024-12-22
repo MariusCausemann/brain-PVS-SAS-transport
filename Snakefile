@@ -16,7 +16,7 @@ model_variations = ["modelA" , "modelA-LowD","modelA-HighD",
                     "modelB1-10", "modelB1-100", "modelB1-1000",
                     "modelB2-10", "modelB2-100", "modelB2-1000",
                     #"modelC", "modelA-NoResp", "modelA-NoDisp", "modelA-LowD",
-                    "LargePVS", ]
+                    "LargePVS", "LargePVSA"]
 
 model_comparisons = [
                     #"modelA_modelB1-10","modelA_modelB1-100", "modelA_modelB1-1000",
@@ -62,8 +62,8 @@ rule all:
         "plots/pvs_flow_peristaltic/cardiac_pvs_oscillation/",
         #expand("plots/{modelname}/{modelname}_{tp}_{t}.png", modelname=models, t=times, tp=types)
         expand("plots/{m}/{m}_{tstr}_{artstr_cmstr}_details.png", 
-            m=["modelA", "modelB1-10", "modelB1-100", "modelB1-1000"] +
-             ["modelA-strongVM", "modelB2-10", "modelB2-100", "modelB2-1000"],
+            m=["modelA", "modelB1-10", "modelB1-100"] +
+             ["modelA-strongVM", "modelB2-10", "modelB2-100"] + ["LargePVS", "LargePVSA"],
              tstr=["1+2+3+4", "2+4+6+8"],
              artstr_cmstr=["MCA-R_0.2+5.0+20.0+20.0", "MCA-L_0.2+5.0+20.0+20.0",
                             "BA_3.0+40.0+40.0+10.0","ACA-A3_0.2+2.0+12.0+10.0",

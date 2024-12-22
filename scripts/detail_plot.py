@@ -69,12 +69,14 @@ def generate_plot(
         cmax = 0
     times = np.array(times)*3600
     pointdict = {l:p for l,p in pointlabels}
+    config = read_config(f"configfiles/{modelname}.yml")
     if selected_artlabels[0]=="all":
         artlabels = list(pointdict.keys())
     else:
         artlabels = selected_artlabels
     points = np.array([pointdict[l] for l in artlabels])
     fontsize = 16
+
 
     fig = plt.figure(figsize=(len(times)*5, len(artlabels)*3), frameon=True)
     grid = ImageGrid(fig, 111, nrows_ncols=(len(artlabels), len(times)),
@@ -90,8 +92,8 @@ def generate_plot(
                          non_manifold_traversal=False)
     sas = get_result(modelname, "sas", times)
     art = get_result(modelname, "artery", times)
+    pvs_radius_ratio = config["pvs_ratio_artery"]
 
-    pvs_radius_ratio = 2
     cmap = cmocean.cm.algae_r
     for j, (p, l) in enumerate(zip(points, artlabels)):
         slice, pvs, vessel, pvs_surf, pia, pia_inner, n = get_slice(art, sas, par, p, pvs_radius_ratio=pvs_radius_ratio)

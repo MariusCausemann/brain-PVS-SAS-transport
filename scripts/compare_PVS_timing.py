@@ -39,16 +39,24 @@ def plot_timings(models:List[str]):
         }
     
     namedict = {"modelA": "baseline", "modelA-strongVM":"high PVS flow",
-                "modelA-PVS-disp": "high PVS dispersion",}
+                "modelA-PVS-disp": "high PVS dispersion",
+                "LargePVS":"high PVS flow (dilated)", "LargePVSA":"baseline (dilated)"}
     markerdict = {"modelA": "d", "modelA-strongVM":"s",
-                "modelA-PVS-disp": "o",}
+                "modelA-PVS-disp": "o", "LargePVS":"o", "LargePVSA":"*"}
     print(models)
-    coldict = {"modelA-strongVM":"#6610f2","modelA":"#0b774d", "modelA-PVS-disp":"#f7b801"}
-
+    coldict = {"modelA-strongVM":"#6610f2","modelA":"#0b774d", "modelA-PVS-disp":"#f7b801",
+               "LargePVS":"#f7b801", "LargePVSA":"darkred"}
+    annotate_model = "LargePVSA" if "LargePVSA" in models else "modelA"
     for t, (pvsdf, outerdf) in zip(["fta", "peaktime"] , [(ftas, outerftas), (pts, otps)]):
-        fig, axes = plt.subplots(ncols=len(art_groups), figsize=(9,4))
-
-        for i, (ax, (agn, ag))  in enumerate(zip(axes, art_groups.items())):
+        fig, axes = plt.subplots(ncols=len(art_groups) + 1, figsize=(9,4),
+                                  width_ratios=[0]+[3]*len(art_groups), sharey=True)
+        ax = axes[0]
+        if t=="fta":ax.set_ylabel("first-time arrival (h)"); ax.set_ylim((0.0, 6))
+        elif t=="peaktime":ax.set_ylabel("time-of-peak (h)"); ax.set_ylim((2, 9.1))
+        ax.get_xaxis().set_ticks([])
+        ax.spines['bottom'].set_visible(False)
+        #ax.set_xlim((-0.05, 0.1))
+        for i, (ax, (agn, ag))  in enumerate(zip(axes[1:], art_groups.items())):
             for m in models:
                 print(m)
                 group = pvsdf.loc[ag]
@@ -65,20 +73,13 @@ def plot_timings(models:List[str]):
                 #ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.17), ncol=2, 
                 #        columnspacing=0.3, frameon=False)
                 ax.set_xlabel("distance (m)")
-                if i==0:  
-                    if t=="fta":ax.set_ylabel("first-time arrival (h)")
-                    elif t=="peaktime":ax.set_ylabel("time-of-peak (h)")
-                    ax.set_xlim((-0.05, 0.1))
-
-                else:
-                    ax.spines['left'].set_visible(False)
-                    ax.get_yaxis().set_ticks([])
-                    ax.set_xlim((0, 0.1))
+                ax.spines['left'].set_visible(False)
+                ax.tick_params(left=False)
+                #ax.get_yaxis().set_ticks([])
+                ax.set_xlim((0, 0.1))
                 ax.get_xaxis().set_ticks([0,0.05, 0.1], ["0","0.05", "0.1"])
-                if t=="fta": ax.set_ylim((0.5, 5.0))
-                elif t=="peaktime": ax.set_ylim((2, 9.1))
                 for ln in ag:
-                    ax.annotate(ln, (pvsdf["dist"].loc[ln], pvsdf["modelA"].loc[ln] / 3600),
+                    ax.annotate(ln, (pvsdf["dist"].loc[ln], pvsdf[annotate_model].loc[ln] / 3600),
                                 horizontalalignment="right", textcoords='offset points',
                                   xytext=(-3,8), fontsize=9)
         plt.figlegend(loc='upper center', bbox_to_anchor=(0.5, 1.05), ncol=len(models)*2,
