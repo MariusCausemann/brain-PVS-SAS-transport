@@ -2,70 +2,6 @@
 
 These sections provide more detailed descriptions of the mathematical models and numerical approximations considered.
 
-\subsection*{Overview of in-silico scenarios and experiments considered}
-
-See~\Cref{tab:scenarios} for an overview of the different in-silico
-scenarios and computational models considered.
-\begin{table}
-  \begin{center}
-  \begin{tabular}{ll|llllll|ll}
-    \toprule
-    & Description & $R_1, R_2$ & $\xi_{\rm PVS-SAS}$ &  $\beta_{\rm efflux}$ & $D$ & $\hat{u}$ & $\mathbf{u}_{SAS}$ & $c_0$ \\
-    \midrule
-    A & Baseline with sheaths & $R_2 = 2 R_1$ & $\xi$ & $10^{-4}$ mm$^2$/s\cite{hornkjol2022csf} & $\phi R D^{\rm gad}_{\rm eff}$\cite{sykova2008diffusion, valnes2020apparent} & $\hat{u}_{\rm prod} + \hat{u}_{\rm cardiac}$ & $\mathbf{u}_{\rm prod}$ & 0 \\ 
-    B1 & Sheath permeability & $R_2 = 2 R_1$ & $0, \xi, 10 \xi, 100 \xi, 1000 \xi$ & $10^{-4}$ mm$^2$/s\cite{hornkjol2022csf} & $\phi R D^{\rm gad}_{\rm eff}$\cite{sykova2008diffusion, valnes2020apparent} & $\hat{u}_{\rm prod} + \hat{u}_{\rm cardiac}$ & $\mathbf{u}_{\rm prod}$ & 0 \\ 
-    B2 & Health permeability & $R_2 = 2 R_1$ & $0, \xi, 10 \xi, 100 \xi, 1000 \xi$ & $10^{-4}$ mm$^2$/s\cite{hornkjol2022csf} & $\phi R D^{\rm gad}_{\rm eff}$\cite{sykova2008diffusion, valnes2020apparent} & $\hat{u}_{\rm prod} +  \hat{u}_{\rm cardiac} + \hat{u}_{\rm vaso}$ & $\mathbf{u}_{\rm prod}$ & 0 \\ 
-    %C & Larger PVS & $R_2 = N R_1$ & -- & -- & --  &  --  & -- &  -- \\
-    C & Higher PVS flow & -- & $\xi$ & -- & --  & $\hat{u}_{\rm prod} +  \hat{u}_{\rm cardiac} + \hat{u}_{\rm vaso}$  & -- & --  \\
-    AA & PVS size & $R_2 = x \beta R_1$ & $\xi$ & -- & -- & -- &  -- & 0 \\ 
-    %C & Larger PVS & $R_2 = N R_1$ & -- & -- & --  &  --  & -- &  -- \\
-    B & PVS flow & -- & $\xi$ & -- & --  & $\hat{u}_{\rm prod} + \hat{u}_{\rm vaso}$  & -- & --  \\
-    C & Clearance & -- & -- & -- & $\alpha D^{\rm gad, \tau, A\beta}$  & $\hat{u}_{\rm prod}$ & -- & 1 \\
-    %E & PVS II & $R_2 = 2 R_1$ & $\xi$, -- & -- & --  &  $\hat{u} = \hat{u}_{\rm prod} + \uparrow\uparrow$  & -- & --  \\
-    %F & PVS III & $R_2 = 2 R_1$ & $\xi$, -- & -- & $10 D_{\rm PVS}$ &  $\hat{u} = \hat{u}_{\rm prod}$  & -- & --  \\
-    %G & Glymphatics & $R_2 = 2 R_1$ & $\xi$, -- & -- & \cite{sykova2008diffusion, valnes2020apparent} &  $\hat{u} = \hat{u}_{\rm prod} + \uparrow$  & $\mathbf{u}_{\rm PAR}$ > 0 & --  \\
-    \bottomrule
-    \end{tabular}
-    \end{center}
-  \caption{Overview of models (-- denotes as immediately above). Each
-    PVS cross-section is modelled as a concentric annulus with inner
-    radius $R_1$ and outer radius $R_2$ and such that $R_2 = \beta
-    R_1$ with $\beta = 2.0$ based on~\cite{eide2024functional}. Let
-    $\xi = \dots$ denote the permeability estimated by Koch et
-    al.~\cite{koch2023estimates}. Model A and its variations aims to
-    quantify the effect of PVS sheaths by varying the permeability
-    $\xi$ between the PVS and its surroundings. We consider a fixed
-    permeability $\xi_{\rm PVS-PAR}$ based
-    on~\cite{koch2023estimates}. \mer{The permeability between the PVS
-      and the SAS $\xi_{\rm PVS-SAS}$ must likely be estimated by a
-      bit of trial-error from the observations of timings of PVS-SAS
-      and SAS from~\cite{eide2024functional}.} \discuss{The
-      extracranial solute efflux permeability $\beta_{\rm efflux}$ is
-      uniformly distributed over the outer SAS boundary with a
-      reasonable rate as baseline\cite{hornkjol2022csf,
-        eide2021clinical, ringstad2024glymphatic}.} At baseline, the
-    effective diffusion coefficients $D^{\rm x}_{\rm SAS} = D^{\rm
-      x}_{\rm PVS}$ of the SAS and PVS represent the free diffusion
-    coefficient of Gadubutrol (${\rm x} = {\rm gad}$) in CSF (water),
-    and $D^{\rm x}_{\rm PAR}$ the effective diffusion coefficient of
-    human cortical tissue, all at body temperature; weighted by a
-    dispersion factor $\alpha$ (see Methods). At baseline, we consider
-    net flow due to CSF-production in the SAS and PVS:
-    $\mathbf{u}_{\rm SAS} > 0$ and $\hat{u} > 0$ (see Methods) but no
-    bulk flow in the parenchyma $\mathbf{u}_{\rm PAR} = 0$. Due to the
-    timescale for human intracranial tracer transport (minutes to
-    hours) compared to typical (cardiac, respiratory, slow vasomotion)
-    human intracranial pulsatility (0.1 -- 1 Hz), we consider net
-    (constant-in-time) flow fields only in subsequent model variations
-    (but see dispersion factor above).  Model B represents
-    perivascular pathway scenarios with more rapid flow in the PVS
-    induced by vasomotion (PVS I)~\cite{gjerde2023directional}.
-    Models C represents a version of the aforementioned scenarios but
-    for studying metabolite clearance (instead of solute influx).}
-\label{tab:scenarios}
-\end{table}
-
-
 \subsection{Mixed-dimensional transport and flow equations}
 \label{sec:app:more_maths}
 
@@ -718,31 +654,37 @@ should be viewed as heuristic rather than absolute.
 \subsection{Estimating net perivascular flow induced by peristaltic waves}
 \label{sec:app:peristalsis}
 
-\mer{MER: This needs a pass to update to new notation and new style.}
-
-We use the theoretical framework introduced by Gjerde et al.~\cite{gjerde2023directional} to compute an analytic estimate of the time-averaged (or \emph{net}) flow rates $\langle Q'_i \rangle$ (mm$^3$/s) induced by peristaltic pumping in a perivascular network$\Lambda = \cup_i \Lambda_i$. The motion of the (inner) vascular wall is described by a periodic traveling (peristaltic) wave of relative amplitude $\varepsilon$, wave length $\lambda$ (mm) and frequency $f$, acting normal to the wall. By definition, the wave number is $k = 2 \pi/\lambda$ and the angular frequency is $\omega = 2 \pi f$. Each PVS segment $\Lambda_i$ has length $L_i$ with wave-relative length $\ell_i = k L$, baseline inner radius $r_{o_i}'$, fixed outer radius $r_{e_i}'$, and outer-to-inner ratio $\beta_i = r_{e_i}'/r_{o_i}'$ (see also \Cref{tab:pvs:parameters}). These geometric parameters and the assumption of annular cylindrical PVS segments yield hydraulic resistances $\mathcal{R}_{o, i}$ and additional characteristic parameters, see \cite{gjerde2023directional} for the complete definitions and schematics. Since the analytical estimate is derived under the assumption that $k L \approx \mathcal{O} 1)$~\cite{gjerde2023directional} and has been verified against numerical simulations for $k L$ of the order $10^{-1}-10^2$~\cite[Table I]{gjerde2023directional}, we consider it applicable for the wave lengths and vascular network data considered here in which $k L$ ranges from \mer{$X$ to $Y$.}
-
+We use the theoretical framework previously introduced by Gjerde et al.~\cite{gjerde2023directional} to compute an analytic estimate of the time-averaged (or \emph{net}) flow rates $\langle Q'_i \rangle$ (mm$^3$/s) induced by peristaltic pumping in a perivascular network $\Lambda = \cup_i \Lambda_i$. The motion of the (inner) vascular wall is described by a periodic traveling (peristaltic) wave of relative amplitude $\varepsilon$, wave length $\lambda$ (mm) and frequency $f$, acting normal to the wall. By definition, the wave number is $k = 2 \pi/\lambda$ and the angular frequency is $\omega = 2 \pi f$. Each PVS segment $\Lambda_i$ has length $L_i$ with wave-relative length $\ell_i = k L$, baseline inner radius $R_1^i$, fixed outer radius $R_2^i$, and outer-to-inner ratio $\beta_i = R_2^i/R_1^i$. These geometric parameters and the assumption of annular cylindrical PVS segments yield hydraulic resistances $\mathcal{R}_{o, i}$ and additional characteristic parameters, see \cite{gjerde2023directional} for the complete definitions and schematics. Since the analytical estimate is derived under the assumption that $k L \approx \mathcal{O} (1)$~\cite{gjerde2023directional} and has been verified against numerical simulations for $k L$ of the order $10^{-1}-10^2$~\cite[Table I]{gjerde2023directional}, we consider it applicable for the wave lengths and vascular network data considered here in which $k L$ range from 0.15 to 30 for the strong vasomotion and 0.0015 to 0.30 for the cardiac waves (\Cref{tab:pvs:parameters}).
 \begin{table}
   \small
   \begin{tabular}{llrc}
     \toprule
     Parameter & Description & Value(s)  & Ref.\\ 
     \midrule
-    Relative PVS size $\beta$ & $\beta = \beta_i = r_{e_i} / r_{o_i}$ & 2 & $\approx$\cite{eide2024functional} \\
+    Relative PVS size $\beta$ & $\beta = \beta_i = R_2^i / R_1^i$ & 2 & $\approx$\cite{eide2024functional} \\
     Wave frequency $f$ & Traveling wave frequency of vascular motion & $0.1-1.0$ Hz & \discuss{\cite{gjerde2023directional}} \\
-    Wave length $\lambda$ & Traveling wave length of vascular motion & $20-2000$ mm & \discuss{\cite{broggini2024long, gjerde2023directional}} \\
+    Wave length $\lambda$ & Traveling wave length of vascular motion & $0.02-2$ mm & \discuss{\cite{broggini2024long, gjerde2023directional}} \\
     Wave amplitude & Relative amplitude of inner wall motion & $1-10\%$ & \discuss{\cite{gjerde2023directional}} \\
-    Vascular radii $\{r_{o_i}\}$ & Vascular network radii data (avg $\pm$ std, $\min$, $\max$) & $X$, $X$, $X$  mm & \cite{hodneland2019new} \\
-    Vascular branch lengths $\{L_{i}\}$ & Path length between vasc. junctions (avg $\pm$ std, $\min$, $\max$) & $X \pm Y$, $X$, $X$  mm & \discuss{--} \\
+    \midrule
+    Cardiac frequency $f_c$ & Frequency of human cardiac pulse wave  & $1.0$ Hz & \cite{jung2021novel} \\
+    Cardiac wave length $\lambda_c$ & Wave length of human cardiac pulse wave & $2.0$m & \\
+    Cardiac amplitude $\varepsilon_c$ & Wall displacement amplitude of cardiac pulse wave & 1\%  & \\
+    \midrule
+    Vasomotion frequency $f_v$ & Frequency of slow vasomotion wave  & $0.1$ Hz & \cite{jung2021novel} \\
+    Vasomotion wave length $\lambda_v$ & Wave length of vasomotion wave & $0.02$ m & \cite{broggini2024long, gjerde2023directional} \\
+    Vasomotion amplitude $\varepsilon_v$ & Wall displacement amplitude of vasomotion wave & 10\%  & \cite{broggini2024long, gjerde2023directional}\\
+    %Vascular radii $\{r_{o_i}\}$ & Vascular network radii data (avg $\pm$ std, $\min$, $\max$) & $X$, $X$, $X$  mm & \cite{hodneland2019new} \\
+    %Vascular branch lengths $\{L_{i}\}$ & Path length between vasc. junctions (avg $\pm$ std, $\min$, $\max$) & $X \pm Y$, $X$, $X$  mm & \discuss{--} \\
     \bottomrule
   \end{tabular}
-  \caption{Perivascular flow induced by vascular wall motion: parameters and key data characteristics.}
+  \caption{Perivascular flow induced by vascular wall motion: overview of parameters.}
   \label{tab:pvs:parameters}
 \end{table}
 % Vascular radii r_o (min, max, avg, std) (mm):  ....
 % Vascular branch lengths L (avg, std, min, max) (mm): ...
 
 \input{tikz/fig_pvs_flow}
+
 This theoretical formalism~\cite{gjerde2023directional} is defined
 relative to a network in the form of a directed, bifurcating tree with
 a single supply node/root $i_0$. To extend to a network of cerebral
@@ -750,7 +692,18 @@ arteries with multiple supply nodes (such as the basilar and two
 internal carotid arteries in the current data
 set~\cite{hodneland2019new}), we separate the network $\Lambda$ into
 edge-disjoint subnetworks $\Lambda^1, \Lambda^2, \Lambda^3$, one for
-each of the supply nodes (\Cref{fig:app:peristalsis}). Each node is assigned to the subnetwork associated with the nearest supply node, and edges between nodes are preserved. Next, we compute a minimal, bifurcating and directed tree representation of each subnetwork: $\mathcal{T}^1, \mathcal{T}^2, \mathcal{T}^3$. Each tree $\mathcal{T}^j = \cup E_n^j$ consists of the subset of the nodes from $\Lambda^j$ that have degree 1 (are leaf or root nodes) or degree $3$ (are true bifurcation points), and each path between nodes with degree $\not = 2$ in $\Lambda^j$ is represented in $\mathcal{T}^j$ by an edge $E^j$ with edge length $L$ corresponding to the total length of the original path and edge radius $r_o$ as the average of the path radii. For the few (2) nodes in $\Lambda$ with degree $>3$; i.e.~junctions where a branch splits into more than two downstream branches, only the two longest downstream paths are included in $\mathcal{T}^j$.
+each of the supply nodes (\Cref{fig:results1}A, C,
+\Cref{fig:app:peristalsis}). Each node is assigned to the subnetwork
+associated with the nearest supply node, and edges between nodes are
+preserved. Next, we compute a minimal, bifurcating and directed tree
+representation of each subnetwork: $\mathcal{T}^1, \mathcal{T}^2,
+\mathcal{T}^3$. Each tree $\mathcal{T}^j = \cup E_n^j$ consists of the
+subset of the nodes from $\Lambda^j$ that have degree 1 (are leaf or
+root nodes) or degree $3$ (are true bifurcation points), and each path
+between nodes with degree $\not = 2$ in $\Lambda^j$ is represented in
+$\mathcal{T}^j$ by an edge $E^j$ with edge length $L$ corresponding to
+the total length of the original path and edge radius $R^j$ as the
+average of the path radii. 
 
 For each subtree $\mathcal{T}^j = \cup_n E_n^j$, we compute the
 time-averaged downstream flow rate $\langle Q'_n \rangle$ induced by
@@ -760,9 +713,10 @@ $\langle Q'_n \rangle$ to each of the branches $\Lambda_i$ that form
 the path $E_n^j$, thus yielding $\langle Q'_i \rangle$ for each
 perivascular segment $\Lambda_i$ (except those ignored above, for
 which we set a flow rate of zero). Finally, we define the mean
-longitudinal perivascular velocity $\langle u^{\rm PVS}_i \rangle$ by
-dividing the flow rate $\langle Q'_i \rangle$ by the cross-section
-area $A_i = \pi (r_{e_i}^2 - r_{o_i}^2) = \pi (\beta_i^2 - 1) r_{o_i}^2$
+longitudinal perivascular velocity induced by the peristaltic wave
+$\langle \hat{u}^x_i \rangle$ by dividing the flow rate $\langle Q'_i
+\rangle$ by the cross-section area $A_i = \pi ({R_2^i}^2 - {R_1^i}^2)
+= \pi (\beta_i^2 - 1) {R_1^i}^2$.
 
 \subsection{Numerical verification}
 
