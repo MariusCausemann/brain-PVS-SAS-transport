@@ -127,7 +127,7 @@ def mark_and_refine(configfile : str):
     # of the CSF space from the Stokes computation (disconnected domains)
 
     sas = df.Mesh()
-    with df.XDMFFile(f'mesh/{meshname}/volmesh/mesh.xdmf') as f:
+    with df.XDMFFile(config["basemesh"]) as f:
         f.read(sas)
         gdim = sas.geometric_dimension()
         label = df.MeshFunction('size_t', sas, gdim, 0)
@@ -137,11 +137,15 @@ def mark_and_refine(configfile : str):
         # compute distance to interface for later refinement
         parenchyma_surf = pv.read(f"mesh/{meshname}/surfaces/parenchyma_incl_ventr.ply")
 
+        # refine all
+        AQ_coords = (0.0837, 0.08, 0.065) 
+        sas, label = refine_sphere(sas, AQ_coords, 1, label, 
+                                    criterion=None, min_size=config["edge_length_r"] * 0.6) 
+
         # refine V3 and V4
         sas, label = refine_region(sas, label, labelids=[V34ID])
 
         # refine AQ
-        #AQ_coords = (0.0837, 0.08, 0.065) 
         #sas, label = refine_sphere(sas, AQ_coords, 0.007, label)
 
         # refine Par boundary
