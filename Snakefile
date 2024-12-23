@@ -9,7 +9,7 @@ def read_config(configfile):
 
 num_mumps_threads = 16
 mesh_refine_models = ["modelALowRes", "modelA", "modelAHighRes"]
-time_refine_models = ["modelA", "modelAsmalldt", "modelAlargedt"]
+time_refine_models = ["modelA","modelAsmalldt", "modelAlargedt"]
 model_variations = ["modelA" , "modelA-LowD","modelA-HighD",
                     "modelA-OnlyDispersion",
                     "modelA-strongVM","modelA-PVS-disp",
@@ -27,7 +27,7 @@ model_comparisons = [
                     "modelA_modelA-PVS-disp"            
                     ]
 
-models =  model_variations #mesh_refine_models + time_refine_models
+models =  model_variations +time_refine_models+ mesh_refine_models
 times = list(np.array([1, 3, 6, 12, 24])*60*60)
 conctimes =  list((np.array([0, 1/3, 2/3, 1, 4/3, 5/3, 2, 7/3, 8/3, 3, 4, 5, 6 ,9, 12, 15, 18, 21, 24])*60*60).astype(int))
 
@@ -44,8 +44,8 @@ diffmax = {"detail":defaultdict(lambda: 0.1,{"modelA_modelA4":0.2}),
 }
 types = ["overview", "isosurf", "timesurf"]
 
-def getconfig(model, key):
-    return read_config(f"configfiles/{model}.yml").get(key, [])
+def getconfig(model, key, default=[]):
+    return read_config(f"configfiles/{model}.yml").get(key, default)
 
 rule all:
     input:
@@ -245,7 +245,8 @@ if config.get("meshing", True):
 rule markAndRefineMesh:
     conda:"environment.yml"
     input:
-        "mesh/{meshname}/volmesh/mesh.xdmf",
+        basemesh=lambda wildcards: getconfig(f"meshconfig/{wildcards.meshname}", "basemesh", 
+            default="mesh/{wildcards.meshname}/volmesh/mesh.xdmf"),
         surf= lambda wildcards: "mesh/{meshname}/surfaces/parenchyma_incl_ventr.ply" if getconfig(f"meshconfig/{wildcards.meshname}", "refine") else []
     output:
         "mesh/{meshname}/{meshname}.xdmf",

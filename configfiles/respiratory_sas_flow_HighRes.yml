@@ -1,0 +1,14 @@
+mesh : "mesh/HighRes/HighRes_outer.xdmf"
+discretization : BDM
+order : 2
+mu : 0.7e-3 
+no_slip_bcs : [1,2,3,4]
+resistance_bcs : []
+inflow_bcs : 
+ - [[1,2], "1.0e-6 / A"]
+ - [[3], "0.121e-6 / A" ] # https://www.researchgate.net/publication/381779788_Using_Real_Time_Phase_contrast_MRI_to_investigate_CSF_oscillations_and_aqueductal_pressure_gradients_during_free_breathing
+ - [[4], 0]
+
+ # Sources:
+ # 0.121 ml/s breathing AQ flow rate: https://www.researchgate.net/publication/381779788_Using_Real_Time_Phase_contrast_MRI_to_investigate_CSF_oscillations_and_aqueductal_pressure_gradients_during_free_breathing
+ # "Peak flow rates ranged from 0.60 to 1.59 mL/s in the cervical region" -> assume 1 ml/s flow https://pmc.ncbi.nlm.nih.gov/articles/PMC9451622/#:~:text=Normal%20respiration%20in%20healthy%20subjects,dominates%20in%20the%20lumbar%20region.
