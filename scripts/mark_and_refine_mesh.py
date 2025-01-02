@@ -127,7 +127,7 @@ def mark_and_refine(configfile : str):
     # of the CSF space from the Stokes computation (disconnected domains)
 
     sas = df.Mesh()
-    with df.XDMFFile(config["basemesh"]) as f:
+    with df.XDMFFile(config.get("basemesh", f"mesh/{meshname}/volmesh/mesh.xdmf")) as f:
         f.read(sas)
         gdim = sas.geometric_dimension()
         label = df.MeshFunction('size_t', sas, gdim, 0)
