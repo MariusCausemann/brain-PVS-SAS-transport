@@ -212,7 +212,7 @@ rule generateSurfaces:
         "data/T1_synthseg.nii.gz",
         config="configfiles/meshconfig/{meshname}.yml"
     output:
-        [f"mesh/{{meshname}}/surfaces/{n}.ply" for n in ["LV", "parenchyma_incl_ventr", "skull", "V34"]]
+        ["mesh/{meshname}/surfaces/" + f"{n}.ply" for n in ["LV", "parenchyma_incl_ventr", "skull", "V34"]]
     shell:
         """
         python scripts/extract_synthseg_surfaces.py {input.config}
@@ -231,7 +231,7 @@ if config.get("meshing", True):
     rule generateMesh:
         conda:"mesh_environment.yml"
         input:
-            [f"mesh/{{meshname}}/surfaces/{n}.ply" for n in ["LV", "parenchyma_incl_ventr", "skull", "V34"]],
+            ["mesh/{meshname}/surfaces/" + f"{n}.ply" for n in ["LV", "parenchyma_incl_ventr", "skull", "V34"]],
             "configfiles/meshconfig/{meshname}.yml"
         output:
             "mesh/{meshname}/volmesh/mesh.xdmf",
@@ -246,7 +246,7 @@ rule markAndRefineMesh:
     conda:"environment.yml"
     input:
         basemesh=lambda wildcards: getconfig(f"meshconfig/{wildcards.meshname}", "basemesh", 
-            default="mesh/{wildcards.meshname}/volmesh/mesh.xdmf"),
+            default=f"mesh/{wildcards.meshname}/volmesh/mesh.xdmf"),
         surf= lambda wildcards: "mesh/{meshname}/surfaces/parenchyma_incl_ventr.ply" if getconfig(f"meshconfig/{wildcards.meshname}", "refine") else []
     output:
         "mesh/{meshname}/{meshname}.xdmf",
