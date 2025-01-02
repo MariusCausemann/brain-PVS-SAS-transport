@@ -19,7 +19,7 @@ dependencies:
   - pykdtree
   - bioconda::snakemake
   - libopenblas=*=*openmp*
-  - vtk=9.3.0=*egl*
+  - vtk=*=*mesa*
   - mumps-mpi>=5.7.3
   - mpich
   - k3d
