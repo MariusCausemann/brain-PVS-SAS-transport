@@ -16,7 +16,7 @@ y2 = 13.4
 y3 = 16
 w = 2.65
 hn = 8.0
-compwidth = 2.5
+compwidth = 3.0
 hpx = 800
 abfac = 0.9
 
