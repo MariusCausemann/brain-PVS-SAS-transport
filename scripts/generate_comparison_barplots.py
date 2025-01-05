@@ -89,7 +89,7 @@ def compare_models(models: List[str]):
 
     barplot_groups += [{"vars":[f"cmean_{dom}_{t}" for t in [10800, 21600,  43200, 86400]],
     "varnames":[f"{int(t/3600)} h" for t in [10800, 21600,  43200, 86400]], 
-    "ylabel":"mol/L", "title":f"mean concentration ({dom})"} for
+    "ylabel":"mmol/l", "title":f"mean concentration ({dom})"} for
     dom in ["CSF", "parenchyma", "PVS artery", "PVS vein"]]
 
     nfigs = len(barplot_groups)
@@ -134,7 +134,7 @@ def compare_models(models: List[str]):
             plt.plot(times, dmax, label=f"max {m}", ls=ls, color="maroon")
             plt.plot(times, dmin, label=f"min {m}", ls=ls, color="teal")
         plt.xlabel("time (h)")
-        plt.ylabel("tracer concentration (mol/L)")
+        plt.ylabel("tracer concentration (mmol/l)")
         plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol=3,
                 columnspacing=0.7, frameon=False)
         plt.savefig(f"plots/comparisons/{v}/{dom}_minmax.png")
@@ -154,7 +154,7 @@ def compare_models(models: List[str]):
                 plt.plot(times, dmean, label=f"{dom.upper()} {m}", ls=ls, markerfacecolor="white",
                         marker=mark, color=c, ms=8, markevery=(0.05*i, 0.2))
         plt.xlabel("time (h)")
-        plt.ylabel("tracer concentration (mol/L)")
+        plt.ylabel("tracer concentration (mmol/l)")
         plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol=len(models),
                     columnspacing=0.7, frameon=False)
         plt.savefig(f"plots/comparisons/{v}/{v}_{'_'.join(doms)}_mean.png")

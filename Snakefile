@@ -10,7 +10,7 @@ def read_config(configfile):
 num_mumps_threads = 16
 mesh_refine_models = ["modelALowRes", "modelA", "modelAHighRes"]
 time_refine_models = ["modelA","modelAsmalldt", "modelAlargedt"]
-model_variations = ["modelA" , "modelA-LowD","modelA-HighD",
+model_variations = ["modelA" , "modelA-LowD","modelA-HighD", "modelAMassConservation",
                     "modelA-OnlyDispersion",
                     "modelA-strongVM","modelA-PVS-disp",
                     "modelB1-10", "modelB1-100", "modelB1-1000",

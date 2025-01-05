@@ -164,7 +164,7 @@ def mark_and_refine(configfile : str):
         print("======================")
         print("refining inlet area...")
         inlet_coords = (0.0847, 0.0833, 0.001)
-        for i in range(2):
+        for i in range(3):
             print("======================")
             print(sas.num_cells())
             crit = abs(get_surface_dist(sas, parenchyma_surf)) < 0.002
@@ -176,10 +176,11 @@ def mark_and_refine(configfile : str):
         print("======================")
         print("refining AQ area...")
         aq_coords = (0.0815, 0.082, 0.0665)
-        for i in range(1):
+        for i in range(3):
             print("======================")
             print(sas.num_cells())
-            sas, label = refine_sphere(sas, aq_coords, 0.005, label)
+            sas, label = refine_sphere(sas, aq_coords, 0.005, label,
+                                        min_size=config["edge_length_r"] / 12)
             print(sas.num_cells())
 
     # remove unconnected components of the CSF space

@@ -1,12 +1,10 @@
 from dolfin import *
 from solver import * 
+from xii import *
 import os
 import numpy as np
-from xii import *
-from petsc4py import PETSc
 import typer
 from plotting_utils import read_config
-from IPython import embed
 from pathlib import Path
 import yaml
 
@@ -55,31 +53,42 @@ SPINAL_CORD_ID = 5
 SPINAL_OUTLET_ID = 6
 CSF_NO_FLOW_CSF_ID = 7
 
-def get_normal_func(mesh, scale=Constant(1)):
+
+def get_normal_func(mesh):
     n = FacetNormal(mesh)
-    V = VectorFunctionSpace(mesh, "DG", 0)
+    V  = VectorFunctionSpace(mesh, 'DG', 1)
     u = TrialFunction(V)
     v = TestFunction(V)
-    a = inner(u,v)*ds
-    l = inner(scale*n, v)*ds
+    ds0 = Measure("ds", metadata={'quadrature_degree': 1})
+    a = inner(u,v)*ds0
+    l = inner(n, v)*ds0
     A = assemble(a, keep_diagonal=True)
     L = assemble(l)
 
     A.ident_zeros()
     nh = Function(V)
     solve(A, nh.vector(), L, "cg", "jacobi")
+    np.testing.assert_allclose(assemble(1*ds(domain=mesh)),
+                               assemble(inner(n, nh)*ds), rtol=1e-10, atol=1e-12)
     return nh
 
 def get_inflow_bcs(W, ds, inflow_bcs):
     bcs = []
+    n = FacetNormal(W.mesh())
     for bids, infl in inflow_bcs:
         if infl == 0:
             infl_func = Constant((0,0,0))
         else:
             area = 0
             for bid in bids: area += assemble(1*ds(bid))
-            infl_func = get_normal_func(W.mesh(), 
-                scale=-Expression(infl, A=area, degree=1))
+            infl_func = get_normal_func(W.mesh())
+            A = area
+            infl_func.vector()[:] *= -eval(infl)
+
+        actual_inflow  = sum(assemble(inner(-n, infl_func)*ds(bid)) for bid in bids)
+        infl_num = float(str(infl).translate({ord(i): None for i in 'A*/'}))
+
+        np.testing.assert_allclose(actual_inflow, infl_num, rtol=1e-10, atol=1e-12)
         for bid in bids:
             bcs += [DirichletBC(W.sub(0), infl_func, 
                                 ds.subdomain_data(), bid)]
@@ -197,7 +206,14 @@ def compute_sas_flow(configfile : str):
 
     wh = directsolve(a, L, bcs, W)
     uh, ph = wh.split(deepcopy=True)[:]
-    
+    n = FacetNormal(mesh)
+    for bids, infl in config["inflow_bcs"]:
+        actual_inflow  = sum(assemble(inner(-n, uh)*ds(bid)) for bid in bids)
+        print(infl)
+        infl_num = float(str(infl).translate({ord(i): None for i in 'A*/'}))
+        print(actual_inflow, infl_num)
+        np.testing.assert_allclose(actual_inflow, infl_num, rtol=1e-4, atol=1e-12)
+
     uhdg = interpolate(uh, VectorFunctionSpace(mesh, "DG", order_k))
     if ph.ufl_element().family() == 'Discontinuous Lagrange':
         assert np.isclose(assemble(div(uhdg)*div(uhdg)*dx), 0)
