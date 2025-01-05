@@ -54,7 +54,7 @@ In this section, we describe the mathematical
 model~\eqref{eq:multi_transport}, the associated definitions,
 interface and boundary conditions in further detail. We refer to the
 main text for explicit parameter values while giving the general,
-abstract form here, and to the reference~\cite{masri2023modelling} for
+abstract form here, and to the reference~\cite{masri2024modelling} for
 the derivation and analysis of this 3D-1D model. Recall that we model
 a concentration field $c = c(x, t)$ for $x \in \Omega$ and $t > 0$
 defined in $\Omega_{\rm PAR}$ and $\Omega_{\rm CSF}$ separately. In
@@ -725,6 +725,12 @@ We assess the accuracy and numerical convergence of our simulation results by pe
 Considering the mean tracer concentrations in the CSF, parenchyma and arterial and venous PVS domain over the first 24\,h after injection, we observe negligible changes with both mesh and time refinement (\cref{fig:mesh_convergence_concentrations} and 
 \ref{fig:time_convergence_concentrations}). In addition, we compute the mean and maximum enhancement factor, the maximum CSF pressure and velocity in both the cardiac-driven and CSF production-induced flow fields, and mean concentrations at 3, 6, 12 and 24\,h for all mesh resolutions and time steps (\cref{fig:mesh_convergence} and \cref{fig:time_convergence}). While the maximum dispersion factor increases by about 60\,\% from the coarse to the standard mesh, it stabilizes with the next refinement step. All other quantities change with less than 10\,\% with mesh refinement, and less than 1\,\% with time refinement. We thus conclude that the standard resolution mesh and a time step of $dt=120\,$s offers sufficient accuracy for our simulations.
 
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{paper/figures/mesh_refinement.png}
+    \caption{Illustration of the three different meshes: low resolution, standard resolution, high resolution (from left to right).}
+    \label{fig:mesh_refinement}
+\end{figure}
 
 \begin{figure}
     \centering
