@@ -296,7 +296,7 @@ venous PVS (8\%) and the arterial PVS
 \begin{figure}%[h!]
 \centering 
 \includegraphics[width = 0.95\textwidth]{figures/figure2.png}
-\caption{The balance between CSF pulsatility and production shapes molecular enrichment patterns.
+\caption{\textbf{The balance between CSF pulsatility and production shapes molecular enrichment patterns.}
 A) CSF spaces: the third and fourth ventricle (V3\&4), lateral ventricles (LV) and SAS; 
 B) Boundaries and interfaces: the spinal subarachnoid space (SSAS), upper and lower arachnoid membrane (AM-U and AM-L), pia (Pia) and lateral ventricles (LV); 
 C) Schematic of the CSF flow model; 
@@ -480,35 +480,24 @@ compared to the baseline (\Cref{fig:pvs}G+M), thus indicating a
 negative answer to this question.
 \begin{figure}
     \centering
-    \includegraphics[height=0.8 \textheight]{figures/figure3.png}
-    \caption{\textbf{Perivascular flow shapes and accelerates molecular enrichment.}
-    A) Illustration of the arterial network;
-    B) CSF production-driven flow field used to compute pressure-driven PVS flow (from \Cref{fig:csf}) and the relative freqency of PVS flow velocities (cellwise) in the network induced by a production-driven transmantle pressure gradient(positive values - antegrade, negative values - retrograde PVS flow);
-    D) illustration of the concept of peristaltic pumping;
-    E) PVS flow velocities induced by cardiac peristaltic pumping;
-    F) PVS flow velocities induced by vasomotion peristaltic pumping;
-    G) concentration in the PVS and mean concentration on the outer PVS surface at selected segments of the arterial tree for the baseline and high PVS flow models;
-    H) first-time arrival for the main trunks of the arterial network over the distance from the closest network root node (BA, ICA-R or ICA-L for the baseline, the high PVS flow and the high PVS dispersion models;
-    I,J)  Zoom-in to the region surrounding the MCA-R and MCA2-R for the baseline and high PVS flow model. Innermost circle - artery (blue), surrounding annulus - PVS (color represents concentration value), surrounding domain - parenchyma and CSF(color coded by concentration), separated by pia (blue: towards the parenchyma, pink: towards the CSF))
-    L,M,N) sagittal, coronal and axial view of computed tracer concentrations over T1-image after 1, 6, 12 and 24\,h for the baseline, high PVS flow and high PVS dispersion models (low concentrations transparent, pial surface in pink, arachnoid membrane in cyan, and arteries in dark red).
-    }
+    \includegraphics[width=0.95\textwidth]{figures/figure3.png}
+    \caption{\textbf{Perivascular flow shapes and accelerates molecular enrichment.}}
     \label{fig:pvs}
 \end{figure}
-
-%% We investigate the PVS flow velocities resulting from a transmantle pressure gradient, cardiac peristalsis and vasomotion-induced flow in a reconstructed arterial network and illustrate the effect of the obtained PVS flow fields on the spreading patterns of intrathecally injected tracer. Further, we explore whether solutes move exclusively from the PVS to the SAS, or bidirectionally along both pathways by comparison of first-time arrival times along major cerebral arteries.
-
-%\paragraph{PVS Flow velocities}
-%% To investigate PVS flow velocities, we extract the centerlines and associated radii of the arterial network from data \cite{hodneland2019new}, and label the main cerebral arteries (Figure 3A+C). We consider three different PVS flow fields: flow driven by CSF production-induced pressure differences, cardiac peristaltic flow, and vasomotion peristaltic flow (\Cref{fig:pvs}B). Pressure-driven flow velocities are computed by solving one-dimensional flow equations with pressure boundary conditions derived from the production field. Cardiac- and vasomotion-driven PVS flow velocities are obtained from semi-analytical estimates for peristaltic flow, assuming a frequency of 1\,Hz, a 1\,\% radius change, and a wavelength of 2 meters for cardiac flow, and a frequency of 0.1\,Hz, a 10\,\% radius change, and a wavelength of 2\,cm for vasomotion.
-
-%% The production-driven pressure gradient induces low flow velocities, with an average velocity of 0.08\,\textmu m and a maximum velocity of 0.55\,\textmu m (\Cref{fig:csf}D+H). In contrast, cardiac-driven velocities are approximately one order of magnitude higher, with an average velocity of 0.92\,\textmu m and a maximum velocity of 7.31\,\textmu m (\Cref{fig:pvs}E+H). Vasomotion-driven PVS flow reach substantially higher velocities, up to 54\,\textmu m, with an average of 13.05\,\textmu m. For all drivers of PVS flow, the majority of flow occurred in the direction of blood flow, with only a small fraction in the opposing direction (\Cref{fig:pvs}H).
-
-%\paragraph{Differences in PVS flow velocities substantially alter tracer enrichment patterns around major cerebral arteries}
-
-%% Using the computed PVS flow velocities, we predict the effect of rapid PVS flow on intracranial transport by comparing a slow transport model (pressure-driven and cardiac-driven PVS flow) with a high-velocity model that accounts for all three mechanisms (pressure-, cardiac-, and vasomotion-driven). In both models, tracers were first observed 48 minutes after injection at the basal artery (\Cref{fig:pvs}G), defined by the first-time arrival (FTA), the time at which concentration first exceeds $0.1\,$mmol/l.
-
-%% At all upstream locations along the middle cerebral arteries (MCAs) and anterior cerebral artery (ACA), we found substantially reduced FTAs in the rapid PVS flow model (\Cref{fig:pvs}G+N). Furthermore, peak concentrations in the PVS were attained earlier than in the surrounding tissue (0:48h / 1:12h at the MCA and 1:00h / 1:48h at MCA2) in the vasomotion model, while concentrations peaked more simultaneously in the low-velocity model. The earlier occurrence and delay in peak time between the PVS and surrounding tissue indicate the directionality of tracer enrichment — it first arrives in the PVS and subsequently spreads into the tissue and SAS, especially in the vasomotion model.
-
-%% The difference in tracer spreading observed at the MCA/ACA points also holds on an aggregated level in the whole arterial PVS. Computing the total amount of tracer in the PVS depending on the distance to the arterial network's inlet nodes (basal artery (BA), left internal carotid artery (ICA-L), or right internal carotid artery (ICA-R)), we find more rapid transport of tracer in the vasomotion model. We also investigate the potential effect of increased dispersion in the PVS, finding that adding a dispersion enhancement factor of 100 in the PVS only induced minor changes in the global spreading rate (\Cref{fig:pvs}J). However, differences in tracer transport along the PVS translate to altered enrichment patterns on a whole-organ scale. For instance, after 4-6 hours, the faster-moving tracer in the PVS is clearly visible in the adjacent spaces of the ACA, MCA, and other arteries in sagittal, coronal, and axial planes of the whole organ (\Cref{fig:pvs}O). In contrast, the model with only pressure- and cardiac-driven PVS flow does not exhibit clear signs of accelerated tracer transport along the PVS.
+\begin{figure}
+\ContinuedFloat
+  \caption{\textbf{(cont.)}
+    A) Surface arterial network colored by arterial radius with vessel locations labelled;
+    B) Net PVS flow induced by CSF production (cf.~\Cref{fig:csf}D) -- histograms show the relative frequencies of local periarterial velocities. Positive values indicate antegrade PVS flow, while negative values indicate retrograde PVS flow;
+    C) Illustration of the concept of peristaltic pumping;
+    D) Estimated net PVS flow induced by pulse wave peristaltic pumping;
+    E) Estimated net PVS flow induced by vasomotion/slow wave peristaltic pumping;
+    F) Comparison of mean tracer concentration in the PVS and over the outer PVS surface at key locations of the arterial tree, for the baseline (lower) and high PVS flow (upper) models, with labels: ``peak'': time-to-peak (h), ``$\Delta t$'': time difference between peaks (h), and ``FTA'': first-time tracer arrival (h).
+    G) first-time arrival for the main trunks of the periarterial network over the distance from the closest network root node (BA, ICA-R or ICA-L for the baseline, the high PVS flow and the high PVS dispersion models);
+    H, I) 2D slices showing zoom-in on the region surrounding the MCA-R and MCA2-R for the baseline (upper) and high PVS flow (lower) models. Innermost circle indicates the artery (blue), the surrounding annulus is the PVS (color represents concentration value), the surroundings are parenchyma and/or CSF spaces (color coded by concentration), separated by the pia (blue: towards the parenchyma, pink: towards the CSF));
+    J) Total amount of tracer in the periarterial spaces as a function of the distance to the nearest network root over time for the baseline (left) and the high PVS flow (right) models;
+    K--M) sagittal (upper) and coronal (lower) views of the simulated tracer concentrations overlayed on the T1-weighted MR image after 4 and 6h for the baseline (K), high PVS flow (L) and high PVS dispersion (M) models (concentrations \discuss{below threshold masked}, pial surface outlined in pink, arachnoid membrane in cyan, and arteries in dark red).}
+\end{figure}
 
 % \mer{MER: Results #4 is about 500 words}
 \subsection*{Structural versus functional compartmentalization of perivascular spaces}
