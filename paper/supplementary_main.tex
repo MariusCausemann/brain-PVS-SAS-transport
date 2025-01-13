@@ -383,8 +383,8 @@ Define for $c, v \in V_h^k$:
   \label{eq:dg_sip}
 \end{equation}
 In~\eqref{eq:dg_sip}, for each facet $F \in \mathcal{F}^i$ shared
-between cells $E^1$ and $E^2$ with facet normal vector $\bm n_F$
-pointing from $E^1$ to $E^2$, $h_F$ denotes the facet diameter,
+between cells $E^1$ and $E^2$, we associate a  facet normal vector $\bm n_F$
+pointing from $E^1$ to $E^2$. The facet diamter is denoted by $h_F$,
 the jump $[\cdot]$ is given by $[v] = v|_{E^1} - v|_{E^2}$, and the
 unweighted average $\{ \cdot \}$ and weighed average $\{ \cdot \}_w$
 are defined as:
@@ -720,7 +720,8 @@ $\langle \hat{u}^x_i \rangle$ by dividing the flow rate $\langle Q'_i
 
 \subsection{Numerical verification}
 
-We assess the accuracy and numerical convergence of our simulation results by performing a series of experiments with different spatial and temporal resolutions. Specifically, we generate a sequence of three meshes with an increasing number of points and cells, solve all relevant simulation steps (CSF flow and intracranial transport computations) for standard model A, and compare the results with respect to a set of key quantities of interest. Similarly, we investigate the effect of the time step size by solving the intracranial transport model with varying time steps $dt \in \{60, 120, 240 \}$\,s.
+We assess the accuracy and numerical convergence of our simulation results by performing a series of experiments with different spatial and temporal resolutions. Specifically, we generate a sequence of three meshes, see \Cref{fig:mesh_refinement}, with an increasing number of points and cells, solve all relevant simulation steps (CSF flow and intracranial transport computations) for standard model A, and compare the results with respect to a set of key quantities of interest. The mesh refinement employed here is adapative in the sense that the coarser mesh is refined near expected sharp concentration gradients. This allows us to better capture dynamics and reduce undershoots, see \Cref{fig:mesh_convergence_concentrations}.  
+Similarly, we investigate the effect of the time step size by solving the intracranial transport model with varying time steps $dt \in \{60, 120, 240 \}$\,s.
 
 Considering the mean tracer concentrations in the CSF, parenchyma and arterial and venous PVS domain over the first 24\,h after injection, we observe negligible changes with both mesh and time refinement (\cref{fig:mesh_convergence_concentrations} and 
 \ref{fig:time_convergence_concentrations}). In addition, we compute the mean and maximum enhancement factor, the maximum CSF pressure and velocity in both the cardiac-driven and CSF production-induced flow fields, and mean concentrations at 3, 6, 12 and 24\,h for all mesh resolutions and time steps (\cref{fig:mesh_convergence} and \cref{fig:time_convergence}). While the maximum dispersion factor increases by about 60\,\% from the coarse to the standard mesh, it stabilizes with the next refinement step. All other quantities change with less than 10\,\% with mesh refinement, and less than 1\,\% with time refinement. We thus conclude that the standard resolution mesh and a time step of $dt=120\,$s offers sufficient accuracy for our simulations. In addition, we compute the standard model without allowing tracer transport across the models outer boundary, confirming mass conservation of our numerical scheme (\cref{fig:mass_conservation}).
