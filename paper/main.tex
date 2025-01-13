@@ -225,7 +225,7 @@ Main findings and outlook \draft{\lipsum[1]} Outlook:
 \subsection*{In-silico predictions of intracranial molecular enrichment and clearance after intrathecal injection}
 \begin{figure}
     \centering
-    \includegraphics[width=0.95 \textwidth]{figures/figure1.png}
+    \includegraphics[width=0.95\textwidth]{figures/figure1.png}
      \caption{A) Illustration of the spatial domains of the model: CSF-filled space (ventricles and SAS) $\Omega_{\rm CSF}$, parenchyma $\Omega_{\rm PAR}$ and the PVS surrounding arteries $\Lambda_{\rm artery}$ and the veins $\Lambda_{\rm vein}$ and their interfaces and boundaries (see Methods); B) 3D rendering of the actual geometry used in this study parenchyma, CSF (clipped, blue), arterial network (red), venous network (blue)); C) arterial network (red) and venous network (blue); D) illustration of the modelled clinical tracer injection procedure; E) time of simulated first tracer arrival after intrathecal injection (concentration exceeds $0.1\,$mol/l); F) time of first tracer arrival in the arterial PVS (top) and venous PVS (bottom); G) sagittal, coronal and axial view of computed tracer concentrations over T1-image 1, 6, 12 and 24\,h after injection (low concentrations transparent, pial surface in pink, arachnoid membrane in cyan, and arteries in dark red); H) total amount of tracer in each cranial compartment over the first 24\,h; I) average tracer concentration in each compartment over the first 24\,h. }
      \label{fig:results1}
 \end{figure}
@@ -295,25 +295,28 @@ venous PVS (8\%) and the arterial PVS
 \subsection*{Reduced CSF pulsatility strongly shifts intracranial enrichment patterns}
 \begin{figure}%[h!]
 \centering 
-\includegraphics[width = 0.9\linewidth]{figures/figure2.png}
-\caption{\mer{MER: @MC, will you update the caption please?}
-A) Illustration of the CSF-filled compartments: third and fourth ventricle (V3\&4), lateral ventricles (LV) and SAS; 
-B) Illustration of the models boundaries: spinal subarachnoid space (SSAS), upper and lower arachnoid membrane (AM-U and AM-L), pia (Pia) and lateral ventricles (LV); 
-C) schematic illustration of the model, its domains and boundaries; 
-D) CSF flow induced by CSF production; with resistive outflow across the
-upper convexity of the arachnoid mater; 
-E) production-induced CSF velocities in the SAS and third and fourth ventricle (V3 \& V4), (frequency denotes the relative frequency of mean velocity magnitude values in each computational cell weighted by the cell volume); 
-F) CSF flow induced by peak systolic expansion; 
-G) cardiac dispersion enhancement factor ($D_{\rm eff} = (1 + R) D^{\ast}$);
-H) CSF flow induced by respiration; 
-I) respiratory dispersion enhancement factor;
-J) cardiac-induced flow velocities;
-K) cardiac-induced dispersion enhancement factor;
-L) respiratory flow velocities;
-M) respiratory dispersion enhancement factor;
-N) sagittal, coronal and axial planes of tracer concentration after 12h in different model variations. The outer model boundaries is shown in cyan, the pial membrane in purple and the arteries in red.;
+\includegraphics[width = 0.95\textwidth]{figures/figure2.png}
+\caption{The balance between CSF pulsatility and production shapes molecular enrichment patterns.
+A) CSF spaces: the third and fourth ventricle (V3\&4), lateral ventricles (LV) and SAS; 
+B) Boundaries and interfaces: the spinal subarachnoid space (SSAS), upper and lower arachnoid membrane (AM-U and AM-L), pia (Pia) and lateral ventricles (LV); 
+C) Schematic of the CSF flow model; 
+D) CSF flow induced by CSF production with outflow allowed across the
+upper convexity (AM-U); 
 }
 \label{fig:csf}
+\end{figure}
+\begin{figure}
+\ContinuedFloat
+\caption{(\textbf{cont.})
+E) Histograms of the production-induced CSF velocities in the SAS and third and fourth ventricle (V3 \& V4) in terms of the relative frequency of the mean flow speed in each computational cell weighted by its volume; 
+F) CSF flow induced at peak systolic blood inflow; 
+G) Cardiac-induced dispersion factor $R_c$;
+H) CSF flow induced at peak respiratory expansion; 
+I) Respiration-induced dispersion factor $R_r$, $D = (1 + R_c + R_r) D^{\rm Gad}$; J--M): Histograms of the cardiac-induced flow velocities (J),
+cardiac-induced dispersion factors (K),
+respiratory flow velocities (L), respiratory dispersion factor (M);
+N--Q): sagittal, coronal and axial planes of tracer concentration after 12h for different model variations: baseline (N), no CSF production (O), low dispersion (P), and high dispersion (Q).
+}
 \end{figure}  
 
 The enrichment patterns observed clinically after intrathecal
