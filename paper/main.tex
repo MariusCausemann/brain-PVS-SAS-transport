@@ -454,7 +454,7 @@ mmol/l. At all upstream locations along the middle cerebral arteries
 reduced FTAs with higher PVS flow (\Cref{fig:pvs}G), up to 2.5 hours
 earlier in the left M2 segment of the MCA. PVS concentrations peaked
 before the surrounding tissue (0:48h vs 1:12h at the MCA and 1:00h vs
-1:48h at MCA2) with high PVS flow, while these peaks occured nearly
+1:48h at MCA2) with high PVS flow, while these peaks occurred nearly
 simultaneously in the baseline model. The earlier appearance and the
 delay in time-to-peak between the PVS and surrounding tissue clearly
 indicates the directionality of tracer enrichment -- it first arrives
@@ -488,7 +488,7 @@ this question.
 \begin{figure}
 \ContinuedFloat
   \caption{\textbf{(cont.)}
-    A) Surface arterial network colored by arterial radius with vessel locations labelled;
+    A) Surface arterial network colored by arterial radius with vessel locations labeled;
     B) Net PVS flow induced by CSF production (cf.~\Cref{fig:csf}D) -- histograms show the relative frequencies of local periarterial velocities. Positive values indicate antegrade PVS flow, while negative values indicate retrograde PVS flow;
     C) Illustration of the concept of peristaltic pumping;
     D) Estimated net PVS flow induced by pulse wave peristaltic pumping;
@@ -622,64 +622,79 @@ concentration drops slightly (\Cref{fig:enlargement}G,H).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Discussion}
 
-To discuss: \cite{hauglund2025norepinephrine}
+We have presented a high-fidelity in-silico model of molecular
+enrichment and clearance in human intracranial spaces, enabling
+tailored predictions of the influence of brain, CSF space and vascular
+morphologies, physiological factors such as cardiac and respiratory
+pulsatility, as well as of pathological conditions such as enlarged
+PVSs. A key observation is that the balance between CSF production and
+intracranial pulsatility significantly shapes the large-scale features
+of molecular enrichment, with e.g. ventricular tracer reflux after
+intrathecal injection in the absence of CSF production, and preference
+towards anterior regions with reduced pulsatility. Indeed, the
+simulated distribution patterns cover a substantial range of the
+individual variations observed clinically \cite{ringstad2018brain}. In
+terms of perivascular pathways, we find that even moderate CSF flow
+rates on the order of 0.1--1.0 \textmu m/s in the surface PVSs result
+in earlier tracer enrichment around major cerebral arteries. This
+effect is more pronounced -- up to a three-hour difference in time of
+arrival -- with PVS flow rates of approximately 10 \textmu m/s.  Our
+models of CSF flow in perivascular networks, based on first principles
+and asymptotic analysis, predict net flow of such magnitudes and
+naturally yield both antegrade and retrograde flow within the
+perivascular network, occurring with or without pressure differences
+at the network ends. The PVS may thus function as highways
+facilitating rapid transport, even in the absence of structural
+barriers, though a sharp concentration difference between the PVS and
+surrounding tissues is unlikely without such barriers. Finally,
+dilated PVS can cause a substantial reduction in cardiac- and
+vasomotion-driven flow velocities, which in turn impedes perivascular
+transport.
 
-\subsection*{Summary of findings}
+%\subsection*{Comparison with others}
 
-We presented a holistic and integrated in-silico model of molecular enrichment in human intracranial spaces, enabling individualized predictions of molecular enrichment influenced by physiological factors such as respiration and cardiac pulsatility, as well as pathological conditions like enlarged perivascular spaces.
-A key observation from this model is that the balance between CSF production and intracranial pulsatility significantly shapes the large-scale features of molecular enrichment patterns, explaining the substantial individual variations observed clinically \cite{ringstad2018brain}.
-Even slow mean CSF flow rates (0.1--1.0 \,\textmu m/s) in the surface PVS result in earlier tracer enrichment around major cerebral arteries, with the effect being more pronounced—up to a three-hour difference in time of arrival—at higher PVS flow rates of approximately 10 \,\textmu m/s. 
-Our rigorously derived models of PVS flow in perivascular networks, based on first principles, naturally yield both retrograde and antegrade flow, occurring with or without pressure differences at the network ends. 
-The PVS may function as highways facilitating rapid transport, even in the absence of structural barriers, though a sharp concentration difference between the PVS and surrounding tissues is unlikely without such barriers.
-Additionally, dilated PVS leads to a substantial reduction in cardiac- and vasomotion-driven flow velocities, which impedes perivascular transport. 
-%However, the enlargement of the PVS results in a greater accumulation of perivascular tracer. 
+% CSF flow predictions in the SAS
+The dynamics of human CSF flow and pressure is reasonably well quantified, both through MR imaging and computational modelling. Linninger et al \cite{linninger2007cerebrospinal} model CSF flow and pressure dynamics induced by CSF production and cardiac pulsatility under normal and hydrocephalic conditions, and report of very good agreement with phase-contrast MRI measurements. Our estimates of the maximum intracranial pressure difference, 10 Pa from the cardiac contribution and 26 mPa from CSF production, is in perfect agreement with their maximum transmantle pressure difference of $\sim$10 Pa, and also in good agreement with the mean pressure differences of 11.5 Pa measured between sensors placed subdurally and in the lateral ventricle \cite{vinje2019respiratory}. Our cardiac- and respiratory-driven CSF flow estimates peak at 19.8 cm/s and 4.8 cm/s in the caudal direction, respectively, which are higher than phase-contrast MRI measurements of cardiac and respiratory CSF flow components \cite{takizawa2017characterization, yildiz2017quantifying}. This is as expected considering that the MRI values represent averages \cite{yildiz2017quantifying} and that the diameter of the cerebral aqueduct strongly affects peak flow velocities\cite{vinje2019respiratory}. Hornkjøl et al \cite{hornkjol2022csf} also model the flow dynamics induced by CSF production in the choroid plexus and report a peak CSF velocity of 8.9 mm/s in the aqueduct, which is 4.8 $\times$ higher than our values of 1.85 mm/s. Given that we used the same production rate, the deviation is again likely due to differences in the aqueduct geometry.
 
+%% Takizawa et al \cite{takizawa2017characterization} report of cardiac and respiratory-driven CSF velocity magnitudes of $\approx$ 0.21 cm/s and 0.11 cm/s, respectively, in the aqueduct and $\approx$ 1.0 cm/s and 0.33 cm/s at the foramen magnum. These values are compatible, though somewhat lower, than our peak flow speeds of 19.8 cm/s for the cardiac contribution and 4.8 cm/s for the respiratory. Similarly, Yildiz et al \cite{yildiz2017quantifying} report of peak CSF velocities associated with cardiac and respiratory pulsatility on the order of 0.97 $\pm$ 0.33 cm/s and 0.58 $\pm$ 0.40 cm/s at the foramen magnum. Vinje et al \cite{vinje2019respiratory} simulate CSF flows in the aqueduct with peak velocities ranging from $\approx$ 2 cm/s to 10 cm/s depending on the aqueduct geometry.
 
-\subsection*{Comparison with others}
-
-\begin{itemize}
-\item
-  Model validation: While the glymphatic system is well-studied in
-  animal models especially in rodents, there are much fewer reports in
-  glymphatic MRI human subjects; we therefore mainly compare with the
-  series of papers by Eide and colleagues.
-  \begin{itemize}
-  \item
-    tracer enrichment timings compared with~\cite{eide2024functional,
-      yamamoto2024perivascular},
-  \item tracer enrichment patterns compared with
-    \cite{ringstad2017glymphatic, ringstad2018brain, eide2021sleep},
-    cohort variations, individual variations, physiological factor
-    variations (sleep, exercise -- cardiac/respiratory)
-  \item
-    CSF flow predictions due to production~\cite{hornkjol2022csf}, and
-    pulsatility~\cite{vinje2019respiratory, baledent2014imaging, linninger2007cerebrospinal}.
-  \item
-    Dispersive factor predictions~\cite{sharp2019dispersion, ray2021quantitative}
-\mar{CSF pulsates in the SAS and ventricular system with each cardiac and respiratory cycle, leading to an increase in effective solute diffusivity via a process known as Taylor dispersion \cite{taylor1953dispersion, watson1983diffusion}. Previous estimates of the magnitude of this effect in the CSF-filled space range from an enhancement factor of 5.8 \cite{keith2019dispersion} up to $10^4$ \cite{ray2021quantitative}. The large discrepancies in reported estimates can (at least partly) be attributed to different assumptions on representative values for local width, pressure differences and fluid velocities in the SAS, which reflect the diverse flow characteristics in the different regions of the intracranial CSF-filled space.}
-
-  \end{itemize}
-\item
-  Magnitude of PVS flow~\cite{mestre2018flow,
-    bedussi2018paravascular}. Antegrade versus retrograde PVS flow
-\end{itemize}
-
-\draft{\lipsum[1-5]}
-
-\iffalse
-\paragraph{CSF flow model validation}
-
-Hornkjøl et al \cite{hornkjol2022csf} model CSF flow induced by production in the choroid plexus and report a peak velocity of $8.9\,$mm/s in the aqueduct. Given that similar flow rates were enforced, the deviation from our value of $2.0\,$mm/s is likely due to differences in diameter of the reconstructed aqueduct. Additionally, their peak velocities in the SAS range between 20 - 50 \textmu m/s, which is compatible with our mean velocity of 4.4 \textmu m/s (\Cref{fig:csf_flow_histo}).
-
-The aqueductal ($0.31\,$ml/s) and craniocervical ($8.31\,$ml/s) flow rates predicted by our model align well with previously reported values of $0.31\,$ml/s peak aqueductal flow rate \cite{vinje2019respiratory} and about $9\,$ml/s peak net blood inflow into the cranium \cite{baledent2014imaging}. Further, Linninger et al \cite{linninger2007cerebrospinal} model cardiac-induced CSF flow and predict a maximum transmantle pressure difference of $10\,$Pa, which is in good agreement with our estimate of $8.5\,$Pa as well as clinically measured mean pressure differences of $11.5\,$Pa between sensors placed subdurally and in the lateral ventricle \cite{vinje2019respiratory}.
+% MER: Where do we report these? I've commented it out for now, I think it is more meaningful to discuss the dispersion estimates in more detail.
+%The aqueductal ($0.31\,$ml/s) and craniocervical ($8.31\,$ml/s) flow rates predicted by our model align well with previously reported values of $0.31\,$ml/s peak aqueductal flow rate \cite{vinje2019respiratory} and about $9\,$ml/s peak net blood inflow into the cranium \cite{baledent2014imaging}. Further, 
 % 10.7 cm/s CSF flow at the craniovertebral junction in control \cite{bapuraj2016cerebrospinal}, area difference?
 
 More references on pressure difference values across the aqueduct:
 \cite{liu2025transmantle,karki2025real,ayansiji2025p174}
 
+% PVS flow predictions. 
+Magnitude of PVS flow~\cite{mestre2018flow,
+  bedussi2018paravascular}. Antegrade versus retrograde PVS flow.
 
-Sharp et al used the theory of dispersive mixing to predict a dispersion enhancement factor of $91.8$ in the (open) spinal SAS, which lies well within the range of our spatially varying estimate (ranging from 0 to 160). Conversely, \cite{ray2021quantitative} report up to 10,000 times greater diffusion in perivascular regions, but their modelling lumps diffusive, dispersive and advective transport in a single enhancement factor and is thus not directly comparable.
+% Effect of PVS size and dilation. 
 
+% Dispersion predictions
+Dispersive factor predictions~\cite{sharp2019dispersion, ray2021quantitative}
+\mar{CSF pulsates in the SAS and ventricular system with each cardiac and respiratory cycle, leading to an increase in effective solute diffusivity via a process known as Taylor dispersion \cite{taylor1953dispersion, watson1983diffusion}. Previous estimates of the magnitude of this effect in the CSF-filled space range from an enhancement factor of 5.8 \cite{keith2019dispersion} up to $10^4$ \cite{ray2021quantitative}. The large discrepancies in reported estimates can (at least partly) be attributed to different assumptions on representative values for local width, pressure differences and fluid velocities in the SAS, which reflect the diverse flow characteristics in the different regions of the intracranial CSF-filled space.} Sharp et al used the theory of dispersive mixing to predict a dispersion enhancement factor of $91.8$ in the (open) spinal SAS, which lies well within the range of our spatially varying estimate (ranging from 0 to 160). Conversely, \cite{ray2021quantitative} report up to 10,000 times greater diffusion in perivascular regions, but their modelling lumps diffusive, dispersive and advective transport in a single enhancement factor and is thus not directly comparable.
+
+
+% Tracer enrichment predictions
+Model validation: While the glymphatic system is well-studied in
+animal models especially in rodents, there are much fewer reports in
+glymphatic MRI human subjects; we therefore mainly compare with the
+series of papers by Eide and colleagues. Tracer enrichment timings
+compared with~\cite{eide2024functional, yamamoto2024perivascular}.
+Tracer enrichment patterns compared with \cite{ringstad2017glymphatic,
+  ringstad2018brain, eide2021sleep}, 
+
+
+% Variations with disease states and sleep
+cohort variations, individual variations, physiological factor
+variations (sleep, exercise -- cardiac/respiratory)s
+
+To discuss: \cite{hauglund2025norepinephrine}
+
+\draft{\lipsum[1-5]}
+
+\iffalse
 The absolute and relative roles of different transport mechanisms in
 the parenchyma is more controversial: diffusion clearly plays a role
 \cite{nicolson}, the low permeability of the extracellular space
@@ -758,10 +773,13 @@ the total amount of tracer.
 
 \subsection*{Outlook}
 
+% Comparison with other models - unique strengths here. 
+
 \draft{\lipsum[1]}
 
 \iffalse
 \begin{itemize}
+
 \item
   Considering the (maybe) low diffusion in CSF spaces, maybe pure
   advection would be relevant? Both computational and physiological
@@ -971,7 +989,7 @@ Using the theoretical framework introduced by Gjerde et
 al.~\cite{gjerde2023directional}, we also compute analytic estimates
 for the time-average perivascular flow rate $\langle Q' \rangle$
 induced by peristalsis in the arterial network $\Lambda_a$; i.e.~the
-net flow induced by travelling waves of arterial wall motion of
+net flow induced by traveling waves of arterial wall motion of
 frequency $f$, amplitude $\varepsilon$ and wave lengths $\lambda$
 (\Cref{fig:pvs}D). The corresponding contribution to the periarterial
 flow velocity is defined for each segment $\Lambda_i$ as $\langle Q'_i
@@ -1083,7 +1101,7 @@ given here. To solve~\eqref{eq:multi_transport} numerically, we use
 the interior penalty discontinuous Galerkin (DG) method with weighted
 averages and upwinding for the convection term in the 3D
 domains~\cite{ern2009discontinuous} -- to ensure numerical stability
-and minimize the artificial presence of negative concentation
+and minimize the artificial presence of negative concentration
 values. For the 1D domain, we use continuous finite element spaces
 defined over each of the networks and stabilized with numerical
 diffusion when $\hat{u}$ is non--zero. Note that the 3D--1D coupling
