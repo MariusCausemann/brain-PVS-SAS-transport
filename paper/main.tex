@@ -653,13 +653,48 @@ transport.
 
 %\subsection*{Comparison with others}
 
-% CSF flow predictions in the SAS
-The dynamics of human CSF flow and pressure is reasonably well quantified, both through MRI and computational modelling. Linninger et al \cite{linninger2007cerebrospinal, sweetman2011cerebrospinal} model CSF flow and pressure dynamics induced by CSF production and cardiac pulsatility under normal and hydrocephalic conditions, and report of very good agreement with phase-contrast MRI measurements. Our estimates of the maximum intracranial pressure difference, 10 Pa from the cardiac contribution and 26 mPa from CSF production, is in perfect agreement with their maximum transmantle pressure difference of $\sim$10 Pa, and also in good agreement with the mean pressure differences of 11.5 Pa measured between sensors placed subdurally and in the lateral ventricle \cite{vinje2019respiratory}. On the other hand, Liu et al~\cite{liu2025transmantle} report of cardiac and respiratory pressure differences across the aqueduct of 12.1 $\pm$ 5.7 Pa and 9.5 $\pm$ 7.2 Pa, respectively, which is higher than our estimate of the respiratory contribution. Our cardiac- and respiratory-driven CSF flow estimates peak at 19.8 cm/s and 4.8 cm/s in the caudal direction, respectively, which are higher than phase-contrast MRI measurements of cardiac and respiratory CSF flow components \cite{takizawa2017characterization, yildiz2017quantifying}. A discrepancy is expected considering that the values from MRI represent averages \cite{yildiz2017quantifying} and that the geometry of the CSF spaces strongly affects peak flow velocities\cite{vinje2019respiratory}. Hornkjøl et al \cite{hornkjol2022csf} model the flow dynamics induced by CSF production in the choroid plexus and report a peak CSF velocity of 8.9 mm/s in the aqueduct, which is 4.8 $\times$ higher than our values of 1.85 mm/s. Given that we use the same production rate, this deviation again illustrates the impact of potential differences in the (aqueduct) geometry on local velocities.
+% CSF pressure (and flow) predictions in the SAS
+The dynamics of human CSF flow and pressure is well quantified through
+clinical imaging, in-vitro studies, and computational
+modelling\cite{linninger2007cerebrospinal, sweetman2011cerebrospinal,
+  vinje2019respiratory, hornkjol2022csf, causemann2022human,
+  karki2025real, liu2025transmantle}. Linninger et
+al.~\cite{linninger2007cerebrospinal} model CSF flow and pressure
+dynamics induced by CSF production and cardiac pulsatility under
+normal and hydrocephalic conditions, and report of very good agreement
+with Cine (phase-contrast) MRI measurements. Our estimates of the
+maximum intracranial pressure difference, 10 Pa from the cardiac
+contribution and 26 mPa from CSF production, is in perfect agreement
+with their maximum transmantle pressure difference of $\sim$10 Pa, and
+also in very good agreement with mean pressure differences of 11.5 Pa
+measured clinically between sensors placed subdurally and in the
+lateral ventricle \cite{vinje2019respiratory}. Liu et
+al~\cite{liu2025transmantle} report of cardiac and respiratory
+pressure differences across the aqueduct of 12.1 $\pm$ 5.7 Pa and 9.5
+$\pm$ 7.2 Pa, respectively; thus our baseline estimate of the
+respiratory contribution (\fixme{1.4 Pa}) may be an
+underestimation. On the other hand, our cardiac- and
+respiratory-driven CSF flow estimates peak at 19.8 cm/s and 4.8 cm/s
+in the caudal direction, respectively, which are higher than
+phase-contrast MRI measurements of cardiac and respiratory CSF flow
+components \cite{takizawa2017characterization,
+  yildiz2017quantifying}. Some variation in CSF flow velocities is
+expected considering that the values from MRI represent averages
+\cite{yildiz2017quantifying} and that the geometry of the CSF spaces
+strongly affects peak velocities\cite{vinje2019respiratory,
+  causemann2022human}. Hornkjøl et al \cite{hornkjol2022csf} model the
+flow dynamics induced by CSF production in the choroid plexus and
+report a peak CSF velocity of 8.9 mm/s in the aqueduct, which is 4.8
+$\times$ higher than our values of 1.85 mm/s. Given that we use the
+same production rate, this deviation again illustrates the impact of
+potential differences in the (aqueduct) geometry on local velocities.
 
 %% Takizawa et al \cite{takizawa2017characterization} report of cardiac and respiratory-driven CSF velocity magnitudes of $\approx$ 0.21 cm/s and 0.11 cm/s, respectively, in the aqueduct and $\approx$ 1.0 cm/s and 0.33 cm/s at the foramen magnum. These values are compatible, though somewhat lower, than our peak flow speeds of 19.8 cm/s for the cardiac contribution and 4.8 cm/s for the respiratory. Similarly, Yildiz et al \cite{yildiz2017quantifying} report of peak CSF velocities associated with cardiac and respiratory pulsatility on the order of 0.97 $\pm$ 0.33 cm/s and 0.58 $\pm$ 0.40 cm/s at the foramen magnum. Vinje et al \cite{vinje2019respiratory} simulate CSF flows in the aqueduct with peak velocities ranging from $\approx$ 2 cm/s to 10 cm/s depending on the aqueduct geometry. Our cross-section CSF velocities at the foramen magnum reduce to 7.7 cm/s for the cardiac and 1.4 cm/s for the respiratory (Slack communication, Jan 14, MER/MC). 
 
-\fixme{More references on pressure difference values across the aqueduct:
-\cite{liu2025transmantle,karki2025real,ayansiji2025p174}.}
+\fixme{More references on pressure difference values across the
+  aqueduct: \cite{karki2025real}.}
+
+% MER: This seems to be a poster. Omitted for now. \cite{ayansiji2025p174}.}
 
 % PVS flow predictions. 
 Magnitude of PVS flow~\cite{mestre2018flow,
