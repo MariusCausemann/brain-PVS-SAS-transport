@@ -651,7 +651,80 @@ dilated PVS can cause a substantial reduction in cardiac- and
 vasomotion-driven flow velocities, which in turn impedes perivascular
 transport.
 
+% Tracer enrichment predictions
+While molecular enrichment of the brain and surrounding CSF spaces
+have been extensively studied in animal models, especially in murine
+models in connection with studies of the glymphatic system, there are
+fewer reports of contrast enrichment in human subjects. We therefore
+mainly compare our up 24h in-silico predictions with the series of
+papers by Eide and colleagues~\cite{ringstad2017glymphatic,
+  ringstad2018brain, eide2021sleep, eide2024functional}. Ringstad et
+al.~\cite{ringstad2018brain} report of tracer enrichment in a
+centripetal pattern, primarily in regions near large cerebral surface
+arteries, peaking in the CSF spaces between 6 and 24 hours, with
+parenchymal tracer content still increasing after 24 hours, but with
+large individual differences. Our predictions agree with these
+observations, though with an earlier \discuss{$\sim$5 + plus spinal
+  transit time)} rather than later peak in the CSF spaces. In
+particular, we note that the substantial individual variation observed
+clinically is comparable to the variation in in-silico enrichment
+patterns associated with reduced CSF production or reduced
+intracranial pulsatility. In terms of perivascular tracer enrichment,
+Eide and Ringstad~\cite{eide2024functional} report of first-time
+tracer appearance in the PVS of the MCA after 37.8 $\pm$ 47.0 (M1),
+53.1 $\pm$ 50.5 (M2) and 82.6 $\pm$ 61.5 (M3) min, thus with just a
+15.3 min delay between M2 and M1. Comparing with the our FTAs in the
+MCA segments, we note that the baseline model predicts a more-than 3
+hour difference in FTA between the M1 and M2. Instead, the high PVS
+flow scenario predicts a 24 min delay between these
+segments. Moreover, the high PVS flow scenario predicts FTAs of
+84--108 min (M1), 84--146 min (M2) which overlaps with the previous
+ranges \discuss{modulo spinal transit time}. We interpret these
+results as indicative a net CSF flow in human surface PVS beyond what
+would be induced by CSF production and cardiac peristalsis alone.
+% M2 - M1 (mean) ~ 15.3 min 
+
 %\subsection*{Comparison with others}
+% PVS flow predictions. 
+The existence, magnitude, and directionality of flow in surface and
+parenchymal PVSs have been the subject of active debate for
+decades~\cite{rennels1985evidence, bilston2003arterial,
+  hadaczek2006perivascular, carare2008solutes, iliff2012paravascular,
+  iliff2013cerebral, bakker2016lymphatic, mestre2018flow,
+  bedussi2018paravascular, rey2018pulsatile, thomas2019fluid,
+  daversin2020mechanisms, kedarasetti2020functional,
+  martinac2021phase, vanveluw2020vasomotion, bohr2022glymphatic,
+  boster2023artificial, gjerde2023directional,
+  nozaleda2024arterial}. In mice, Mestre et al~\cite{mestre2018flow}
+observe CSF flow in surface perivascular regions surrounding branches
+of the MCA with average flow speeds of 18.7 \textmu m/s and net flow
+in the antegrade direction, but also regions with retrograde
+flow. Similarly, Bedussi et al.~\cite{bedussi2018paravascular} report
+of oscillatory flow, with an average (net) CSF velocity of 17 $\pm$ 2
+\textmu m/s in the antegrade direction. Using physics-informed neural
+networks, Boster et al~\cite{boster2023artificial} estimate PVS
+velocities of $12.75 \pm 6.25$ \textmu m/s. Less is known about the
+magnitude and directionality of CSF flow in surface PVSs in
+humans. Here, assuming that human surface PVS follow the major surface
+vessels and are CSF-filled but otherwise open regions of width
+proportional to the vessel radius, our estimates indicate that the CSF
+pressure differences due to CSF production, cardiac peristaltic
+pumping and low-frequency vasomotion all yield spatially-varying net
+CSF flow with both antegrade and retrograde PVS segments. This
+observation is thus in agreement with the experimental
+observations~\cite{mestre2018flow, bedussi2018paravascular}, and
+inherently supports the original notion that antegrade and retrograde
+solute transport along PVSs may coexist~\cite{rennels1985evidence}. In
+terms of magnitude, the contribution from CSF production and cardiac
+wall motion are small (0.08 \textmu m/s and 0.92 \textmu m/s on
+average), but intriguingly, our estimates of the contribution from
+vasomotion (13.05 \textmu m/s) are comparable to the experimental
+reports. We do however note that this estimate is based on the
+presence of rhythmic waves of vasomotion at a frequency of 0.1Hz, a
+wavelength of 20 mm, and a wall displacement of 10\% -- in the
+antegrade direction, all values currently associated with significant
+uncertainty~\cite{gokina1996electrical, vanveluw2020vasomotion,
+  broggini2024long}.
 
 % CSF pressure (and flow) predictions in the SAS
 The dynamics of human CSF flow and pressure is well quantified through
@@ -725,60 +798,6 @@ enhancement factors $R_c, R_r$ (with $D = (1 + R_c + R_r) D^{\rm
 to 320 for the respiratory contribution $R_r$; and is thus compatible
 within the previously reported spectrum.
 
-% PVS flow predictions. 
-The existence, magnitude, and directionality of flow in surface and
-parenchymal PVSs have been the subject of active debate for
-decades~\cite{rennels1985evidence, bilston2003arterial,
-  hadaczek2006perivascular, carare2008solutes, iliff2012paravascular,
-  iliff2013cerebral, bakker2016lymphatic, mestre2018flow,
-  bedussi2018paravascular, rey2018pulsatile, thomas2019fluid,
-  daversin2020mechanisms, kedarasetti2020functional,
-  martinac2021phase, vanveluw2020vasomotion, bohr2022glymphatic,
-  boster2023artificial, gjerde2023directional,
-  nozaleda2024arterial}. In mice, Mestre et al~\cite{mestre2018flow}
-observe CSF flow in surface perivascular regions surrounding branches
-of the MCA with average flow speeds of 18.7 \textmu m/s and net flow
-in the antegrade direction, but also regions with retrograde
-flow. Similarly, Bedussi et al.~\cite{bedussi2018paravascular} report
-of oscillatory flow, with an average (net) CSF velocity of 17 $\pm$ 2
-\textmu m/s in the antegrade direction. Using physics-informed neural
-networks, Boster et al~\cite{boster2023artificial} estimate PVS
-velocities of $12.75 \pm 6.25$ \textmu m/s. Less is known about the
-magnitude and directionality of CSF flow in surface PVSs in
-humans. Here, assuming that human surface PVS follow the major surface
-vessels and are CSF-filled but otherwise open regions of width
-proportional to the vessel radius, our estimates indicate that the CSF
-pressure differences due to CSF production, cardiac peristaltic
-pumping and low-frequency vasomotion all yield spatially-varying net
-CSF flow with both antegrade and retrograde PVS segments. This
-observation is thus in agreement with the experimental
-observations~\cite{mestre2018flow, bedussi2018paravascular}, and
-inherently supports the original notion that antegrade and retrograde
-solute transport along PVSs may coexist~\cite{rennels1985evidence}. In
-terms of magnitude, the contribution from CSF production and cardiac
-wall motion are small (0.08 \textmu m/s and 0.92 \textmu m/s on
-average), but intriguingly, our estimates of the contribution from
-vasomotion (13.05 \textmu m/s) are comparable to the experimental
-reports. We do however note that this estimate is based on the
-presence of rhythmic waves of vasomotion at a frequency of 0.1Hz, a
-wavelength of 20 mm, and a wall displacement of 10\% -- in the
-antegrade direction, all values currently associated with significant
-uncertainty~\cite{gokina1996electrical, vanveluw2020vasomotion,
-  broggini2024long}.
-
-% Tracer enrichment predictions
-While molecular enrichment of the brain and surrounding CSF spaces has
-been extensively studied in animal models, especially in murine models
-in connection with studies of the glymphatic system, there are much
-fewer reports of contrast enrichment in human subjects; we therefore
-mainly compare our in-silico predictions with the series of papers by
-Eide and colleagues~\cite{ringstad2017glymphatic, ringstad2018brain,
-  eide2021sleep, eide2024functional} and Yamamoto et
-al.~\cite{yamamoto2024perivascular}. 
-
-Tracer enrichment timings compared with~\cite{eide2024functional,
-  yamamoto2024perivascular}.  Tracer enrichment patterns compared with
-\cite{ringstad2017glymphatic, ringstad2018brain, eide2021sleep},
 
 % Effect of PVS size and dilation. As well as interfaces.
 Effect of PVS size and dilation. 
