@@ -624,14 +624,14 @@ concentration drops slightly (\Cref{fig:enlargement}G,H).
 
 We have presented a high-fidelity in-silico model of molecular
 enrichment and clearance in human intracranial spaces, enabling
-tailored predictions of the influence of brain, CSF space and vascular
-morphologies, physiological factors such as cardiac and respiratory
+tailored predictions of the influence of CSF space and (peri)vascular
+morphology, physiological factors such as cardiac and respiratory
 pulsatility, as well as of pathological conditions such as enlarged
 PVSs. A key observation is that the balance between CSF production and
 intracranial pulsatility significantly shapes the large-scale features
-of molecular enrichment, with e.g. ventricular tracer reflux after
+of molecular enrichment, with e.g.~ventricular tracer reflux after
 intrathecal injection in the absence of CSF production, and preference
-towards anterior regions with reduced pulsatility. Indeed, the
+towards anterior brain regions with reduced pulsatility. Indeed, the
 simulated distribution patterns cover a substantial range of the
 individual variations observed clinically \cite{ringstad2018brain}. In
 terms of perivascular pathways, we find that even moderate CSF flow
@@ -714,23 +714,60 @@ $10\,000$ in surface periarterial spaces~\cite{ray2021quantitative,
   sharp2019dispersion}. The large variability can (at least partly) be
 attributed to methodological differences; e.g. different assumptions
 on the medium, domain width, pressure differences and/or fluid
-velocities, and the diversity in flow characteristics of the different
-CSF spaces, as well as a high likelihood of spatial
-variations. Hornkjøl et al~\cite{hornkjol2022csf} consider model
-variations with constant dispersion factors from 1 up to 1000, and
-indicate that a value of 10 gives the better agreement with the
-clinically observed enrichment. Our spatially-varying estimates of the
-dispersion enhancement factors $R_c, R_r$ (with $D = (1 + R_c + R_r)
-D^{\rm Gad}$) range from 0 to 200 for the cardiac contribution $R_c$
-and 0 to 320 for the respiratory contribution $R_r$; and is thus
-compatible within the previously reported spectrum.
+velocities, the diversity of CSF flow characteristics, as well as a
+high likelihood of spatial variations. Hornkjøl et
+al~\cite{hornkjol2022csf} consider model variations with constant
+dispersion factors from 1 up to 1000, and indicate that a value of 10
+gives the better agreement with the clinically observed
+enrichment. Our spatially-varying estimates of the dispersion
+enhancement factors $R_c, R_r$ (with $D = (1 + R_c + R_r) D^{\rm
+  Gad}$) range from 0 to 200 for the cardiac contribution $R_c$ and 0
+to 320 for the respiratory contribution $R_r$; and is thus compatible
+within the previously reported spectrum.
 
 % PVS flow predictions. 
-Magnitude of PVS flow~\cite{mestre2018flow,
-  bedussi2018paravascular}. Antegrade versus retrograde PVS flow.
+The existence, magnitude, and directionality of flow in surface and
+parenchymal PVSs have been the subject of active debate for
+decades~\cite{rennels1985evidence, bilston2003arterial,
+  hadaczek2006perivascular, carare2008solutes, iliff2012paravascular,
+  iliff2013cerebral, bakker2016lymphatic, mestre2018flow,
+  bedussi2018paravascular, rey2018pulsatile, thomas2019fluid,
+  daversin2020mechanisms, kedarasetti2020functional,
+  martinac2021phase, vanveluw2020vasomotion, bohr2022glymphatic,
+  boster2023artificial, gjerde2023directional,
+  nozaleda2024arterial}. In mice, Mestre et al~\cite{mestre2018flow}
+observe CSF flow in surface perivascular regions surrounding branches
+of the MCA with average flow speeds of 18.7 \textmu m/s and net flow
+in the antegrade direction, but also regions with retrograde
+flow. Similarly, Bedussi et al.~\cite{bedussi2018paravascular} report
+of oscillatory flow, with an average (net) CSF velocity of 17 $\pm$ 2
+\textmu m/s in the antegrade direction. Using physics-informed neural
+networks, Boster et al~\cite{boster2023artificial} estimate PVS
+velocities of $12.75 \pm 6.25$ \textmu m/s. Less is known about the
+magnitude and directionality of CSF flow in surface PVSs in
+humans. Here, assuming that human surface PVS follow the major surface
+vessels and are CSF-filled but otherwise open regions of width
+proportional to the vessel radius, our estimates indicate that the CSF
+pressure differences due to CSF production, cardiac peristaltic
+pumping and low-frequency vasomotion all yield spatially-varying net
+CSF flow with both antegrade and retrograde PVS segments. This
+observation is thus in agreement with the experimental
+observations~\cite{mestre2018flow, bedussi2018paravascular}, and
+inherently supports the original notion that antegrade and retrograde
+solute transport along PVSs may coexist~\cite{rennels1985evidence}. In
+terms of magnitude, the contribution from CSF production and cardiac
+wall motion are small (0.08 \textmu m/s and 0.92 \textmu m/s on
+average), but intriguingly, our estimates of the contribution from
+vasomotion (13.05 \textmu m/s) are comparable to the experimental
+reports. We do however note that this estimate is based on the
+presence of rhythmic waves of vasomotion at a frequency of 0.1Hz, a
+wavelength of 20 mm, and a wall displacement of 10\% -- in the
+antegrade direction, all values currently associated with significant
+uncertainty~\cite{gokina1996electrical, vanveluw2020vasomotion,
+  broggini2024long}.
 
-% Effect of PVS size and dilation. 
-
+% Effect of PVS size and dilation. As well as interfaces.
+Effect of PVS size and dilation. 
 
 % Tracer enrichment predictions
 Model validation: While the glymphatic system is well-studied in
@@ -741,28 +778,19 @@ compared with~\cite{eide2024functional, yamamoto2024perivascular}.
 Tracer enrichment patterns compared with \cite{ringstad2017glymphatic,
   ringstad2018brain, eide2021sleep}, 
 
-% Variations with disease states and sleep
+% Variations with disease states
 cohort variations, individual variations, physiological factor
-variations (sleep, exercise -- cardiac/respiratory)s
+variations.
 
-Moreover, our
-findings highlight the importance of dispersion for the large-scale
-features of tracer enrichment and thus the impact of variations in
-pulsatility, e.g., between individuals or activity levels.
-
-To discuss: \cite{hauglund2025norepinephrine}
+% Variations with sleep, exercise
+Other individual variations, physiological factor variations (sleep,
+exercise -- cardiac/respiratory). Moreover, our findings highlight the
+importance of dispersion for the large-scale features of tracer
+enrichment and thus the impact of variations in pulsatility, e.g.,
+between individuals or activity levels. To discuss: \cite{hauglund2025norepinephrine}
 
 \draft{\lipsum[1-5]}
 
-\iffalse
-The absolute and relative roles of different transport mechanisms in
-the parenchyma is more controversial: diffusion clearly plays a role
-\cite{nicolson}, the low permeability of the extracellular space
-hinders significant convection neuropil \cite{holter}, (estimates on
-the order of 1-10 \textmu/min) in humans \cite{vinje2023human} and cats
-\cite{cserr}, possibly focused on perivascular spaces along
-penetrating vessel.
-\fi
 
 \subsection*{Limitations}
 
@@ -794,6 +822,16 @@ the total amount of tracer.
   expected. Maybe something to consider in small follow-up
   work. Interestingly, blobs match observations of large molecular
   tracer observations.
+\iffalse
+The absolute and relative roles of different transport mechanisms in
+the parenchyma is more controversial: diffusion clearly plays a role
+\cite{nicolson}, the low permeability of the extracellular space
+hinders significant convection neuropil \cite{holter}, (estimates on
+the order of 1-10 \textmu/min) in humans \cite{vinje2023human} and cats
+\cite{cserr}, possibly focused on perivascular spaces along
+penetrating vessel.
+\fi
+
 \item
   Assumed no transport across the BBB. PVS-blood exchange and BBB
   leakage. Natural to consider in model variation here, or follow-up
