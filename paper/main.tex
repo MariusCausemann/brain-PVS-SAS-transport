@@ -622,6 +622,8 @@ concentration drops slightly (\Cref{fig:enlargement}G,H).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Discussion}
 
+%% Summary of findings
+
 We have presented a high-fidelity in-silico model of molecular
 enrichment and clearance in human intracranial spaces, enabling
 tailored predictions of the influence of CSF space and (peri)vascular
@@ -634,30 +636,31 @@ intrathecal injection in the absence of CSF production, and preference
 towards anterior brain regions with reduced pulsatility. Indeed, the
 simulated distribution patterns cover a substantial range of the
 individual variations observed clinically \cite{ringstad2018brain}. In
-terms of perivascular pathways, we find that even moderate CSF flow
-rates on the order of 0.1--1.0 \textmu m/s in the surface PVSs result
-in earlier tracer enrichment around major cerebral arteries. This
-effect is more pronounced -- up to a three-hour difference in time of
-arrival -- with PVS flow rates of approximately 10 \textmu m/s.  Our
+terms of perivascular pathways, we find that even moderate CSF flow on
+the order of 0.1--1.0 \textmu m/s in the surface PVSs results in
+earlier tracer enrichment around major cerebral arteries. This effect
+is more pronounced -- with up to a three-hour difference in time of
+arrival -- with PVS flow rates of approximately 10 \textmu m/s. Our
 models of CSF flow in perivascular networks, based on first principles
-and asymptotic analysis, predict net flow of such magnitudes and
-naturally yield both antegrade and retrograde flow within the
-perivascular network, occurring with or without pressure differences
-at the network ends. The PVS may thus function as highways
-facilitating rapid transport, even in the absence of structural
-barriers, though a sharp concentration difference between the PVS and
-surrounding tissues is unlikely without such barriers. Finally,
-dilated PVS can cause a substantial reduction in cardiac- and
-vasomotion-driven flow velocities, which in turn impedes perivascular
-transport.
+and asymptotic analysis, predict net flow of such magnitudes and both
+antegrade and retrograde flow within the perivascular network,
+occurring with or without pressure differences at the network
+ends. The PVS may thus function as highways facilitating rapid
+transport, even in the absence of structural barriers, though a sharp
+concentration difference between the PVS and surrounding tissues is
+unlikely without such barriers. Finally, dilated PVS can cause a
+substantial reduction in cardiac- and vasomotion-driven flow
+velocities, which in turn impedes perivascular transport.
+
+%% Comparison with others
 
 % Tracer enrichment predictions
 While molecular enrichment of the brain and surrounding CSF spaces
 have been extensively studied in animal models, especially in murine
 models in connection with studies of the glymphatic system, there are
 fewer reports of contrast enrichment in human subjects. We therefore
-mainly compare our 0--24h in-silico predictions with the series of papers
-by Eide and colleagues~\cite{ringstad2017glymphatic,
+mainly compare our 0--24h in-silico predictions with the series of
+papers by Eide and colleagues~\cite{ringstad2017glymphatic,
   ringstad2018brain, eide2021sleep, eide2024functional}. Ringstad et
 al.~\cite{ringstad2018brain} report of tracer enrichment in a
 centripetal pattern, primarily in regions near large cerebral surface
@@ -680,11 +683,10 @@ flow scenario predicts a 24 min delay between these
 segments. Moreover, the high PVS flow scenario predicts FTAs of
 84--108 min (M1), 84--146 min (M2) which overlaps with the previous
 ranges \discuss{modulo spinal transit time}. We interpret these
-results as indicative a net CSF flow in human surface PVS beyond what
-would be induced by CSF production and cardiac peristalsis alone.
+results as indicative of a net CSF flow in human surface PVS beyond
+what would be induced by CSF production and cardiac peristalsis alone.
 % M2 - M1 (mean) ~ 15.3 min 
 
-%\subsection*{Comparison with others}
 % PVS flow predictions. 
 The existence, magnitude, and directionality of flow in surface and
 parenchymal PVSs have been the subject of active debate for
@@ -719,20 +721,21 @@ terms of magnitude, the contribution from CSF production and cardiac
 wall motion are small (0.08 \textmu m/s and 0.92 \textmu m/s on
 average), but intriguingly, our estimates of the contribution from
 vasomotion (13.05 \textmu m/s) are comparable to the experimental
-reports. We do however note that this estimate is based on the
-presence of rhythmic waves of vasomotion at a frequency of 0.1Hz, a
-wavelength of 20 mm, and a wall displacement of 10\% -- in the
-antegrade direction, all values currently associated with significant
+reports. We do note that this estimate is based on the presence of
+rhythmic waves of vasomotion at a frequency of 0.1Hz, a wavelength of
+20 mm, and a wall displacement of 10\% -- in the antegrade direction,
+all values currently associated with significant
 uncertainty~\cite{gokina1996electrical, vanveluw2020vasomotion,
   broggini2024long}.
 
 % CSF pressure (and flow) predictions in the SAS
-The dynamics of human CSF flow and pressure is well quantified
-through clinical imaging, in-vitro studies, and computational
-modelling\cite{linninger2007cerebrospinal, sweetman2011cerebrospinal,
+The dynamics of human CSF flow and pressure is better quantified, by
+way of clinical imaging, in-vitro studies, and computational
+modelling, in other areas of the ventricular
+system~\cite{linninger2007cerebrospinal, sweetman2011cerebrospinal,
   vinje2019respiratory, hornkjol2022csf, causemann2022human,
   karki2025real, liu2025transmantle}. Linninger et
-al.~\cite{linninger2007cerebrospinal} model CSF flow and pressure
+al~\cite{linninger2007cerebrospinal} model CSF flow and pressure
 dynamics induced by CSF production and cardiac pulsatility under
 normal and hydrocephalic conditions, and report of very good agreement
 with Cine (phase-contrast) MRI measurements. Our estimates of the
@@ -762,15 +765,6 @@ $\times$ higher than our values of 1.85 mm/s. Given that we use the
 same production rate, this deviation again illustrates the impact of
 potential differences in the (aqueduct) geometry on local velocities.
 
-% Hornkjøl et al \cite{hornkjol2022csf} report of peak CSF flow
-% velocites in the SAS of 20, 40 and 50 \mu m/s, with lower values < 4
-% \mu m/s along the upper convexity for
-% non-parasagittal-dura-efflux-models. How do ours compare?
-
-%% Takizawa et al \cite{takizawa2017characterization} report of cardiac and respiratory-driven CSF velocity magnitudes of $\approx$ 0.21 cm/s and 0.11 cm/s, respectively, in the aqueduct and $\approx$ 1.0 cm/s and 0.33 cm/s at the foramen magnum. These values are compatible, though somewhat lower, than our peak flow speeds of 19.8 cm/s for the cardiac contribution and 4.8 cm/s for the respiratory. Similarly, Yildiz et al \cite{yildiz2017quantifying} report of peak CSF velocities associated with cardiac and respiratory pulsatility on the order of 0.97 $\pm$ 0.33 cm/s and 0.58 $\pm$ 0.40 cm/s at the foramen magnum. Vinje et al \cite{vinje2019respiratory} simulate CSF flows in the aqueduct with peak velocities ranging from $\approx$ 2 cm/s to 10 cm/s depending on the aqueduct geometry. Our cross-section CSF velocities at the foramen magnum reduce to 7.7 cm/s for the cardiac and 1.4 cm/s for the respiratory (Slack communication, Jan 14, MER/MC). 
-
-% MER: This seems to be a poster. Omitted for now. \cite{ayansiji2025p174}.}
-
 % Dispersion predictions
 This pulsatile flow of CSF in the SAS, ventricular system and PVSs
 leads to an increase in effective solute
@@ -798,9 +792,57 @@ enhancement factors $R_c, R_r$ (with $D = (1 + R_c + R_r) D^{\rm
 to 320 for the respiratory contribution $R_r$; and is thus compatible
 within the previously reported spectrum.
 
+% Compartmentalization of the PVS
+To what extent are surface PVSs in communication with the surrounding
+SAS and to what extent are these structurally separated compartments?
+Originally, Weller and coauthors~\cite{zhang1990interrelationships,
+  zhang1992directional, weller2005microscopic} identified thin sheaths
+of pial cells surrounding human surface arteries and penetrating
+arterioles (but not veins or venules). On the other hand, Bakker and
+coauthors report that the subarachnoid space, the cisterns, ventricles
+and penetrating periarteriolar spaces form a continuous CSF
+space~\cite{bedussi2017paravascular}. Thorne and colleagues study the
+architectures of rat perivascular spaces in detail, emphasizing the
+presence of openings (stomata) on the interface between the
+vasculature and the CSF within the SAS~\cite{pizzo2018intrathecal,
+  hannocks2018molecular}. Further, Mestre et
+al~\cite{mestre2022periarteriolar} study the properties of pial
+perivascular spaces in mice, and report of pial cells forming sheaths
+for larger surface arteries and partially cover smaller surface
+arteries, with higher coverage in ventral SAS regions. Our results
+demonstrate that the PVSs may act as rapid transport pathways even
+with only a partial barrier between the PVS-SAS.
 
-% Effect of PVS size and dilation. As well as interfaces.
-Effect of PVS size and dilation. 
+% Effect of PVS size and shapes
+The shapes, sizes and structures of the PVSs likely vary between
+species (e.g.~mice vs.~humans), between spatial compartments
+(e.g.~surface vs.~parenchymal), and between vessel types (arteries
+vs.~arterioles vs.~veins)~\cite{ichimura1991distribution,
+  foley2012realtime, schain2017cortical, mestre2018flow,
+  bedussi2018paravascular, raicevic2023sizes, smets2024perivascular,
+  vinje2021brain, eide2024functional}. In terms of shape, the PVSs are
+commonly represented as annular (elliptic) cylinders, though it is
+well recognized that this represents an
+idealization~\cite{mestre2018flow, tithof2019hydraulic,
+  vinje2021brain, raicevic2023sizes, boster2024hydraulic,
+  smets2024perivascular}. In terms of sizes, Raicevic et
+al~\cite{raicevic2023sizes} note that the variation in PVS area is
+larger between PVS segments than along a single PVS segment and that
+the PVS area increases with lumen area. In mice, reports of the ratio
+between PVS and lumen area range from
+$\approx$0.35--0.43~\cite{smets2024perivascular} up to
+$\approx$1.12--1.4~\cite{raicevic2023sizes, mestre2018flow}. In
+humans, the PVS may be as wide as the associated surface artery and up
+to 4$\times$ wider in iNPH subjects~\cite{eide2024functional}, which
+would correspond to substantially larger PVS area ratios (3 or
+higher). To reflect the human scale, we here represent each PVS
+segment as an annular cylinder with inner radius $R_1$ and outer
+radius $R_2$ of width and area proportional to that of the
+corresponding blood vessel ($R_2 = 2 R_1$ at baseline, $R_2 = 3 R_1$
+for enlarged PVS). The hydraulic resistance of annular cross-sections
+is $1-6 \times$~\cite{tithof2019hydraulic} larger than more elongated
+cross-sections and thus our estimates of the pressure-induced PVS
+velocities are conservative. 
 
 % Variations with disease states
 cohort variations, individual variations, physiological factor
@@ -812,9 +854,6 @@ exercise -- cardiac/respiratory). Moreover, our findings highlight the
 importance of dispersion for the large-scale features of tracer
 enrichment and thus the impact of variations in pulsatility, e.g.,
 between individuals or activity levels. To discuss: \cite{hauglund2025norepinephrine}
-
-\draft{\lipsum[1-5]}
-
 
 \subsection*{Limitations}
 
