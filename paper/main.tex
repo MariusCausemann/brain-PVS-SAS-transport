@@ -70,11 +70,6 @@ Here, we utilize geometric model reduction and mixed-dimensional modelling, stru
 The model predicts the temporal and spatial spreading of a solute within a image-derived geometric representation of the human brain parenchyma, subarachnoid space and ventricular system, including networks of surface perivascular spaces (PVSs).
 Our findings highlight the significant impact of cerebrospinal fluid (CSF) production and intracranial pulsatility on molecular enrichment following intrathecal tracer injection. We demonstrate that moderate CSF flow rates in surface PVSs substantially enhance tracer enrichment around major cerebral arteries.
 Our framework enables the integration of separate observations on diffusion in neuropil, PVS flow, net flow, and pulsatile dispersion into a comprehensive model of intracranial transport, facilitating the translation of insights from animal models and clinical studies to the human case.}
-
-%% A molecular agent injected into the spinal canal will spread into the
-%% cerebrospinal fluid spaces surrounding the human brain and into
-%% the brain parenchyma, preferentially along perivascular spaces,
-%% and eventually appear in the systemic blood. 
 \end{abstract}
 \begin{document}
 
@@ -113,22 +108,23 @@ clearance characteristics~\cite{rasmussen2018glymphatic,
 sleep and conversely sleep-deprivation play a definite yet enigmatic
 role in modulating molecular enrichment and
 clearance~\cite{xie2013sleep, eide2021sleep, eide2022altered,
-  miao2024brain}. In the last decade, established theories have been
-challenged by new findings revealing a greater degree of molecular
-movement and exchange~\cite{iliff2012paravascular,
-  ringstad2017glymphatic, louveau2017understanding,
-  proulx2021cerebrospinal, bohr2022glymphatic}, as well as substantial
-variability in enrichment and clearance between individuals and
-between patient cohorts~\cite{ringstad2018brain, eide2021direction,
-  eide2021impaired, eide2022altered}. These observations provide
-distinct opportunities (and challenges) for personalized medicine
-e.g.~for tailored intrathecal delivery of
-chemotherapy~\cite{lohela2022glymphatic} and for early diagnostics of
-impaired brain clearance~\cite{eide2021clinical, van2024human}. In
-spite of their importance, our understanding of these mechanisms is
-incomplete with open challenges and significant debate -- in part
-relating to the transfer of knowledge between species, experimental
-protocols, clinical cohorts, and individuals.
+  miao2024brain, hauglund2025norepinephrine}. In the last decade,
+established theories have been challenged by new findings revealing a
+greater degree of molecular movement and
+exchange~\cite{iliff2012paravascular, ringstad2017glymphatic,
+  louveau2017understanding, proulx2021cerebrospinal,
+  bohr2022glymphatic}, as well as substantial variability in
+enrichment and clearance between individuals and between patient
+cohorts~\cite{ringstad2018brain, eide2021direction, eide2021impaired,
+  eide2022altered}. These observations provide distinct opportunities
+(and challenges) for personalized medicine e.g.~for tailored
+intrathecal delivery of chemotherapy~\cite{lohela2022glymphatic} and
+for early diagnostics of impaired brain
+clearance~\cite{eide2021clinical, van2024human}. In spite of their
+importance, our understanding of these mechanisms is incomplete with
+open challenges and significant debate -- in part relating to the
+transfer of knowledge between species, experimental protocols,
+clinical cohorts, and individuals.
 
 Perivascular pathways along the brain surface and within the brain
 parenchyma have long been hypothesized to serve a designated role in
@@ -469,9 +465,10 @@ higher PVS flow, especially at earlier time points (2--9 hours)
 PVS translate to altered enrichment patterns on the whole-organ
 scale. For instance, after 4-6 hours, the faster-moving tracer in the
 PVS is clearly visible in the adjacent spaces to the ACA, MCA, and
-other arteries (\Cref{fig:pvs}L). In contrast, there are no clear
-signs of early enrichment surrounding the PVS in the baseline model
-(\Cref{fig:pvs}K).
+other arteries (\Cref{fig:pvs}L). \mer{One more sentence on effect of
+  high PVS flow on tracer enrichment outside the PVS.} In contrast,
+there are no clear signs of early enrichment surrounding the PVS in
+the baseline model (\Cref{fig:pvs}K).
 
 A natural question is whether early PVS enrichment could be the result
 of increased dispersion rather than net flow in the
@@ -734,7 +731,7 @@ uncertainty~\cite{gokina1996electrical, vanveluw2020vasomotion,
   broggini2024long}.
 
 % CSF pressure (and flow) predictions in the SAS
-The dynamics of human CSF flow and pressure is better quantified, by
+The dynamics of human CSF flow and pressure are better quantified, by
 way of clinical imaging, in-vitro studies, and computational
 modelling, in other areas of the ventricular
 system~\cite{linninger2007cerebrospinal, sweetman2011cerebrospinal,
@@ -823,10 +820,11 @@ interface~\cite{eide2024functional}.
 % Effect of PVS size and shapes
 The shapes, sizes and structures of the PVSs likely vary between
 species (e.g.~mice vs.~humans), between spatial compartments
-(e.g.~surface vs.~parenchymal), and between vessel types (arteries
-vs.~arterioles vs.~veins)~\cite{ichimura1991distribution,
-  foley2012realtime, schain2017cortical, mestre2018flow,
-  bedussi2018paravascular, raicevic2023sizes, smets2024perivascular,
+(e.g.~surface vs.~parenchymal), between vessel types (arteries
+vs.~arterioles vs.~veins), and in
+pathologies~\cite{ichimura1991distribution, foley2012realtime,
+  schain2017cortical, mestre2018flow, bedussi2018paravascular,
+  mestre2022periarteriolar, smets2024perivascular, raicevic2023sizes,
   vinje2021brain, eide2024functional}. In terms of shape, the PVSs are
 commonly represented as annular (elliptic) cylinders, though it is
 well recognized that this represents an
@@ -849,39 +847,39 @@ corresponding blood vessel ($R_2 = 2 R_1$ at baseline, $R_2 = 3 R_1$
 for enlarged PVS). The hydraulic resistance of annular cross-sections
 is $1-6 \times$~\cite{tithof2019hydraulic} larger than more elongated
 cross-sections and thus our estimates of the pressure-induced PVS
-velocities are conservative. 
-
-% Variations with disease states
-cohort variations, individual variations, physiological factor
-variations. Enlarged PVS reduce transport at the whole cerebral scale.
+velocities are conservative.
 
 % Variations with sleep, exercise
-Lifestyle factors such as sleep~\cite{} or sleep-deprivation~\cite{}
-and exercise~\cite{} affect molecular enrichment and clearance of the
-brain. In particular, sleep affects pulsatility. Exercise affects
-pulsatility.
+Lifestyle factors such as sleep~\cite{xie2013sleep, miao2024brain,
+  bojarskaite2023sleep, eide2021sleep, vinje2023human,
+  hauglund2025norepinephrine, larsen2024sleep},
+exercise~\cite{holstein2018voluntary, yildiz2022immediate}, and
+alcohol intake~\cite{lundgaard2018beneficial} affect molecular
+enrichment and clearance of the brain. In particular, pial arteries
+display higher-amplitude low-frequency vasomotion during NREM and
+intermediate sleep states, while REM sleep is associated with reduced
+PVS width~\cite{bojarskaite2023sleep}. Peristaltic pumping is more
+effective under both of these configurations, resulting in higher
+estimated net PVS flow velocities~\cite{gjerde2023directional}. Even
+higher PVS velocities would amplify the PVS flow effects simulated
+here, with earlier arrival times along the PVSs, clear enrichment in
+adjacent spaces, and accelerated molecular enrichment
+overall. Moreover, sleep is linked with low-frequency oscillations in
+human CSF flow~\cite{fultz2019coupled}. As we have shown here, the
+level of dispersion in the CSF spaces strongly shapes molecular
+enrichment patterns. While we, at baseline, account for the dispersion
+induced by cardiac and respiratory pulsatility, the high dispersion
+scenarios considered can be viewed as representative of additional
+pulsatility induced by e.g.~neural waves~\cite{fultz2019coupled,
+  williams2023neural} or other respiration patterns depending on
+activity level. More broadly, we consider this as a key strength of
+the current in-silico framework: allowing for integrating and
+exploring the mechanistic macroscale implications of changes in
+pulsatility at smaller spatial or temporal scales.
 
-Here, we offer a platform that allows for exploring this further
-later.
-
-
-Other individual variations, physiological factor variations (sleep,
-exercise -- cardiac/respiratory). Key strength of this modelling
-platform: useful for linking pulsatility, dispersion, morphological
-patterns and enrichment features. Variations in sleep reported by
-Bojarskaite, using the PVS model of Gjerde and Sanchez, Rognes, give
-increase in PVS velocities - can be studied using the model
-here. Similarly, the sleep waves by Fultz et al, add to Dispersion -
-high dispersion models, clearly mechanistic links of faster solute
-enrichment. Other lifestyle effects, exercise as observed by van
-Holstein, higher pulsatility, higher dispersion. Moreover, our
-findings highlight the importance of dispersion for the large-scale
-features of tracer enrichment and thus the impact of variations in
-pulsatility, e.g., between individuals or activity levels. To discuss:
-\cite{hauglund2025norepinephrine}
-
-
-
+% Variations with disease states
+%cohort variations, individual variations, physiological factor
+%variations. Enlarged PVS reduce transport at the whole cerebral scale. 
 
 \subsection*{Limitations}
 
@@ -931,7 +929,7 @@ penetrating vessel.
   SAS/brain concentration in the surroundings).
 \end{itemize}
 
-\draft{\lipsum[1-2]}
+%\draft{\lipsum[1-2]}
 
 %% \begin{itemize}
 %% %\item
