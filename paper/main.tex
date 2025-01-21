@@ -881,53 +881,49 @@ pulsatility at smaller spatial or temporal scales.
 %cohort variations, individual variations, physiological factor
 %variations. Enlarged PVS reduce transport at the whole cerebral scale. 
 
-\subsection*{Limitations}
+In terms of limitations, our primary constraint modelling-wise is the
+geometric representation of the vascular (and therefore also
+perivascular) networks. Concretely, we account for no vessels below
+the original MRI resolution limits, and thus only a part of the
+cerebral surface vasculature and effectively not the cortical
+vessels. In addition, and again due to lack of resolution, there is
+uncertainty associated with the location of the vessel segments
+relative to the CSF spaces and parenchyma, with some vessels
+surrounded by both domains and some vessels completely entering the
+parenchyma before returning to the SAS. Higher resolution MRI data
+(T1w and e.g. time-of-flight, QSM or other modalities) in more
+subjects would immediately allow for more detailed studies of this
+aspect. As a result of the lack of an accurate representation of the
+cortical and subcortical white matter vasculature, we have considered
+a conservative transport model within the parenchyma, modelling
+extracellular diffusion alone. To compensate, we have focused on
+reporting detailed predictions in the CSF spaces and surface PVS after
+not more than 24 hours. In particular, we note that, we observe tracer
+accumulation at the perivascular network ends after \fixme{24} hours,
+similar to that previously observed for
+microspheres~\cite{bedussi2018paravascular, mestre2018flow}, which
+here can be interpreted as an artifact of the incomplete network
+creating up a barrier for tracer movement. Previously, we have found
+that enrichment within the parenchyma is well-represented by $\approx
+3\times$ enhanced diffusion augmented by local clearance e.g.~across
+the blood-brain barrier or diffusion-convection with a complex pattern
+of spatially-varying convective velocities of 1-10 \textmu
+m/min~\cite{vinje2023human}. We will incorporate such transport
+mechanisms within the parenchyma in future work. Finally, we also note
+that we simulate the intracranial distribution of a tracer
+concentration appearing at the craniocervical junction rather than as
+an intrathecal injection. We therefore overestimate the amount of
+tracer entering into the intracranial spaces; however, due to the
+linearity of the mathematical model, it is valid to directly interpret
+the in-silico concentrations relative to the total amount of tracer.
 
-In terms of limitations, we here simulate the intracranial
-distribution of a tracer concentration appearing at the craniocervical
-junction rather than as an intrathecal injection. We therefore
-overestimate the amount of tracer entering into the intracranial
-spaces; however, due to the linearity of the mathematical model, it is
-valid to directly interpret the in-silico concentrations relative to
-the total amount of tracer.
-
-\begin{itemize}
-\item
-  Not all of the injected tracer get to the craniocervical
-  junction. What is the impact of this. Linear effect, just scale the
-  our predicted values e.g.~in \Cref{fig:results1}.
-\item 
-  Inaccuracies in vascular geometry representation - and consequences
-  downstream for e.g. numerical integration. PVS geometry assumptions
-  and approximations. Humans different from mice. Limitations in
-  resolution. No vasculature in the cerebellum, and of course no
-  vasculature below certain resolution.
-\item
-  Very simplified model of transport in the parenchyma, no PVS there,
-  no glymphatics there. Clearly have an effect on the later stage
-  transport in the brain, though the current model provides a baseline
-  for comparison, accounting for isotropic diffusion alone.
-  Accounting for brain diffusive anisotropy. Little effect
-  expected. Maybe something to consider in small follow-up
-  work. Interestingly, blobs match observations of large molecular
-  tracer observations.
-\iffalse
-The absolute and relative roles of different transport mechanisms in
-the parenchyma is more controversial: diffusion clearly plays a role
-\cite{nicolson}, the low permeability of the extracellular space
-hinders significant convection neuropil \cite{holter}, (estimates on
-the order of 1-10 \textmu/min) in humans \cite{vinje2023human} and cats
-\cite{cserr}, possibly focused on perivascular spaces along
-penetrating vessel.
-\fi
-
-\item
-  Assumed no transport across the BBB. PVS-blood exchange and BBB
-  leakage. Natural to consider in model variation here, or follow-up
-  work. We here ignore PVS-blood exchange, and thus only model the
-  perivascular concentration at the network level (in addition to the
-  SAS/brain concentration in the surroundings).
-\end{itemize}
+%% \item
+%%   Assumed no transport across the BBB. PVS-blood exchange and BBB
+%%   leakage. Natural to consider in model variation here, or follow-up
+%%   work. We here ignore PVS-blood exchange, and thus only model the
+%%   perivascular concentration at the network level (in addition to the
+%%   SAS/brain concentration in the surroundings).
+%% \end{itemize}
 
 %\draft{\lipsum[1-2]}
 
