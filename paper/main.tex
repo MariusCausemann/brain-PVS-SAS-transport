@@ -1289,14 +1289,15 @@ values. For the 1D domain, we use continuous finite element spaces
 defined over each of the networks and stabilized with numerical
 diffusion when $\hat{u}$ is non--zero. Note that the 3D--1D coupling
 in~\eqref{eq:multi_transport} leads to a 3D solution $c$ with low regularity properties. Thus, one can only expect lower-order error convergence near
-$\Lambda_a$ and $\Lambda_v$, see \cite{masri2023discontinuous} for the numerical analysis of DG schemes and \cite{laurino2019derivation} for continuous Galerkin schemes.  However, away from these 1D networks, almost
+$\Lambda_a$ and $\Lambda_v$, see \cite{masri2024discontinuous} for the numerical analysis of DG schemes and \cite{laurino2019derivation} for continuous Galerkin schemes.  However, away from these 1D networks, almost
 optimal approximation is expected~\cite{masri2023discontinuous,koppl2016local}. To numerically solve the Stokes equations to
 compute the CSF flow velocity and pressure in the ventricular system
 and SAS, we use finite element spaces that preserve the
 incompressibility condition on the discrete
 level~\cite{hong2016robust}. This requirement is important for
 numerical stability when later
-solving~\eqref{eq:multi_transport}\cite{cesmelioglu2022compatible}. The
+solving~\eqref{eq:multi_transport} %\cite{cesmelioglu2022compatible}.
+ The
 spaces we used for the velocity are continuous along the normal
 direction; continuity of the tangential component is enforced via
 interior penalty approaches~\cite{hong2016robust}. Optimal
