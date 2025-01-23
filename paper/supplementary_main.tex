@@ -799,3 +799,112 @@ Considering the mean tracer concentrations in the CSF, parenchyma and arterial a
     \caption{total tracer content in CSF, parenchyma and arterial and venous PVS for the standard model without tracer outflow, illustrating numerical mass conservation.}
     \label{fig:mass_conservation}
 \end{figure}
+
+\section{Supplementary discussion}
+\label{sec:model_validation}
+
+\subsection{Extended model validation}
+\label{sec:model_validation}
+
+In addition to the comparison of our in-silico predictions of tracer
+enrichment and clearance against glymphatic MRI, we here compare
+auxiliary model quantities against the literature as additional model
+validation.
+
+\paragraph{CSF flow and pressures in the SAS and ventricular system}
+The dynamics of human CSF flow and pressure are better quantified, by
+way of clinical imaging, in-vitro studies, and computational
+modelling, in other areas of the ventricular
+system~\cite{linninger2007cerebrospinal, sweetman2011cerebrospinal,
+  vinje2019respiratory, hornkjol2022csf, causemann2022human,
+  karki2025real, liu2025transmantle}. Linninger et
+al~\cite{linninger2007cerebrospinal} model CSF flow and pressure
+dynamics induced by CSF production and cardiac pulsatility under
+normal and hydrocephalic conditions, and report of very good agreement
+with Cine (phase-contrast) MRI measurements. Our estimates of the
+maximum intracranial pressure difference, 10 Pa from the cardiac
+contribution and 26 mPa from CSF production, is in perfect agreement
+with their maximum transmantle pressure difference of $\sim$10 Pa, and
+also in very good agreement with mean pressure differences of 11.5 Pa
+measured clinically between sensors placed subdurally and in the
+lateral ventricle \cite{vinje2019respiratory}. Liu et
+al~\cite{liu2025transmantle} report of cardiac and respiratory
+pressure differences across the aqueduct of 12.1 $\pm$ 5.7 Pa and 9.5
+$\pm$ 7.2 Pa, respectively; thus our baseline estimate of the
+respiratory contribution (\fixme{1.4 Pa}) may be an
+underestimation. On the other hand, our cardiac- and
+respiratory-driven CSF flow estimates peak at 19.8 cm/s and 4.8 cm/s
+in the caudal direction, respectively, which are higher than
+phase-contrast MRI measurements of cardiac and respiratory CSF flow
+components \cite{takizawa2017characterization,
+  yildiz2017quantifying}. Some variation in CSF flow velocities is
+expected considering that the values from MRI represent averages
+\cite{yildiz2017quantifying} and that the geometry of the CSF spaces
+strongly affects peak velocities\cite{vinje2019respiratory,
+  causemann2022human}. Hornkjøl et al \cite{hornkjol2022csf} model the
+flow dynamics induced by CSF production in the choroid plexus and
+report a peak CSF velocity of 8.9 mm/s in the aqueduct, which is 4.8
+$\times$ higher than our values of 1.85 mm/s. Given that we use the
+same production rate, this deviation again illustrates the impact of
+potential differences in the (aqueduct) geometry on local velocities.
+
+% Dispersion predictions
+\paragraph{Dispersion in the SAS, ventricular system and PVS}
+This pulsatile flow of CSF in the SAS, ventricular system and PVSs
+leads to an increase in effective solute
+diffusivity~\cite{stockman2007effect, hettiarachchi2011effect,
+  asgari2016glymphatic, sharp2019dispersion, ray2021quantitative} via
+a process known as Taylor dispersion \cite{taylor1953dispersion,
+  watson1983diffusion}. Previous estimates of the magnitude of this
+effect in the CSF spaces vary significantly: from an enhancement
+factor of 0.05--1 in periarterial spaces surrounding penetrating
+arteries~\cite{asgari2016glymphatic, troyetsky2021dispersion}, to
+5--100 in the spinal subarachnoid space~\cite{stockman2007effect,
+  hettiarachchi2011effect, sharp2019dispersion}, and up to more than
+$10\,000$ in surface periarterial spaces~\cite{ray2021quantitative,
+  sharp2019dispersion}. The large variability can (at least partly) be
+attributed to methodological differences; e.g. different assumptions
+on the medium, domain width, pressure differences and/or fluid
+velocities, the diversity of CSF flow characteristics, as well as a
+high likelihood of spatial variations. Hornkjøl et
+al~\cite{hornkjol2022csf} consider model variations with constant
+dispersion factors from 1 up to 1000, and indicate that a value of 10
+gives the better agreement with the clinically observed
+enrichment. Our spatially-varying estimates of the dispersion
+enhancement factors $R_c, R_r$ (with $D = (1 + R_c + R_r) D^{\rm
+  Gad}$) range from 0 to 200 for the cardiac contribution $R_c$ and 0
+to 320 for the respiratory contribution $R_r$; and is thus compatible
+within the previously reported spectrum.
+
+% Effect of PVS size and shapes
+\paragraph{Shapes, sizes and structures of the PVS}
+The shapes, sizes and structures of the PVSs likely vary between
+species (e.g.~mice vs.~humans), between spatial compartments
+(e.g.~surface vs.~parenchymal), between vessel types (arteries
+vs.~arterioles vs.~veins), and in
+pathologies~\cite{ichimura1991distribution, foley2012realtime,
+  schain2017cortical, mestre2018flow, bedussi2018paravascular,
+  mestre2022periarteriolar, smets2024perivascular, raicevic2023sizes,
+  vinje2021brain, eide2024functional}. In terms of shape, the PVSs are
+commonly represented as annular (elliptic) cylinders, though it is
+well recognized that this represents an
+idealization~\cite{mestre2018flow, tithof2019hydraulic,
+  vinje2021brain, raicevic2023sizes, boster2024hydraulic,
+  smets2024perivascular}. In terms of sizes, Raicevic et
+al~\cite{raicevic2023sizes} note that the variation in PVS area is
+larger between PVS segments than along a single PVS segment and that
+the PVS area increases with lumen area. In mice, reports of the ratio
+between PVS and lumen area range from
+$\approx$0.35--0.43~\cite{smets2024perivascular} up to
+$\approx$1.12--1.4~\cite{raicevic2023sizes, mestre2018flow}. In
+humans, the PVS may be as wide as the associated surface artery and up
+to 4$\times$ wider in iNPH subjects~\cite{eide2024functional}, which
+would correspond to substantially larger PVS area ratios (3 or
+higher). To reflect the human scale, we here represent each PVS
+segment as an annular cylinder with inner radius $R_1$ and outer
+radius $R_2$ of width and area proportional to that of the
+corresponding blood vessel ($R_2 = 2 R_1$ at baseline, $R_2 = 3 R_1$
+for enlarged PVS). The hydraulic resistance of annular cross-sections
+is $1-6 \times$~\cite{tithof2019hydraulic} larger than more elongated
+cross-sections and thus our estimates of the pressure-induced PVS
+velocities are conservative.
