@@ -396,7 +396,7 @@ $1\,$ml/s \cite{gutierrez2022effect} in the SAS and $0.121\,$ml/s
 \cite{liu2024using} in the lateral ventricles, yielding a respiratory
 peak flow volume of $1.121\,$ ml/s at the craniocervical
 junction. While the resulting flow velocities are only about one
-fourth of their cardiac-induced counterparts (see \Cref{fig:csf}H, L),
+fourth of their cardiac-induced counterparts (\Cref{fig:csf}H, L),
 respiratory dispersive mixing reaches a factor of up to 320 due the
 lower respiratory frequency of $0.25\,$Hz (\Cref{fig:csf}I, M).
 
@@ -1064,18 +1064,17 @@ frequency $f$, amplitude $\varepsilon$ and wave lengths $\lambda$
 flow velocity is defined for each segment $\Lambda_i$ as $\langle Q'_i
 \rangle/A_i$ where $A_i = \pi (R_2^i - R_1^i)$ is the cross-section
 area of the PVS segment and $\langle Q_i' \rangle$ is the estimated
-mean flow rate (see Supplementary Methods~\ref{sec:app:peristalsis}
-for more details). Two wall motion patterns are considered, yielding
-$\hat{u}_a^c$ and $\hat{u}_a^v$ respectively: \emph{cardiac}
-pulsations with $f = 1.0$Hz, $\lambda = 2$ m and $\varepsilon = 1\%$
-(\Cref{fig:pvs}E), and very low-frequency \emph{vasomotion} with $f =
-0.1$Hz, $\lambda = 0.02$m, and $\varepsilon = 10\%$
-(\Cref{fig:pvs}F). No flow induced by peristalsis is considered for
-the perivenous network. In the baseline model, we combine the
-contributions from CSF production and cardiac peristalsis to set
-$\hat{u}$ in~\eqref{eq:multi_transport} as $\hat{u}_a = \hat{u}_a^p +
-\hat{u}_a^c$ in $\Lambda_a$, and $\hat{u}_v = \hat{u}_v^p$ in
-$\Lambda_v$.
+mean flow rate (see~\ref{sec:app:peristalsis} for more details). Two
+wall motion patterns are considered, yielding $\hat{u}_a^c$ and
+$\hat{u}_a^v$ respectively: \emph{cardiac} pulsations with $f =
+1.0$Hz, $\lambda = 2$ m and $\varepsilon = 1\%$ (\Cref{fig:pvs}E), and
+very low-frequency \emph{vasomotion} with $f = 0.1$Hz, $\lambda =
+0.02$m, and $\varepsilon = 10\%$ (\Cref{fig:pvs}F). No flow induced by
+peristalsis is considered for the perivenous network. In the baseline
+model, we combine the contributions from CSF production and cardiac
+peristalsis to set $\hat{u}$ in~\eqref{eq:multi_transport} as
+$\hat{u}_a = \hat{u}_a^p + \hat{u}_a^c$ in $\Lambda_a$, and $\hat{u}_v
+= \hat{u}_v^p$ in $\Lambda_v$.
 
 
 
@@ -1162,29 +1161,33 @@ parenchyma.
 \end{table}
 
 
-\subsection*{Numerical approximation, implementation, verification}
+\subsection*{Numerical approximation, implementation, and verification}
 
-A complete description of the numerical methods used is provided in
-\Cref{sec:details_numerical_method}, while a condensed summary is
-given here. To solve~\eqref{eq:multi_transport} numerically, we use
-the interior penalty discontinuous Galerkin (DG) method with weighted
-averages and upwinding for the convection term in the 3D
+We give a concise summary of the numerical approach here (see
+Supplementary methods for a comprehensive description). To
+solve~\eqref{eq:multi_transport} numerically, we use the interior
+penalty discontinuous Galerkin (DG) method with weighted averages and
+upwinding for the convection term in the 3D
 domains~\cite{ern2009discontinuous} -- to ensure numerical stability
 and minimize the artificial presence of negative concentration
 values. For the 1D domain, we use continuous finite element spaces
 defined over each of the networks and stabilized with numerical
 diffusion when $\hat{u}$ is non--zero. Note that the 3D--1D coupling
-in~\eqref{eq:multi_transport} leads to a 3D solution $c$ with low regularity properties. Thus, one can only expect lower-order error convergence near
-$\Lambda_a$ and $\Lambda_v$, see \cite{masri2024discontinuous} for the numerical analysis of DG schemes and \cite{laurino2019derivation} for continuous Galerkin schemes.  However, away from these 1D networks, almost
-optimal approximation is expected~\cite{masri2023discontinuous,koppl2016local}. To numerically solve the Stokes equations to
-compute the CSF flow velocity and pressure in the ventricular system
-and SAS, we use finite element spaces that preserve the
-incompressibility condition on the discrete
+in~\eqref{eq:multi_transport} leads to a 3D solution $c$ with low
+regularity properties. Thus, one can only expect lower-order error
+convergence near $\Lambda_a$ and $\Lambda_v$, see the references
+\cite{masri2024discontinuous} and \cite{laurino2019derivation} for the
+numerical analysis of DG and continuous Galerkin schemes,
+respectively. However, away from these 1D networks, almost optimal
+approximation is
+expected~\cite{masri2023discontinuous,koppl2016local}. To numerically
+solve the Stokes equations to compute the CSF flow velocity and
+pressure in the ventricular system and SAS, we use finite element
+spaces that preserve the incompressibility condition on the discrete
 level~\cite{hong2016robust}. This requirement is important for
-numerical stability when later
-solving~\eqref{eq:multi_transport} %\cite{cesmelioglu2022compatible}.
- The
-spaces we used for the velocity are continuous along the normal
+numerical stability when subsequently
+solving~\eqref{eq:multi_transport}\cite{cesmelioglu2022compatible}.
+The spaces we used for the velocity are continuous along the normal
 direction; continuity of the tangential component is enforced via
 interior penalty approaches~\cite{hong2016robust}. Optimal
 approximation properties are expected for this scheme. These numerical
@@ -1193,7 +1196,7 @@ framework~\cite{alnaes2015fenics}, and the 3D-1D coupling is handled
 by the extension
 FEniCS\textsubscript{ii}~\cite{kuchta2020assembly}. The correctness
 and accuracy of the numerical solutions were verified by a series of
-numerical verification experiments \fixme{(see \Cref{sec:app:verification})}.
+numerical verification experiments (\Cref{sec:app:verification}).
 
 %% The choice this scheme was is necessary here since continuous Galerkin
 %% methods even when supplemented with artificial diffusion stabilization
@@ -1206,7 +1209,7 @@ predictions of tracer enrichment and clearance against glymphatic MRI
 studies (Discussion). In addition, we compare auxiliary model
 quantities (CSF flow rates and pressure differences, dispersion factor
 estimates, and the shapes and sizes of PVSs) with the current
-literature (Supplementary discussion: Extended model validation).
+literature (\Cref{sec:app:model_validation}).
 
 \section*{Acknowledgments}
 

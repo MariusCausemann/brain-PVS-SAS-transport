@@ -225,7 +225,7 @@ behavior. However, to represent a continuously extending PVSs also
 along penetrating vessels, this condition should be revisited.
 
 \subsubsection{Modelling CSF flow via the incompressible Stokes equations}
-\label{sec:csf_flow}
+\label{sec:app:csf_flow}
 The time-independent, incompressible Stokes equations model the flow
 of an incompressible Newtonian fluid at low Reynolds numbers, and read
 as follows: over the domain $\Omega_{\rm CSF} \subset \R^3$, find the
@@ -315,7 +315,7 @@ non-moving domain; the effect of domain motion is addressed
 in~\Cref{sec:app:peristalsis}.
 
 \subsection{Numerical solution of the transport and flow equations}
-\label{sec:details_numerical_method}
+\label{sec:app:details_numerical_method}
 
 We solve the models presented in~\Cref{sec:app:more_maths} numerically
 using finite element methods. The following subsections provide more
@@ -719,6 +719,7 @@ $\langle \hat{u}^x_i \rangle$ by dividing the flow rate $\langle Q'_i
 = \pi (\beta_i^2 - 1) {R_1^i}^2$.
 
 \subsection{Numerical verification}
+\label{sec:app:verification}
 
 We assess the accuracy and numerical convergence of our simulation results by performing a series of experiments with different spatial and temporal resolutions. Specifically, we generate a sequence of three meshes, see \Cref{fig:mesh_refinement}, with an increasing number of points and cells, solve all relevant simulation steps (CSF flow and intracranial transport computations) for standard model A, and compare the results with respect to a set of key quantities of interest. The mesh refinement employed here is adapative in the sense that the coarser mesh is refined near expected sharp concentration gradients. This allows us to better capture dynamics and reduce undershoots, see \Cref{fig:mesh_convergence_concentrations}.  
 Similarly, we investigate the effect of the time step size by solving the intracranial transport model with varying time steps $dt \in \{60, 120, 240 \}$\,s.
@@ -801,10 +802,9 @@ Considering the mean tracer concentrations in the CSF, parenchyma and arterial a
 \end{figure}
 
 \section{Supplementary discussion}
-\label{sec:model_validation}
 
 \subsection{Extended model validation}
-\label{sec:model_validation}
+\label{sec:app:model_validation}
 
 In addition to the comparison of our in-silico predictions of tracer
 enrichment and clearance against glymphatic MRI, we here compare
