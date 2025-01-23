@@ -724,16 +724,35 @@ by the cross-section area $A_i = \pi ({R_2^i}^2 - {R_1^i}^2) = \pi
 \subsection{Numerical verification}
 \label{sec:app:verification}
 
-We assess the accuracy and numerical convergence of our simulation results by performing a series of experiments with different spatial and temporal resolutions. Specifically, we generate a sequence of three meshes, see \Cref{fig:mesh_refinement}, with an increasing number of points and cells, solve all relevant simulation steps (CSF flow and intracranial transport computations) for standard model A, and compare the results with respect to a set of key quantities of interest. The mesh refinement employed here is adaptive in the sense that the coarser mesh is refined near expected sharp concentration gradients. This allows us to better capture dynamics and reduce undershoots, see \Cref{fig:mesh_convergence_concentrations}.  
-Similarly, we investigate the effect of the time step size by solving the intracranial transport model with varying time steps $dt \in \{60, 120, 240 \}$\,s.
+We assess the numerical accuracy and convergence of our simulation results by performing a series of experiments with different spatial and temporal resolutions. Specifically, we generate a sequence of three meshes (\Cref{fig:mesh_refinement}) with an increasing number of computational mesh vertices and cells, solve all relevant simulation steps (CSF flow and intracranial transport computations) for the baseline model on each mesh, and compare the results across meshes with respect to a set of key quantities of interest. The mesh refinement employed here is adaptive in the sense that the coarser mesh is refined near expected sharp concentration gradients. This allows us to better capture dynamics and reduce undershoots, see \Cref{fig:mesh_convergence_concentrations}.  
+Similarly, we investigate the effect of the time step size by solving the intracranial transport model with different time steps: 1, 2, and 4 minutes. 
 
-Considering the mean tracer concentrations in the CSF, parenchyma and arterial and venous PVS domain over the first 24\,h after injection, we observe negligible changes with both mesh and time refinement (\cref{fig:mesh_convergence_concentrations} and 
-\ref{fig:time_convergence_concentrations}). In addition, we compute the mean and maximum enhancement factor, the maximum CSF pressure and velocity in both the cardiac-driven and CSF production-induced flow fields, and mean concentrations at 3, 6, 12 and 24\,h for all mesh resolutions and time steps (\cref{fig:mesh_convergence} and \cref{fig:time_convergence}). While the maximum dispersion factor increases by about 60\,\% from the coarse to the standard mesh, it stabilizes with the next refinement step. All other quantities change with less than 10\,\% with mesh refinement, and less than 1\,\% with time refinement. We thus conclude that the standard resolution mesh and a time step of $dt=120\,$s offers sufficient accuracy for our simulations. In addition, we compute the standard model without allowing tracer transport across the models outer boundary, confirming mass conservation of our numerical scheme (\cref{fig:mass_conservation}).
+Considering the mean tracer concentrations in the CSF, parenchyma and
+arterial and venous PVS domain over the first 24\,h after injection,
+we observe negligible changes with both mesh and time refinement
+(\Cref{fig:mesh_convergence_concentrations} and
+\Cref{fig:time_convergence_concentrations}). As an additional
+verification step, we compute the mean and maximum dispersion
+enhancement factor, the maximum CSF pressure and velocity in both the
+cardiac-driven and CSF production-induced flow fields, and mean
+concentrations at 3, 6, 12 and 24\,h for all mesh resolutions and time
+steps (\Cref{fig:mesh_time_convergence}). While the maximum dispersion factor
+increases by about 60\,\% from the low resolution to the standard mesh, it
+stabilizes with the next refinement step. All other quantities change
+with less than 10\,\% with mesh refinement, and less than 1\,\% with
+time refinement. We thus conclude that the standard resolution mesh
+and a time step of 2 min offer sufficient accuracy for our
+simulations.
 
+Finally, to check for numerical mass conservation, we perform an
+additional simulation not allowing for tracer efflux across the outer
+boundary, and confirm that the total amount of tracer is preserved
+over time after the initial influx phase
+(\Cref{fig:mass_conservation}).
 \begin{figure}
     \centering
     \includegraphics[width=0.9\linewidth]{figures/mesh_refinement.png}
-    \caption{Illustration of the three different meshes: low resolution, standard resolution, high resolution (from left to right).}
+    \caption{Illustration of the three different meshes; from left to right: low resolution, standard resolution, high resolution.}
     \label{fig:mesh_refinement}
 \end{figure}
 
@@ -742,7 +761,7 @@ Considering the mean tracer concentrations in the CSF, parenchyma and arterial a
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
         \includegraphics[width = 1 \linewidth]{figures/csf_minmax.png}
-        \caption{Minimum and maximum tracer concentration in  the CSF under mesh refinement}
+        \caption{Minimum and maximum tracer concentration in the CSF under mesh refinement}
     \end{subfigure}
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
@@ -759,26 +778,25 @@ Considering the mean tracer concentrations in the CSF, parenchyma and arterial a
      \includegraphics[width= 1 \linewidth]{figures/ven_minmax.png}
          \caption{Minimum and maximum tracer concentration in PVSs around veins under mesh refinement}
     \end{subfigure}
-    \caption{Minimum and maximum tracer concentrations over the first 24\,h after injection on the CSF and parenchyma (a), and the arterial and venous PVS (b) computed on the LowRes, standard and HighRes meshes with a timestep of $dt=120$\,s.}
+    \caption{Minimum and maximum tracer concentrations over the first 24\,h after injection on the CSF and parenchyma (a), and the arterial and venous PVS (b) computed on the low resolution (LowRes), standard and high resolution (HighRes) meshes with a timestep of 2 min for the baseline model (Model A).}
     \label{fig:mesh_convergence_concentrations}
 \end{figure}
-
-
 \begin{figure}
     \centering
     \begin{subfigure}[b]{0.49\textwidth}
         \centering
         \includegraphics[trim={0.5cm 1cm 0.05cm 0.8cm}, clip, width = 1.05 \linewidth]{figures/modelALowRes_modelA_modelAHighRes.pdf}
-        \caption{Convergence of key quantities of interest with mesh refinement}
-        \label{fig:mesh_convergence}
+        \caption*{Convergence of key quantities of interest with mesh refinement}
+        %\label{fig:mesh_convergence}
     \end{subfigure}
     \begin{subfigure}[b]{0.49\textwidth}
         \centering
      \includegraphics[trim={0.5cm 1cm 0.05cm 0.8cm}, clip,width= 1.05 \linewidth]{figures/modelAsmalldt_modelA_modelAlargedt.pdf}
-        \caption{Convergence of key quantities of interest with time refinement}
-        \label{fig:time_convergence}
+        \caption*{Convergence of key quantities of interest with time refinement}
+        %\label{fig:time_convergence}
     \end{subfigure}
-    \caption{minimal ($\rm h_{min}$) and maximal ($\rm h_{max}$) mesh cell sizes (computed as cell circumradius $\times 2$) (A); number of points and tetrahedral cells in each mesh (B); mean cardiac dispersion enhancement factor $R$ (C), maximum cardiac dispersion enhancement factor $R$ (D); maximum pressure in steady CSF production flow (E), maximum pressure in cardiac-driven CSF flow (F); maximum CSF velocity in steady CSF production flow (G); maximum CSF velocity in cardiac-driven CSF flow (H);  mean tracer concentration in the CSF, parenchyma, arterial PVS and venous PVS at 3,6,12 and 24\,h (I, J, K and L).}
+    \caption{For both left and right panels: A: Minimal ($\rm h_{min}$) and maximal ($\rm h_{max}$) mesh cell sizes (computed as cell circumradius $\times 2$); B: number of mesh vertices and tetrahedral cells in each mesh; C: mean cardiac dispersion enhancement factor $R$; D: maximum cardiac dispersion enhancement factor $R$; E: maximum pressure in steady CSF production flow; F: maximum pressure in cardiac-driven CSF flow; G: maximum CSF velocity in steady CSF production flow; H: maximum CSF velocity in cardiac-driven CSF flow; I--L: mean tracer concentration in the CSF, parenchyma, arterial PVS and venous PVS after 3, 6, 12 and 24 hours.}
+        \label{fig:mesh_time_convergence}
 \end{figure}
 
 \begin{figure}
@@ -793,14 +811,13 @@ Considering the mean tracer concentrations in the CSF, parenchyma and arterial a
      \includegraphics[width= 1\linewidth]{figures/time_refinement_art_ven_mean.png}
          \caption{Mean tracer concentration in PVSs around (veins and) arteries under time step refinement}
     \end{subfigure}
-    \caption{Mean tracer concentrations over the first 24\,h after injection on the CSF and parenchyma (a), and the arterial and venous PVS (b) computed on the standard resolution mesh for timesteps $dt \in \{60, 120, 240 \}$\,s.}
+    \caption{Mean tracer concentrations after up to 24\,h in the CSF and parenchyma (a), and the arterial and venous PVS (b) computed on the standard resolution mesh for timesteps of 1, 2, and 4 minutes (dt of 60, 120, or 240 seconds)}
     \label{fig:time_convergence_concentrations}
 \end{figure}
-
 \begin{figure}
     \centering
     \includegraphics[width=0.5\linewidth]{figures/modelAMassConservation_total_conc.png}
-    \caption{total tracer content in CSF, parenchyma and arterial and venous PVS for the standard model without tracer outflow, illustrating numerical mass conservation.}
+    \caption{Total tracer content in the CSF, parenchyma, and arterial and venous PVS for a variant of the baseline model without tracer outflow. The total amount of tracer is constant after the initial influx phase demonstrating that the numerical scheme conserves mass.}
     \label{fig:mass_conservation}
 \end{figure}
 
