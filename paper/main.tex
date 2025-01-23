@@ -41,28 +41,9 @@
 \newcommand{\discuss}[1]{\textcolor{red}{#1}}
 \newcommand{\fixme}[1]{\textcolor{red}{#1}}
 \newcommand{\draft}[1]{\textcolor{lightgray}{#1}}
-%\newcommand{\brain}{\Omega_{\rm{PAR}}} 
-%\newcommand{\sas}{\Omega_{\rm CSF}}
-%\newcommand{\spinal}{\Gamma_{\rm SAS}}
-%\newcommand{\skull}{\Gamma_{\rm{skull}}}
-%\newcommand{\gin}{g_{\rm{influx}}}
 
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\foralls}{\forall \,}
-
-%\affil[+]{these authors contributed equally to this work}
-
-%\keywords{Keyword1, Keyword2, Keyword3}
-
-%% The problem we are addressing here is that we would like to be able to
-%% understand, integrate and quantify the role of different mechanisms -
-%% including effects associated with individual variations - on molecular
-%% enrichment and clearance of human intracranial spaces. And we think of
-%% this as a step on the way to predict tracer enrichment after
-%% intrathecal injection in a personalized medicine context. Which is
-%% important because of drug delivery/treatment in cancer, diagnostics
-%% for CSF and dementia disorders, and clearance in neurodegenerative
-%% disease.
 
 \begin{abstract}
   The mechanisms of intracranial solute transport are fundamental to
@@ -97,25 +78,11 @@
 
 \flushbottom
 \maketitle
-% * <john.hammersley@gmail.com> 2015-02-09T12:07:31.197Z:
-%
-%  Click the title above to edit the author information and abstract
-%
+
+
 \thispagestyle{empty}
 
 %\mer{MER: Target length: 5000 words (Intro, Results, Discussion) plus <3000 words Methods: 700 words Introduction. 3100 words Results. 1200 words Discussion.}
-
-\iffalse
-\paragraph*{Abbreviations}
-\begin{itemize}
-\item
-  Subarachnoid space (SAS)
-\item
-  Cerebrospinal fluid (CSF)
-\item
-  Perivascular space (PVS), perivascular spaces (PVSs)
-\end{itemize}
-\fi
 
 \section*{Introduction}
 
@@ -235,27 +202,8 @@ integrate and extend insights from clinical, experimental, and
 theoretical studies, and lay a new foundation for in-silico studies of
 personalized intrathecal drug delivery and brain clearance.
 
-%% \begin{itemize}
-%% \item
-%%   Need better understanding of transport of solutes in intracranial spaces.
-%% \item
-%%   Need to integrate separate observations e.g. on diffusion in
-%%   neuropil, PVS flow, net flow, effect of dispersion
-%% \item
-%%  Need to transfer and integrate insights from animal models,
-%%   computational models and theoretical insights into the human case. 
-%% \item
-%%  Controversies need to be resolved.
-%% \end{itemize}
-
-  
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Results}
-%% \mer{MER: Target ~3100 words in 6 subsections}
 
-%% \mer{MER: Results #1 is about 500 words}
 \subsection*{In-silico predictions of intracranial molecular enrichment and clearance after intrathecal injection}
 \begin{figure}
     \centering
@@ -325,7 +273,6 @@ share in the CSF (53\%), followed by the parenchyma (35\%), the
 venous PVS (8\%) and the arterial PVS
 (5\%) (\Cref{fig:results1}H).
 
-% \mer{MER: Results #2 is about 600 words}
 \subsection*{Reduced CSF pulsatility strongly shifts intracranial enrichment patterns}
 \begin{figure}%[h!]
 \centering 
@@ -420,7 +367,6 @@ through the quadrigeminal cistern and further upwards into the
 longitudinal fissure, with also enrichment of the cerebellum
 (\Cref{fig:csf}Q).
 
-% \mer{MER: Results #3 is about 800 words}
 \subsection*{Perivascular flow shapes and accelerates molecular enrichment}
 \label{sec:pvs_flow_results}
 
@@ -535,7 +481,6 @@ this question.
     K--M) sagittal (upper) and coronal (lower) views of the simulated tracer concentrations overlayed on the T1-weighted MR image after 4 and 6h for the baseline (K), high PVS flow (L) and high PVS dispersion (M) models (concentrations \discuss{below threshold masked}, pial surface outlined in pink, arachnoid membrane in cyan, and arteries in dark red).}
 \end{figure}
 
-% \mer{MER: Results #4 is about 500 words}
 \subsection*{Structural versus functional compartmentalization of perivascular spaces}
 
 Human and rodent observations indicate that tracers concentrate in perivascular spaces surrounding the pial and subarachnoid vasculature \cite{zhang1990interrelationships,zhang1992directional, bedussi2017paravascular, mestre2018flow, bedussi2018paravascular, eide2024functional}. However, it remains unclear whether such enrichment patterns necessitate a structural barrier, such as a membrane with limited permeability, or if the patterns could result from enhanced flow or mixing in these areas alone. We therefore next investigate how the permeability of the interface between the PVS and the surrounding CSF affects tracer enrichment around the major arterial trunks (\Cref{fig:compartmentalization}A--B). To this end, we compare models with high and low  permeabilities, representing a highly permeable PVS-CSF interface (functional compartmentalization) and a less permeable interface (structural compartmentalization), respectively. For the low permeability model, we set the permeability to $3.8 \cdot 10^{-7}\,$m/s, consistent with previous estimates for the endfoot sheath surrounding penetrating arterioles \cite{koch2023estimates}, which we consider to be a lower bound for the surface PVS-CSF permeability. For the high permeability model, we increase this permeability by a factor of 100. For both scenarios, we consider the high PVS flow regime as examined in the previous section.
@@ -580,7 +525,6 @@ outer PVS surface (dotted) for the BA, MCA-R, MCA-L, ACA-2, and ACA3 segments ov
   F) Effect of varying the PVS-CSF permeability on first-time-of-arrival (FTA), time difference ($\Delta t$) between concentration peaks in the PVS and surrounding tissue, time of PVS peak concentration, PVS peak concentration and difference in peak concentration between PVS and surrounding tissue.}
 \end{figure}
   
-% \mer{MER: Target Results 5 300 words}
 \subsection*{Enlarged PVSs delay periarterial and intracranial molecular enrichment}
 
 Enlarged PVSs are associated with impaired periarterial tracer
@@ -632,25 +576,6 @@ concentration drops slightly (\Cref{fig:enlargement}G,H).
     }
     \label{fig:enlargement}
 \end{figure}
-
-% \mer{MER: Target Results 6 400 words}
-%\subsection*{The perivenous contribution to molecular clearance of CSF tracers}
-
-%\begin{itemize}
-%\item Look at clearance phase 12h-24h-48h-72h.
-%\item Look at concentration in the veins
-%\item Look at concentration in the parenchyma
-%\item Consider low-pressure sink for the perivenous spaces.
-%\end{itemize}
-
-%% \subsection*{Clearance of intra-parenchymal solutes}
-
-%% \begin{itemize}
-%% \item
-%%   Clearance of a molecular concentration in the parenchyma, different
-%%   molecular sizes - ranging from Gadubutrol to amyloid-$\beta$/$\tau$.
-%% \end{itemize}
-
 
 \section*{Discussion}
 
@@ -815,10 +740,9 @@ the current in-silico framework: allowing for integrating and
 exploring the mechanistic macroscale implications of changes in
 pulsatility at smaller spatial or temporal scales.
 
-% Variations with disease states
-%cohort variations, individual variations, physiological factor
-%variations. Enlarged PVS reduce transport at the whole cerebral scale. 
+% Not discussed variations with disease states
 
+% Limitations
 In terms of limitations, our primary constraint modelling-wise is the
 geometric representation of the vascular (and therefore also
 perivascular) networks. Concretely, we account for no vessels below
@@ -855,6 +779,7 @@ tracer entering into the intracranial spaces; however, due to the
 linearity of the mathematical model, it is valid to directly interpret
 the in-silico concentrations relative to the total amount of tracer.
 
+% Outlook
 In conclusion, our findings transfer insights from experimental
 studies and theoretical analysis to the in-silico human setting,
 reconcile seemingly conflicting observations in particular relating to
@@ -893,19 +818,6 @@ ventricles and the outer SAS contribute $32$ ml and $329$ ml,
 respectively, to a total CSF volume of $361$ml, in agreement with
 recent estimates~\cite{hladky2024regulation}.
 
-%% In addition, we slightly modify the segmentation to ensure correct
-%% connectivity of the ventricular system. In particular, we elongate
-%% the aqueduct and enforce no communication between the ventricles
-%% and the surrounding CSF spaces except for the median aperture.
-%% After morphological smoothing of the segmented image, we extract
-%% surface representations of the outer SAS boundary, the pial
-%% membrane and the components of the ventricular system.
-
-%% Note that the widely reported value of $150$\,ml of intracranial
-%% CSF volume is likely an underestimate. Recent estimates indicate
-%% that a value of $200$ to $300$\,ml is more accurate (see
-%% \cite{hladky2024regulation} and references therein
-
 \subsection*{Periarterial and perivenous spaces}
 
 To represent surface networks of periarterial and perivenous spaces,
@@ -929,10 +841,6 @@ $\fixme{N}$ end nodes, and the associated domain is denoted by
 $\Lambda_v$. \discuss{Finally, we label the outer surface of the PVSs
   associated with $\Lambda_a$ and $\Lambda_v$, by $\Gamma_a$ and
   $\Gamma_v$ respectively.}
-
-%% The resulting vascular networks are further smoothened using a
-%% spline interpolation technique, and represented as graphs with
-%% nodes connected by edges.
 
 \subsection*{Molecular transport equations}
 
@@ -999,7 +907,6 @@ set a no-flux condition at the end nodes of the perivascular networks,
 not allowing for direct molecular clearance there.
 
 \subsection*{CSF flow in the SAS and ventricular system}
-%\label{sec:csf_fluid_vel}
 
 We model CSF as an incompressible Newtonian fluid at low Reynolds and
 Womersley numbers via the Stokes equations with viscosity $\mu$, and
@@ -1018,8 +925,6 @@ below the pial surface, and thus set $\bm u = 0$ in $\Omega_{\rm PAR}$
 in~\eqref{eq:multi_transport}.
 
 \subsection*{Dispersion in the CSF spaces}
-%\label{sec:csf_dispersion}
-%% MER: I'm commenting out labels as long as there is no numbering
 
 The pulsatile flow of CSF in the SAS and ventricular system,
 associated with the cardiac and respiratory cycles, substantially
@@ -1056,15 +961,6 @@ also~\Cref{sec:app:hydraulic_network}). We repeat this procedure to
 compute a corresponding velocity $\hat{u}^p_v$ in the perivenous
 network $\Lambda_v$.
 
-%% \subsection*{Dispersion in the PVS}
-
-%% Similar to the CSF spaces, dispersion due to cardiac and respiratory pulsation has been hypothesized to enhance transport in the perivascular spaces. However, recent estimates indicate that the effect of dispersion does not exceed a factor of 2 compared to diffusion alone \cite{asgari2016glymphatic,sharp2019dispersion,bojarskaite2023sleep,asgari2016glymphatic,troyetsky2021dispersion}.
-
-% \cite{sharp2019dispersion}: dispersion in PVS is negligiable in porous PVS, but might be relevant in open PVS (R=220) (theoretical estimates)
-%  \cite{bojarskaite2023sleep} numerical simulations show that the enhancement factor is likely in the range of 10 - 50 \%
-%\cite{asgari2016glymphatic} numerical simulations show increase of 16% to 50%  in distribution lengths
-%\cite{troyetsky2021dispersion}:   maximum enhancement of diffusion of only about 5%
-
 \subsection*{Perivascular fluid flow induced by arterial wall motion}
 
 Using the theoretical framework introduced by Gjerde et
@@ -1088,7 +984,6 @@ model, we combine the contributions from CSF production and cardiac
 peristalsis to set $\hat{u}$ in~\eqref{eq:multi_transport} as
 $\hat{u}_a = \hat{u}_a^p + \hat{u}_a^c$ in $\Lambda_a$, and $\hat{u}_v
 = \hat{u}_v^p$ in $\Lambda_v$.
-
 
 
 \subsection*{Model and material parameters}
@@ -1211,10 +1106,6 @@ FEniCS\textsubscript{ii}~\cite{kuchta2020assembly}. The correctness
 and accuracy of the numerical solutions were verified by a series of
 numerical verification experiments (\Cref{sec:app:verification}).
 
-%% The choice this scheme was is necessary here since continuous Galerkin
-%% methods even when supplemented with artificial diffusion stabilization
-%% terms were unstable in our experiments.
-
 \subsection*{Model validation}
 
 As the primary means of model validation, we compare the in-silico
@@ -1255,9 +1146,5 @@ The authors declare no competing interests.
 \FloatBarrier
 \appendix
 \input{supplementary_main.tex}
-
-%\newpage
-%\FloatBarrier
-%\input{background.tex}
 
 \end{document}
