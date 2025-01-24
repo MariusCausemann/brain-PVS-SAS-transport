@@ -8,7 +8,7 @@ from fenics import *
 import matplotlib 
 import k3d.colormaps.paraview_color_maps as pcm
 from compute_dispersion_field import alpha_cardiac, alpha_respiratory
-from plotting_utils import set_plotting_defaults, minmax
+from plotting_utils import set_plotting_defaults, read_config
 from subdomain_ids import CSFID, LVID, V34ID
 import matplotlib.pyplot as plt
 from matplotlib.ticker import PercentFormatter
@@ -16,6 +16,8 @@ import seaborn as sns
 from plot_subdomains import get_camera
 from vtk.util.numpy_support import numpy_to_vtk
 import seaborn as sns
+from pathlib import Path
+from mark_and_refine_mesh import SPINAL_OUTLET_ID
 
 m2mum = 1e6
 
@@ -90,6 +92,18 @@ def plot_csf_flow(dirname: str):
         f.read(sm, "label")
     p = interpolate(p, FunctionSpace(mesh, "DG", v_elem.degree()))
 
+    flow_model = Path(dirname).name
+    flow_config = read_config(f"configfiles/{flow_model}.yml")
+    bm = MeshFunction("size_t", mesh, 2, 0)
+    with XDMFFile(flow_config["mesh"].replace(".xdmf","_facets.xdmf")) as f:
+        f.read(bm, "f")
+
+    ds = Measure("ds", mesh, subdomain_data=bm)
+    n = FacetNormal(mesh)
+    fm_area = assemble(Constant(1)*ds(SPINAL_OUTLET_ID))
+    fm_outflow = assemble(inner(v, n)*ds(SPINAL_OUTLET_ID))
+    fm_mean_velocity = fm_outflow/ fm_area
+    print(fm_mean_velocity)
     topology, cell_types, x = create_vtk_structures(V)
     grid = pv.UnstructuredGrid(topology, cell_types, x)
     grid["v"] = v.vector()[:].reshape(-1, 3)
