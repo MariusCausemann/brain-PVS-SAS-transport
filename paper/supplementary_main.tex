@@ -29,8 +29,8 @@ $\Gamma_{\rm{SC}} = \partial \Omega_{\rm PAR} \setminus \partial
 
 In addition, we consider two sets of perivascular networks: a
 periarterial network $\Lambda_a$ represented by the (connected)
-centerlines $\Lambda^i_{(a)}$ of the arterial tree, and a perivenous
-network $\Lambda_v$ associated with the centerlines $\Lambda^i_{(v)}$
+centerlines $\Lambda^i_{a}$ of the arterial tree, and a perivenous
+network $\Lambda_v$ associated with the centerlines $\Lambda^i_{v}$
 of the veins. Recall that we represent the vascular domains as the
 union of cylindrical vessels of radius $R_1^i$ surrounding the
 centerlines $\Lambda^i$. Moreover, we consider the surrounding
@@ -45,7 +45,7 @@ abuse of notation, simply write $s \in \Lambda$ to represent the point
 ${\bm \lambda}(s)$ on $\Lambda$ corresponding to $s$. Finally, we view
 each perivascular network both as a geometric domain and as a directed
 graph with the centerlines $\{ \Lambda^i \}$ as oriented edges and the
-connections as nodes $\mathcal{V}$.
+connections as nodes $\mathcal{V}$. \mk{We always keep $R^i_2$, $R^i_1$ fixed in time in A.1.1 and A.1.4, right?}
 
 \subsubsection{Solute transport and exchange in intracranial domains (3D) and perivascular networks (1D)}
 \label{sec:app:transport_eqs}
@@ -195,16 +195,17 @@ for each $y \in \mathcal{B}$:
   = 0
   \label{eq:flux_conservation}
 \end{equation}
-where the function $n^i : \mathcal{V} \rightarrow \{-1, 0, 1\}$
+where the function $n^i : \mathcal{V} \rightarrow \{-1, \mk{0}, 1\}$
 defines an orientation of each vertex relative to the
 edges. Specifically, for an edge $\Lambda^i$ from $y_{\rm in}$ to $y_{\rm out}$
 \begin{equation}
   n^i(y_{\rm in}) = 1, \quad
   n^i(y_{\rm{out}}) = -1, \quad
-  n^i(y) = 0 \quad \foralls y \in 
-  \mathcal{V} \backslash \{ y_{\rm in}, y_{\rm out} \} .  
+  \mk{n^i(y) = 0 \quad \foralls y \in 
+  \mathcal{V} \backslash \{ y_{\rm in}, y_{\rm out} \} }.  
   \label{eq:def:sign}
 \end{equation}
+\mk{Why do we need the normal on non-IO vertices?}
 
 Finally, we impose a homogeneous Neumann condition at all network end
 nodes to augment~\eqref{eq:1d_pde}:
@@ -235,7 +236,7 @@ the pressure field $p : \Omega_{\rm CSF} \rightarrow \R$ such that
   \begin{alignat}{2}
     - \mu \Delta \bm u  + \nabla p &=  0 \quad && \text{ in } \Omega_{\rm CSF},
     \label{eq:momentum_equation} \\ 
-    \nabla \cdot \bm u &= 0 \quad && \text{ in } \Omega_{\rm CSF},
+    \nabla \cdot \bm u &= 0 \quad && \text{ in } \Omega_{\rm CSF}
     \label{eq:divergence_equation} .
   \end{alignat}
   \label{eq:stokes}%
@@ -354,7 +355,7 @@ and~\eqref{eq:flux_conservation}, and the boundary
 conditions~\eqref{eq:3d_bcs} and~\eqref{eq:1d_bcs}. We discretize
 these equations using an implicit finite difference scheme in time and
 a discontinuous Galerkin (DG) finite element method with upwinding in
-space to accurately capture sharp boundary layers.
+space to accurately capture sharp boundary layers. \mk{Comment on Peclet number}
 
 We first consider the discretization of~\eqref{eq:3d_pde} and
 introduce the discrete space
@@ -403,7 +404,7 @@ upwinding, see \cite[Section 2.3.1]{di2011mathematical} and the
 references therein. For $c, v \in V_h^k$, define
 \begin{equation}
   a_h^{\mathrm{up}}(c, v)
-  = - \sum_{E \in \mathcal{T}} \int_E \bm{u} c \nabla v
+  = - \sum_{E \in \mathcal{T}} \int_E c\bm{u} \cdot \nabla v
   + \sum_{F \in \mathcal{F}_i } \int_F \{ \bm u  c\} \cdot \bm{n}_F [v] +
   \sum_{F \in \mathcal{F}_i} \int_F \frac{|\bm u \cdot \bm n_F|}{2} [c] [v] .
 \end{equation}
@@ -456,7 +457,7 @@ We consider an H(div)-based finite element approximation of the incompressible S
   Q_h  &= \{q \in L^2(\Omega_{\rm CSF}): \; q \vert_E \in \mathrm{P}^1(E),
   \; E \in \mathcal{T}_{\rm CSF} \}. 
 \end{align*}
-Here, $H(\mathrm{div}, \Omega_{\rm{CSF}})$ is the space of $L^2(\Omega_{\rm{CSF}})$ vector fields with $L^2(\Omega_{\rm{CSF}})$ divergence, $\mathrm{BDM}^2$ is the Brezzi-Douglas--Marini element~\cite{brezzi1987mixed} of degree 2, and $\bm n$ and $\bm \tau$ are the unit outward normal and unit tangent vectors to each facet, respectively. Given any vector $\bm v$, the normal and tangential components on each facet are denoted and given by 
+Here, $H(\mathrm{div}, \Omega_{\rm{CSF}})$ is the space of $L^2(\Omega_{\rm{CSF}})$ vector fields with $L^2(\Omega_{\rm{CSF}})$ divergence, $\mathrm{BDM}^2$ is the Brezzi-Douglas--Marini element~\cite{brezzi1987mixed} of degree 2, and $\bm n$ is the unit outward normal vector to each facet. Given any vector $\bm v$, the normal and tangential components on each facet are denoted and given by 
 \begin{equation}
 \bm v_n = (\bm v \cdot \bm n) \bm n, \quad \bm v_t = \bm v - \bm v_n. 
 \end{equation}
@@ -503,8 +504,8 @@ space of (discontinuous) piecewise constants $\hat{Z}_h(\mathcal{I})$ and define
 spaces of continuous piecewise linears $\hat{V}_{h, g}(\mathcal{I})$ with
 prescribed boundary node values (on $\mathcal{N}$) given by $g$:
 \begin{align}
-  \hat{Z}_h(\mathcal{I}) &= \{z \in L^2(\Lambda) \, | \, z \vert_{\Lambda_i} \in \mathrm{P}^{0}(\Lambda_i) \, \foralls \Lambda^i \in \mathcal{I}\}, \\
-  \hat{V}_{h, g}(\mathcal{I}) &= \{ v \in C^0(\Lambda) \, | \, v \vert_{\Lambda^i} \in \mathrm{P}^1(\Lambda_i), \, v(x) = g(x) \, \foralls x \in \mathcal{N} \} .
+  \hat{Z}_h(\mathcal{I}) &= \{z \in L^2(\Lambda) ; \, z \vert_{\Lambda_i} \in \mathrm{P}^{0}(\Lambda_i) \, \foralls \Lambda^i \in \mathcal{I}\}, \\
+  \hat{V}_{h, g}(\mathcal{I}) &= \{ v \in C^0(\Lambda) ; \, v \vert_{\Lambda^i} \in \mathrm{P}^1(\Lambda_i), \, v(x) = g(x) \, \foralls x \in \mathcal{N} \} .
   %Q_h^{\rm PVS} &= \{ q_h \in C^0(\Lambda),  q_h \vert_{\Lambda^i} \in \mathrm{P}^k(\Lambda_i), q_h \vert_{\Gamma_{\rm Pia}} = p_{\rm CSF} \}
 \end{align}
 To discretize~\eqref{eq:1d_flow} with the bifurcation
@@ -654,7 +655,7 @@ should be viewed as heuristic rather than absolute.
 \subsection{Estimating net perivascular flow induced by peristaltic waves}
 \label{sec:app:peristalsis}
 
-We use the theoretical framework previously introduced by Gjerde et al.~\cite{gjerde2023directional} to compute an analytic estimate of the time-averaged (or \emph{net}) flow rates $\langle Q'_i \rangle$ (mm$^3$/s) induced by peristaltic pumping in a perivascular network $\Lambda = \cup_i \Lambda_i$. The motion of the (inner) vascular wall is described by a periodic traveling (peristaltic) wave of relative amplitude $\varepsilon$, wave length $\lambda$ (mm) and frequency $f$, acting normal to the wall. By definition, the wave number is $k = 2 \pi/\lambda$ and the angular frequency is $\omega = 2 \pi f$. Each PVS segment $\Lambda_i$ has length $L_i$ with wave-relative length $\ell_i = k L$, baseline inner radius $R_1^i$, fixed outer radius $R_2^i$, and outer-to-inner ratio $\beta_i = R_2^i/R_1^i$. These geometric parameters and the assumption of annular cylindrical PVS segments yield hydraulic resistances $\mathcal{R}_{o, i}$ and additional characteristic parameters, see \cite{gjerde2023directional} for the complete definitions and schematics. Since the analytical estimate is derived under the assumption that $k L \approx \mathcal{O} (1)$~\cite{gjerde2023directional} and has been verified against numerical simulations for $k L$ of the order $10^{-1}-10^2$~\cite[Table I]{gjerde2023directional}, we consider it applicable for the wave lengths and vascular network data considered here in which $k L$ range from 0.15 to 30 for the strong vasomotion and 0.0015 to 0.30 for the cardiac waves (\Cref{tab:pvs:parameters}).
+We use the theoretical framework previously introduced by Gjerde et al.~\cite{gjerde2023directional} to compute an analytic estimate of the time-averaged (or \emph{net}) flow rates $\langle Q'_i \rangle$ (mm$^3$/s) induced by peristaltic pumping in a perivascular network $\Lambda = \cup_i \Lambda_i$. The motion of the (inner) vascular wall is described by a periodic traveling (peristaltic) wave of relative amplitude $\varepsilon$, wave length $\lambda$ (mm) and frequency $f$, acting normal to the wall. By definition, the wave number is $k = 2 \pi/\lambda$ and the angular frequency is $\omega = 2 \pi f$. Each PVS segment $\Lambda_i$ has length $L_i$ with wave-relative length $\ell_i = k L$, \mk{Should the $L$ here be $L_i$?} baseline inner radius $R_1^i$, fixed outer radius $R_2^i$, and outer-to-inner ratio $\beta_i = R_2^i/R_1^i$. These geometric parameters and the assumption of annular cylindrical PVS segments yield hydraulic resistances $\mathcal{R}_{o, i}$ and additional characteristic parameters, see \cite{gjerde2023directional} for the complete definitions and schematics. Since the analytical estimate is derived under the assumption that $k L \approx \mathcal{O} (1)$~\cite{gjerde2023directional} and has been verified against numerical simulations for $k L$ of the order $10^{-1}-10^2$~\cite[Table I]{gjerde2023directional}, we consider it applicable for the wave lengths and vascular network data considered here in which $k L$ range from 0.15 to 30 for the strong vasomotion and 0.0015 to 0.30 for the cardiac waves (\Cref{tab:pvs:parameters}).
 \begin{table}
   \small
   \begin{tabular}{llrc}
@@ -817,7 +818,7 @@ over time after the initial influx phase
 \begin{figure}
     \centering
     \includegraphics[width=0.5\linewidth]{figures/modelAMassConservation_total_conc.png}
-    \caption{Total tracer content in the CSF, parenchyma, and arterial and venous PVS for a variant of the baseline model without tracer outflow. The total amount of tracer is constant after the initial influx phase demonstrating that the numerical scheme conserves mass.}
+    \caption{Total tracer content in the CSF, parenchyma, and arterial and venous PVS for a variant of the baseline model without tracer outflow. The total amount of tracer is constant after the initial influx phase demonstrating that the numerical scheme conserves mass globally.}
     \label{fig:mass_conservation}
 \end{figure}
 
