@@ -54,7 +54,7 @@ In this section, we describe the mathematical
 model~\eqref{eq:multi_transport}, the associated definitions,
 interface and boundary conditions in further detail. We refer to the
 main text for explicit parameter values while giving the general,
-abstract form here, and to the reference~\cite{masri2023modelling} for
+abstract form here, and to the reference~\cite{masri2024modelling} for
 the derivation and analysis of this 3D-1D model. Recall that we model
 a concentration field $c = c(x, t)$ for $x \in \Omega$ and $t > 0$
 defined in $\Omega_{\rm PAR}$ and $\Omega_{\rm CSF}$ separately. In
@@ -67,7 +67,7 @@ each of these domains, $c$ satisfies
   \quad \quad \mathrm{in} \quad \Omega_{\rm CSF}, \Omega_{\rm{PAR}}.
   \label{eq:3d_pde}
 \end{equation}
-In~\eqref{eq:3d_pde}, $\phi$ is the fluid volume fraction (also known as the porosity) defined in the parenchyma ($\phi \ll 1$ in $\Omega_{\rm PAR}$) and in the CSF spaces ($\phi = 1$ in $\Omega_{\rm CSF}$). In the parenchyma, $\phi$ represents the extracellular space volume fraction, and thus $c$ here generally represents the intrinsic (in contrast to the superficial) concentration~\cite{sykova2008diffusion}. Moreover, $D$ is the effective diffusion coefficient of the relevant solute in the respective media which takes different values over the CSF spaces and the parenchyma, depending on tortuosity~\cite{sykova2008diffusion} and dispersive effects; and $\bm u$ is a convective velocity field representing the flow of CSF in $\Omega_{\rm CSF}$ and the flow of ISF in $\Omega_{\rm PAR}$. $\xi$ models a transfer or exchange parameter between the 3D domain ($\Omega_{\rm PAR}$ or $\Omega_{\rm CSF}$) and the perivacular networks $\Lambda_a, \Lambda_v$. To summarize,
+In~\eqref{eq:3d_pde}, $\phi$ is the fluid volume fraction (also known as the porosity) defined in the parenchyma ($\phi \ll 1$ in $\Omega_{\rm PAR}$) and in the CSF spaces ($\phi = 1$ in $\Omega_{\rm CSF}$). In the parenchyma, $\phi$ represents the extracellular space volume fraction, and thus $c$ here generally represents the intrinsic (in contrast to the superficial) concentration~\cite{sykova2008diffusion}. Moreover, $D$ is the effective diffusion coefficient of the relevant solute in the respective media which takes different values over the CSF spaces and the parenchyma, depending on tortuosity~\cite{sykova2008diffusion} and dispersive effects; and $\bm u$ is a convective velocity field representing the flow of CSF in $\Omega_{\rm CSF}$ and the flow of ISF in $\Omega_{\rm PAR}$. $\xi$ models a transfer or exchange parameter between the 3D domain ($\Omega_{\rm PAR}$ or $\Omega_{\rm CSF}$) and the perivascular networks $\Lambda_a, \Lambda_v$. To summarize,
 \begin{equation*}
 \phi =  \begin{cases}
   1  & \mathrm{in} \;  \Omega_{\rm{CSF}} \\ 
@@ -206,7 +206,7 @@ edges. Specifically, for an edge $\Lambda^i$ from $y_{\rm in}$ to $y_{\rm out}$
   \label{eq:def:sign}
 \end{equation}
 
-Finally, we impose a homogogenous Neumann condition at all network end
+Finally, we impose a homogeneous Neumann condition at all network end
 nodes to augment~\eqref{eq:1d_pde}:
 \begin{equation}
     \hat D A \partial_s (\phi \hat c) - A \hat u \hat c  = 0 \quad \mathrm{on} \quad \mathcal{N}.
@@ -225,7 +225,7 @@ behavior. However, to represent a continuously extending PVSs also
 along penetrating vessels, this condition should be revisited.
 
 \subsubsection{Modelling CSF flow via the incompressible Stokes equations}
-\label{sec:csf_flow}
+\label{sec:app:csf_flow}
 The time-independent, incompressible Stokes equations model the flow
 of an incompressible Newtonian fluid at low Reynolds numbers, and read
 as follows: over the domain $\Omega_{\rm CSF} \subset \R^3$, find the
@@ -315,11 +315,11 @@ non-moving domain; the effect of domain motion is addressed
 in~\Cref{sec:app:peristalsis}.
 
 \subsection{Numerical solution of the transport and flow equations}
-\label{sec:details_numerical_method}
+\label{sec:app:details_numerical_method}
 
 We solve the models presented in~\Cref{sec:app:more_maths} numerically
 using finite element methods. The following subsections provide more
-details, model-by-model.
+details, model-by-model. \rami{Add a note on the convection dominated problem and the need for DG}
 
 \subsubsection{Computational mesh entities: definitions and common notation}
 
@@ -383,8 +383,8 @@ Define for $c, v \in V_h^k$:
   \label{eq:dg_sip}
 \end{equation}
 In~\eqref{eq:dg_sip}, for each facet $F \in \mathcal{F}^i$ shared
-between cells $E^1$ and $E^2$ with facet normal vector $\bm n_F$
-pointing from $E^1$ to $E^2$, $h_F$ denotes the facet diameter,
+between cells $E^1$ and $E^2$, we associate a  facet normal vector $\bm n_F$
+pointing from $E^1$ to $E^2$. The facet diameter is denoted by $h_F$,
 the jump $[\cdot]$ is given by $[v] = v|_{E^1} - v|_{E^2}$, and the
 unweighted average $\{ \cdot \}$ and weighed average $\{ \cdot \}_w$
 are defined as:
@@ -441,7 +441,7 @@ where $\mathrm{P}^1(\Lambda^i)$ is the space of linear polynomials on each $\Lam
  \end{align}
  where $h_{\Lambda^i}$ is the mesh--size of $\Lambda^i$.
 
- \textit{Summary.} The discretization for \eqref{eq:3d_pde} and \eqref{eq:1d_pde} comlemented with boundary conditions (\eqref{eq:3d_bcs} and \eqref{eq:1d_bcs}), interface and bifurcation  conditions (\eqref{eq:3d_interface}, \eqref{eq:1d_flow:bifurcations}, and \eqref{eq:conc_continuity}), and intial conditions $c_h^0 =0 $ and $\hat c_h^0 = 0 $ is the following: 
+ \textit{Summary.} The discretization for \eqref{eq:3d_pde} and \eqref{eq:1d_pde} complemented with boundary conditions (\eqref{eq:3d_bcs} and \eqref{eq:1d_bcs}), interface and bifurcation  conditions (\eqref{eq:3d_interface}, \eqref{eq:1d_flow:bifurcations}, and \eqref{eq:conc_continuity}), and intial conditions $c_h^0 =0 $ and $\hat c_h^0 = 0 $ is the following: 
 
  For $n = 1,2, \ldots $, find  $c_h^n \in V_h$ and $\hat c^n_h \in \hat V_h$ such that the coupled equations \eqref{eq:3d_dg_disc} and \eqref{eq:1d_dg_disc} hold for all $v \in V_h$ and for all $\hat v \in \hat V_h$. 
 \subsubsection{Finite element solution of the incompressible Stokes equations}
@@ -695,69 +695,108 @@ edge-disjoint subnetworks $\Lambda^1, \Lambda^2, \Lambda^3$, one for
 each of the supply nodes (\Cref{fig:results1}A, C,
 \Cref{fig:app:peristalsis}). Each node is assigned to the subnetwork
 associated with the nearest supply node, and edges between nodes are
-preserved. Next, we compute a minimal, bifurcating and directed tree
-representation of each subnetwork: $\mathcal{T}^1, \mathcal{T}^2,
-\mathcal{T}^3$. Each tree $\mathcal{T}^j = \cup E_n^j$ consists of the
-subset of the nodes from $\Lambda^j$ that have degree 1 (are leaf or
-root nodes) or degree $3$ (are true bifurcation points), and each path
-between nodes with degree $\not = 2$ in $\Lambda^j$ is represented in
-$\mathcal{T}^j$ by an edge $E^j$ with edge length $L$ corresponding to
-the total length of the original path and edge radius $R^j$ as the
-average of the path radii. 
+preserved (\Cref{fig:app:peristalsis}B). Next, we compute a minimal,
+bifurcating and directed tree representation of each subnetwork:
+$\mathcal{T}^1, \mathcal{T}^2, \mathcal{T}^3$
+(\Cref{fig:app:peristalsis}C). Each tree $\mathcal{T}^j = \cup E_n^j$
+consists of the subset of the nodes from $\Lambda^j$ that have degree
+1 (are leaf or root nodes) or degree $3$ (are true bifurcation
+points), and each path between nodes with degree $\not = 2$ in
+$\Lambda^j$ is represented in $\mathcal{T}^j$ by an edge $E^j$ with
+edge length $L$ corresponding to the total length of the original path
+and edge radius $R^j$ as the average of the path radii.
 
 For each subtree $\mathcal{T}^j = \cup_n E_n^j$, we compute the
 time-averaged downstream flow rate $\langle Q'_n \rangle$ induced by
 the vascular wall motion for each edge $n$ via~\cite[eq.~(5),
-  (34)]{gjerde2023directional}. We next uniquely assign the flow rate
-$\langle Q'_n \rangle$ to each of the branches $\Lambda_i$ that form
-the path $E_n^j$, thus yielding $\langle Q'_i \rangle$ for each
-perivascular segment $\Lambda_i$ (except those ignored above, for
-which we set a flow rate of zero). Finally, we define the mean
-longitudinal perivascular velocity induced by the peristaltic wave
-$\langle \hat{u}^x_i \rangle$ by dividing the flow rate $\langle Q'_i
-\rangle$ by the cross-section area $A_i = \pi ({R_2^i}^2 - {R_1^i}^2)
-= \pi (\beta_i^2 - 1) {R_1^i}^2$.
+  (34)]{gjerde2023directional} (\Cref{fig:app:peristalsis}D). We next
+assign this flow rate $\langle Q'_n \rangle$ to each of the branches
+$\Lambda_i$ that form the path $E_n^j$, thus yielding $\langle Q'_i
+\rangle$ for each perivascular segment $\Lambda_i$ while ensuring that
+mass is conserved (\Cref{fig:app:peristalsis}E). For the segment(s)
+ignored in the separation step (\Cref{fig:app:peristalsis}B), we set a
+flow rate of zero. Finally, we define the mean longitudinal
+perivascular velocity induced by the peristaltic wave $\langle
+\hat{u}^x_i \rangle$ by dividing the flow rate $\langle Q'_i \rangle$
+by the cross-section area $A_i = \pi ({R_2^i}^2 - {R_1^i}^2) = \pi
+(\beta_i^2 - 1) {R_1^i}^2$.
 
 \subsection{Numerical verification}
+\label{sec:app:verification}
 
-We assess the accuracy and numerical convergence of our simulation results by performing a series of experiments with different spatial and temporal resolutions. Specifically, we generate a sequence of three meshes with an increasing number of points and cells, solve all relevant simulation steps (CSF flow and intracranial transport computations) for standard model A, and compare the results with respect to a set of key quantities of interest. Similarly, we investigate the effect of the time step size by solving the intracranial transport model with varying time steps $dt \in \{60, 120, 240 \}$\,s.
+We assess the numerical accuracy and convergence of our simulation results by performing a series of experiments with different spatial and temporal resolutions. Specifically, we generate a sequence of three meshes (\Cref{fig:mesh_refinement}) with an increasing number of computational mesh vertices and cells, solve all relevant simulation steps (CSF flow and intracranial transport computations) for the baseline model on each mesh, and compare the results across meshes with respect to a set of key quantities of interest. The mesh refinement employed here is adaptive in the sense that the coarser mesh is refined near expected sharp concentration gradients. This allows us to better capture dynamics and reduce undershoots, see \Cref{fig:mesh_convergence_concentrations}.  
+Similarly, we investigate the effect of the time step size by solving the intracranial transport model with different time steps: 1, 2, and 4 minutes. 
 
-Considering the mean tracer concentrations in the CSF, parenchyma and arterial and venous PVS domain over the first 24\,h after injection, we observe negligible changes with both mesh and time refinement (\cref{fig:mesh_convergence_concentrations} and 
-\ref{fig:time_convergence_concentrations}). In addition, we compute the mean and maximum enhancement factor, the maximum CSF pressure and velocity in both the cardiac-driven and CSF production-induced flow fields, and mean concentrations at 3, 6, 12 and 24\,h for all mesh resolutions and time steps (\cref{fig:mesh_convergence} and \cref{fig:time_convergence}). While the maximum dispersion factor increases by about 60\,\% from the coarse to the standard mesh, it stabilizes with the next refinement step. All other quantities change with less than 10\,\% with mesh refinement, and less than 1\,\% with time refinement. We thus conclude that the standard resolution mesh and a time step of $dt=120\,$s offers sufficient accuracy for our simulations.
+Considering the mean tracer concentrations in the CSF, parenchyma and
+arterial and venous PVS domain over the first 24\,h after injection,
+we observe negligible changes with both mesh and time refinement
+(\Cref{fig:mesh_convergence_concentrations} and
+\Cref{fig:time_convergence_concentrations}). As an additional
+verification step, we compute the mean and maximum dispersion
+enhancement factor, the maximum CSF pressure and velocity in both the
+cardiac-driven and CSF production-induced flow fields, and mean
+concentrations at 3, 6, 12 and 24\,h for all mesh resolutions and time
+steps (\Cref{fig:mesh_time_convergence}). While the maximum dispersion factor
+increases by about 60\,\% from the low resolution to the standard mesh, it
+stabilizes with the next refinement step. All other quantities change
+with less than 10\,\% with mesh refinement, and less than 1\,\% with
+time refinement. We thus conclude that the standard resolution mesh
+and a time step of 2 min offer sufficient accuracy for our
+simulations.
 
-
+Finally, to check for numerical mass conservation, we perform an
+additional simulation not allowing for tracer efflux across the outer
+boundary, and confirm that the total amount of tracer is preserved
+over time after the initial influx phase
+(\Cref{fig:mass_conservation}).
 \begin{figure}
     \centering
-    \begin{subfigure}[b]{0.45\textwidth}
-        \centering
-        \includegraphics[width = 1 \linewidth]{figures/mesh_refinement_par_csf_mean.png}
-        \caption{Mean tracer concentration in CSF and parenchyma under mesh refinement}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.45\textwidth}
-        \centering
-     \includegraphics[width= 1 \linewidth]{figures/mesh_refinement_art_ven_mean.png}
-         \caption{Mean tracer concentration in PVSs around (veins and) arteries  under mesh refinement}
-    \end{subfigure}
-    \caption{Mean tracer concentrations over the first 24\,h after injection on the CSF and parenchyma (a), and the arterial and venous PVS (b) computed on the LowRes, standard and HighRes meshes with a timestep of $dt=120$\,s.}
-    \label{fig:mesh_convergence_concentrations}
+    \includegraphics[width=0.9\linewidth]{figures/mesh_refinement.png}
+    \caption{Illustration of the three different meshes; from left to right: low resolution, standard resolution, high resolution.}
+    \label{fig:mesh_refinement}
 \end{figure}
 
-
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width = 1 \linewidth]{figures/csf_minmax.png}
+        \caption{Minimum and maximum tracer concentration in the CSF under mesh refinement}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+     \includegraphics[width= 1 \linewidth]{figures/par_minmax.png}
+        \caption{Minimum and maximum tracer concentration in the parenchyma under mesh refinement}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width = 1 \linewidth]{figures/art_minmax.png}
+        \caption{Minimum and maximum tracer concentration in PVSs around arteries under mesh refinement}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+     \includegraphics[width= 1 \linewidth]{figures/ven_minmax.png}
+         \caption{Minimum and maximum tracer concentration in PVSs around veins under mesh refinement}
+    \end{subfigure}
+    \caption{Minimum and maximum tracer concentrations over the first 24\,h after injection on the CSF and parenchyma (a), and the arterial and venous PVS (b) computed on the low resolution (LowRes), standard and high resolution (HighRes) meshes with a timestep of 2 min for the baseline model (Model A).}
+    \label{fig:mesh_convergence_concentrations}
+\end{figure}
 \begin{figure}
     \centering
     \begin{subfigure}[b]{0.49\textwidth}
         \centering
-        \includegraphics[trim={0.5cm 1cm 0.05cm 0.8cm}, clip, width = 1.05 \linewidth]{figures/mesh_refinement.pdf}
-        \caption{Convergence of key quantities of interest with mesh refinement}
-        \label{fig:mesh_convergence}
+        \includegraphics[trim={0.5cm 1cm 0.05cm 0.8cm}, clip, width = 1.05 \linewidth]{figures/modelALowRes_modelA_modelAHighRes.pdf}
+        \caption*{Convergence of key quantities of interest with mesh refinement}
+        %\label{fig:mesh_convergence}
     \end{subfigure}
     \begin{subfigure}[b]{0.49\textwidth}
         \centering
-     \includegraphics[trim={0.5cm 1cm 0.05cm 0.8cm}, clip,width= 1.05 \linewidth]{figures/time_refinement.pdf}
-        \caption{Convergence of key quantities of interest with time refinement}
-        \label{fig:time_convergence}
+     \includegraphics[trim={0.5cm 1cm 0.05cm 0.8cm}, clip,width= 1.05 \linewidth]{figures/modelAsmalldt_modelA_modelAlargedt.pdf}
+        \caption*{Convergence of key quantities of interest with time refinement}
+        %\label{fig:time_convergence}
     \end{subfigure}
-    \caption{minimal ($\rm h_{min}$) and maximal ($\rm h_{max}$) mesh cell sizes (computed as cell circumradius $\times 2$) (A); number of points and tetrahedral cells in each mesh (B); mean dispersion enhancement factor $R$ (C), maximum dispersion enhancement factor $R$ (D); maximum pressure in steady CSF production flow (E), maximum pressure in cardiac-driven CSF flow (F); maximum CSF velocity in steady CSF production flow (G); maximum CSF velocity in cardiac-driven CSF flow (H);  mean tracer concentration in the CSF, parenchyma, arterial PVS and venous PVS at 3,6,12 and 24\,h (I, J, K and L).}
+    \caption{For both left and right panels: A: Minimal ($\rm h_{min}$) and maximal ($\rm h_{max}$) mesh cell sizes (computed as cell circumradius $\times 2$); B: number of mesh vertices and tetrahedral cells in each mesh; C: mean cardiac dispersion enhancement factor $R$; D: maximum cardiac dispersion enhancement factor $R$; E: maximum pressure in steady CSF production flow; F: maximum pressure in cardiac-driven CSF flow; G: maximum CSF velocity in steady CSF production flow; H: maximum CSF velocity in cardiac-driven CSF flow; I--L: mean tracer concentration in the CSF, parenchyma, arterial PVS and venous PVS after 3, 6, 12 and 24 hours.}
+        \label{fig:mesh_time_convergence}
 \end{figure}
 
 \begin{figure}
@@ -772,5 +811,120 @@ Considering the mean tracer concentrations in the CSF, parenchyma and arterial a
      \includegraphics[width= 1\linewidth]{figures/time_refinement_art_ven_mean.png}
          \caption{Mean tracer concentration in PVSs around (veins and) arteries under time step refinement}
     \end{subfigure}
-    \caption{Mean tracer concentrations over the first 24\,h after injection on the CSF and parenchyma (a), and the arterial and venous PVS (b) computed on the standard resolution mesh for timesteps $dt \in \{60, 120, 240 \}$\,s.}    \label{fig:time_convergence_concentrations}
+    \caption{Mean tracer concentrations after up to 24\,h in the CSF and parenchyma (a), and the arterial and venous PVS (b) computed on the standard resolution mesh for timesteps of 1, 2, and 4 minutes (dt of 60, 120, or 240 seconds)}
+    \label{fig:time_convergence_concentrations}
 \end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{figures/modelAMassConservation_total_conc.png}
+    \caption{Total tracer content in the CSF, parenchyma, and arterial and venous PVS for a variant of the baseline model without tracer outflow. The total amount of tracer is constant after the initial influx phase demonstrating that the numerical scheme conserves mass.}
+    \label{fig:mass_conservation}
+\end{figure}
+
+\section{Supplementary discussion}
+
+\subsection{Extended model validation}
+\label{sec:app:model_validation}
+
+In addition to the comparison of our in-silico predictions of tracer
+enrichment and clearance against glymphatic MRI, we here compare
+auxiliary model quantities against the literature as additional model
+validation.
+
+\paragraph{CSF flow and pressures in the SAS and ventricular system}
+The dynamics of human CSF flow and pressure are better quantified, by
+way of clinical imaging, in-vitro studies, and computational
+modelling, in other areas of the ventricular
+system~\cite{linninger2007cerebrospinal, sweetman2011cerebrospinal,
+  vinje2019respiratory, hornkjol2022csf, causemann2022human,
+  karki2025real, liu2025transmantle}. Linninger et
+al~\cite{linninger2007cerebrospinal} model CSF flow and pressure
+dynamics induced by CSF production and cardiac pulsatility under
+normal and hydrocephalic conditions, and report of very good agreement
+with Cine (phase-contrast) MRI measurements. Our estimates of the
+maximum intracranial pressure difference, 10 Pa from the cardiac
+contribution and 26 mPa from CSF production, is in perfect agreement
+with their maximum transmantle pressure difference of $\sim$10 Pa, and
+also in very good agreement with mean pressure differences of 11.5 Pa
+measured clinically between sensors placed subdurally and in the
+lateral ventricle \cite{vinje2019respiratory}. Liu et
+al~\cite{liu2025transmantle} report of cardiac and respiratory
+pressure differences across the aqueduct of 12.1 $\pm$ 5.7 Pa and 9.5
+$\pm$ 7.2 Pa, respectively; thus our baseline estimate of the
+respiratory contribution (\fixme{1.4 Pa}) may be an
+underestimation. On the other hand, our cardiac- and
+respiratory-driven CSF flow estimates peak at 19.8 cm/s and 4.8 cm/s
+in the caudal direction, respectively, which are higher than
+phase-contrast MRI measurements of cardiac and respiratory CSF flow
+components \cite{takizawa2017characterization,
+  yildiz2017quantifying}. Some variation in CSF flow velocities is
+expected considering that the values from MRI represent averages
+\cite{yildiz2017quantifying} and that the geometry of the CSF spaces
+strongly affects peak velocities\cite{vinje2019respiratory,
+  causemann2022human}. Hornkjøl et al \cite{hornkjol2022csf} model the
+flow dynamics induced by CSF production in the choroid plexus and
+report a peak CSF velocity of 8.9 mm/s in the aqueduct, which is 4.8
+$\times$ higher than our values of 1.85 mm/s. Given that we use the
+same production rate, this deviation again illustrates the impact of
+potential differences in the (aqueduct) geometry on local velocities.
+
+% Dispersion predictions
+\paragraph{Dispersion in the SAS, ventricular system and PVS}
+This pulsatile flow of CSF in the SAS, ventricular system and PVSs
+leads to an increase in effective solute
+diffusivity~\cite{stockman2007effect, hettiarachchi2011effect,
+  asgari2016glymphatic, sharp2019dispersion, ray2021quantitative} via
+a process known as Taylor dispersion \cite{taylor1953dispersion,
+  watson1983diffusion}. Previous estimates of the magnitude of this
+effect in the CSF spaces vary significantly: from an enhancement
+factor of 0.05--1 in periarterial spaces surrounding penetrating
+arteries~\cite{asgari2016glymphatic, troyetsky2021dispersion}, to
+5--100 in the spinal subarachnoid space~\cite{stockman2007effect,
+  hettiarachchi2011effect, sharp2019dispersion}, and up to more than
+$10\,000$ in surface periarterial spaces~\cite{ray2021quantitative,
+  sharp2019dispersion}. The large variability can (at least partly) be
+attributed to methodological differences; e.g. different assumptions
+on the medium, domain width, pressure differences and/or fluid
+velocities, the diversity of CSF flow characteristics, as well as a
+high likelihood of spatial variations. Hornkjøl et
+al~\cite{hornkjol2022csf} consider model variations with constant
+dispersion factors from 1 up to 1000, and indicate that a value of 10
+gives the better agreement with the clinically observed
+enrichment. Our spatially-varying estimates of the dispersion
+enhancement factors $R_c, R_r$ (with $D = (1 + R_c + R_r) D^{\rm
+  Gad}$) range from 0 to 200 for the cardiac contribution $R_c$ and 0
+to 320 for the respiratory contribution $R_r$; and is thus compatible
+within the previously reported spectrum.
+
+% Effect of PVS size and shapes
+\paragraph{Shapes, sizes and structures of the PVS}
+The shapes, sizes and structures of the PVSs likely vary between
+species (e.g.~mice vs.~humans), between spatial compartments
+(e.g.~surface vs.~parenchymal), between vessel types (arteries
+vs.~arterioles vs.~veins), and in
+pathologies~\cite{ichimura1991distribution, foley2012realtime,
+  schain2017cortical, mestre2018flow, bedussi2018paravascular,
+  mestre2022periarteriolar, smets2024perivascular, raicevic2023sizes,
+  vinje2021brain, eide2024functional}. In terms of shape, the PVSs are
+commonly represented as annular (elliptic) cylinders, though it is
+well recognized that this represents an
+idealization~\cite{mestre2018flow, tithof2019hydraulic,
+  vinje2021brain, raicevic2023sizes, boster2024hydraulic,
+  smets2024perivascular}. In terms of sizes, Raicevic et
+al~\cite{raicevic2023sizes} note that the variation in PVS area is
+larger between PVS segments than along a single PVS segment and that
+the PVS area increases with lumen area. In mice, reports of the ratio
+between PVS and lumen area range from
+$\approx$0.35--0.43~\cite{smets2024perivascular} up to
+$\approx$1.12--1.4~\cite{raicevic2023sizes, mestre2018flow}. In
+humans, the PVS may be as wide as the associated surface artery and up
+to 4$\times$ wider in iNPH subjects~\cite{eide2024functional}, which
+would correspond to substantially larger PVS area ratios (3 or
+higher). To reflect the human scale, we here represent each PVS
+segment as an annular cylinder with inner radius $R_1$ and outer
+radius $R_2$ of width and area proportional to that of the
+corresponding blood vessel ($R_2 = 2 R_1$ at baseline, $R_2 = 3 R_1$
+for enlarged PVS). The hydraulic resistance of annular cross-sections
+is $1-6 \times$~\cite{tithof2019hydraulic} larger than more elongated
+cross-sections and thus our estimates of the pressure-induced PVS
+velocities are conservative.
