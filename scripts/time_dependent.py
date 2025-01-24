@@ -196,6 +196,18 @@ def run_simulation(configfile: str):
         R = map_dg_on_global(R, parentmesh=mesh)
         Ds *= (1 + R)
 
+    dx_s = Measure("dx", mesh, subdomain_data=vol_subdomains)
+    DG0 = FunctionSpace(mesh, "DG", 0)
+    csf_dofs_dg = get_subdomain_dofs(DG0, vol_subdomains, CSFID)
+
+    # compute peclet number
+    L = 0.05 # characteristic length (along direction of primary transport)
+    Pe = project(L*sqrt(inner(velocity_csf, velocity_csf)) / Ds, DG0,
+                 solver_type="cg",preconditioner_type="jacobi")
+    pemax = Pe.vector().get_local()[csf_dofs_dg].max()
+    pemin = Pe.vector().get_local()[csf_dofs_dg].min()
+    peavg = assemble(Pe*dx_s(CSFID)) / assemble(Constant(1)*dx_s(CSFID))
+    print(f"min Pe: {pemin}, max Pe: {pemax}, avg Pe: {peavg}")
 
     fa = Constant(0.0) 
     fv = Constant(0.0)
@@ -231,7 +243,6 @@ def run_simulation(configfile: str):
 
     eta = Constant(1e3)
 
-    dx_s = Measure("dx", mesh, subdomain_data=vol_subdomains)
     dS = Measure("dS", mesh, subdomain_data=bm)
 
     def a_dg_adv_diff(u,v) :
