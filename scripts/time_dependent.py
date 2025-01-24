@@ -229,8 +229,7 @@ def run_simulation(configfile: str):
     # tangent vector
     a = xii.block_form(W, 2)
 
-    eta = 1.0 
-    alpha = Constant(1e3)
+    eta = Constant(1e3)
 
     dx_s = Measure("dx", mesh, subdomain_data=vol_subdomains)
     dS = Measure("dS", mesh, subdomain_data=bm)
@@ -247,14 +246,14 @@ def run_simulation(configfile: str):
         wavg = lambda k: 2*k("+")*k("-") / (k("+") + k("-"))
         DF = wavg(Ds*phi)
 
-        a_fac = (alpha/avg(h))*DF*dot(jump(u, n), jump(v, n))*dSi \
+        a_fac = (eta/avg(h))*DF*dot(jump(u, n), jump(v, n))*dSi \
                 - dot(avg(grad(u))*DF, jump(v, n))*dSi \
                 - dot(jump(u, n), avg(grad(v)) * DF)*dSi \
                 + beta_csf_par*jump(u)*jump(v)*dS(PIA_ID) \
                 + beta_csf_par*jump(u)*jump(v)*dS(LV_INTERF_ID)
         
         a_vel = dot(dot(b("+"),n('+'))*avg(u), jump(v))*dSi \
-            + (eta/2)*dot(abs(dot(b("+"),n('+')))*jump(u), jump(v))*dSi
+            + (1/2)*dot(abs(dot(b("+"),n('+')))*jump(u), jump(v))*dSi
 
         a = a_int + a_fac + a_vel
         return a
