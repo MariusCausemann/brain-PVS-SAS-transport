@@ -320,7 +320,7 @@ in~\Cref{sec:app:peristalsis}.
 
 We solve the models presented in~\Cref{sec:app:more_maths} numerically
 using finite element methods. The following subsections provide more
-details, model-by-model. \rami{Add a note on the convection dominated problem and the need for DG}
+details, model-by-model.
 
 \subsubsection{Computational mesh entities: definitions and common notation}
 
@@ -354,8 +354,7 @@ conditions~\eqref{eq:conc_continuity}
 and~\eqref{eq:flux_conservation}, and the boundary
 conditions~\eqref{eq:3d_bcs} and~\eqref{eq:1d_bcs}. We discretize
 these equations using an implicit finite difference scheme in time and
-a discontinuous Galerkin (DG) finite element method with upwinding in
-space to accurately capture sharp boundary layers. \mk{Comment on Peclet number}
+a discontinuous Galerkin (DG) finite element method with upwinding in space to accurately capture sharp boundary layers. We remark that the transport in the CSF spaces is highly convection dominated, with an average Péclet number of 402 and maximum of 9542 (assuming a characteristic length of $10\,$cm and taking the increased diffusivity due to dispersion into account).
 
 We first consider the discretization of~\eqref{eq:3d_pde} and
 introduce the discrete space
@@ -399,7 +398,7 @@ porosity-weighted diffusion coefficient given by
 \begin{equation}
   \gamma_{D,F} = \frac{\kappa_1\kappa_2}{\kappa_1 + \kappa_2},
 \end{equation}
-and $\eta$ is a user-specified penalty parameter. To discretize the convection term in~\eqref{eq:3d_pde}, we use
+and $\eta$ is a user-specified penalty parameter (we set $\eta=1000$). To discretize the convection term in~\eqref{eq:3d_pde}, we use
 upwinding, see \cite[Section 2.3.1]{di2011mathematical} and the
 references therein. For $c, v \in V_h^k$, define
 \begin{equation}
@@ -471,7 +470,6 @@ $\mathcal{F}_{e} = \mathcal{F}_{\rm pia} \cup \mathcal{F}_{\rm LV}
 lying on the pial interface $\Gamma_{\rm pia}$ are denoted by
 $\mathcal{F}_{\rm pia}$, on the lower and upper outer (arachnoid) boundary
 $\Gamma_{\rm AM-L}$ and $\Gamma_{\rm AM-U}$ by $\mathcal{F}_{\rm AM-L}$ and $\mathcal{F}_{\rm AM-U}$, on the inner ventricular
-interface $\Gamma_{\rm LV}$ by $\mathcal{F}_{\rm LV}$,
 %on the boundary toward the spinal cord $\Gamma_{\rm SC}$ by $\mathcal{F}_{\rm SC}$
 and on the boundary towards the spinal SAS $\Gamma_{\rm SSAS}$ by
 $\mathcal{F}_{\rm SSAS}$. Now, define the form 
@@ -529,12 +527,12 @@ The cardiac ($\sim$1Hz) and respiratory ($\sim$0.25Hz) cycles induce
 pulsatile flow of CSF in the ventricular system and in the cranial and
 spinal SAS. Pulsatile flow leads to dispersion which in turn may
 enhance molecular transport~\cite{taylor1953dispersion,
-  watson1983diffusion, asgari2016glymphatic, keith2019dispersion,
+  watson1983diffusion, asgari2016glymphatic, sharp2019dispersion,
   ray2021quantitative, troyetsky2021dispersion}. To account for the
 dispersive effects over a longer time scale (hours to days), and in
 the absence of measurements or estimates of dispersion coefficients in
 human CSF spaces, we adapt existing theoretical
-estimates~\cite{watson1983diffusion, keith2019dispersion}. More
+estimates~\cite{watson1983diffusion, sharp2019dispersion}. More
 specifically, we compute spatially-varying dispersion enhancement
 fields $R_c$ and $R_r$ (\Cref{fig:csf}G, I), associated with the
 cardiac and respiratory cycles respectively, via the algorithm
@@ -585,7 +583,7 @@ R_c + R_r) D^{\rm Gad}$.
   tube~\cite[Chap.~4.3.]{van1998cardiovascular}.
 \item
   Further, assuming unsteady dispersion, we follow Sharp et
-  al.~\cite{keith2019dispersion} to estimate local enhancement factors
+  al.~\cite{sharp2019dispersion} to estimate local enhancement factors
   $S_c, S_r$ from the non-dimensionalized pressure gradients:
   \begin{equation}
     S_i(x) = \frac{1}{\alpha_i^3} \frac{1}{\omega_i \mu/h} | \nabla p_i^1(x) |
@@ -616,7 +614,7 @@ should be viewed as heuristic rather than absolute.
 %% % respiratory pulsatility
 %% \mar{Employing the same methodology, we estimate the respiratory contribution to dispersive mixing by computing the CSF flow field driven by an inflow of $0.121\,$ml/s \cite{liu2024using} and $1\,$ml/s \cite{gutierrez2022effect} across the lateral ventricular wall and the arachnoid mater, respectively.}
 
-%% Taking the large spatial differences of pulsatile CSF flow into account, we estimate a spatially varying diffusion enhancement factor $R$ in the CSF-filled space $\Omega_{\rm CSF}$ by combining a computational model of cardiac- and respiration-induced pulsatile CSF flow with theoretical estimates for shear-augmented (Taylor) dispersion \cite{taylor1953dispersion, watson1983diffusion}. These estimates are are derived under simplifying assumptions on the problem geometry, the flow field and concentration profiles \cite{watson1983diffusion, keith2019dispersion}. Therefore such an estimate is heuristic; however, our computational results qualitatively agree with observed data. 
+%% Taking the large spatial differences of pulsatile CSF flow into account, we estimate a spatially varying diffusion enhancement factor $R$ in the CSF-filled space $\Omega_{\rm CSF}$ by combining a computational model of cardiac- and respiration-induced pulsatile CSF flow with theoretical estimates for shear-augmented (Taylor) dispersion \cite{taylor1953dispersion, watson1983diffusion}. These estimates are are derived under simplifying assumptions on the problem geometry, the flow field and concentration profiles \cite{watson1983diffusion, sharp2019dispersion}. Therefore such an estimate is heuristic; however, our computational results qualitatively agree with observed data. 
 
 %% Similar to the case of CSF flow driven by production introduced in \Cref{sec:csf_flow}, we employ a Stokes flow model to predict CSF velocities corresponding to the peak cardiac and respiratory blood inflow rates. In particular, we enforce a uniformly distributed inflow of $u^{\rm in}_{\rm AM}$ and $u^{\rm in}_{\rm LV}$ across the arachnoid mater ($\Gamma_{\rm AM}$) and lateral ventricular surfaces ($\Gamma_{\rm LV}$) respectively, mimicking the effect of reduced CSF volume due to blood inflow. We set $u^{\rm in}_{\rm AM} = 6\,$ml/s \cite{causemann2022human,baledent2014imaging} and $u^{\rm in}_{\rm LV}=0.31\,$ml/s \cite{vinje2019respiratory} in the cardiac case, and $u^{\rm{in}}_{\rm{AM}} = 1\,$ml/s \cite{gutierrez2022effect} and $u^{\rm in}_{\rm{LV}}=0.121\,$ml/s \cite{liu2024using} in the respiratory case, respectively.
 %% We prescribe a no-slip boundary condition on the pial surface $\Gamma_{\rm Pia}$ and zero-traction on the spinal boundary $\Gamma_{\rm SSAS}$, making the spinal compartment the only outflow route of CSF. Thus, we compute the pulsatile flow fields by augmenting the Stokes flow model (\eqref{eq:momentum_equation} and \ref{eq:divergence_equation}) with the following boundary conditions:
@@ -629,7 +627,7 @@ should be viewed as heuristic rather than absolute.
 
 %% The obtained pressure fields $p_{\rm cardiac}$ and $p_{\rm resp}$ only account for viscous forces, albeit cardiac and respiratory induced CSF flow is known to be unsteady and substantially impacted by transient inertial forces. Assuming an oscillatory flow with either the heartbeat frequency $\omega_{\rm cardiac} = 2 \pi$ or respiratory frequency $\omega_{\rm resp} = 0.5 \pi$, a mean gap width of the CSF-filled spaces of $2h=3$\,mm and CSF density $\rho=10^3\,\text{kg/m}^3$, the squared Womersley number $\alpha_i^2 = \frac{h^2 \omega_{i} \rho}{\mu}$ becomes $\alpha_{\rm cardiac}^2 = 20.2$ and $\alpha_{\rm resp}^2=5.05$, which is unsteady. Based on theoretical considerations on the ratio of oscillatory flow to steady flow impedances in a tube, we account for inertial forces in the pulsatile flow by upscaling the computed viscous pressure field by a factor of $1 + \alpha^2 / 8$ (see \cite{van1998cardiovascular}, chapter. 4.3). Thus, the upscaled pressure fields become $p^{\rm up}_{i}= (1 + \alpha_{i}^2 / 8)p_i \text{ for } i = \{\mathrm{cardiac}, \mathrm{resp}\}$.
 
-%% Further assuming unsteady dispersion, we follow Sharp et al \cite{keith2019dispersion} and estimate each enhancement factor $R_{\rm cardiac}$ and $R_{\rm resp}$ from the non-dimensionalized pressure gradient 
+%% Further assuming unsteady dispersion, we follow Sharp et al \cite{sharp2019dispersion} and estimate each enhancement factor $R_{\rm cardiac}$ and $R_{\rm resp}$ from the non-dimensionalized pressure gradient 
 %% $$R_{i} \approx dP_{i}^2 / \alpha_{i}^3, \quad  \text{where} \quad  dP=\frac{|\nabla p^{\rm up}_{i}|}{\omega_{i} \mu / h} \quad \text{for} \quad i = \{\mathrm{cardiac}, \mathrm{resp}\}.$$
 %% Finally, we account for the non-local nature of the dispersion mechanism and smooth the resulting field by solving a Helmholtz problem with $dP+i^2/\alpha_i^3$ as the right-hand side
 %% \begin{equation}
@@ -725,8 +723,8 @@ by the cross-section area $A_i = \pi ({R_2^i}^2 - {R_1^i}^2) = \pi
 \subsection{Numerical verification}
 \label{sec:app:verification}
 
-We assess the numerical accuracy and convergence of our simulation results by performing a series of experiments with different spatial and temporal resolutions. Specifically, we generate a sequence of three meshes (\Cref{fig:mesh_refinement}) with an increasing number of computational mesh vertices and cells, solve all relevant simulation steps (CSF flow and intracranial transport computations) for the baseline model on each mesh, and compare the results across meshes with respect to a set of key quantities of interest. The mesh refinement employed here is adaptive in the sense that the coarser mesh is refined near expected sharp concentration gradients. This allows us to better capture dynamics and reduce undershoots, see \Cref{fig:mesh_convergence_concentrations}.  
-Similarly, we investigate the effect of the time step size by solving the intracranial transport model with different time steps: 1, 2, and 4 minutes. 
+We assess the numerical accuracy and convergence of our simulation results by performing a series of experiments with different spatial and temporal resolutions. Specifically, we generate a sequence of three meshes (\Cref{fig:mesh_refinement}) with an increasing number of computational mesh vertices and cells, solve all relevant simulation steps (CSF flow and intracranial transport computations) for the baseline model on each mesh, and compare the results across meshes with respect to a set of key quantities of interest. The mesh refinement employed here is adaptive in the sense that the coarser mesh is manually refined near expected sharp concentration gradients. This allows us to better capture dynamics and reduce undershoots, see \Cref{fig:mesh_convergence_concentrations}.  
+Similarly, we investigate the effect of the time step size by solving the intracranial transport model on the standard resolution mesh with different time steps: 1, 2, and 4 minutes. 
 
 Considering the mean tracer concentrations in the CSF, parenchyma and
 arterial and venous PVS domain over the first 24\,h after injection,
@@ -741,9 +739,7 @@ steps (\Cref{fig:mesh_time_convergence}). While the maximum dispersion factor
 increases by about 60\,\% from the low resolution to the standard mesh, it
 stabilizes with the next refinement step. All other quantities change
 with less than 10\,\% with mesh refinement, and less than 1\,\% with
-time refinement. We thus conclude that the standard resolution mesh
-and a time step of 2 min offer sufficient accuracy for our
-simulations.
+time refinement. We thus conclude that the standard resolution mesh and a time step of 2 min offer sufficient accuracy for our simulations, and remark that all reported results are obtained with the standard resolution mesh. 
 
 Finally, to check for numerical mass conservation, we perform an
 additional simulation not allowing for tracer efflux across the outer
@@ -752,7 +748,7 @@ over time after the initial influx phase
 (\Cref{fig:mass_conservation}).
 \begin{figure}
     \centering
-    \includegraphics[width=0.9\linewidth]{figures/mesh_refinement.png}
+\includegraphics[width=0.9\linewidth]{figures/mesh_refinement.png}
     \caption{Illustration of the three different meshes; from left to right: low resolution, standard resolution, high resolution.}
     \label{fig:mesh_refinement}
 \end{figure}
@@ -929,3 +925,29 @@ for enlarged PVS). The hydraulic resistance of annular cross-sections
 is $1-6 \times$~\cite{tithof2019hydraulic} larger than more elongated
 cross-sections and thus our estimates of the pressure-induced PVS
 velocities are conservative.
+
+\paragraph{Predictions on overall tracer spreading patterns}
+
+
+\begin{table}
+\centering
+\begin{tabular}{c|c|c|c|c}
+    \toprule
+   quantity of interest  & Watts et al\cite{watts2019measuring}  & Ringstad et al\cite{ringstad2018brain} & Eide and Ringstand \cite{eide2024functional} & ours (vasomotion model)\\
+   \midrule
+    Spinal transit time &  1 - 3 hours & 20 min &  $13\pm6.3\,$ min & N/A \\
+    Time of peak amount (CSF) & 10 - 15 hours & 6–9 hours & & 2 hours \\
+    Time of peak amount (parenchyma) & 10 - 26 hours & 24 hours & N/A& 12 - 24 hours \\
+    Peak amount (CSF) &  N/A & N/A & N/A & 0.5 mmol \\
+    Peak amount (parenchyma) & N/A & N/A& N/A & 0.09 mmol \\
+    injected tracer quantity &  1.0 mmol & 0.5 mmol & 0.5 mmol & 0.5 mmol (cranially) \\
+    Peak concentration (CSF) & 0.5 mmol/l &  N/A&  N/A & 1.4 mmol/l\\
+    Peak concentration (parenchyma) & 0.1 mmol/l & N/A & N/A & 0.4 mmol/l \\
+    FTA in MCA1 & N/A & N/A &  37.8 ± 47.0 min &  1:48 / 1:24 hours \\
+    FTA in MCA2 & N/A & N/A & 53.1 ± 50.5 min & 2:12 / 1:48 hours \\
+    FTA in ACA2 & N/A & N/A & 48.3 ± 46.1 min & 3:00 / 3:12 hours \\
+    \bottomrule
+\end{tabular}
+\caption{Comparison of literature values and model predictions on overall tracer spreading patters and timing}
+\label{tab:spreading comparison}
+\end{table}
