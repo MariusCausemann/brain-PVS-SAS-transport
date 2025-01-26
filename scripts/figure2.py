@@ -117,21 +117,21 @@ class Figure2_Panels(PanelsSpec):
     n2: Panel = Panel(
             RasterImage("plots/modelA-OnlyDispersion/modelA-OnlyDispersion_overview_1-6-12-24.png",
                          ElemSize(3, hn, units), crop=(1420, 100, 1350, 0)),
-            Location(xstart + compwidth, y3), auto_label=False,
+            Location(xstart + compwidth, y3), auto_label=True,
             content_offset=Location(0,0),
             text=Text("no advection (12 h)", **dict(textargs, y=-0.1, x=1.5))
         )
     n3: Panel = Panel(
             RasterImage("plots/modelA-LowD/modelA-LowD_overview_1-6-12-24.png",
                          ElemSize(3, hn, units), crop=(1420, 100, 1350, 0)),
-            Location(xstart + 2*compwidth, y3), auto_label=False,
+            Location(xstart + 2*compwidth, y3), auto_label=True,
             content_offset=Location(0,0),
             text=Text("low dispersion (12 h)", **dict(textargs, y=-0.1, x=1.5))
         )
     n4: Panel = Panel(
             RasterImage("plots/modelA-HighD/modelA-HighD_overview_1-6-12-24.png",
                          ElemSize(3, hn, units), crop=(1420, 100, 1350, 0)),
-            Location(xstart + 3*compwidth, y3), auto_label=False,
+            Location(xstart + 3*compwidth, y3), auto_label=True,
             content_offset=Location(0,0),
             text=Text("high dispersion (12 h)", **dict(textargs, y=-0.1, x=1.5))
         )
