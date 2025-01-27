@@ -50,12 +50,12 @@ def getconfig(model, key, default=[]):
 rule all:
     input:
         expand("plots/comparisons/{c}/{c}_{type}.png",c=model_comparisons, type=types),
-        expand("plots/{modelname}/{modelname}_tracer_vessel_dist.png", modelname=models),
         expand("plots/{modelname}/{modelname}_total_conc.png", modelname=models),
         expand("plots/{modelname}/{modelname}_overview_1-6-12-24.png", modelname=models),
         expand("plots/{modelname}/{modelname}_overview_1-3-6-9-12-24.png", modelname=models),
         expand("plots/{modelname}/{modelname}_overview_4-6.png", modelname=models),
         expand("plots/{modelname}/{modelname}.mp4", modelname=models),
+        expand("plots/{modelname}/{modelname}_300.html", modelname=models),
         expand("plots/{modelname}/{modelname}_1+2+3+6+9+12_all_0_details.png", modelname=models),
         "plots/pvs_flow_prod/sas_flow-arteries/",
         "plots/pvs_flow_peristaltic/vasomotion/",
@@ -373,6 +373,17 @@ rule makeVideo:
         "plots/{m}/{m}.mp4"
     shell:
         "python scripts/make_video.py {wildcards.m}"
+
+rule makeHtml:
+    conda:"environment.yml"
+    input:
+        sas="results/{m}/{m}_sas.xdmf",
+        art="results/{m}/{m}_artery.xdmf",
+    output:
+        "plots/{m}/{m}_{N}.html"
+    shell:
+        "python scripts/make_html.py {wildcards.m} {wildcards.N}"
+
 
 
 
