@@ -623,30 +623,18 @@ papers by Eide and colleagues~\cite{ringstad2017glymphatic,
 al~\cite{watts2019measuring}. Ringstad et al.~\cite{ringstad2018brain}
 report of tracer enrichment in a centripetal pattern, primarily in
 regions near large cerebral surface arteries, peaking in the CSF
-spaces between 6 and 24 hours, with parenchymal tracer content still
+spaces between 6 and 9 hours, with parenchymal tracer content still
 increasing after 24 hours, but with large individual
 differences. Watts et al~\cite{watts2019measuring} report of a similar
 enrichment pattern and a concentration peak in the SAS of $\approx$0.5
-mmol/L occuring after 10 to 15 hours. Our in-silico enrichment
-patterns agree with these observations, though with an earlier
-\discuss{$\sim$5 + plus spinal transit time)} rather than later peak
-in the CSF spaces. In particular, we note that the substantial
-individual variation observed clinically is comparable to the
-variation in in-silico enrichment patterns associated with reduced CSF
-production or reduced intracranial pulsatility. \mer{One sentence on
-  tracer content comparison.} In terms of perivascular tracer
+mmol/l (relative to a total amount of 1.0 mmol) occuring after 10 to 15 hours. Our in-silico enrichment
+patterns agree with these observations, though with an earlier rather than later peak in the CSF spaces (2 hours after first tracer appearance at the craniocervical junction). In particular, we note that the substantial individual variation observed clinically is comparable to the variation in in-silico enrichment patterns associated with reduced CSF production or reduced intracranial pulsatility. We find that about 20\% of the tracer reaching the cranium enters the parenchyma, which aligns with the reported peak concentration values of $0.5\,$mmol/l in the SAS and $0.1\,$mmol/l in the parenchyma reported by Watts et al~\cite{watts2019measuring}.
+In terms of perivascular tracer
 enrichment, Eide and Ringstad~\cite{eide2024functional} report of
 first-time tracer appearance in the PVS of the MCA after 37.8 $\pm$
-47.0 (M1), 53.1 $\pm$ 50.5 (M2) and 82.6 $\pm$ 61.5 (M3) min, thus
-with just a 15.3 min delay between M2 and M1. Comparing with the our
-FTAs in the MCA segments, we note that the baseline model predicts a
-more-than 3 hour difference in FTA between the M1 and M2. Instead, the
-high PVS flow scenario predicts a 24 min delay between these
-segments. Moreover, the high PVS flow scenario predicts FTAs of
-84--108 min (M1), 84--146 min (M2) which overlaps with the previous
-ranges \discuss{modulo spinal transit time}. We interpret these
-results as indicative of a net CSF flow in human surface PVS beyond
-what would be induced by CSF production and cardiac peristalsis alone.
+47.0 (M1), 53.1 $\pm$ 50.5 (M2) and 82.6 $\pm$ 61.5 (M3) min after injection, thus with just a 15.3 min delay between M2 and M1. Comparing with our FTAs in the MCA segments, we note that the baseline model predicts a more-than 3 hour difference in FTA between the M1 and M2. Instead, the high PVS flow scenario predicts a 24 min delay between these segments.
+Moreover, the high PVS flow scenario predicts FTAs of
+84--108 min (M1) and 108--132 min (M2) after tracer appearance at the craniocervical junction, which overlaps with the previous ranges if one assumes a tracer travel time from the point of injection to the craniocervical junction of $13\,$min (as reported by Eide and Ringstad \cite{eide2024functional}). We interpret these results as indicative of a net CSF flow in human surface PVS beyond what would be induced by CSF production and cardiac peristalsis alone.
 % M2 - M1 (mean) ~ 15.3 min 
 
 % PVS flow predictions. 
@@ -763,7 +751,7 @@ a conservative transport model within the parenchyma, modelling
 extracellular diffusion alone. To compensate, we have focused on
 reporting detailed predictions in the CSF spaces and surface PVS after
 not more than 24 hours. In particular, we note that, we observe tracer
-accumulation at the perivascular network ends after \fixme{24} hours,
+accumulation at the perivascular network ends after 12 hours,
 similar to that previously observed for
 microspheres~\cite{bedussi2018paravascular, mestre2018flow}, which
 here can be interpreted as an artifact of the incomplete network
@@ -995,8 +983,8 @@ $D|_{\Omega_{\rm PAR}} = D^{\rm Gad}_{\rm PAR}$. We set $\xi$
 depending on whether the PVS segment is fully embedded within the CSF
 spaces ($\xi = \xi_{\rm CSF}$) or parenchyma ($\xi = \xi_{\rm EF}$),
 or neither (\Cref{sec:app:more_maths}). Additionally, we increase the
-permeability $\xi$ ($100\times$) \fixme{near} the leaf nodes of
-$\Lambda_a$ to account for the transition from explicitly resolved
+permeability $\xi$ ($100\times$) at the the leaf nodes of
+$\Lambda_a$, linearly decreasing over the corresponding cell, to account for the transition from explicitly resolved
 PVSs to their unresolved continuation in the CSF spaces and
 parenchyma.
 \begin{table}
