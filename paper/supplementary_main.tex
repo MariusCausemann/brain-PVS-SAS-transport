@@ -354,7 +354,7 @@ conditions~\eqref{eq:conc_continuity}
 and~\eqref{eq:flux_conservation}, and the boundary
 conditions~\eqref{eq:3d_bcs} and~\eqref{eq:1d_bcs}. We discretize
 these equations using an implicit finite difference scheme in time and
-a discontinuous Galerkin (DG) finite element method with upwinding in space to accurately capture sharp boundary layers. We remark that the transport in the CSF spaces is highly convection dominated, with an average Péclet number of 402 and maximum of 9542 (assuming a characteristic length of $10\,$cm and taking the increased diffusivity due to dispersion into account).
+a discontinuous Galerkin (DG) finite element method with upwinding in space to accurately capture sharp boundary layers. We remark that the transport in the CSF spaces is highly convection dominated, with an average Péclet number of 402 and maximum of 9542 (assuming a characteristic length of $10\,$cm, and accounting for the increased diffusivity due to dispersion).
 
 We first consider the discretization of~\eqref{eq:3d_pde} and
 introduce the discrete space
@@ -924,13 +924,14 @@ velocities are conservative.
 
 \paragraph{Predictions on overall tracer spreading patterns}
 
+We compare our in-silico predictions with clinical data from human subjects, in particular the studies by Ringstad et al~\cite{ringstad2018brain}, Watts et al~\cite{watts2019measuring} and Eide and Ringstad~\cite{eide2024functional}. Finding an overall good agreement, we provide a detailed overview on key quantities of interest in \cref{tab:spreading_comparison}. We remark that the our simulation begins at the time of first tracer appearance at the craniocervical junction, while the clinical studies report time with respect to intrathecal injection time, leading to an offset, which is captured by the spinal transition time.
 
 \begin{table}
 \centering
 \small
-\begin{tabular}{ccccc}
+\begin{tabular}{lcccc}
 \toprule
-quantity of interest  & Watts et al\cite{watts2019measuring}  & Ringstad et al\cite{ringstad2018brain} & Eide and Ringstand \cite{eide2024functional} & ours (vasomotion model)\\
+quantity of interest  & Watts et al\cite{watts2019measuring}  & Ringstad et al\cite{ringstad2018brain} & Eide and Ringstad \cite{eide2024functional} & high PVS flow model \\
 \midrule
 Spinal transit time ($t_{st}$) &  1 - 3 hours & 20 min &  $13\pm6.3\,$ min & N/A \\
 Time of peak amount (CSF) & 10 - 15 hours & 6–9 hours & N/A & 2 hours +$t_{st}$ \\
@@ -945,6 +946,6 @@ FTA in MCA2 & N/A & N/A & 53.1 ± 50.5 min & 2:12 / 1:48 hours +$t_{st}$ \\
 FTA in ACA2 & N/A & N/A & 48.3 ± 46.1 min & 3:00 hours +$t_{st}$ \\
 \bottomrule
 \end{tabular}
-\caption{Comparison of literature values and model predictions on tracer spreading patterns and timing}
-\label{tab:spreading comparison}
+\caption{Comparison of clinical studies and model predictions on tracer spreading patterns and arrival times.}
+\label{tab:spreading_comparison}
 \end{table}
