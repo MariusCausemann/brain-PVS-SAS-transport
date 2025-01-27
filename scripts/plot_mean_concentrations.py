@@ -12,7 +12,7 @@ def compare_concentrations(modelname:str):
     config = read_config(f"configfiles/{modelname}.yml")
     os.makedirs("plots/{modelname}", exist_ok=True)
     dt , T= config["dt"], config["T"]
-    times = np.arange(0, T + dt, 3*dt*config["output_frequency"])
+    times = np.arange(0, T + dt, 2*dt*config["output_frequency"])
 
     data = read_config(f"results/{modelname}/mean_concentrations.yml")
 

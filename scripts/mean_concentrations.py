@@ -32,7 +32,7 @@ def ii_project(f, V):
 def compare_concentrations(modelname:str):
     config = read_config(f"configfiles/{modelname}.yml")
     dt , T= config["dt"], config["T"]
-    times = np.arange(0, T + dt, 3*dt*config["output_frequency"])
+    times = np.arange(0, T + dt, 2*dt*config["output_frequency"])
     assert 3600 in times
     sas_conc, subd_marker = get_result_fenics(modelname, "sas", times)
     art_conc, art_radii, art_roots = get_result_fenics(modelname, "artery", times, getroots=True)
