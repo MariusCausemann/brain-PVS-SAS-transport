@@ -2,7 +2,7 @@ description : "model A - no dispersion"
 dt : 120
 T : 86400 # 1 day in seconds
 mesh : "mesh/standard/standard.xdmf"
-output_frequency : 2
+output_frequency : 5
 ecs_share : 0.2
 sas_diffusion : 3.8e-10 # Valnes 2020, https://www.nature.com/articles/s41598-020-66042-5
 arterial_pvs_diffusion : 3.8e-10
