@@ -52,23 +52,6 @@ The standard mesh resolution is available in the Git repository under
 mesh/standard.
 
 
-#### Generating surfaces, meshes and networks from the image data
-
-OBSOLETE INSTRUCTIONS: To generate surfaces, extract vessel networks and generate meshes, run:
-
-```
-cd scripts
-python3 extract_surfaces.py
-python3 extract_vessels.py
-python3 generate_mesh.py
-```
-
-These scripts will generate objects placed under mesh/ including
-
-* networks/
-* surfaces/
-* volmesh/
-
 For networks/, there is the original, a smoothened and a tube representation of the arterial and venous network separately in .vtk format. The ones we use further are arteries_smooth.vtk and veins_smooth.vtk. 
 
 For surfaces/, there is the white matter (pial) surface (wm.ply), the white-gray matter interface (gm.ply) and parenchyma.ply, all in .ply format. 
