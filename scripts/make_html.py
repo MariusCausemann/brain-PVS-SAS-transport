@@ -13,11 +13,10 @@ import skimage
 hexcolor = lambda c: int(matplotlib.colors.to_hex(c)[1:], base=16)
 compression_level = 6
 
-def make_html(modelname:str):
-    N = 300
+def make_html(modelname:str, n:int):
     config = read_config(f"configfiles/{modelname}.yml")
-    dt , T= config["dt"], config["T"]
     clim = (0,2)
+    #times = (np.array([0,1, 3, 6, 12])*3600).astype(np.int32)
     times = (np.array([0, 1/3, 2/3, 1,2, 3,4,5,6,8,10,12,15,18,24])*3600).astype(np.int32)
     meshfile = Path(config["mesh"])
     skull = pv.read(meshfile.parent / "surfaces/skull.ply")
@@ -29,11 +28,9 @@ def make_html(modelname:str):
     arteries = get_tubes(art)
     arteries["c"] = arteries["c_0"]
     for t in times:
-        sas[f"c_{t}"] = sas[f"c_{t}"].clip(min=clim[0]).astype(np.float32)
-    
-    #from IPython import embed; embed()
-        
-    img = pv.create_grid(sas, dimensions=(N, N, N))
+        sas[f"c_{t}"] = sas[f"c_{t}"].clip(min=0).astype(np.float32)
+            
+    img = pv.create_grid(sas, dimensions=(n, n, n))
     img = img.sample(sas, progress_bar=True)
     for t in times:
         img[f"c_{t}"] = skimage.filters.gaussian(img[f"c_{t}"], sigma=1, truncate=2)
@@ -52,12 +49,14 @@ def make_html(modelname:str):
     cmap = np.array(pcm.Yellow___Gray___Blue, dtype=vol_dtype).reshape(-1,4)[:,:] 
     cmap[:,0] = np.linspace(-1, 1, cmap.shape[0])[::-1]
     cmap = cmap.flatten()
-    get_c = lambda t: img[f"c_{t}"].clip(min=clim[0]).astype(vol_dtype).reshape([N]*3)
-    get_art_c = lambda t: arteries[f"c_{t}"].clip(min=clim[0]).astype(vol_dtype)
+    get_c = lambda t: img[f"c_{t}"].clip(min=0.0).astype(vol_dtype).reshape([n]*3)
+    get_art_c = lambda t: arteries[f"c_{t}"].clip(min=0.0).astype(vol_dtype)
 
     pl_volume = k3d.volume({str(t/(60*60)): get_c(t) for t in times},
-                            bounds=img.bounds, color_range=clim, color_map=cmap,
-                           compression_level=compression_level, opacity_function=[0, 0.15],
+                           bounds=img.bounds, color_range=clim, color_map=cmap,
+                           compression_level=compression_level,
+                           opacity_function=np.array([(0, 0.2),(0.001, 0.8), (0.5, 0.8), (1, 0.7)], dtype=vol_dtype), 
+                           alpha_coef=50, gradient_step=0.1,
                            name="concentration field")
     pl += pl_volume
     for surf, name in zip([skull, LV, V34, parenchyma],
@@ -85,7 +84,7 @@ def make_html(modelname:str):
     timetxt.text = {str(t):f"time: {t} h" for t in range(int(times[-1] / 3600))}
     pl += timetxt
 
-    with open(f"plots/{modelname}/{modelname}_{N}.html", 'w') as f:
+    with open(f"plots/{modelname}/{modelname}_{n}.html", 'w') as f:
         f.write(pl.get_snapshot())
 
 
