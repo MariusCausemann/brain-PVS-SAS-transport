@@ -47,32 +47,30 @@
 
 \begin{abstract}
   The mechanisms of intracranial solute transport are fundamental to
-  human brain health and function, with alterations often linked to
+  human brain health, with alterations often linked to
   disease and functional impairment, and with distinct opportunities
   for personalized diagnostics and treatment. However, our
   understanding of these mechanisms and their interplay remains
   incomplete, in part due to the complexity of integrating insights
   across scales, between species and from different modalities. Here,
-  we combine geometric model reduction and mixed-dimensional
-  modelling, multi-modal magnetic resonance images, and high
-  performance computing to construct and explore a high-fidelity
-  in-silico model of human intracranial molecular enrichment and
-  clearance. This model predicts the temporal and spatial spreading of
-  a solute within an image-derived geometric representation of the
+  we combine mixed-dimensional modelling, multi-modal magnetic 
+  resonance images, and high performance computing to construct and 
+  explore a high-fidelity in-silico model of human intracranial molecular enrichment. 
+  This model predicts the temporo-spatial spreading of a solute
+  within an image-derived geometric representation of the
   subarachnoid space, ventricular system and brain parenchyma,
-  including branching networks of surface perivascular spaces
+  including networks of surface perivascular spaces
   (PVSs). Our findings highlight the significant impact of
   cerebrospinal fluid (CSF) production and intracranial pulsatility on
   molecular enrichment following intrathecal tracer injection. We
   demonstrate that low-frequency vasomotion induces moderate CSF flow
-  rates in surface PVS networks that substantially enhance tracer
-  enrichment, and that impaired enrichment is a natural direct
+  in surface PVS networks that substantially enhances tracer
+  enrichment, and that impaired enrichment is a direct
   consequence of enlarged PVSs. This openly available technology
   platform thus provides an opportunity for integrating separate
   observations on diffusion in neuropil, vascular dynamics,
   intracranial pulsatility, CSF production, and efflux, and for
-  exploring questions relating to drug delivery and clearance in the
-  human brain environment.
+  exploring drug delivery and clearance in the human brain.
 \end{abstract}
 \begin{document}
 
@@ -395,7 +393,7 @@ network ends located within the SAS or up to 6 mm inside the
 parenchyma (\Cref{fig:results1}A--C, \Cref{fig:pvs_a}A) and includes
 major surface arteries of radius 0.5--1.4 mm. Imposing the pressure
 field induced by CSF production at the periarterial network ends
-induces ultraslow steady CSF flow of variable direction in these PVSs,
+induces slow steady CSF flow of variable direction in these PVSs,
 with an average velocity of 0.08 \textmu m/s (antegrade) and a maximum
 velocity of 0.55 \textmu m/s (\Cref{fig:pvs_a}B). On the other hand,
 traveling waves of arterial wall motion (\Cref{fig:pvs_a}C), such as the pulse wave or other vasomotion~\cite{vanveluw2020vasomotion,
@@ -481,7 +479,7 @@ this question.
 \caption{(\textbf{cont.})
     C, D) 2D slices showing zoom-in on the region surrounding the MCA-R and MCA2-R for the baseline (upper) and high PVS flow (lower) models. Innermost circle indicates the artery (blue), the surrounding annulus is the PVS (color represents concentration value), the surroundings are parenchyma and/or CSF spaces, separated by the pia (blue: towards the parenchyma, pink: towards the CSF));  
     E) Total amount of tracer in the periarterial spaces as a function of the distance to the nearest network root over time for the baseline (left) and the high PVS flow (right) models;
-    F--H) sagittal (upper) and coronal (lower) views of the simulated tracer concentrations overlayed on the T1-weighted MR image after 4 and 6h for the baseline (K), high PVS flow (L) and high PVS dispersion (M) models (concentration opacity linearly increasing with concentration value, pial surface outlined in pink, arachnoid membrane in cyan, and arteries in dark red).}
+    F--H) sagittal (upper) and coronal (lower) views of the simulated tracer concentrations overlayed on the T1-weighted MR image after 4 and 6h for the baseline (K), high PVS flow (L) and high PVS dispersion (M) models (concentration opacity linearly increasing with concentration value, pial surface outlined in pink, arachnoid membrane in cyan, and arteries in dark red). An interactive visualization of the baseline and the high PVS flow model can be found \href{https://baseline-pvs-flow.surge.sh/}{here}, and \href{https://high-pvs-flow.surge.sh/}{here}.}
 \end{figure}  
 
 \subsection*{Structural versus functional compartmentalization of perivascular spaces}
@@ -1000,7 +998,7 @@ parenchyma.
       Permeability coefficient, endfoot sheath & $\xi_{\rm EF}$ & $3.8\cdot 10^{-7}$  & m/s & \cite{koch2023estimates} \\
       Molecular efflux rate & $\beta_{\rm exit}$ & $10^{-4}$ & mm$^2$/s & \cite{hornkjol2022csf} \\
       Total molecular volume & $m_{\rm tot}$ & $0.5$ & mmol & \cite{eide2024functional} \\
-      Molecular influx, time-to-peak & $T_{\rm max}$ & $1$ & h & \fixme{$\ast$} \\
+      Molecular influx, time-to-peak & $T_{\rm max}$ & $1$ & h & $\ast$ \\
       CSF production rate & $u_{\mathrm{in}}$ & $0.63$  & l / day & \cite{nilsson1992circadian} \\
       CSF viscosity & $\mu$ & $0.7$ & mPa$ \cdot $s & \cite{bloomfield1998effects} \\ 
       CSF outflow resistance & $R_0$ & $10^{-5}$  & Pa/(mm$\cdot$s) & \cite{hornkjol2022csf} \\ 
@@ -1107,7 +1105,10 @@ Center for Brain Fluid Research and the Research Council of Norway via
 grant \#324239 (EMIx). Simulations were performed on the Experimental
 Infrastructure for Exploration of Exascale Computing (eX3), which is
 financially supported by the Research Council of Norway under contract
-270053. M.K. acknowledges support from the RCN grant \#303362.
+270053. 
+M.C. acknowledges support from the RCN grant \#324239 (EMIx).
+M.K. acknowledges support from the RCN grant \#303362.
+The figures 1A, 1D, 2C, 3C, 5A and 6A were created in Biorender.
 
 \section*{Author contributions statement}
 

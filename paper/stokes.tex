@@ -1,0 +1,148 @@
+\documentclass[11pt, dvipsnames]{amsart}
+\usepackage[utf8]{inputenc} 
+\newcommand{\R}{\mathbb{R}}
+
+\usepackage{bm}
+\usepackage{caption}
+\usepackage{subcaption}
+% \captionsetup[subfigure]{justification=justified,singlelinecheck=false}
+\usepackage{tikz}
+\usepackage{newtxmath} % MER: Prettier math
+\usepackage{cleveref} % MER: Allows \Cref (but use Section X.Y not Subsection X.Y)
+\usepackage{booktabs} % MER: Prettier table
+
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{siunitx}
+\usepackage{placeins}
+\usetikzlibrary{quotes}
+\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,positioning,fit,petri}
+\newtheorem{lemma}{Lemma}
+\begin{document}
+
+
+The time-independent, incompressible Stokes equations model the flow
+of an incompressible Newtonian fluid at low Reynolds numbers, and read
+as follows: over the domain $\Omega_{\rm CSF} \subset \R^3$, find the
+velocity vector field $\bm u : \Omega_{\rm CSF} \rightarrow \R^3$ and
+the pressure field $p : \Omega_{\rm CSF} \rightarrow \R$ such that
+\begin{subequations}
+  \begin{alignat}{2}
+    - \mu \Delta \bm u  + \nabla p &=  0 \quad && \text{ in } \Omega_{\rm CSF},
+    \label{eq:momentum_equation} \\ 
+    \nabla \cdot \bm u &= 0 \quad && \text{ in } \Omega_{\rm CSF}
+    \label{eq:divergence_equation} .
+  \end{alignat}
+  \label{eq:stokes}%
+\end{subequations}%
+In addition, we impose the following boundary conditions to model flow
+induced by CSF production in the choroid plexus with $\Gamma_{\rm AM-U}$ as the main efflux site:
+\begin{subequations}
+  \begin{alignat}{2}
+   \bm n^T (\mu \nabla \bm u \bm{n} - p \bm n ) &= -R_0 ( \bm u \cdot \bm n ), \quad \bm u \cdot \bm \tau = 0  
+    && \text{ on } \Gamma_{\mathrm{AM-U}}, \\
+    \bm u &= 0 && \text{ on } \Gamma_{\mathrm{AM-L}}\cup\Gamma_{\rm{pia}}\cup\Gamma_{\rm{SSAS}}, \\
+    %\bm u &= 0 && \text{ on } \Gamma_{\rm{pia}}, \\
+    %\bm u &= 0 && \text{ on } \Gamma_{\rm{SSAS}}, \\
+    \bm u \cdot \bm n & = \frac{1}{ |\Gamma_{\rm LV}|}  u_{\rm in}, \quad \bm u \cdot \bm \tau = 0 \quad && \text{ on } \Gamma_{\rm{LV}} ,  
+  \end{alignat}
+  \label{eq:stokes_bcs}%
+\end{subequations}%
+where $\bm n$ denotes the unit outward normal to the boundary, $\mu$ is the (dynamic) CSF viscosity, $R_0 > 0$ is a resistance parameter for CSF efflux, and $u_{\rm in}$ is a given fluid influx, here across the lateral ventricle wall $\Gamma_{\rm LV}$. %  We consider alternative variations of these boundary conditions in connection with estimating dispersion effects induced by CSF pulsatility, see~\Cref{sec:app:dispersion}.
+
+
+We consider an H(div)-based finite element approximation of the incompressible Stokes equations~\eqref{eq:stokes} defined over $\Omega_{\rm CSF}$ with the boundary conditions~\eqref{eq:stokes_bcs}. Following\cite{hong2016robust}, we approximate the velocity field $\bm u$ and the pressure field $p$ with the following finite element spaces:
+\begin{align*}
+  \bm V_{h,g} &= \{ \bm v  \in H(\mathrm{div}, \Omega_{\mathrm{CSF}}): \;
+  \bm v \vert_{E} \in \mathrm{BDM}^2(E), \; E \in \mathcal{T}_{\rm CSF}; \; \\ & \quad 
+  \bm v \cdot \bm n = 0
+  \text{ on } \Gamma_{\rm{pia}} \cup \Gamma_{\rm AM-L} \cup \Gamma_{\rm{SSAS}}, \;\; \bm v \cdot \bm n =  g %\frac{1}{|\Gamma_{\mathrm{LV}}|} u_{\mathrm{in}} 
+  \text{ on } \Gamma_{\mathrm{LV}} \}  \\ 
+  Q_h  &= \{q \in L^2(\Omega_{\rm CSF}): \; q \vert_E \in \mathrm{P}^1(E),
+  \; E \in \mathcal{T}_{\rm CSF} \}. 
+\end{align*}
+Here, $H(\mathrm{div}, \Omega_{\rm{CSF}})$ is the space of $L^2(\Omega_{\rm{CSF}})$ vector fields with $L^2(\Omega_{\rm{CSF}})$ divergence, $\mathrm{BDM}^2$ is the Brezzi-Douglas--Marini element~\cite{brezzi1987mixed} of degree 2, $g$ is a given constant, and $\bm n$ is the unit outward normal vector to each facet. Given any vector $\bm v$, the normal and tangential components on each facet are denoted and given by 
+\begin{equation}
+\bm v_n = (\bm v \cdot \bm n) \bm n, \quad \bm v_t = \bm v - \bm v_n. 
+\end{equation}
+Since $\bm V_{h,g} \subset H(\mathrm{div}, \Omega_{\rm CSF})$, then $[\bm
+  v_n] = 0 $ on $\mathcal{F}_{i, \rm CSF}$. Continuity in the
+tangential component is enforced weakly via interior penalization. For
+convenience, we collect all facets exterior to the CSF space in  the set
+$$\mathcal{F}_{e} = \mathcal{F}_{\rm pia} \cup \mathcal{F}_{\rm LV}
+\cup \mathcal{F}_{\rm AM-L}\cup \mathcal{F}_{\rm AM-U}  \cup \mathcal{F}_{\rm SSAS}, $$ where facets
+lying on the pial interface $\Gamma_{\rm pia}$ are denoted by
+$\mathcal{F}_{\rm pia}$, on the lower and upper outer (arachnoid) boundary
+$\Gamma_{\rm AM-L}$ and $\Gamma_{\rm AM-U}$ by $\mathcal{F}_{\rm AM-L}$ and $\mathcal{F}_{\rm AM-U}$, on the inner ventricular
+%on the boundary toward the spinal cord $\Gamma_{\rm SC}$ by $\mathcal{F}_{\rm SC}$
+and on the boundary towards the spinal SAS $\Gamma_{\rm SSAS}$ by
+$\mathcal{F}_{\rm SSAS}$ and $\mathcal{F}_{\rm LV}$ respectively. Now, define the form 
+\begin{multline}
+  \mathcal{A}_h(\bm u, \bm v)
+  = \sum_{E \in \mathcal{T}_{\rm CSF}} \int_{E} \mu \nabla \bm u : \nabla \bm v
+ \\  - \sum_{F \in \mathcal{F}_{i, \rm CSF} \cup \mathcal{F}_{e}} \left (
+  \int_{F} \mu \{\nabla \bm u\}  \bm n_F \cdot [\bm v_t] 
+  - %\sum_{F \in \mathcal{F}_{h,c} \cup \mathcal{F}_{\Gamma}}
+  \int_{F} \mu \{\nabla \bm v\} \bm n_F \cdot [\bm u_t]
+  + %\sum_{F \in \mathcal{F}_{h,c} \cup \mathcal{F}_{\Gamma}}
+\int_{F}   \frac{\sigma \mu}{h_F} [\bm u_t ] \cdot [\bm v_t] \right ),   
+\end{multline}
+where on exterior facets the average and jump operators take the one-sided values. We set the penalty parameter for the tangential continuity to be $\sigma = 20$. Our finite element discretization of the incompressible Stokes equations is then to find $(\bm u_h, p_h) \in \bm V_{h,g} \times Q_h$ with $g  = \frac{1}{|\Gamma_{\mathrm{LV}}|} u_{\mathrm{in}}$  such that 
+\begin{subequations}
+\label{eq:discrete_stokes}
+\begin{align}
+  \mathcal{A}_h(\bm u_h, \bm v_h)
+  + \sum_{F \in \mathcal{F}_{\rm AM-U}} \int_{F} R_0 (\bm u_h \cdot \bm n) (\bm v_h \cdot \bm n)
+  - \int_{\Omega_{\rm CSF}} \nabla \cdot \bm v_h \, p_h  &= 0 \quad \forall \bm v_h \in \bm V_{h,0} \\ 
+\int_{\Omega_{\rm CSF}} \nabla \cdot \bm u_h \, q_h  &= 0 \quad \forall q_h \in Q_h.
+\end{align}
+\end{subequations}
+
+\begin{lemma}[Consistency]
+Let $\bm u \in H^2(\Omega)$ be the true solution of  \eqref{eq:stokes}. Then, \eqref{eq:discrete_stokes} holds with $\bm u$ replacing $\bm u_h$. 
+\end{lemma}
+
+\begin{proof}
+ Multiply \eqref{eq:momentum_equation} by $\bm v_h \in \bm V_{h,0}$ and integrate by parts locally on each element. 
+ \begin{align}
+     \sum_{E \in \mathcal{T}} \int_E  (\mu \nabla \bm u : \nabla \bm v - \nabla \cdot \bm v_h p_h ) -  \sum_{E \in \mathcal{T}}  \int_{\partial E}  ( \mu \nabla u \bm n_E  - p \bm n_E) \cdot \bm v  = 0. 
+  \end{align} 
+The second term denoted here by $T$  can be written as follows.
+\begin{align} \nonumber
+T = -\sum_{F \in  \mathcal{F}_{i, \rm CSF}}  \int_{F}  \left( \{ \mu \nabla \bm u\} \bm n_F \cdot [\bm v]  -  \{ p \} \bm n_F \cdot [\bm v]  \right) \mathrm{d}s   -  \sum_{F \in \mathcal{F}_e}   \int_{F} ( \mu \nabla u \bm n   - p \bm n) \cdot \bm v \mathrm{d}s
+\end{align}
+Since $V_h $ is H-div conforming, $[\bm v ] = [\bm v_t] $ on $F \in \mathcal{F}_{i,\rm CSF}$. Therefore, the first term above, denoted by $T_1$, is written as 
+\begin{align}
+T_1 & = -  \sum_{F \in  \mathcal{F}_{i, \rm CSF}}  \int_{F}  \left( \{ \mu \nabla \bm u\} \bm n_F \cdot [\bm v_t]  -  \{ p \} \bm n_F \cdot [\bm v_t]  \right) \mathrm{d}s  \\ 
+& = - \sum_{F \in  \mathcal{F}_{i, \rm CSF}}  \int_{F}  \{ \mu \nabla \bm u\} \bm n_F \cdot [\bm v_t].  \nonumber 
+\end{align}
+For the second term, we have that for $F \in \mathcal{F}_e$: 
+\begin{align*}
+\int_F (\mu \nabla \bm u \bm n - p \bm n) \cdot \bm v & = \int_F (\bm n^T (\mu \nabla \bm u \bm n - p \bm n)\bm n  +\bm t^T (\mu \nabla \bm u \bm n - p \bm n)\bm t ) \cdot (\bm v_n + \bm v_t) \\ 
+&  = \int_F (\bm n^T (\mu \nabla \bm u \bm n - p \bm n)\bm n \cdot \bm v_n   +\bm t^T (\mu \nabla \bm u \bm n - p \bm n)\bm t ) \cdot  \bm v_t)
+\end{align*}
+ On $F \in \mathcal{F}_e \backslash \mathcal{F}_{\rm{AM-U}}$, the first term above is zero since $\bm v \cdot \bm n = 0 $ by the definition of $\bm V_{h,0}$.  For $F \in \mathcal{F}_{\rm{AM-U}}$, we use the boundary condition and write 
+ \begin{align}
+     \sum_{F \in \mathcal{F}_{\rm{AM-U}}} \int_F (\bm n^T (\mu \nabla \bm u \bm n - p \bm n)\bm n \cdot \bm v_n   &  = \sum_{F \in \mathcal{F}_{\rm{AM-U}}} \int_F - R_0 (\bm u \cdot \bm n)  \bm n \cdot \bm v_n  \\ 
+     & = \sum_{F \in \mathcal{F}_{\rm{AM-U}}} \int_F - R_0 (\bm u \cdot \bm n)  \bm v \cdot \bm n  
+ \end{align}
+ Collecting the above computations, we see that 
+\begin{multline}
+ \nonumber
+ \sum_{E \in \mathcal{T}} \int_E  (\mu \nabla \bm u : \nabla \bm v - \nabla \cdot \bm v_h p_h )   - \sum_{F \in  \mathcal{F}_{i, \rm CSF}}  \int_{F}  \{ \mu \nabla \bm u\} \bm n_F \cdot [\bm v_t] \\ - \sum_{F \in \mathcal{F}_{e}} \int_F \bm t^T (\mu \nabla \bm u \bm n - p \bm n)\bm t ) \cdot  \bm v_t) \
+ + \sum_{F \in \mathcal{F}_{\rm{AM-U}}} \int_F  R_0 (\bm u \cdot \bm n)  \bm v \cdot \bm n    \nonumber = 0. 
+\end{multline}
+Now, since $\bm n^T (\nabla \bm u \bm n - p \bm n) \bm n \cdot \bm v_t = 0 $, we arrive at 
+\begin{multline}
+ \nonumber
+ \sum_{E \in \mathcal{T}} \int_E  (\mu \nabla \bm u : \nabla \bm v - \nabla \cdot \bm v_h p_h )   - \sum_{F \in  \mathcal{F}_{i, \rm CSF} \cup \mathcal{F}_{e}}  \int_{F}  \{ \mu \nabla \bm u\} \bm n_F \cdot [\bm v_t] \\ 
+ + \sum_{F \in \mathcal{F}_{\rm{AM-U}}} \int_F  R_0 (\bm u \cdot \bm n)  \bm v \cdot \bm n    \nonumber = 0. 
+\end{multline}
+The result is concluded by noting that $[\bm u \cdot \bm \tau ] = 0$ on  $\mathcal{F}_e \cup \mathcal{F}_{i,\mathrm{CSF}}$ from the associated boundary conditions and from the regularity of $\bm u$.s 
+\end{proof} 
+\bibliographystyle{plain}
+\bibliography{references}
+\end{document}
