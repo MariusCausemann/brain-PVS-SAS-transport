@@ -244,12 +244,16 @@ In addition, we impose the following boundary conditions to model flow
 induced by CSF production in the choroid plexus with $\Gamma_{\rm AM-U}$ as the main efflux site:
 \begin{subequations}
   \begin{alignat}{2}
-( \mu \nabla \bm u \cdot \bm{n} - p \bm n) \cdot \bm n  &= -R_0 ( \bm u \cdot \bm n ), \quad \bm u \cdot \bm t = 0
+    ( \mu \nabla \bm u \cdot \bm{n} - p \bm n) \cdot \bm n  &= -R_0 ( \bm u \cdot \bm n ), 
+    \quad \bm u \cdot \bm t = 0
     && \text{ on } \Gamma_{\mathrm{AM-U}}, \\
-    \bm u &= 0 && \text{ on } \Gamma_{\mathrm{AM-L}}\cup\Gamma_{\rm{pia}}\cup\Gamma_{\rm{SSAS}}, \\
+    \bm u &= 0 
+    && \text{ on } \Gamma_{\mathrm{AM-L}}\cup\Gamma_{\rm{pia}}\cup\Gamma_{\rm{SSAS}}, \\
     %\bm u &= 0 && \text{ on } \Gamma_{\rm{pia}}, \\
     %\bm u &= 0 && \text{ on } \Gamma_{\rm{SSAS}}, \\
-    \bm u \cdot \bm n & = \frac{1}{ |\Gamma_{\rm LV}|}  u_{\rm in}, \quad \bm u \cdot \bm t = 0 \quad && \text{ on } \Gamma_{\rm{LV}} ,  
+    \bm u \cdot \bm n & = \frac{1}{ |\Gamma_{\rm LV}|}  u_{\rm in}, 
+    \quad \quad \bm u \cdot \bm t = 0 \quad 
+    && \text{ on } \Gamma_{\rm{LV}} ,  
   \end{alignat}
   \label{eq:stokes_bcs}%
 \end{subequations}%
@@ -469,7 +473,7 @@ $$\mathcal{F}_{e} = \mathcal{F}_{\rm pia} \cup \mathcal{F}_{\rm LV}
 where facets
 lying on the pial interface $\Gamma_{\rm pia}$ are denoted by
 $\mathcal{F}_{\rm pia}$, on the lower and upper outer (arachnoid) boundary
-$\Gamma_{\rm AM-L}$ and $\Gamma_{\rm AM-U}$ by $\mathcal{F}_{\rm AM-L}$ and $\mathcal{F}_{\rm AM-U}$ respectively, 
+$\Gamma_{\rm AM-L}$ and $\Gamma_{\rm AM-U}$ by $\mathcal{F}_{\rm AM-L}$ and $\mathcal{F}_{\rm AM-U}$, respectively, 
 %on the boundary toward the spinal cord $\Gamma_{\rm SC}$ by $\mathcal{F}_{\rm SC}$
  on the boundary towards the spinal SAS $\Gamma_{\rm SSAS}$ by
 $\mathcal{F}_{\rm SSAS}$, and on the surface of the lateral ventricles by $\mathcal{F}_{\rm LV}$. Now, define the form 

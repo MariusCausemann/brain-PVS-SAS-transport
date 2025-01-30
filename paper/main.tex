@@ -30,7 +30,7 @@
 \author[2]{Rami Masri}
 \author[1,3,*]{Marie E. Rognes }
 \affil[1]{Department of Numerical Analysis and Scientific Computing, Simula Research Laboratory, Oslo, Norway}
-\affil[2]{Brown University, Providence, Rhode Island, USA}
+\affil[2]{Division of Applied Mathematics, Brown University, Providence, Rhode Island, USA}
 \affil[3]{K. G. Jebsen Centre for Brain Fluid Research, University of Oslo, Norway}
 \affil[*]{meg@simula.no}
 
@@ -64,8 +64,8 @@
   cerebrospinal fluid (CSF) production and intracranial pulsatility on
   molecular enrichment following intrathecal tracer injection. We
   demonstrate that low-frequency vasomotion induces moderate CSF flow
-  in surface PVS networks that substantially enhances tracer
-  enrichment, and that impaired enrichment is a direct
+  in surface PVS networks which substantially enhances tracer
+  enrichment, and that impaired enrichment is a direct natural
   consequence of enlarged PVSs. This openly available technology
   platform thus provides an opportunity for integrating separate
   observations on diffusion in neuropil, vascular dynamics,
@@ -190,7 +190,7 @@ patterns, with the potential to span a wide range of individual and
 cohort variability. Moreover, we predict that CSF production, cardiac-
 and respiratory pulsatility is not sufficient to explain early
 perivascular enrichment, but that fluid flow induced by low-frequency
-vasomotion in surface periarterial spaces (on the order of 13 \textmu
+vasomotion in surface periarterial spaces (on the order of 10 \textmu
 m/s) is sufficient, even in the absence of a structural
 compartmentalization of the PVS. Conversely, enlarged PVSs in the SAS
 will cause a substantial reduction in cardiac- and vasomotion-driven
@@ -237,8 +237,7 @@ and (iii) be convected by a (small) net flow of CSF resulting from
 production in the choroid plexus with CSF efflux across the upper
 convexity\cite{hornkjol2022csf} and from the peristaltic pumping
 effect of pulse wave pulsations in surface periarterial
-spaces~\cite{mestre2018flow, gjerde2023directional}
-(\Cref{fig:results1}D). Mathematically, this model is represented by a
+spaces~\cite{mestre2018flow, gjerde2023directional}. Mathematically, this model is represented by a
 mixed-dimensional system of coupled time-dependent partial
 differential equations\cite{masri2024modelling}, which we solve
 numerically with high accuracy using a mass-conserving finite element
@@ -247,7 +246,7 @@ scheme and the FEniCS finite element software\cite{alnaes2015fenics,
 associated software are all openly available~\cite{ZENODO}.
 
 Simulating a glymphatic MRI protocol~\cite{ringstad2017glymphatic,
-  ringstad2018brain, eide2024functional}, we then predict the
+  ringstad2018brain, eide2024functional}(\Cref{fig:results1}D), we then predict the
 spreading of $0.5$ mmol intrathecally injected Gadobutrol after its
 appearance at the craniocervical junction
 (\Cref{fig:results1}E--G). After one hour, the in-silico
@@ -257,7 +256,7 @@ posterior through the quadrigeminal cistern and the longitudinal
 fissure, and anteriorly through the outer SAS, reaching the top of the
 cerebral cortex after around 12 hours. After 24 hours, the tracer
 covers most of the brain surface (with the exception of some posterior
-regions) and has penetrated several centimeters into the parenchymal
+regions) and has penetrated substantially into the parenchymal
 tissue. This pattern is reflected in the mean tracer concentrations in
 each compartment, where the CSF space reaches its peak of
 $1.4\,$mmol/l after 2 hours, followed by the arterial PVS
@@ -596,7 +595,7 @@ terms of perivascular pathways, we find that even moderate CSF flow on
 the order of 0.1--1.0 \textmu m/s in the surface PVSs results in
 earlier tracer enrichment around major cerebral arteries. This effect
 is more pronounced -- with up to a three-hour difference in time of
-arrival -- with PVS flow rates of approximately 10 \textmu m/s. Our
+arrival -- with mean PVS flow rates of approximately 10 \textmu m/s. Our
 models of CSF flow in perivascular networks, based on first principles
 and asymptotic analysis, predict net flow of such magnitudes and both
 antegrade and retrograde flow within the perivascular network,
@@ -630,9 +629,11 @@ patterns agree with these observations, though with an earlier rather than later
 In terms of perivascular tracer
 enrichment, Eide and Ringstad~\cite{eide2024functional} report of
 first-time tracer appearance in the PVS of the MCA after 37.8 $\pm$
-47.0 (M1), 53.1 $\pm$ 50.5 (M2) and 82.6 $\pm$ 61.5 (M3) min after injection, thus with just a 15.3 min delay between M2 and M1. Comparing with our FTAs in the MCA segments, we note that the baseline model predicts a more-than 3 hour difference in FTA between the M1 and M2. Instead, the high PVS flow scenario predicts a 24 min delay between these segments.
+47.0 (M1), 53.1 $\pm$ 50.5 (M2) and 82.6 $\pm$ 61.5 (M3) min after injection, thus with just a 15.3 min delay between M2 and M1. Comparing with our FTAs in the MCA segments, we note that the baseline model predicts a more-than 3 hour difference in FTA between the M1 and M2. In contrast, the high PVS flow scenario predicts a 24 min delay between these segments.
 Moreover, the high PVS flow scenario predicts FTAs of
-84--108 min (M1) and 108--132 min (M2) after tracer appearance at the craniocervical junction, which overlaps with the previous ranges if one assumes a tracer travel time from the point of injection to the craniocervical junction of $13\,$min (as reported by Eide and Ringstad \cite{eide2024functional}). We interpret these results as indicative of a net CSF flow in human surface PVS beyond what would be induced by CSF production and cardiac peristalsis alone.
+84--108 min (M1) and 108--132 min (M2) after tracer appearance at the craniocervical junction.
+Assuming a tracer travel time from the point of injection to the craniocervical junction of $13\,$min (as reported by Eide and Ringstad \cite{eide2024functional}), our predictions fall at the upper end of the clinical ranges. This can partly be attributed to the limited caudal extend of our PVS network, with the lowest point located approximately $4\,$cm above the craniocervical junction due to imaging constrains.
+We interpret these results as indicative of a net CSF flow in human surface PVS beyond what would be induced by CSF production and cardiac peristalsis alone.
 % M2 - M1 (mean) ~ 15.3 min 
 
 % PVS flow predictions. 
@@ -982,7 +983,7 @@ depending on whether the PVS segment is fully embedded within the CSF
 spaces ($\xi = \xi_{\rm CSF}$) or parenchyma ($\xi = \xi_{\rm EF}$),
 or neither (\Cref{sec:app:more_maths}). Additionally, we increase the
 permeability $\xi$ ($100\times$) at the the leaf nodes of
-$\Lambda_a$, linearly decreasing over the corresponding cell, to account for the transition from explicitly resolved
+$\Lambda_a$, linearly decreasing to the baseline permeability at the next network node ($\approx0.4\,$mm), to account for the transition from explicitly resolved
 PVSs to their unresolved continuation in the CSF spaces and
 parenchyma.
 \begin{table}
