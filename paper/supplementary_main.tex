@@ -36,7 +36,7 @@ union of cylindrical vessels of radius $R_1^i$ surrounding the
 centerlines $\Lambda^i$. Moreover, we consider the surrounding
 perivascular spaces as the union of annular cylinders $\Omega^i$ of
 inner radius $R_1^i$ and outer radius $R_2^i > R_1^i$ and thus of
-width $R_2^i - R_1^i$. We denote the outer lateral surface of the
+width $R_2^i - R_1^i$, and remark that we interpret $R^i_2$ and $R^i_1$ as temporal averages (fixed in time), as the pulsations considered in \Cref{sec:app:peristalsis} are beyond the temporal resolution of our model. We denote the outer lateral surface of the
 periarterial and perivenous spaces by $\Gamma_a$ and $\Gamma_v$,
 respectively. We omit the subscript $a$ or $v$ when referring to any
 such network, vessel segment or perivascular outer surface. We assume
@@ -45,7 +45,7 @@ abuse of notation, simply write $s \in \Lambda$ to represent the point
 ${\bm \lambda}(s)$ on $\Lambda$ corresponding to $s$. Finally, we view
 each perivascular network both as a geometric domain and as a directed
 graph with the centerlines $\{ \Lambda^i \}$ as oriented edges and the
-connections as nodes $\mathcal{V}$. \mk{We always keep $R^i_2$, $R^i_1$ fixed in time in A.1.1 and A.1.4, right?}
+connections as nodes $\mathcal{V}$.
 
 \subsubsection{Solute transport and exchange in intracranial domains (3D) and perivascular networks (1D)}
 \label{sec:app:transport_eqs}
@@ -54,7 +54,7 @@ In this section, we describe the mathematical
 model~\eqref{eq:multi_transport}, the associated definitions,
 interface and boundary conditions in further detail. We refer to the
 main text for explicit parameter values while giving the general,
-abstract form here, and to the reference~\cite{masri2024modelling} for
+abstract form here, and to the reference~\cite{masri2024modelling, laurino2019derivation} for
 the derivation and analysis of this 3D-1D model. Recall that we model
 a concentration field $c = c(x, t)$ for $x \in \Omega$ and $t > 0$
 defined in $\Omega_{\rm PAR}$ and $\Omega_{\rm CSF}$ separately. In
@@ -99,7 +99,7 @@ such that
   \int_{\Lambda} P \xi (\overline{c} - \hat c ) \overline{v}, 
 \end{equation*}
 under the assumption that $\xi$ is constant on each $\partial
-\Theta_2^i$, see also~\cite{masri2024discontinuous}.
+\Theta_2^i$.
 %% , since:
 %% \begin{multline}
 %%   \int_{\Omega} \xi (\overline{c} - \hat c ) \delta_\Gamma (v) =
@@ -176,8 +176,8 @@ boundary conditions at the end nodes. To this end, define the set of
 internal nodes $\mathcal{B} \subset \mathcal{V}$ as the set of nodes
 that are connected to two or more edges and the set of end nodes as
 $\mathcal{N} \subset \mathcal{V}$, write $\hat{c}^i =
-\hat{c}|_{\Lambda^i}$, and let $\mathcal{E}(y)$ denote the set of
-(one, two or three) edges in $\{\Lambda^i\}$ sharing the node $y$. To
+\hat{c}|_{\Lambda^i}$, and for $y\in\mathcal{B}$ let $\mathcal{E}(y)$ denote the set of
+(two or three) edges in $\{\Lambda^i\}$ sharing the node $y$. To
 impose continuity of the concentrations, we set that the
 concentrations when viewed from each edge must match at nodes:
 \begin{equation}
@@ -192,20 +192,19 @@ for each $y \in \mathcal{B}$:
 \begin{equation}
   \sum_{\Lambda^i \in \mathcal{E}(y)}
   \left (\hat{D}^i A^i \partial_s \hat{c}^i (y) - A^i \hat u^i(y) \hat{c}^i(y) \right ) n^i(y)
-  = 0
+  = 0.
   \label{eq:flux_conservation}
 \end{equation}
-where the function $n^i : \mathcal{V} \rightarrow \{-1, \mk{0}, 1\}$
-defines an orientation of each vertex relative to the
-edges. Specifically, for an edge $\Lambda^i$ from $y_{\rm in}$ to $y_{\rm out}$
+Here the (normal ``vector") function $n^i$ takes the values in $\left\{-1, 1\right\}$ and 
+defines an orientation of vertices of edge $\Lambda^i$. Specifically, for an edge $\Lambda^i$ oriented from $y_{\rm in}$ to $y_{\rm out}$ we set 
 \begin{equation}
-  n^i(y_{\rm in}) = 1, \quad
-  n^i(y_{\rm{out}}) = -1, \quad
-  \mk{n^i(y) = 0 \quad \foralls y \in 
-  \mathcal{V} \backslash \{ y_{\rm in}, y_{\rm out} \} }.  
-  \label{eq:def:sign}
+  n^i(y_{\rm in}) = 1,\quad
+  n^i(y_{\rm{out}}) = -1. %\quad
+  %\mk{n^i(y) = 0 \quad \foralls y \in 
+  %\mathcal{V} \backslash \{ y_{\rm in}, y_{\rm out} \} }.  
+\label{eq:def:sign}
 \end{equation}
-\mk{Why do we need the normal on non-IO vertices?}
+%\mk{Why do we need the normal on non-IO vertices?}
 
 Finally, we impose a homogeneous Neumann condition at all network end
 nodes to augment~\eqref{eq:1d_pde}:
@@ -245,16 +244,20 @@ In addition, we impose the following boundary conditions to model flow
 induced by CSF production in the choroid plexus with $\Gamma_{\rm AM-U}$ as the main efflux site:
 \begin{subequations}
   \begin{alignat}{2}
-    \mu \nabla \bm u \cdot \bm{n} - p \bm n &= -R_0 ( \bm u \cdot \bm n ) \bm n
+    ( \mu \nabla \bm u \cdot \bm{n} - p \bm n) \cdot \bm n  &= -R_0 ( \bm u \cdot \bm n ), 
+    \quad \bm u \cdot \bm t = 0
     && \text{ on } \Gamma_{\mathrm{AM-U}}, \\
-    \bm u &= 0 && \text{ on } \Gamma_{\mathrm{AM-L}}\cup\Gamma_{\rm{pia}}\cup\Gamma_{\rm{SSAS}}, \\
+    \bm u &= 0 
+    && \text{ on } \Gamma_{\mathrm{AM-L}}\cup\Gamma_{\rm{pia}}\cup\Gamma_{\rm{SSAS}}, \\
     %\bm u &= 0 && \text{ on } \Gamma_{\rm{pia}}, \\
     %\bm u &= 0 && \text{ on } \Gamma_{\rm{SSAS}}, \\
-    \bm u \cdot \bm n & = \frac{1}{ |\Gamma_{\rm LV}|}  u_{\rm in}, \quad \bm u \cdot \bm \tau = 0 \quad && \text{ on } \Gamma_{\rm{LV}} ,  
+    \bm u \cdot \bm n & = \frac{1}{ |\Gamma_{\rm LV}|}  u_{\rm in}, 
+    \quad \quad \bm u \cdot \bm t = 0 \quad 
+    && \text{ on } \Gamma_{\rm{LV}} ,  
   \end{alignat}
   \label{eq:stokes_bcs}%
 \end{subequations}%
-where $\bm n$ denotes the unit outward normal to the boundary, $\mu$ is the (dynamic) CSF viscosity, $R_0 > 0$ is a resistance parameter for CSF efflux, and $u_{\rm in}$ is a given fluid influx, here across the lateral ventricle wall $\Gamma_{\rm LV}$. We consider alternative variations of these boundary conditions in connection with estimating dispersion effects induced by CSF pulsatility, see~\Cref{sec:app:dispersion}.
+where $\bm n$ and $\bm t$ denote the unit outward normal and tangent vectors to the boundary respectively,  $\mu$ is the (dynamic) CSF viscosity, $R_0 > 0$ is a resistance parameter for CSF efflux, and $u_{\rm in}$ is a given fluid influx, here across the lateral ventricle wall $\Gamma_{\rm LV}$. We consider alternative variations of these boundary conditions in connection with estimating dispersion effects induced by CSF pulsatility, see~\Cref{sec:app:dispersion}.
 
 %% We consider non-zero convection in the CSF space $u_{\rm CSF} \not = 0$ in \eqref{eq:multi_transport_3d} resulting from steady state CSF production.  Recall that $\Omega_{\mathrm{CSF}}$ represents the CSF space and that $\Gamma_{\mathrm{skull^{u/l}}}$ and $\Gamma_{\mathrm{pia}}$, $\Gamma_{\mathrm{LV}}$ represent the boundaries facing the upper and lower parts of the dura, the pia and the lateral ventricles, respectively.  Assuming CSF production in the choroid plexus located at the lateral ventricle wall, we solve the  steady state Stokes equations for the velocity and the pressure $(\bm u_{\mathrm{CSF}}, p_{\mathrm{CSF}})$ in the CSF domain: 
 
@@ -353,8 +356,8 @@ conditions~\eqref{eq:3d_interface}, the bifurcation
 conditions~\eqref{eq:conc_continuity}
 and~\eqref{eq:flux_conservation}, and the boundary
 conditions~\eqref{eq:3d_bcs} and~\eqref{eq:1d_bcs}. We discretize
-these equations using an implicit finite difference scheme in time and
-a discontinuous Galerkin (DG) finite element method with upwinding in space to accurately capture sharp boundary layers. We remark that the transport in the CSF spaces is highly convection dominated, with an average Péclet number of 402 and maximum of 9542 (assuming a characteristic length of $10\,$cm and taking the increased diffusivity due to dispersion into account).
+these equations using an implicit finite difference scheme in time, 
+a discontinuous Galerkin (DG) finite element method with upwinding in space for the 3D domain to accurately capture sharp boundary layers, and a continuous Galerkin method for the 1D networks. We remark that the transport in the CSF spaces is highly convection dominated, with an average Péclet number of 402 and maximum of 9542 (assuming a characteristic length of $10\,$cm, and accounting for the increased diffusivity due to dispersion).
 
 We first consider the discretization of~\eqref{eq:3d_pde} and
 introduce the discrete space
@@ -377,9 +380,10 @@ Define for $c, v \in V_h^k$:
   a_h (c, v)
   =
   \sum_{E \in \mathcal{T}} \int_{E} D\phi \nabla c \cdot \nabla v
-  + \sum_{F \in \mathcal{F}_i} \eta \frac{\gamma_{D,F}}{h_F} \int_{F} [c][v] 
   - \sum_{F \in \mathcal{F}_i} \int_{F} \left( \{D \phi \nabla c \}_w \cdot \bm n_F [v]
-  + \{D \phi \nabla v \}_w \cdot \bm n_F [c] \right).
+  + \{D \phi \nabla v \}_w \cdot \bm n_F [c] \right) 
+   + \sum_{F \in \mathcal{F}_i} \eta \frac{\gamma_{D,F}}{h_F} \int_{F} [c][v] 
+  .
   \label{eq:dg_sip}
 \end{equation}
 In~\eqref{eq:dg_sip}, for each facet $F \in \mathcal{F}^i$ shared
@@ -396,7 +400,7 @@ are defined as:
 The parameter $\gamma_{D,F}$ is the harmonic mean of the
 porosity-weighted diffusion coefficient given by
 \begin{equation}
-  \gamma_{D,F} = \frac{\kappa_1\kappa_2}{\kappa_1 + \kappa_2},
+  \gamma_{D,F} = \frac{2\kappa_1\kappa_2}{\kappa_1 + \kappa_2},
 \end{equation}
 and $\eta$ is a user-specified penalty parameter (we set $\eta=1000$). To discretize the convection term in~\eqref{eq:3d_pde}, we use
 upwinding, see \cite[Section 2.3.1]{di2011mathematical} and the
@@ -440,6 +444,7 @@ where $\mathrm{P}^1(\Lambda^i)$ is the space of linear polynomials on each $\Lam
  h_{\Lambda^i} \int_{\Lambda^i} A (\hat u \partial_s \hat c_h  ) (\hat u \partial_s \hat v),  
  \end{align}
  where $h_{\Lambda^i}$ is the mesh--size of $\Lambda^i$.
+Note that the condition \eqref{eq:flux_conservation} is enforced weakly in the above formulation.
 
  \textit{Summary.} The discretization for \eqref{eq:3d_pde} and \eqref{eq:1d_pde} complemented with boundary conditions (\eqref{eq:3d_bcs} and \eqref{eq:1d_bcs}), interface and bifurcation  conditions (\eqref{eq:3d_interface}, \eqref{eq:1d_flow:bifurcations}, and \eqref{eq:conc_continuity}), and intial conditions $c_h^0 =0 $ and $\hat c_h^0 = 0 $ is the following: 
 
@@ -456,34 +461,33 @@ We consider an H(div)-based finite element approximation of the incompressible S
   Q_h  &= \{q \in L^2(\Omega_{\rm CSF}): \; q \vert_E \in \mathrm{P}^1(E),
   \; E \in \mathcal{T}_{\rm CSF} \}. 
 \end{align*}
-Here, $H(\mathrm{div}, \Omega_{\rm{CSF}})$ is the space of $L^2(\Omega_{\rm{CSF}})$ vector fields with $L^2(\Omega_{\rm{CSF}})$ divergence, $\mathrm{BDM}^2$ is the Brezzi-Douglas--Marini element~\cite{brezzi1987mixed} of degree 2, and $\bm n$ is the unit outward normal vector to each facet. Given any vector $\bm v$, the normal and tangential components on each facet are denoted and given by 
-\begin{equation}
-\bm v_n = (\bm v \cdot \bm n) \bm n, \quad \bm v_t = \bm v - \bm v_n. 
-\end{equation}
+Here, $H(\mathrm{div}, \Omega_{\rm{CSF}})$ is the space of $L^2(\Omega_{\rm{CSF}})$ vector fields with $L^2(\Omega_{\rm{CSF}})$ divergence, $\mathrm{BDM}^2$ is the Brezzi-Douglas--Marini element~\cite{brezzi1987mixed} of degree 2, $g$ is a given constant, and $\bm n$ is the unit outward normal vector to each facet. Given any vector $\bm v$, the normal and tangential components on each facet are denoted and given by 
+$$ \bm v_n = (\bm v \cdot \bm n) \bm n, \quad \bm v_t = \bm v - \bm v_n. 
+$$ 
 Since $\bm V_{h,g} \subset H(\mathrm{div}, \Omega_{\rm CSF})$, then $[\bm
-  v_n] = 0 $ on $\mathcal{F}_{i, \rm CSF}$. Continuity in the
+  v_n] = 0 $ on $\mathcal{F}_{i, \rm CSF}$, the interior facets to $\Omega_{\mathrm{CSF}}$. Continuity in the
 tangential component is enforced weakly via interior penalization. For
-convenience, we collect all facets exterior to the CSF space but not
-on the (Neumann) boundary $\Gamma_{\rm AM-U}$ in the set
-$\mathcal{F}_{e} = \mathcal{F}_{\rm pia} \cup \mathcal{F}_{\rm LV}
-\cup \mathcal{F}_{\rm AM-L} \cup \mathcal{F}_{\rm SSAS}$, where facets
+convenience, we collect all facets exterior to the CSF space  $\Gamma_{\rm AM-U}$ in the set
+$$\mathcal{F}_{e} = \mathcal{F}_{\rm pia} \cup \mathcal{F}_{\rm LV}
+\cup \mathcal{F}_{\rm AM-L}\cup \mathcal{F}_{\rm AM-U}  \cup \mathcal{F}_{\rm SSAS}, $$ 
+where facets
 lying on the pial interface $\Gamma_{\rm pia}$ are denoted by
 $\mathcal{F}_{\rm pia}$, on the lower and upper outer (arachnoid) boundary
-$\Gamma_{\rm AM-L}$ and $\Gamma_{\rm AM-U}$ by $\mathcal{F}_{\rm AM-L}$ and $\mathcal{F}_{\rm AM-U}$, on the inner ventricular
+$\Gamma_{\rm AM-L}$ and $\Gamma_{\rm AM-U}$ by $\mathcal{F}_{\rm AM-L}$ and $\mathcal{F}_{\rm AM-U}$, respectively, 
 %on the boundary toward the spinal cord $\Gamma_{\rm SC}$ by $\mathcal{F}_{\rm SC}$
-and on the boundary towards the spinal SAS $\Gamma_{\rm SSAS}$ by
-$\mathcal{F}_{\rm SSAS}$. Now, define the form 
+ on the boundary towards the spinal SAS $\Gamma_{\rm SSAS}$ by
+$\mathcal{F}_{\rm SSAS}$, and on the surface of the lateral ventricles by $\mathcal{F}_{\rm LV}$. Now, define the form 
 \begin{multline}
   \mathcal{A}_h(\bm u, \bm v)
   = \sum_{E \in \mathcal{T}_{\rm CSF}} \int_{E} \mu \nabla \bm u : \nabla \bm v
   - \sum_{F \in \mathcal{F}_{i, \rm CSF} \cup \mathcal{F}_{e}} \left (
-  \int_{F} \mu \{\nabla \bm u\} \cdot \bm n_F \cdot [\bm v_t] 
+  \int_{F} \mu \{\nabla \bm u\}  \bm n_F \cdot [\bm v_t] 
   - %\sum_{F \in \mathcal{F}_{h,c} \cup \mathcal{F}_{\Gamma}}
-  \int_{F} \mu \{\nabla \bm v\}\cdot \bm n_F \cdot [\bm u_t]
+  \int_{F} \mu \{\nabla \bm v\}  \bm n_F \cdot [\bm u_t]
   + %\sum_{F \in \mathcal{F}_{h,c} \cup \mathcal{F}_{\Gamma}}
 \int_{F}   \frac{\sigma \mu}{h_F} [\bm u_t ] \cdot [\bm v_t] \right ),   
 \end{multline}
-where on exterior facets the average and jump operators take the one-sided values. We set the penalty parameter for the tangential continuity to be $\sigma = 20$. Our finite element discretization of the incompressible Stokes equations is then to find $(\bm u_h, p_h) \in \bm V_{h,g} \times Q_h$ with $g  = \frac{1}{|\Gamma_{\mathrm{LV}}|} u_{\mathrm{in}}$  such that 
+where on exterior facets the average and jump operators take the one-sided values. We set the penalty parameter for the tangential continuity to be $\sigma = 20$. The finite element discretization of the incompressible Stokes equations is then to find $(\bm u_h, p_h) \in \bm V_{h,g} \times Q_h$ with $g  = \frac{1}{|\Gamma_{\mathrm{LV}}|} u_{\mathrm{in}}$  such that 
 \begin{subequations}
 \begin{align}
   \mathcal{A}_h(\bm u_h, \bm v_h)
@@ -561,9 +565,9 @@ R_c + R_r) D^{\rm Gad}$.
   associated with the cardiac and respiratory flow patterns,
   respectively, by the definition
   \begin{equation}
-    \alpha^2_i = \frac{h^2 \omega_i \rho}{\mu} \qquad i \in \{c, r\},
+    \alpha^2_i = \frac{h_{\rm SAS}^2 \omega_i \rho}{\mu} \qquad i \in \{c, r\},
   \end{equation}
-  with CSF density $\rho = 10^3$ kg/m$^3$, a mean CSF space width $h =
+  with CSF density $\rho = 10^3$ kg/m$^3$, a mean CSF space width $h_{\rm SAS} =
   1.5$mm, and CSF viscosity $\mu$ given in~\Cref{tab:parameters}.  For
   the cardiac cycle, we consider an angular frequency $\omega_c = 2
   \pi$, while for the respiratory cycle, we set $\omega_r = 0.5
@@ -586,7 +590,7 @@ R_c + R_r) D^{\rm Gad}$.
   al.~\cite{sharp2019dispersion} to estimate local enhancement factors
   $S_c, S_r$ from the non-dimensionalized pressure gradients:
   \begin{equation}
-    S_i(x) = \frac{1}{\alpha_i^3} \frac{1}{\omega_i \mu/h} | \nabla p_i^1(x) |
+    S_i(x) = \frac{1}{\alpha_i^3} \frac{1}{\omega_i \mu/h_{\rm SAS}} | \nabla p_i^1(x) |
     \qquad i \in \{c, r\}.
   \end{equation}
 \item
@@ -653,7 +657,7 @@ should be viewed as heuristic rather than absolute.
 \subsection{Estimating net perivascular flow induced by peristaltic waves}
 \label{sec:app:peristalsis}
 
-We use the theoretical framework previously introduced by Gjerde et al.~\cite{gjerde2023directional} to compute an analytic estimate of the time-averaged (or \emph{net}) flow rates $\langle Q'_i \rangle$ (mm$^3$/s) induced by peristaltic pumping in a perivascular network $\Lambda = \cup_i \Lambda_i$. The motion of the (inner) vascular wall is described by a periodic traveling (peristaltic) wave of relative amplitude $\varepsilon$, wave length $\lambda$ (mm) and frequency $f$, acting normal to the wall. By definition, the wave number is $k = 2 \pi/\lambda$ and the angular frequency is $\omega = 2 \pi f$. Each PVS segment $\Lambda_i$ has length $L_i$ with wave-relative length $\ell_i = k L$, \mk{Should the $L$ here be $L_i$?} baseline inner radius $R_1^i$, fixed outer radius $R_2^i$, and outer-to-inner ratio $\beta_i = R_2^i/R_1^i$. These geometric parameters and the assumption of annular cylindrical PVS segments yield hydraulic resistances $\mathcal{R}_{o, i}$ and additional characteristic parameters, see \cite{gjerde2023directional} for the complete definitions and schematics. Since the analytical estimate is derived under the assumption that $k L \approx \mathcal{O} (1)$~\cite{gjerde2023directional} and has been verified against numerical simulations for $k L$ of the order $10^{-1}-10^2$~\cite[Table I]{gjerde2023directional}, we consider it applicable for the wave lengths and vascular network data considered here in which $k L$ range from 0.15 to 30 for the strong vasomotion and 0.0015 to 0.30 for the cardiac waves (\Cref{tab:pvs:parameters}).
+We use the theoretical framework previously introduced by Gjerde et al.~\cite{gjerde2023directional} to compute an analytic estimate of the time-averaged (or \emph{net}) flow rates $\langle Q'_i \rangle$ (mm$^3$/s) induced by peristaltic pumping in a perivascular network $\Lambda = \cup_i \Lambda_i$. The motion of the (inner) vascular wall is described by a periodic traveling (peristaltic) wave of relative amplitude $\varepsilon$, wave length $\lambda$ (mm) and frequency $f$, acting normal to the wall. By definition, the wave number is $k = 2 \pi/\lambda$ and the angular frequency is $\omega = 2 \pi f$. Each PVS segment $\Lambda_i$ has length $L_i$ with wave-relative length $\ell_i = k L_i$, baseline inner radius $R_1^i$, fixed outer radius $R_2^i$, and outer-to-inner ratio $\beta_i = R_2^i/R_1^i$. These geometric parameters and the assumption of annular cylindrical PVS segments yield hydraulic resistances $\mathcal{R}_{o, i}$ and additional characteristic parameters, see \cite{gjerde2023directional} for the complete definitions and schematics. Since the analytical estimate is derived under the assumption that $k L_i \approx \mathcal{O} (1)$~\cite{gjerde2023directional} and has been verified against numerical simulations for $k L_i$ of the order $10^{-1}-10^2$~\cite[Table I]{gjerde2023directional}, we consider it applicable for the wave lengths and vascular network data considered here in which $k L_i$ range from 0.15 to 30 for the strong vasomotion and 0.0015 to 0.30 for the cardiac waves (\Cref{tab:pvs:parameters}).
 \begin{table}
 \centering
   \small
@@ -724,7 +728,7 @@ by the cross-section area $A_i = \pi ({R_2^i}^2 - {R_1^i}^2) = \pi
 \subsection{Numerical verification}
 \label{sec:app:verification}
 
-We assess the numerical accuracy and convergence of our simulation results by performing a series of experiments with different spatial and temporal resolutions. Specifically, we generate a sequence of three meshes (\Cref{fig:mesh_refinement}) with an increasing number of computational mesh vertices and cells, solve all relevant simulation steps (CSF flow and intracranial transport computations) for the baseline model on each mesh, and compare the results across meshes with respect to a set of key quantities of interest. The mesh refinement employed here is adaptive in the sense that the coarser mesh is manually refined near expected sharp concentration gradients. This allows us to better capture dynamics and reduce undershoots, see \Cref{fig:mesh_convergence_concentrations}.  
+We assess the numerical accuracy and convergence of our simulation results by performing a series of experiments with different spatial and temporal resolutions. Specifically, we generate a sequence of three meshes (\Cref{fig:mesh_refinement}) with an increasing number of computational mesh vertices and cells, solve all relevant simulation steps (CSF flow and intracranial transport computations) for the baseline model on each mesh, and compare the results across meshes with respect to a set of key quantities of interest. The mesh refinement employed here is localized near expected sharp concentration gradients. This allows us to better capture dynamics and reduce undershoots, see \Cref{fig:mesh_convergence_concentrations}.  
 Similarly, we investigate the effect of the time step size by solving the intracranial transport model on the standard resolution mesh with different time steps: 1, 2, and 4 minutes. 
 
 Considering the mean tracer concentrations in the CSF, parenchyma and
@@ -922,29 +926,12 @@ is $1-6 \times$~\cite{tithof2019hydraulic} larger than more elongated
 cross-sections and thus our estimates of the pressure-induced PVS
 velocities are conservative.
 
-\paragraph{Predictions on overall tracer spreading patterns}
+%\paragraph{Predictions on overall tracer spreading patterns}
 
-
-\begin{table}
-\centering
-\small
-\begin{tabular}{ccccc}
-\toprule
-quantity of interest  & Watts et al\cite{watts2019measuring}  & Ringstad et al\cite{ringstad2018brain} & Eide and Ringstand \cite{eide2024functional} & ours (vasomotion model)\\
-\midrule
-Spinal transit time ($t_{st}$) &  1 - 3 hours & 20 min &  $13\pm6.3\,$ min & N/A \\
-Time of peak amount (CSF) & 10 - 15 hours & 6–9 hours & N/A & 2 hours +$t_{st}$ \\
-Time of peak amount (parenchyma) & 10 - 26 hours & 24 hours & N/A & 12 - 24 hours \\
-Peak amount (CSF) &  N/A & N/A & N/A & 0.5 mmol \\
-Peak amount (parenchyma) & N/A & N/A& N/A & 0.09 mmol \\
-Injected tracer quantity &  1.0 mmol & 0.5 mmol & 0.5 mmol & 0.5 mmol (cranially) \\
-Peak concentration (CSF) & 0.5 mmol/l &  N/A&  N/A & 1.4 mmol/l\\
-Peak concentration (parenchyma) & 0.1 mmol/l & N/A & N/A & 0.4 mmol/l \\
-FTA in MCA1 & N/A & N/A &  37.8 ± 47.0 min &  1:48 / 1:24 hours +$t_{st}$ \\
-FTA in MCA2 & N/A & N/A & 53.1 ± 50.5 min & 2:12 / 1:48 hours +$t_{st}$ \\
-FTA in ACA2 & N/A & N/A & 48.3 ± 46.1 min & 3:00 hours +$t_{st}$ \\
-\bottomrule
-\end{tabular}
-\caption{Comparison of literature values and model predictions on tracer spreading patterns and timing}
-\label{tab:spreading comparison}
-\end{table}
+%We compare our in-silico predictions with clinical data from human subjects, in particular the studies by Ringstad et al~\cite{ringstad2018brain}, Watts et al~\cite{watts2019measuring} and Eide and Ringstad~\cite{eide2024functional}. Finding an overall good agreement, we provide a detailed overview on key quantities of interest in %FTA in MCA2 & N/A & N/A & 53.1 ± 50.5 min & 2:12 / 1:48 hours +$t_{st}$ \\
+%FTA in ACA2 & N/A & N/A & 48.3 ± 46.1 min & 3:00 hours +$t_{st}$ \\
+%\bottomrule
+%\end{tabular}
+%\caption{Comparison of clinical studies and model predictions on tracer spreading patterns %and arrival times.}
+%\label{tab:spreading_comparison}
+%\end{table}
