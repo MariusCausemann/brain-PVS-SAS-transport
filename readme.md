@@ -27,6 +27,22 @@ and start with:
 
 `snakemake --profile ex3`
 
+#### Installation and basic set-up (for dummies, e.g. for prototyping)
+
+Make sure that you have conda installed e.g. via:
+
+1. Download and install conda from miniforge (https://conda-forge.org/download/)
+2. In a terminal, run `$ ~/miniforge3/bin/conda init`
+3. and run `$ conda config --set auto_activate_base false`
+
+First time around, create the conda environment from the .yml file:
+
+`conda env create -f environment.yml`
+
+Then activate with
+
+`conda activate pvs_transport_env`
+
 #### Brain and vasculature imaging data 
 
 Image data were downloaded from Hodneland et al, PLOS Comp. Bio, 2023 (https://doi.org/10.1371/journal.pcbi.1007073) and placed under data/. These data include: 
