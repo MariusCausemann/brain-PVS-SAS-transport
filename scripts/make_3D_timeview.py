@@ -9,11 +9,22 @@ import k3d.colormaps.paraview_color_maps as pcm
 from extract_vessels import get_tubes
 import seaborn as sns
 import os
+import matplotlib.pyplot as plt 
+import matplotlib as mpl
+
+def create_colorbar(cmap, clim, figsize=(0.2, 3), **kwargs):
+    fig, ax = plt.subplots(figsize=figsize, layout='constrained')
+    norm = mpl.colors.Normalize(vmin=clim[0], vmax=clim[1])
+    fig.colorbar(mpl.cm.ScalarMappable(norm=norm, cmap=cmap),
+                cax=ax, **kwargs)
+    return fig, ax
+
 
 def make_3D_time_view(modelname:str):
     config = read_config(f"configfiles/{modelname}.yml")
     os.makedirs(f"plots/{modelname}/timeview3D/", exist_ok=True)
     colors = [ "#ff595e", "#ffca3a", "#8ac926", "#1982c4", "#6a4c93"]
+    colors = ["#002642","#0fa3b1","#e59500", "#840032",]
     getcmap = lambda color: sns.blend_palette(["white", color],as_cmap=True)
     clim = (0,2)
     nres = 350
@@ -49,6 +60,9 @@ def make_3D_time_view(modelname:str):
         # generate frames
         for t, color in zip(times, colors):
             cmap = getcmap(color)
+            colfig, colax = create_colorbar(cmap, clim, orientation="vertical", 
+                ticks=[], figsize=(0.7,3))
+            colfig.savefig(f"plots/{modelname}/timeview3D/colorbar_{t}.png")
             pl.add_mesh(arteries, scalars=f"c_{t}", cmap=cmap,
                         clim=clim, show_scalar_bar=False,)
             if type=="volume":
