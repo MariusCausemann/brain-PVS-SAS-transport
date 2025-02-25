@@ -181,8 +181,10 @@ personalized intrathecal drug delivery and brain clearance.
 \subsection*{In-silico predictions of intracranial molecular enrichment and clearance after intrathecal injection}
 \begin{figure}
     \centering
-    \includegraphics[width=0.95\textwidth]{figures/figure1.png}
-     \caption{A) Illustration of the spatial domains of the model: CSF-filled space (ventricles and SAS) $\Omega_{\rm CSF}$, parenchyma $\Omega_{\rm PAR}$ and the PVS surrounding arteries $\Lambda_{\rm artery}$ and the veins $\Lambda_{\rm vein}$ and their interfaces and boundaries (see Methods); B) 3D rendering of the actual geometry used in this study parenchyma, CSF (clipped, blue), arterial network (red), venous network (blue)); C) arterial network (red) and venous network (blue); D) illustration of the modelled clinical tracer injection procedure; E) time of simulated first tracer arrival after intrathecal injection (concentration exceeds $0.1\,$mol/l); F) time of first tracer arrival in the arterial PVS (top) and venous PVS (bottom); G) sagittal, coronal and axial view of computed tracer concentrations over T1-image 1, 6, 12 and 24\,h after injection (low concentrations transparent, pial surface in pink, arachnoid membrane in cyan, and arteries in dark red); H) total amount of tracer in each cranial compartment over the first 24\,h; I) average tracer concentration in each compartment over the first 24\,h. }
+    \includegraphics[width=0.93\textwidth]{figures/figure1.png}
+     \caption{
+     \textbf{Our in-silico model predicts tracer transport in PVS, SAS and parenchyma following intrathecal injection.}\\
+     A) Illustration of the spatial domains of the model: CSF-filled space (ventricles and SAS) $\Omega_{\rm CSF}$, parenchyma $\Omega_{\rm PAR}$ and the PVS surrounding arteries $\Lambda_{\rm artery}$ and the veins $\Lambda_{\rm vein}$ and their interfaces and boundaries (see Methods); B) 3D rendering of the actual geometry used in this study parenchyma, CSF (clipped, blue), arterial network (red), venous network (blue)); C) arterial network (red) and venous network (blue); D) illustration of the modelled clinical tracer injection procedure; E) time of simulated first tracer arrival after intrathecal injection (concentration exceeds $0.1\,$mol/l); F) time of first tracer arrival in the arterial PVS (top) and venous PVS (bottom); G) sagittal, coronal and axial view of computed tracer concentrations over T1-image 1, 6, 12 and 24\,h after injection (low concentrations transparent, pial surface in pink, arachnoid membrane in cyan, and arteries in dark red); H) total amount of tracer in each cranial compartment over the first 24\,h; I) average tracer concentration in each compartment over the first 24\,h. }
      \label{fig:results1}
 \end{figure}
 Using previously published multi-modal magnetic resonance imaging
@@ -359,7 +361,7 @@ transport~\cite{bilston2003arterial, asgari2016glymphatic,
   troyetsky2021dispersion, martinac2021phase, gjerde2023directional,
   nozaleda2024arterial}. Here, we ask how these proposed mechanisms
 would translate from idealized geometries to human vascular networks
-and moreover evaluate their integrated effect in the context of
+and moreover, evaluate their integrated effect in the context of
 intracranial solute transport.
 
 Our periarterial network extends from the internal carotid arteries
@@ -383,16 +385,16 @@ waves and the characteristics of the perivascular
 network~\cite{gjerde2023directional}. Applying a semi-analytic model
 of the net flow induced by peristalsis in perivascular
 networks~\cite{gjerde2023directional} (see Methods), we estimate that
-the cardiac pulse wave alone, traveling at a frequency of 1 Hz with a
+the cardiac pulse wave alone, travelling at a frequency of 1 Hz with a
 wavelength of 2.0 m and a 1\% wall displacement~\cite{jung2021novel},
 will induce mainly antegrade PVS flow with an average net velocity of
 0.92 \textmu m/s while reaching up to 7.31 \textmu m/s near larger,
-ventral vessels such as the MCA (\Cref{fig:pvs_a}D). The same theory
-predicts that strong ultraslow vasomotions, if traveling antegrade at
+ventral vessels such as the MCA (\Cref{fig:pvs_a}D,E). The same theory
+predicts that strong ultraslow vasomotions, if travelling antegrade at
 0.1Hz with a wavelength of 0.02 m and a 10\%
 displacement~\cite{broggini2024long}, will induce both retrograde and
 antegrade net PVS flow with an average velocity of 13.05 \textmu m/s
-and maximum velocity 54.44 \textmu m/s (\Cref{fig:pvs_a}E).
+and maximum velocity 54.44 \textmu m/s (\Cref{fig:pvs_a}D,F).
 
 We study the effect of such rapid PVS flow on intracranial molecular
 enrichment by comparing the more conservative baseline model and a
@@ -434,11 +436,13 @@ this question.
     \centering
     \includegraphics[width=0.95\textwidth]{figures/figure3a.png}
     \caption{\textbf{A static pressure gradient and peristaltic pumping are potential drivers of perivascular flow.}
-    A) Surface arterial network colored by arterial radius with vessel locations labeled;
-    B) Net PVS flow induced by CSF production (cf.~\Cref{fig:csf}D) -- histograms show the relative frequencies of local periarterial velocities. Positive values indicate antegrade PVS flow, while negative values indicate retrograde PVS flow;
+    A) Surface arterial network coloured by arterial radius with vessel locations labelled;
+    B) Net PVS flow induced by CSF production (cf.~\Cref{fig:csf}
+    -- histograms show the relative frequencies of local periarterial velocities. Positive values indicate antegrade PVS flow, while negative values indicate retrograde PVS flow;
     C) Illustration of the concept of peristaltic pumping;
-    D) Estimated net PVS flow induced by pulse wave peristaltic pumping;
-    E) Estimated net PVS flow induced by vasomotion/slow wave peristaltic pumping.}
+    D) histograms of estimated net PVS flow induced by pulse wave or vasomotion peristaltic pumping;
+    E) Estimated net PVS flow induced by pulse wave peristaltic pumping.
+    F) Estimated net PVS flow induced by vasomotion/slow wave peristaltic pumping.}
     \label{fig:pvs_a}
 \end{figure}
     
