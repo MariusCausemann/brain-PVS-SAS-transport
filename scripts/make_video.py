@@ -11,7 +11,7 @@ import seaborn as sns
 
 def make_movie(modelname:str):
     config = read_config(f"configfiles/{modelname}.yml")
-    dt , T= config["dt"], config["T"]
+    dt, T = config["dt"], config["T"]
     #cmap = sns.blend_palette(["lightsteelblue", "orange", "darkviolet"],as_cmap=True)
     cmap = from_k3d(pcm.Yellow___Gray___Blue).reversed()
     clim = (0,2)
