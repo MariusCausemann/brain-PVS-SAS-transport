@@ -12,6 +12,7 @@ dependencies:
   - scikit-image
   - meshio
   - seaborn
+  - colorcet
   - nibabel
   - pip
   - tqdm
