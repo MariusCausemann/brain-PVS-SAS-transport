@@ -9,6 +9,11 @@ final:
 	pdflatex $(FILE).tex
 	pdflatex $(FILE).tex
 
+	pdflatex supplementary.tex
+	bibtex supplementary
+	pdflatex supplementary.tex
+	pdflatex supplementary.tex
+
 diff:
 	latexdiff old.tex paper.tex > diff.tex
 	pdflatex diff.tex

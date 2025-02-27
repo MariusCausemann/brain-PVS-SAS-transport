@@ -352,12 +352,12 @@ longitudinal fissure, with also enrichment of the cerebellum
 \label{sec:pvs_flow_results}
 
 The PVSs are recognized across species as critical pathways for solute
-transport in and around the brain\cite{}, and thus as potential
-targets for enhancing brain drug delivery and metabolic waste
-clearance\cite{}. However, whether CSF flows more rapidly in PVSs and
-what the forces and mechanisms required to drive such flow are, remain
-as key points of debate~\cite{bohr2022glymphatic,
-  van2024caa}. Motivated by experimental observations in animal
+transport in and around the brain, and thus as potential targets for
+enhancing brain drug delivery and metabolic waste clearance. However,
+whether CSF flows more rapidly in PVSs and what the forces and
+mechanisms required to drive such flow are, remain as key points of
+debate~\cite{bohr2022glymphatic, van2024caa}. Motivated by
+experimental observations in animal
 models~\cite{iliff2012paravascular, iliff2013cerebral, mestre2018flow,
   bedussi2018paravascular}, there is now a remarkable body of
 literature on modelling perivascular fluid flow and
@@ -391,12 +391,12 @@ waves and the characteristics of the perivascular
 network~\cite{gjerde2023directional}. Applying a semi-analytic model
 of the net flow induced by peristalsis in perivascular
 networks~\cite{gjerde2023directional} (see Methods), we estimate that
-the cardiac pulse wave alone, travelling at a frequency of 1 Hz with a
+the cardiac pulse wave alone, traveling at a frequency of 1 Hz with a
 wavelength of 2.0 m and a 1\% wall displacement~\cite{jung2021novel},
 will induce mainly antegrade PVS flow with an average net velocity of
 0.92 \textmu m/s while reaching up to 7.31 \textmu m/s near larger,
 ventral vessels such as the MCA (\Cref{fig:pvs_a}D,E). The same theory
-predicts that strong ultraslow vasomotions, if travelling antegrade at
+predicts that strong ultraslow vasomotions, if traveling antegrade at
 0.1Hz with a wavelength of 0.02 m and a 10\%
 displacement~\cite{broggini2024long}, will induce both retrograde and
 antegrade net PVS flow with an average velocity of 13.05 \textmu m/s
@@ -442,7 +442,7 @@ this question.
     \centering
     \includegraphics[width=0.95\textwidth]{figures/figure3a.png}
     \caption{\textbf{A static pressure gradient and peristaltic pumping are potential drivers of perivascular flow.}
-    A) Surface arterial network coloured by arterial radius with vessel locations labelled;
+    A) Surface arterial network colored by arterial radius with vessel locations labeled;
     B) Net PVS flow induced by CSF production (cf.~\Cref{fig:csf}
     -- histograms show the relative frequencies of local periarterial velocities. Positive values indicate antegrade PVS flow, while negative values indicate retrograde PVS flow;
     C) Illustration of the concept of peristaltic pumping;
@@ -851,7 +851,7 @@ perivenous networks and their surroundings.  Moreover, we model the
 membrane between the parenchyma and the CSF spaces as a semi-permeable
 membrane with permeability coefficient $\beta_{\rm pia}$. For a
 complete description of this mathematical model and simulation
-scenarios, see \Cref{sec:app:more_maths}. The initial concentrations
+scenarios, see the Supplementary information S1. The initial concentrations
 in the three-dimensional domain $\Omega$ and networks $\Lambda_a,
 \Lambda_v$ are all set to zero.
 
@@ -891,7 +891,7 @@ efflux across the upper, outer (arachnoid) boundary with efflux
 resistance $R_0$; and then set $\bm u = \bm u_{\rm CSF}$ in
 $\Omega_{\rm CSF}$ in~\eqref{eq:multi_transport}
 (\Cref{tab:parameters}, \Cref{fig:csf}A--E, see also
-\Cref{sec:app:more_maths}). We do not model bulk flow within the brain
+the Supplementary information (S1)). We do not model bulk flow within the brain
 parenchyma, except within the perivascular network segments extending
 below the pial surface, and thus set $\bm u = 0$ in $\Omega_{\rm PAR}$
 in~\eqref{eq:multi_transport}.
@@ -911,10 +911,11 @@ spatially-varying, in $\Omega_{\rm CSF}$ (\Cref{fig:csf}A) by
 combining computational estimates of the respective peak CSF pressure
 gradients with theoretical estimates for shear-augmented (Taylor)
 dispersion \cite{taylor1953dispersion, watson1983diffusion,
-  sharp2019dispersion} (see \Cref{sec:app:dispersion} for a complete
-description). Combining these effects, we then set $R = R_c + R_r$ and
-define the effective diffusion coefficient $D = (1 + R) D^{\rm Gad}$
-in $\Omega_{\rm CSF}$ in~\eqref{eq:multi_transport} in the baseline model.
+  sharp2019dispersion} (see Supplementary information S1.3 for a
+complete description). Combining these effects, we then set $R = R_c +
+R_r$ and define the effective diffusion coefficient $D = (1 + R)
+D^{\rm Gad}$ in $\Omega_{\rm CSF}$ in~\eqref{eq:multi_transport} in
+the baseline model.
 
 \subsection*{Perivascular fluid flow induced by CSF pressure differences}
 
@@ -929,7 +930,7 @@ the corresponding value at these end nodes. We then numerically solve
 a system of hydraulic network equations to compute $\hat{u}^p_a$
 defined over $\Lambda_a$; i.e., the pressure-difference induced CSF
 flow velocity in the periarterial network (see
-also~\Cref{sec:app:hydraulic_network}). We repeat this procedure to
+also Supplementary information S1.1.4). We repeat this procedure to
 compute a corresponding velocity $\hat{u}^p_v$ in the perivenous
 network $\Lambda_v$.
 
@@ -945,7 +946,7 @@ frequency $f$, amplitude $\varepsilon$ and wave lengths $\lambda$
 flow velocity is defined for each segment $\Lambda_i$ as $\langle Q'_i
 \rangle/A_i$ where $A_i = \pi (R_2^i - R_1^i)$ is the cross-section
 area of the PVS segment and $\langle Q_i' \rangle$ is the estimated
-mean flow rate (see~\ref{sec:app:peristalsis} for more details). Two
+mean flow rate (see Supplementary information S1.4 for more details). Two
 wall motion patterns are considered, yielding $\hat{u}_a^c$ and
 $\hat{u}_a^v$ respectively: \emph{cardiac} pulsations with $f =
 1.0$Hz, $\lambda = 2$ m and $\varepsilon = 1\%$ (\Cref{fig:pvs_a}D), and very low-frequency \emph{vasomotion} with $f = 0.1$Hz, $\lambda =
@@ -968,11 +969,12 @@ porosity and tortuosity ($\lambda = 1.78$) in the parenchyma:
 $D|_{\Omega_{\rm PAR}} = D^{\rm Gad}_{\rm PAR}$. We set $\xi$
 depending on whether the PVS segment is fully embedded within the CSF
 spaces ($\xi = \xi_{\rm CSF}$) or parenchyma ($\xi = \xi_{\rm EF}$),
-or neither (\Cref{sec:app:more_maths}). Additionally, we increase the
-permeability $\xi$ ($100\times$) at the the leaf nodes of
-$\Lambda_a$, linearly decreasing to the baseline permeability at the next network node ($\approx0.4\,$mm), to account for the transition from explicitly resolved
-PVSs to their unresolved continuation in the CSF spaces and
-parenchyma.
+or neither (see also Supplementary information S1). Additionally, we
+increase the permeability $\xi$ ($100\times$) at the the leaf nodes of
+$\Lambda_a$, linearly decreasing to the baseline permeability at the
+next network node ($\approx0.4\,$mm), to account for the transition
+from explicitly resolved PVSs to their unresolved continuation in the
+CSF spaces and parenchyma.
 \begin{table}
   \begin{center}
     \begin{tabular}{ll|ccc}
@@ -1072,7 +1074,7 @@ framework~\cite{alnaes2015fenics}, and the 3D-1D coupling is handled
 by the extension
 FEniCS\textsubscript{ii}~\cite{kuchta2020assembly}. The correctness
 and accuracy of the numerical solutions were verified by a series of
-numerical verification experiments (\Cref{sec:app:verification}).
+numerical verification experiments (see Supplementary information S1.5).
 
 \subsection*{Model validation}
 
@@ -1081,7 +1083,7 @@ predictions of tracer enrichment and clearance against glymphatic MRI
 studies (Discussion). In addition, we compare auxiliary model
 quantities (CSF flow rates and pressure differences, dispersion factor
 estimates, and the shapes and sizes of PVSs) with the current
-literature (\Cref{sec:app:model_validation}).
+literature (see Supplementary information S2.1).
 
 \section*{Acknowledgments}
 
@@ -1112,9 +1114,9 @@ The authors declare no competing interests.
 
 \bibliography{references}
 
-\newpage
-\FloatBarrier
-\appendix
-\input{supplementary_main.tex}
+%% \newpage
+%% \FloatBarrier
+%% \appendix
+%% \input{supplementary_main.tex}
 
 \end{document}
