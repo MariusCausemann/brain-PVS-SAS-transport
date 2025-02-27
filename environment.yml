@@ -28,7 +28,7 @@ dependencies:
   - imageio-ffmpeg
   - pip:
     - cmocean
-    - kimimaro
+    - kimimaro<5.0.0
     - git+https://github.com/MiroK/ulfy.git@ufl_legacy
     - git+https://github.com/MiroK/fenics_ii.git@ufl_legacy
     - git+https://github.com/blocknics/cbc.block.git@mirok/ufl_legacy
