@@ -1,0 +1,60 @@
+\documentclass[fleqn,10pt]{wlscirep}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{bm}
+\usepackage{subcaption}
+% \captionsetup[subfigure]{justification=justified,singlelinecheck=false}
+\usepackage{tikz}
+\usepackage{newtxmath} % MER: Prettier math
+\usepackage{cleveref} % MER: Allows \Cref (but use Section X.Y not Subsection X.Y)
+\usepackage{booktabs} % MER: Prettier tables
+
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{siunitx}
+\usepackage{placeins}
+\usepackage{lineno}
+\usetikzlibrary{quotes}
+\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,positioning,fit,petri}
+
+\graphicspath{{figures/}}
+
+\renewcommand\thefigure{S\arabic{figure}}    
+\renewcommand\thesection{S\arabic{section}}    
+
+\captionsetup[subfigure]{justification=justified,singlelinecheck=false}
+
+\title{Supplementary information: In-silico molecular enrichment and clearance of the human intracranial space}
+\author[1]{Marius Causemann}
+\author[1]{Miroslav Kuchta}
+\author[2]{Rami Masri}
+\author[1,3,*]{Marie E. Rognes }
+\affil[1]{Department of Numerical Analysis and Scientific Computing, Simula Research Laboratory, Oslo, Norway}
+\affil[2]{Division of Applied Mathematics, Brown University, Providence, Rhode Island, USA}
+\affil[3]{K. G. Jebsen Centre for Brain Fluid Research, University of Oslo, Norway}
+\affil[*]{meg@simula.no}
+
+\begin{abstract}
+  Supplementary methods and discussion accompanying the main text of
+  \emph{In-silico molecular enrichment and clearance of the human
+  intracranial space}.
+\end{abstract}
+
+\begin{document}
+
+\linenumbers
+\flushbottom
+\maketitle
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\foralls}{\forall \,}
+
+\input{supplementary_main.tex}
+
+\bibliography{references}
+
+
+\end{document}

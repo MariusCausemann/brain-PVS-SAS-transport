@@ -10,7 +10,7 @@ These sections provide more detailed descriptions of the mathematical models and
 In terms of geometrical domains, we consider the parenchyma
 $\Omega_{\rm PAR} \subset \R^3$ and CSF spaces $\Omega_{\rm CSF}
 \subset \R^3$ with $\Omega = \Omega_{\rm PAR} \cup \Omega_{\rm CSF}$
-(\Cref{fig:results1}A, \Cref{fig:csf}A--C). The coordinates in these
+(Fig.~1A, Fig.~2A--C). The coordinates in these
 3D domains is denoted by $x$. The interface between the parenchyma and
 CSF spaces is given by $\partial \Omega_{\rm PAR} \cap \partial
 \Omega_{\rm CSF}$ and we separate it as two parts: the surface of the
@@ -50,13 +50,13 @@ connections as nodes $\mathcal{V}$.
 \subsubsection{Solute transport and exchange in intracranial domains (3D) and perivascular networks (1D)}
 \label{sec:app:transport_eqs}
 
-In this section, we describe the mathematical
-model~\eqref{eq:multi_transport}, the associated definitions,
-interface and boundary conditions in further detail. We refer to the
-main text for explicit parameter values while giving the general,
-abstract form here, and to the reference~\cite{masri2024modelling, laurino2019derivation} for
-the derivation and analysis of this 3D-1D model. Recall that we model
-a concentration field $c = c(x, t)$ for $x \in \Omega$ and $t > 0$
+In this section, we describe the mathematical model (eq.~(1)), the
+associated definitions, interface and boundary conditions in further
+detail. We refer to the main text for explicit parameter values while
+giving the general, abstract form here, and to the
+reference~\cite{masri2024modelling, laurino2019derivation} for the
+derivation and analysis of this 3D-1D model. Recall that we model a
+concentration field $c = c(x, t)$ for $x \in \Omega$ and $t > 0$
 defined in $\Omega_{\rm PAR}$ and $\Omega_{\rm CSF}$ separately. In
 each of these domains, $c$ satisfies
 %\mer{MER: Rami asks if it should be a $\phi$ in the advective term here. We can include it, or drop it, but in the latter case, perhaps we should clarify that u is an average/superficial/Darcy velocity.}
@@ -480,8 +480,8 @@ $\mathcal{F}_{\rm SSAS}$, and on the surface of the lateral ventricles by $\math
 \begin{multline}
   \mathcal{A}_h(\bm u, \bm v)
   = \sum_{E \in \mathcal{T}_{\rm CSF}} \int_{E} \mu \nabla \bm u : \nabla \bm v
-  - \sum_{F \in \mathcal{F}_{i, \rm CSF} \cup \mathcal{F}_{e}} \left (
-  \int_{F} \mu \{\nabla \bm u\}  \bm n_F \cdot [\bm v_t] 
+ + \sum_{F \in \mathcal{F}_{i, \rm CSF} \cup \mathcal{F}_{e}} \left (
+  -\int_{F} \mu \{\nabla \bm u\}  \bm n_F \cdot [\bm v_t] 
   - %\sum_{F \in \mathcal{F}_{h,c} \cup \mathcal{F}_{\Gamma}}
   \int_{F} \mu \{\nabla \bm v\}  \bm n_F \cdot [\bm u_t]
   + %\sum_{F \in \mathcal{F}_{h,c} \cup \mathcal{F}_{\Gamma}}
@@ -538,7 +538,7 @@ the absence of measurements or estimates of dispersion coefficients in
 human CSF spaces, we adapt existing theoretical
 estimates~\cite{watson1983diffusion, sharp2019dispersion}. More
 specifically, we compute spatially-varying dispersion enhancement
-fields $R_c$ and $R_r$ (\Cref{fig:csf}G, I), associated with the
+fields $R_c$ and $R_r$ (Fig.~2G, I), associated with the
 cardiac and respiratory cycles respectively, via the algorithm
 presented below. These fields then contribute to the diffusion
 coefficient in $\Omega_{\rm CSF}$ in~\eqref{eq:3d_pde} as $D = (1 +
@@ -548,7 +548,7 @@ R_c + R_r) D^{\rm Gad}$.
   To account for viscous forces, we compute spatially-varying CSF
   pressure fields $p^0_c, p^0_r$ in $\Omega_{\rm CSF}$ corresponding
   to the Stokes flow induced by the peak volumetric reduction of the
-  CSF space in the respective cycle (\Cref{fig:csf}F, H). More
+  CSF space in the respective cycle (Fig.~2F, H). More
   precisely, we numerically solve the incompressible Stokes
   equations~\eqref{eq:stokes} equipped with the following boundary
   conditions mimicking a dilation of the brain parenchyma with the
@@ -568,7 +568,7 @@ R_c + R_r) D^{\rm Gad}$.
     \alpha^2_i = \frac{h_{\rm SAS}^2 \omega_i \rho}{\mu} \qquad i \in \{c, r\},
   \end{equation}
   with CSF density $\rho = 10^3$ kg/m$^3$, a mean CSF space width $h_{\rm SAS} =
-  1.5$mm, and CSF viscosity $\mu$ given in~\Cref{tab:parameters}.  For
+  1.5$mm, and CSF viscosity $\mu$ given in~Table.~1.  For
   the cardiac cycle, we consider an angular frequency $\omega_c = 2
   \pi$, while for the respiratory cycle, we set $\omega_r = 0.5
   \pi$. The resulting (square) Womersley numbers are $\alpha_c^2 = 20.2$
@@ -666,9 +666,9 @@ We use the theoretical framework previously introduced by Gjerde et al.~\cite{gj
     Parameter & Description & Value(s)  & Ref.\\ 
     \midrule
     Relative PVS size $\beta$ & $\beta = \beta_i = R_2^i / R_1^i$ & 2 & $\approx$\cite{eide2024functional} \\
-    Wave frequency $f$ & Traveling wave frequency of vascular motion & $0.1-1.0$ Hz & \discuss{\cite{gjerde2023directional}} \\
-    Wave length $\lambda$ & Traveling wave length of vascular motion & $0.02-2$ mm & \discuss{\cite{broggini2024long, gjerde2023directional}} \\
-    Wave amplitude & Relative amplitude of inner wall motion & $1-10\%$ & \discuss{\cite{gjerde2023directional}} \\
+    Wave frequency $f$ & Traveling wave frequency of vascular motion & $0.1-1.0$ Hz & \cite{gjerde2023directional} \\
+    Wave length $\lambda$ & Traveling wave length of vascular motion & $0.02-2$ mm & \cite{broggini2024long, gjerde2023directional} \\
+    Wave amplitude & Relative amplitude of inner wall motion & $1-10\%$ & \cite{gjerde2023directional} \\
     \midrule
     Cardiac frequency $f_c$ & Frequency of human cardiac pulse wave  & $1.0$ Hz & \cite{jung2021novel} \\
     Cardiac wave length $\lambda_c$ & Wave length of human cardiac pulse wave & $2.0$m & \\
@@ -677,8 +677,6 @@ We use the theoretical framework previously introduced by Gjerde et al.~\cite{gj
     Vasomotion frequency $f_v$ & Frequency of slow vasomotion wave  & $0.1$ Hz & \cite{jung2021novel} \\
     Vasomotion wave length $\lambda_v$ & Wave length of vasomotion wave & $0.02$ m & \cite{broggini2024long, gjerde2023directional} \\
     Vasomotion amplitude $\varepsilon_v$ & Wall displacement amplitude of vasomotion wave & 10\%  & \cite{broggini2024long, gjerde2023directional}\\
-    %Vascular radii $\{r_{o_i}\}$ & Vascular network radii data (avg $\pm$ std, $\min$, $\max$) & $X$, $X$, $X$  mm & \cite{hodneland2019new} \\
-    %Vascular branch lengths $\{L_{i}\}$ & Path length between vasc. junctions (avg $\pm$ std, $\min$, $\max$) & $X \pm Y$, $X$, $X$  mm & \discuss{--} \\
     \bottomrule
   \end{tabular}
   \caption{Perivascular flow induced by vascular wall motion: overview of parameters.}
@@ -696,7 +694,7 @@ arteries with multiple supply nodes (such as the basilar and two
 internal carotid arteries in the current data
 set~\cite{hodneland2019new}), we separate the network $\Lambda$ into
 edge-disjoint subnetworks $\Lambda^1, \Lambda^2, \Lambda^3$, one for
-each of the supply nodes (\Cref{fig:results1}A, C,
+each of the supply nodes (Fig.~1A--B,
 \Cref{fig:app:peristalsis}). Each node is assigned to the subnetwork
 associated with the nearest supply node, and edges between nodes are
 preserved (\Cref{fig:app:peristalsis}B). Next, we compute a minimal,

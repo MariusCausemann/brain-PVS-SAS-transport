@@ -68,6 +68,7 @@
 \lfoot{}%
 \cfoot{}%
 \rfoot{\small\sffamily\bfseries\thepage/\pageref{LastPage}}%
+%\rfoot{\small\sffamily\bfseries\thepage}% MER
 \renewcommand{\headrulewidth}{0pt}% % No header rule
 \renewcommand{\footrulewidth}{0pt}% % No footer rule
 
