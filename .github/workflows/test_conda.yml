@@ -38,6 +38,9 @@ jobs:
       - name: snakemake dryrun
         run: |
           snakemake -c1 -n -p plots/test/test_total_conc.png
+      - name: snakemake install deps
+        run: |
+          snakemake -c1 -p --verbose --conda-create-envs-only
       - name: Run snakemake
         run: |
           snakemake --conda-frontend conda --use-conda --cores 2 -p plots/test/test_total_conc.png --config meshing=False
