@@ -47,7 +47,7 @@
 \newcommand{\foralls}{\forall \,}
 
 \begin{abstract}
-  The mechanisms of intracranial solute transport are fundamental to human brain health, with alterations often linked to disease and functional impairment, and with distinct opportunities for personalized diagnostics and treatment. However, our understanding of these mechanisms and their interplay remains incomplete, in part due to the complexity of integrating insights across scales, between species and from different modalities. Here, we combine mixed-dimensional modelling, multi-modal magnetic resonance images, and high performance computing to construct and explore a high-fidelity in-silico model of human intracranial molecular enrichment.  This model predicts the temporo-spatial spreading of a solute within an image-derived geometric representation of the subarachnoid space, ventricular system and brain parenchyma, including networks of surface perivascular spaces (PVSs). Our findings highlight the significant impact of cerebrospinal fluid (CSF) production and intracranial pulsatility on molecular enrichment following intrathecal tracer injection. We demonstrate that low-frequency vasomotion induces moderate CSF flow in surface PVS networks which substantially enhances tracer enrichment, and that impaired enrichment is a direct natural consequence of enlarged PVSs. This openly available technology platform thus provides an opportunity for integrating separate observations on diffusion in neuropil, vascular dynamics, intracranial pulsatility, CSF production, and efflux, and for exploring drug delivery and clearance in the human brain.
+  The mechanisms of intracranial solute transport are fundamental to human brain health, with alterations often linked to disease and functional impairment, and with distinct opportunities for personalized diagnostics and treatment. However, our understanding of these mechanisms and their interplay remains incomplete, in part due to the complexity of integrating insights across scales, between species and from different modalities. Here, we combine mixed-dimensional modelling, multi-modal magnetic resonance images, and high performance computing to construct and explore a high-fidelity in-silico model of human intracranial molecular enrichment.  This model predicts the temporo-spatial spreading of a solute within an image-derived geometric representation of the subarachnoid space, ventricular system and brain parenchyma, including networks of surface perivascular spaces (PVSs). Our findings highlight the significant impact of cerebrospinal fluid (CSF) production and intracranial pulsatility on molecular enrichment following intrathecal tracer injection. We demonstrate that low-frequency vasomotion induces moderate CSF flow in surface PVS networks which substantially enhances tracer enrichment, and that impaired enrichment is a direct natural consequence of enlarged surface PVSs. This openly available technology platform thus provides an opportunity for integrating separate observations on diffusion in neuropil, vascular dynamics, intracranial pulsatility, CSF production, and efflux, and for exploring drug delivery and clearance in the human brain.
 \end{abstract}
 \begin{document}
 
@@ -515,17 +515,19 @@ outer PVS surface (dotted) for the BA, MCA-R, MCA-L, ACA-2, and ACA3 segments ov
 F) Effect of varying the PVS-CSF permeability on first-time-of-arrival (FTA), time difference ($\Delta t$) between concentration peaks in the PVS and surrounding tissue, time of PVS peak concentration, PVS peak concentration and difference in peak concentration between PVS and surrounding tissue.}
 \end{figure}
   
-\subsection*{Enlarged PVSs delay periarterial and intracranial molecular enrichment}
+\subsection*{Enlarged PVSs in the SAS delay periarterial and intracranial molecular enrichment}
 
-Enlarged PVSs are associated with impaired periarterial tracer
-transport and more generally with cognitive decline as well as
-certain subtypes of
-dementia~\cite{bown2022physiology,eide2024functional}. A key
-question is thus whether enlarged PVSs alone leads to delayed perivascular
-and intracranial tracer enrichment. To address this question from a
-fluid and transport dynamics perspective, we ask our in-silico model
-to predict the integrated effect of perivascular dilation on PVS flow
-velocities and tracer enrichment patterns (\Cref{fig:enlargement}A).
+Idiopathic normal pressure hydrocephalus (iNPH), a dementia subtype,
+is associated with enlarged PVS in the SAS and impaired periarterial
+and parenchymal tracer transport~\cite{eide2024functional}. More
+generally, enlarged PVSs are associated with a range of pathophysiogical
+conditions and cognitive decline~\cite{bown2022physiology}. A key
+question is thus whether enlarged PVSs alone leads to delayed
+perivascular and intracranial tracer enrichment. To address this
+question from a fluid and transport dynamics perspective, we ask our
+in-silico model to predict the integrated effect of perivascular
+dilation on PVS flow velocities and tracer enrichment patterns
+(\Cref{fig:enlargement}A).
 
 Again we compute CSF production-, cardiac-, and vasomotion-induced net PVS flow velocities, but now in a perivascular geometry with an increased outer radius ($R^{\rm dilated}_2 = 3 R_1$) compared to the previous ($R^{\rm control}_2 = 2 R_1$), which corresponds to a $2.67 \times$ increase in PVS cross-section area.
 %% \begin{align*}
@@ -555,8 +557,8 @@ concentration is initially lower, but later exceeds the baseline model (\Cref{fi
 \begin{figure}
     \centering
     \includegraphics[width=1 \textwidth]{figures/figure5.png}
-\caption{\textbf{PVS enlargement reduces net PVS flow and delays tracer transport}
-A) Modelling dilated PVS by extending the outer PVS boundaries;
+\caption{\textbf{PVS enlargement in the SAS reduces net PVS flow and delays tracer transport}
+A) Modelling dilated PVS in the SAS by extending the outer PVS boundaries;
 B) mean and max PVS flow velocities with normal/control and dilated PVS;
 C--D) 3D rendering of vasomotion-induced PVS flow in the normal (C) and dilated (D) periarterial networks; 
 E) 2D slices showing zoom-in to the region surrounding the MCA-R after 1, 2, 3, and 4\,h with normal (lower) and dilated (upper) PVS. Innermost circle indicates the artery (blue), the surrounding annulus is the PVS (color represents concentration value), the surroundings are parenchyma and/or CSF spaces, separated by the pia (blue: towards the parenchyma, pink: towards the CSF)); 
@@ -575,28 +577,29 @@ enrichment and clearance in human intracranial spaces, enabling
 tailored predictions of the influence of CSF space and (peri)vascular
 morphology, physiological factors such as cardiac and respiratory
 pulsatility, as well as of pathological conditions such as enlarged
-PVSs. A key observation is that the balance between CSF production and
-intracranial pulsatility significantly shapes the large-scale features
-of molecular enrichment, with e.g.~ventricular tracer reflux after
-intrathecal injection in the absence of CSF production, and preference
-towards anterior brain regions with reduced pulsatility. Indeed, the
-simulated distribution patterns cover a substantial range of the
-individual variations observed clinically \cite{ringstad2018brain}. In
-terms of perivascular pathways, we find that even moderate CSF flow on
-the order of 0.1--1.0 \textmu m/s in the surface PVSs results in
-earlier tracer enrichment around major cerebral arteries. This effect
-is more pronounced -- with up to a three-hour difference in time of
-arrival -- with mean PVS flow rates of approximately 10 \textmu m/s. Our
-models of CSF flow in perivascular networks, based on first principles
-and asymptotic analysis, predict net flow of such magnitudes and both
-antegrade and retrograde flow within the perivascular network,
-occurring with or without pressure differences at the network
-ends. The PVS may thus function as highways facilitating rapid
-transport, even in the absence of structural barriers, though a sharp
-concentration difference between the PVS and surrounding tissues is
-unlikely without such barriers. Finally, dilated PVS will cause a
-substantial reduction in cardiac- and vasomotion-driven flow
-velocities, which in turn impedes perivascular transport.
+PVSs in the SAS. A key observation is that the balance between CSF
+production and intracranial pulsatility significantly shapes the
+large-scale features of molecular enrichment, with e.g.~ventricular
+tracer reflux after intrathecal injection in the absence of CSF
+production, and preference towards anterior brain regions with reduced
+pulsatility. Indeed, the simulated distribution patterns cover a
+substantial range of the individual variations observed clinically
+\cite{ringstad2018brain}. In terms of perivascular pathways, we find
+that even moderate CSF flow on the order of 0.1--1.0 \textmu m/s in
+the surface PVSs results in earlier tracer enrichment around major
+cerebral arteries. This effect is more pronounced -- with up to a
+three-hour difference in time of arrival -- with mean PVS flow rates
+of approximately 10 \textmu m/s. Our models of CSF flow in
+perivascular networks, based on first principles and asymptotic
+analysis, predict net flow of such magnitudes and both antegrade and
+retrograde flow within the perivascular network, occurring with or
+without pressure differences at the network ends. The PVS may thus
+function as highways facilitating rapid transport, even in the absence
+of structural barriers, though a sharp concentration difference
+between the PVS and surrounding tissues is unlikely without such
+barriers. Finally, dilated PVS in the SAS will cause a substantial reduction in
+cardiac- and vasomotion-driven flow velocities, which in turn impedes
+perivascular transport.
 
 %% Comparison with others
 
@@ -1015,7 +1018,7 @@ CSF spaces and parenchyma.
     & increased CSF dispersion & $-$ & $-$ & $ (1 + 10 R) D^{\rm Gad}$ & $-$ & $-$ & $-$  & $-$ \\ 
     & higher PVS flow & $-$ & $-$ & $-$ & $-$ & $-$ & $\hat{u}_a^p + \hat{u}_a^c + \hat{u}_a^v$  & $-$ \\ 
     & higher PVS exchange & $-$ & 100$\xi$  &  $-$ & $-$ & $-$ & $-$  & $-$ \\ 
-    & dilated PVS & $R_2 = 3 R_1$ & $-$ & $-$ & $-$ & $-$ & $\tilde{u}_a^p + \tilde{u}_a^c$  & $-$ \\ 
+    & dilated PVS in the SAS & $R_2 = 3 R_1$ & $-$ & $-$ & $-$ & $-$ & $\tilde{u}_a^p + \tilde{u}_a^c$  & $-$ \\ 
     \bottomrule
     \end{tabular}
     \end{center}
