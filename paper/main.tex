@@ -474,7 +474,7 @@ this question.
 
 \subsection*{Structural versus functional compartmentalization of perivascular spaces}
 
-Human and rodent observations indicate that tracers concentrate in perivascular spaces surrounding the pial and subarachnoid vasculature \cite{zhang1990interrelationships,zhang1992directional, bedussi2017paravascular, mestre2018flow, bedussi2018paravascular, eide2024functional}. However, it remains unclear whether such enrichment patterns necessitate a structural barrier, such as a membrane with limited permeability, or if the patterns could result from enhanced flow or mixing in these areas alone. We therefore next investigate how the permeability of the interface between the PVS and the surrounding CSF affects tracer enrichment around the major arterial trunks (\Cref{fig:compartmentalization}A--B). To this end, we compare models with high and low  permeabilities, representing a highly permeable PVS-CSF interface (functional compartmentalization) and a less permeable interface (structural compartmentalization), respectively. For the low permeability model, we set the permeability to $3.8 \cdot 10^{-7}\,$m/s, consistent with previous estimates for the endfoot sheath surrounding penetrating arterioles \cite{koch2023estimates}, which we consider to be a lower bound for the surface PVS-CSF permeability. For the high permeability model, we increase this permeability by a factor of 100. For both scenarios, we consider the high PVS flow regime as examined in the previous section.
+Human and rodent observations indicate that tracers concentrate in perivascular spaces surrounding the pial and subarachnoid vasculature \cite{zhang1990interrelationships,zhang1992directional, bedussi2017paravascular, mestre2018flow, bedussi2018paravascular, eide2024functional}. However, it remains unclear whether such enrichment patterns necessitate a structural barrier, such as a membrane with limited permeability, or if the patterns could result from enhanced flow or mixing in these areas alone. We therefore next investigate how the permeability of the interface between the PVS and the surrounding CSF affects tracer enrichment around the major arterial trunks (\Cref{fig:compartmentalization}A--B). To this end, we compare models with high and low  permeabilities, representing a highly permeable PVS-CSF interface (functional compartmentalization) and a less permeable interface (structural compartmentalization), respectively. For the low permeability model, we set the permeability to $3.8 \cdot 10^{-7}\,$m/s, consistent with previous estimates for the endfoot sheath surrounding penetrating arterioles \cite{koch2023estimates}, which we consider to be a lower bound for the surface PVS-CSF permeability. For the high permeability model, we increase this permeability by a factor of 100. We emphasize that, for both scenarios, we consider the high PVS flow regime as examined in the previous section. 
 
 At the basal artery (BA), tracer appears within one hour in the surrounding CSF in both models (\Cref{fig:compartmentalization}C, E). With a more permeable PVS-CSF interface, tracer quickly crosses from the CSF into the PVS, resulting in similar peak concentrations of 25\,mmol/l in the PVS and at its outer surface, while values up to 50\,mmol/l are attained in the vicinity. In contrast, the low permeability model exhibits substantially lower perivascular tracer enrichment, with a maximum concentration of 10\,mmol/l after approximately two hours.
 %The high permeability model allows for more tracer crossing into the PVS, leading to higher concentrations further downstream. Notably, crossover into the parenchyma is also observed, most clearly at 4 hours.
@@ -692,8 +692,15 @@ arteries, with higher coverage in ventral SAS regions. Our results
 demonstrate that the PVSs may act as rapid transport pathways even
 with only a partial barrier between the PVS and surrounding CSF, thus
 contributing to quantifying the properties of the human PVS-CSF
-interface~\cite{eide2024functional}.
-
+interface~\cite{eide2024functional}. In this regard, we emphasize that
+we report on the isolated effect of variations in permeability on
+molecular transport, separated from any effects on fluid flow in the
+PVS. Clearly, one may expect that the presence and/or properties of
+such a barrier would affect also PVS flow. However, considering the
+uncertainty associated with PVS flow characteristics in the human SAS
+in general and the lack of computational models describing net PVS
+flow in the presence of fluid exchange, this remains challenging to
+quantify.
 
 % Variations with sleep, exercise
 Lifestyle factors such as sleep~\cite{xie2013sleep, miao2024brain,
@@ -761,6 +768,8 @@ an intrathecal injection. We therefore overestimate the amount of
 tracer entering into the intracranial spaces; however, due to the
 linearity of the mathematical model, it is valid to directly interpret
 the in-silico concentrations relative to the total amount of tracer.
+
+
 
 % Outlook
 In conclusion, our findings transfer insights from experimental
@@ -939,7 +948,7 @@ defined over $\Lambda_a$; i.e., the pressure-difference induced CSF
 flow velocity in the periarterial network (see
 also Supplementary information S1.1.4). We repeat this procedure to
 compute a corresponding velocity $\hat{u}^p_v$ in the perivenous
-network $\Lambda_v$.
+network $\Lambda_v$. 
 
 \subsection*{Perivascular fluid flow induced by arterial wall motion}
 
@@ -949,18 +958,25 @@ for the time-average perivascular flow rate $\langle Q' \rangle$
 induced by peristalsis in the arterial network $\Lambda_a$; i.e.~the
 net flow induced by traveling waves of arterial wall motion of
 frequency $f$, amplitude $\varepsilon$ and wave lengths $\lambda$
-(\Cref{fig:pvs_a}C). The corresponding contribution to the periarterial
-flow velocity is defined for each segment $\Lambda_i$ as $\langle Q'_i
-\rangle/A_i$ where $A_i = \pi (R_2^i - R_1^i)$ is the cross-section
-area of the PVS segment and $\langle Q_i' \rangle$ is the estimated
-mean flow rate (see Supplementary information S1.4 for more details). Two
-wall motion patterns are considered, yielding $\hat{u}_a^c$ and
-$\hat{u}_a^v$ respectively: \emph{cardiac} pulsations with $f =
-1.0$Hz, $\lambda = 2$ m and $\varepsilon = 1\%$ (\Cref{fig:pvs_a}D), and very low-frequency \emph{vasomotion} with $f = 0.1$Hz, $\lambda =
-0.02$m, and $\varepsilon = 10\%$ (\Cref{fig:pvs_a}E). No flow induced by peristalsis is considered for the perivenous network. In the baseline model, we combine the contributions from CSF production and cardiac peristalsis to set $\hat{u}$ in~\eqref{eq:multi_transport} as
-$\hat{u}_a = \hat{u}_a^p + \hat{u}_a^c$ in $\Lambda_a$, and $\hat{u}_v
-= \hat{u}_v^p$ in $\Lambda_v$.
-
+(\Cref{fig:pvs_a}C). The corresponding contribution to the
+periarterial flow velocity is defined for each segment $\Lambda_i$ as
+$\langle Q'_i \rangle/A_i$ where $A_i = \pi (R_2^i - R_1^i)$ is the
+cross-section area of the PVS segment and $\langle Q_i' \rangle$ is
+the estimated mean flow rate (see Supplementary information S1.4 for
+more details). Two wall motion patterns are considered, yielding
+$\hat{u}_a^c$ and $\hat{u}_a^v$ respectively: \emph{cardiac}
+pulsations with $f = 1.0$Hz, $\lambda = 2$ m and $\varepsilon = 1\%$
+(\Cref{fig:pvs_a}D), and very low-frequency \emph{vasomotion} with $f
+= 0.1$Hz, $\lambda = 0.02$m, and $\varepsilon = 10\%$
+(\Cref{fig:pvs_a}E). No flow induced by peristalsis is considered for
+the perivenous network. In the baseline model, we combine the
+contributions from CSF production and cardiac peristalsis to set
+$\hat{u}$ in~\eqref{eq:multi_transport} as $\hat{u}_a = \hat{u}_a^p +
+\hat{u}_a^c$ in $\Lambda_a$, and $\hat{u}_v = \hat{u}_v^p$ in
+$\Lambda_v$. We remark that none of these models account for fluid
+exchange across the lateral outer interface of the PVSs (over
+$\Gamma_a, \Gamma_v$), while fluid entry and exit is allowed at the
+end nodes of the PVS networks.
 
 \subsection*{Model and material parameters}
 
@@ -1041,7 +1057,7 @@ CSF spaces and parenchyma.
     periarterial velocity induced by arterial pulse wave wall motion
     and slow vasomotion, respectively. Last, $\tilde{u}_a^c$ and
     $\tilde{u}_a^p$ are as $\hat{u}_a^c$ and $\hat{u}_a^p$,
-    respectively, but with dilated PVS.}
+    respectively, but with dilated PVS. }
 \label{tab:scenarios}
 \end{table}
 
