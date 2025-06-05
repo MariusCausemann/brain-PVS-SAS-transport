@@ -17,6 +17,7 @@
 \usepackage{amsmath}
 \usepackage{siunitx}
 \usepackage{placeins}
+\usepackage{lineno}
 \usetikzlibrary{quotes}
 \usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,positioning,fit,petri}
 
@@ -50,7 +51,10 @@
 \end{abstract}
 \begin{document}
 
+\linenumbers
+
 \flushbottom
+
 \maketitle
 
 
@@ -138,7 +142,7 @@ In this study, by leveraging geometric model reduction and
 mixed-dimensional modelling~\cite{masri2024modelling}, structural
 magnetic resonance (MR) images~\cite{hodneland2019new}, and high
 performance computing, we introduce an integrated computational model
-of intracranial molecular enrichment and clearance. Focusing on the
+of \mar{intracranial molecular enrichment and clearance}. Focusing on the
 interplay between perivascular pathways, pulsatility and CSF flow
 dynamics, the model predicts the temporal evolution and spatial
 distribution of a solute concentration within a detailed geometric
@@ -178,12 +182,12 @@ personalized intrathecal drug delivery and brain clearance.
 
 \section*{Results}
 
-\subsection*{In-silico predictions of intracranial molecular enrichment and clearance after intrathecal injection}
+\subsection*{In-silico predictions of intracranial \mar{molecular enrichment and clearance} after intrathecal injection}
 \begin{figure}
     \centering
     \includegraphics[width=1\textwidth]{figures/figure1.png}
      \caption{
-     \textbf{In-silico modelling of molecular enrichment and clearance of the PVS, SAS and parenchyma.}
+     \textbf{In-silico modelling of \mar{molecular enrichment and clearance} of the PVS, SAS and parenchyma.}
      A) Illustration of the model geometry including the CSF-filled spaces (ventricles and SAS) $\Omega_{\rm CSF}$, the parenchyma $\Omega_{\rm PAR}$ and the PVS surrounding arteries $\Lambda_{\rm artery}$ and veins $\Lambda_{\rm vein}$, as well as their interfaces and boundaries; 
      B) 3D rendering of the computational geometry: the parenchyma, CSF (clipped, blue), arterial network (red), and venous network (blue); 
      C) illustration of model representation of the intrathecal tracer injection; 
@@ -301,20 +305,20 @@ $400\,$ml/day across the surface of the lateral ventricles, while
 allowing for efflux across the upper convexity, yields a total CSF
 pressure drop of $26\,$mPa (0.00020 mmHg) (\Cref{fig:csf}D) with a
 maximum flow velocity of $1.85\,$mm/s (in the aqueduct) and a mean
-velocity in the SAS of $2.6$\textmu m/s (\Cref{fig:csf}E). To examine the
-dispersive effects of pulsatile CSF flow, we employ the theory of
+velocity in the SAS of $2.6$\textmu m/s (\Cref{fig:csf}E). 
+To examine the dispersive effects of pulsatile CSF flow, we employ the theory of
 shear-augmented dispersion together with computational fluid dynamics
 to determine a dispersion factor $R$ enhancing the effective solute
-diffusivity (see Methods). For the cardiac contribution, we compute
-CSF pressure and flow fields at peak systolic blood inflow,
-corresponding to a reduction in CSF space volume at a total rate of
-$6\,$ml/s~\cite{baledent2014imaging, causemann2022human} in the SAS
-and $0.31\,$ml/s across the lateral ventricle
-surface\cite{vinje2019respiratory}. This scenario sets up a pressure
-drop of $10\,$Pa ($0.075$ mmHg) between the lateral ventricles and the
-spinal SAS and a maximum flow velocity of $19.8\,$cm/s
-(\Cref{fig:csf}F, J). Assuming a cardiac frequency of $1\,$Hz, we
-infer that this cardiac-induced pulsatile CSF flow increases the
+diffusivity (see Supplementary information S1.3 for a complete description). 
+To estimate the cardiac contribution, we compute the steady state
+CSF pressure and flow fields at peak systolic blood inflow. Modelling the reduction 
+in CSF space volume corresponding to peak systolic conditions, we assume a
+total inflow rate of $6\,$ml/s~\cite{baledent2014imaging, causemann2022human} 
+in the SAS across its outer surface and $0.31\,$ml/s across the lateral ventricle surface\cite{vinje2019respiratory}. This scenario sets up a pressure drop of 
+$10\,$Pa ($0.075$ mmHg) between the lateral ventricles and the spinal 
+SAS and a maximum flow velocity of $19.8\,$cm/s (\Cref{fig:csf}F, J). 
+Assuming a cardiac frequency of $1\,$Hz, we infer that this cardiac-induced 
+pulsatile CSF flow increases the
 effective diffusion by more than two orders of magnitude in the
 aqueduct and near the cisterna magna, but has little effect ($R <
 1$) in most of the SAS (\Cref{fig:csf}G, K). For the respiratory
@@ -566,8 +570,8 @@ H) mean concentration in the CSF, parenchyma and arterial and venous PVS over ti
 \section*{Discussion}
 
 %% Summary of findings
-We have presented a high-fidelity in-silico model of molecular
-enrichment and clearance in human intracranial spaces, enabling
+We have presented a high-fidelity in-silico model of \mar{molecular
+enrichment and clearance} in human intracranial spaces, enabling
 tailored predictions of the influence of CSF space and (peri)vascular
 morphology, physiological factors such as cardiac and respiratory
 pulsatility, as well as of pathological conditions such as enlarged
@@ -741,7 +745,7 @@ accumulation at the perivascular network ends after 12 hours,
 similar to that previously observed for
 microspheres~\cite{bedussi2018paravascular, mestre2018flow}, which
 here can be interpreted as an artifact of the incomplete network
-creating up a barrier for tracer movement. Previously, we have found
+creating a barrier for tracer movement. Previously, we have found
 that enrichment within the parenchyma is well-represented by $\approx
 3\times$ enhanced diffusion augmented by local clearance e.g.~across
 the blood-brain barrier or diffusion-convection with a complex pattern
@@ -760,7 +764,7 @@ In conclusion, our findings transfer insights from experimental
 studies and theoretical analysis to the in-silico human setting,
 reconcile seemingly conflicting observations in particular relating to
 directionality of perivascular flow, and integrate different physical
-mechanisms across across spatial and temporal scales. The complete
+mechanisms across spatial and temporal scales. The complete
 simulation pipeline is openly available, including interactive
 visualization of simulation results for all model
 variations~\cite{ZENODO}. Looking ahead, this platform establishes a
