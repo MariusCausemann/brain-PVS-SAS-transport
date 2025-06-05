@@ -839,69 +839,6 @@ and the basilar artery (BA) -- as root nodes, and designate the other
 ends as leaf nodes. The resulting perivenous network graph consists of
 $24\,829$ edges connected at $23\,881$ inner nodes and with $949$ end nodes, and the associated domain is denoted by $\Lambda_v$. Finally, we label the outer surface of the PVSs associated with $\Lambda_a$ and $\Lambda_v$, by $\Gamma_a$ and $\Gamma_v$ respectively.
 
-\subsection*{Molecular transport equations}
-
-We model diffusion, convection, and exchange of a molecular solute in
-the PVS networks $\Lambda_a$ and $\Lambda_v$, in the CSF spaces
-$\Omega_{\rm CSF}$ and in the brain parenchyma $\Omega_{\rm PAR}$ via
-a mixed-dimensional transport model~\cite{masri2024modelling,laurino2019derivation} over a
-timescale of minutes to hours (\Cref{fig:results1}A--B,
-\Cref{fig:csf}A--C). Specifically, for $t > 0$, we solve for a
-concentration $c = c(x, t)$ in the 3D intracranial compartments ($x
-\in \Omega_{\rm CSF}, x \in \Omega_{\rm PAR}$) and for a cross-section
-averaged concentration $\hat{c} = \hat{c}(s, t)$ in the periarterial
-and perivenous networks ($s \in \Lambda_a, s \in \Lambda_v$) such that
-the following equations hold:
-\begin{subequations}
-\begin{alignat}{2}
-  \partial_t (\phi c) - \nabla \cdot (D \nabla (\phi c) ) + \nabla \cdot (\bm u c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma & = 0 && \quad \quad \mathrm{in} \quad \Omega_{\rm CSF}, \Omega_{\rm{PAR}},
-  \label{eq:multi_transport_3d}
-  \\ 
-  \partial_t (A  \hat c) - \partial_s(\hat D A \partial_s ( \hat c)) +\partial_s(A \hat u \hat c )  +  \xi P (\hat c - \overline{c})  &= 0 && \quad \quad \mathrm{in} \quad  \Lambda_a, \Lambda_v .
-  \label{eq:multi_transport_1d}
- \end{alignat}%
-\label{eq:multi_transport}%
-\end{subequations}%
-In~\eqref{eq:multi_transport}, $0 < \phi \leqslant 1$ is the fluid
-volume fraction, $D$ and $\hat{D}$ are effective diffusion
-coefficients, and $\bm u$ and $\hat{u}$ are fluid (CSF/ISF)
-velocities, all defined in the respective compartments; $P = 2 \pi
-R_2$ is the perimeter and $A = \pi (R_2^2 - R_1^2)$ the area of the
-PVS cross-sections, $\delta_{\Gamma}$ is a Dirac term concentrated on
-the interfaces $\Gamma_a, \Gamma_v$, the overlined $\overline{c}$
-denotes the average of $c$ over cross-sections of $\Gamma_a,
-\Gamma_v$, and $\xi$ is a permeability allowing for transfer/exchange
-over the interfaces $\Gamma_a, \Gamma_v$ between the periarterial and
-perivenous networks and their surroundings.  Moreover, we model the
-membrane between the parenchyma and the CSF spaces as a semi-permeable
-membrane with permeability coefficient $\beta_{\rm pia}$. For a
-complete description of this mathematical model and simulation
-scenarios, see the Supplementary information S1. The initial concentrations
-in the three-dimensional domain $\Omega$ and networks $\Lambda_a,
-\Lambda_v$ are all set to zero.
-
-\subsection*{Intracranial influx after intrathecal injection}
-To represent molecular influx into the intracranial compartments
-following intrathecal injection, without modelling the spinal
-compartment explicitly, we prescribe a time-dependent molecular influx
-over the interface towards the spinal CSF compartment with the condition
-\begin{equation*}
-  (D \nabla c - \bm u c ) \cdot \bm{n} = g_{\mathrm{influx}},  \quad \mathrm{on}  \quad \Gamma_{\mathrm{SSAS}}.
-\end{equation*}
-Here we set
-\begin{equation*}
-  g_\mathrm{influx}(t) = \frac{m_{\rm tot}}{T_{\rm max}^2 |\Gamma_{\rm SSAS}|} \max(0, T_{\rm max} - |t - T_{\rm max}|), 
-\end{equation*}
-which expresses a hat-shaped influx function with a peak at $T_{\rm max}$ and a total tracer injection of $m_{\rm tot}$ (\Cref{tab:parameters}).
-
-\subsection*{Molecular clearance from the intracranial space and perivascular network ends}
-
-We model molecular clearance, into the meningeal lymphatics or other
-pathways, across the upper, outer (arachnoid) boundary
-(\Cref{fig:results1}A, \Cref{fig:csf}C), proportional to the
-concentration in the SAS with a rate constant $\beta_{\rm exit}$. We
-set a no-flux condition at the end nodes of the perivascular networks,
-not allowing for direct molecular clearance there.
 
 \subsection*{CSF flow in the SAS and ventricular system}
 
@@ -920,6 +857,7 @@ the Supplementary information (S1)). We do not model bulk flow within the brain
 parenchyma, except within the perivascular network segments extending
 below the pial surface, and thus set $\bm u = 0$ in $\Omega_{\rm PAR}$
 in~\eqref{eq:multi_transport}.
+
 
 \subsection*{Dispersion in the CSF spaces}
 
@@ -986,6 +924,123 @@ $\Lambda_v$. We remark that none of these models account for fluid
 exchange across the lateral outer interface of the PVSs (over
 $\Gamma_a, \Gamma_v$), while fluid entry and exit is allowed at the
 end nodes of the PVS networks.
+
+\subsection*{Molecular transport equations}
+
+We represent the evolution and distribution of a solute in the CSF
+spaces $\Omega_{\rm CSF}$, brain parenchyma $\Omega_{\rm PAR}$, and
+periarterial and perivenous networks $\Lambda_a \cup \Lambda_v$ via a
+mixed-dimensional transport model~\cite{masri2024modelling} over a timescale
+of minutes to hours (\Cref{fig:results1}A--B, \Cref{fig:csf}A--C). The
+current model accounts for solute exchange between the CSF spaces,
+brain parenchyma, and the PVSs, diffusion within all compartments,
+dispersion and convection in the CSF spaces, and convection within the
+PVS. Specifically, for $t > 0$, we solve for a concentration field
+$c(x, t)$ in the 3D intracranial compartments (for $x \in \Omega_{\rm
+  CSF} \cup \Omega_{\rm PAR}$) and for a cross section-averaged
+concentration field $\hat{c}(s, t)$ in the perivascular networks (for
+$s \in \Lambda_a, \Lambda_v$) satisfying the following equations:
+\begin{subequations}
+\begin{alignat}{2}
+  \partial_t c - \nabla \cdot D (1 + R) \nabla c  + \nabla \cdot (\bm u_{\rm CSF} c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma & = 0 && \quad \quad \mathrm{in} \quad \Omega_{\rm CSF},
+  \label{eq:multi_transport_3d_CSF}
+  \\ 
+  \partial_t (\phi c) - \nabla \cdot D^{\ast} \nabla (\phi c)  + \nabla \cdot (\bm u_{\rm PAR} c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma & = 0 && \quad \quad \mathrm{in} \quad \Omega_{\rm{PAR}},
+  \label{eq:multi_transport_3d_PAR}
+  \\ 
+  \partial_t (A  \hat c) - \partial_s(\hat D A \partial_s ( \hat c)) +\partial_s(A \hat u \hat c )  +  \xi P (\hat c - \overline{c})  &= 0 && \quad \quad \mathrm{in} \quad  \Lambda_a, \Lambda_v .
+  \label{eq:multi_transport_1d}
+ \end{alignat}%
+\label{eq:multi_transport}%
+\end{subequations}%
+In~\eqref{eq:multi_transport_3d_CSF}, $D$ is the (free) diffusion
+coefficient of the solute, $R$ is a dispersion coefficient, $\bm
+u_{\rm CSF}$ is a CSF velocity, $\xi$ is a permeability allowing for
+transfer/exchange across the interfaces $\Gamma_a, \Gamma_v$ between
+the periarterial and perivenous networks and their surroundings, the
+overlined $\overline{c}$ denotes the average of $c$ over
+cross-sections of $\Gamma_a, \Gamma_v$, and $\delta_{\Gamma}$ is a
+Dirac term concentrated on $\Gamma_a, \Gamma_v$. Additionally, in
+\eqref{eq:multi_transport_3d_PAR}, $\phi$ is the brain extracellular
+volume fraction\footnote{We set $\phi = 1.0$ in $\Omega_{\rm CSF}$ and
+therefore omit $\phi$ in~\eqref{eq:multi_transport_3d_CSF}.},
+$D^{\ast}$ is the effective diffusion coefficient in the parenchyma,
+and $\bm u_{\rm PAR}$ is an interstitial fluid velocity. In this
+study, we set $\bm u_{\rm PAR} = 0$. In~\eqref{eq:multi_transport_1d},
+$A = \pi (R_2^2 - R_1^2)$ is the area and $P = 2 \pi R_2$ is the
+perimeter of the PVS cross-sections, $\hat{D}$ is the effective
+diffusion coefficient in the PVSs, and $\hat{u}$ is the fluid velocity
+(in the axial direction) in the PVS. Further, we model the membrane
+between the parenchyma and the CSF spaces as a semi-permeable membrane
+with permeability coefficient $\beta_{\rm pia}$. For an extended description of the mathematical model and simulation
+scenarios, see the Supplementary information S1. The initial
+concentrations in the three-dimensional domain $\Omega$ and networks
+$\Lambda_a, \Lambda_v$ are all set to zero.
+
+%% \subsection*{Molecular transport equations}
+
+%% We model diffusion, convection, and exchange of a molecular solute in
+%% the PVS networks $\Lambda_a$ and $\Lambda_v$, in the CSF spaces
+%% $\Omega_{\rm CSF}$ and in the brain parenchyma $\Omega_{\rm PAR}$ via
+%% a mixed-dimensional transport model~\cite{masri2024modelling,laurino2019derivation} over a
+%% timescale of minutes to hours (\Cref{fig:results1}A--B,
+%% \Cref{fig:csf}A--C). Specifically, for $t > 0$, we solve for a
+%% concentration $c = c(x, t)$ in the 3D intracranial compartments ($x
+%% \in \Omega_{\rm CSF}, x \in \Omega_{\rm PAR}$) and for a cross-section
+%% averaged concentration $\hat{c} = \hat{c}(s, t)$ in the periarterial
+%% and perivenous networks ($s \in \Lambda_a, s \in \Lambda_v$) such that
+%% the following equations hold:
+%% \begin{subequations}
+%% \begin{alignat}{2}
+%%   \partial_t (\phi c) - \nabla \cdot (D \nabla (\phi c) ) + \nabla \cdot (\bm u c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma & = 0 && \quad \quad \mathrm{in} \quad \Omega_{\rm CSF}, \Omega_{\rm{PAR}},
+%%   \label{eq:multi_transport_3d}
+%%   \\ 
+%%   \partial_t (A  \hat c) - \partial_s(\hat D A \partial_s ( \hat c)) +\partial_s(A \hat u \hat c )  +  \xi P (\hat c - \overline{c})  &= 0 && \quad \quad \mathrm{in} \quad  \Lambda_a, \Lambda_v .
+%%   \label{eq:multi_transport_1d}
+%%  \end{alignat}%
+%% \label{eq:multi_transport}%
+%% \end{subequations}%
+%% In~\eqref{eq:multi_transport}, $0 < \phi \leqslant 1$ is the fluid
+%% volume fraction, $D$ and $\hat{D}$ are effective diffusion
+%% coefficients, and $\bm u$ and $\hat{u}$ are fluid (CSF/ISF)
+%% velocities, all defined in the respective compartments; $P = 2 \pi
+%% R_2$ is the perimeter and $A = \pi (R_2^2 - R_1^2)$ the area of the
+%% PVS cross-sections, $\delta_{\Gamma}$ is a Dirac term concentrated on
+%% the interfaces $\Gamma_a, \Gamma_v$, the overlined $\overline{c}$
+%% denotes the average of $c$ over cross-sections of $\Gamma_a,
+%% \Gamma_v$, and $\xi$ is a permeability allowing for transfer/exchange
+%% over the interfaces $\Gamma_a, \Gamma_v$ between the periarterial and
+%% perivenous networks and their surroundings.  Moreover, we model the
+%% membrane between the parenchyma and the CSF spaces as a semi-permeable
+%% membrane with permeability coefficient $\beta_{\rm pia}$. For a
+%% complete description of this mathematical model and simulation
+%% scenarios, see the Supplementary information S1. The initial concentrations
+%% in the three-dimensional domain $\Omega$ and networks $\Lambda_a,
+%% \Lambda_v$ are all set to zero.
+
+\subsection*{Intracranial influx after intrathecal injection}
+To represent molecular influx into the intracranial compartments
+following intrathecal injection, without modelling the spinal
+compartment explicitly, we prescribe a time-dependent molecular influx
+over the interface towards the spinal CSF compartment with the condition
+\begin{equation*}
+  (D \nabla c - \bm u c ) \cdot \bm{n} = g_{\mathrm{influx}},  \quad \mathrm{on}  \quad \Gamma_{\mathrm{SSAS}}.
+\end{equation*}
+Here we set
+\begin{equation*}
+  g_\mathrm{influx}(t) = \frac{m_{\rm tot}}{T_{\rm max}^2 |\Gamma_{\rm SSAS}|} \max(0, T_{\rm max} - |t - T_{\rm max}|), 
+\end{equation*}
+which expresses a hat-shaped influx function with a peak at $T_{\rm max}$ and a total tracer injection of $m_{\rm tot}$ (\Cref{tab:parameters}).
+
+\subsection*{Molecular clearance from the intracranial space and perivascular network ends}
+
+We model molecular clearance, into the meningeal lymphatics or other
+pathways, across the upper, outer (arachnoid) boundary
+(\Cref{fig:results1}A, \Cref{fig:csf}C), proportional to the
+concentration in the SAS with a rate constant $\beta_{\rm exit}$. We
+set a no-flux condition at the end nodes of the perivascular networks,
+not allowing for direct molecular clearance there.
+
 
 \subsection*{Model and material parameters}
 
