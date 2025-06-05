@@ -797,6 +797,10 @@ capacity.
 
 \section*{Methods}
 
+For an extended description of the mathematical model and simulation
+scenarios, see the Supplementary information S1.
+
+
 \subsection*{Intracranial compartments: ventricular system, SAS, and brain parenchyma}
 
 From T1-weighted MR images of a 26-year-old, healthy male volunteer~\cite{hodneland2019new},
@@ -972,8 +976,7 @@ perimeter of the PVS cross-sections, $\hat{D}$ is the effective
 diffusion coefficient in the PVSs, and $\hat{u}$ is the fluid velocity
 (in the axial direction) in the PVS. Further, we model the membrane
 between the parenchyma and the CSF spaces as a semi-permeable membrane
-with permeability coefficient $\beta_{\rm pia}$. For an extended description of the mathematical model and simulation
-scenarios, see the Supplementary information S1. The initial
+with permeability coefficient $\beta_{\rm pia}$. The initial
 concentrations in the three-dimensional domain $\Omega$ and networks
 $\Lambda_a, \Lambda_v$ are all set to zero.
 
@@ -1018,6 +1021,15 @@ $\Lambda_a, \Lambda_v$ are all set to zero.
 %% in the three-dimensional domain $\Omega$ and networks $\Lambda_a,
 %% \Lambda_v$ are all set to zero.
 
+\subsection*{Molecular clearance from the intracranial space and perivascular network ends}
+
+We model molecular clearance, into the meningeal lymphatics or other
+pathways, across the upper, outer (arachnoid) boundary
+(\Cref{fig:results1}A, \Cref{fig:csf}C), proportional to the
+concentration in the SAS with a rate constant $\beta_{\rm exit}$. We
+set a no-flux condition at the end nodes of the perivascular networks,
+not allowing for direct molecular clearance there.
+
 \subsection*{Intracranial influx after intrathecal injection}
 To represent molecular influx into the intracranial compartments
 following intrathecal injection, without modelling the spinal
@@ -1031,16 +1043,6 @@ Here we set
   g_\mathrm{influx}(t) = \frac{m_{\rm tot}}{T_{\rm max}^2 |\Gamma_{\rm SSAS}|} \max(0, T_{\rm max} - |t - T_{\rm max}|), 
 \end{equation*}
 which expresses a hat-shaped influx function with a peak at $T_{\rm max}$ and a total tracer injection of $m_{\rm tot}$ (\Cref{tab:parameters}).
-
-\subsection*{Molecular clearance from the intracranial space and perivascular network ends}
-
-We model molecular clearance, into the meningeal lymphatics or other
-pathways, across the upper, outer (arachnoid) boundary
-(\Cref{fig:results1}A, \Cref{fig:csf}C), proportional to the
-concentration in the SAS with a rate constant $\beta_{\rm exit}$. We
-set a no-flux condition at the end nodes of the perivascular networks,
-not allowing for direct molecular clearance there.
-
 
 \subsection*{Model and material parameters}
 
