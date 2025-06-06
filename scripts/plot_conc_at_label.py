@@ -12,7 +12,7 @@ def plot_conc_at_label(model:str):
     config = read_config(f"configfiles/{model}.yml")
 
     dt , T= config["dt"], config["T"]
-    times = np.arange(0, T + dt, 3*dt*config["output_frequency"])
+    times = np.arange(0, T + dt, 2*dt*config["output_frequency"])
     set_plotting_defaults()
 
     artlabelsets = [["BA",],#["ICA-L", "ICA-R"], 
