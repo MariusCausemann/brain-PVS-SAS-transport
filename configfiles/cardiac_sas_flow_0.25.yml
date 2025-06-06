@@ -1,0 +1,10 @@
+mesh : "mesh/standard/standard_outer.xdmf"
+discretization : BDM
+order : 2
+mu : 0.7e-3 #dfsdsf
+no_slip_bcs : [1,2,3,4]
+resistance_bcs : []
+inflow_bcs : 
+ - [[1,2], "1.5e-6 / A"]
+ - [[3], "0.0775e-6 / A" ]
+ - [[4], 0]

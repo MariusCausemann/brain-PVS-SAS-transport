@@ -15,6 +15,7 @@ model_variations = ["modelA" , "modelA-LowD","modelA-HighD", "modelAMassConserva
                     "modelA-strongVM","modelA-PVS-disp",
                     "modelB1-10", "modelB1-100", "modelB1-1000",
                     "modelB2-10", "modelB2-100", "modelB2-1000",
+                    "adena-virus",
                     #"modelC", "modelA-NoResp", "modelA-NoDisp", "modelA-LowD",
                     "LargePVS", "LargePVSA"]
 
@@ -56,6 +57,7 @@ rule all:
         expand("plots/{modelname}/{modelname}_overview_4-6.png", modelname=models),
         expand("plots/{modelname}/{modelname}.mp4", modelname=models),
         expand("plots/{modelname}/{modelname}_300.html", modelname=models),
+        expand("results/csf_flow/cardiac_sas_flow_{proc}/R.png",proc=["0.25", "0.5", "0.75"]),
         expand("plots/{modelname}/{modelname}_1+2+3+6+9+12_all_0_details.png", modelname=models),
         "plots/pvs_flow_prod/sas_flow-arteries/",
         "plots/pvs_flow_peristaltic/vasomotion/",
