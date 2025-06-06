@@ -5,6 +5,7 @@ channels:
 dependencies:
   - fenics-dolfin=2019.2.0.dev
   - python=3.9    
+  - sympy<1.14.0
   - numpy
   - ipython
   - matplotlib
