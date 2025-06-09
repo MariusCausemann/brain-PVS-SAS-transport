@@ -22,9 +22,9 @@ arterial_velocity_file : ["results/pvs_flow_prod/sas_flow-arteries-2/pvs_flow.hd
                           "results/pvs_flow_peristaltic/cardiac_pvs_oscillation/pvs_flow.hdf"]
 venous_velocity_file : ["results/pvs_flow_prod/sas_flow-venes-2/pvs_flow.hdf"]
 csf_velocity_file : "results/csf_flow/sas_flow/flow.hdf"
-csf_dispersion_file : ["results/csf_flow/cardiac_sas_flow/R.xdmf",
-                       "results/csf_flow/respiratory_sas_flow/R.xdmf"]
-csf_dispersion_weights : [0.1, 0.1]
+csf_dispersion_file : ["results/csf_flow/cardiac_sas_flow_0.5/R.xdmf",
+                       "results/csf_flow/respiratory_sas_flow_0.5/R.xdmf"]
+csf_dispersion_weights : [1, 1]
 boundary_conditions:
   # influx of a total of 0.5mmol tracer with a linearly decreasing function over the first two hours
   sas : 
