@@ -7,10 +7,8 @@ dependencies:
   - pyvista
   - meshio
   - typer
-  - gcc<13 # fTetWild install via pip requires gcc<13
-  - gxx<13 
   - cmake
   - pyaml
   - pip
   - pip:
-    - git+https://github.com/MariusCausemann/wildmeshing-python.git
+    - wildmeshing
