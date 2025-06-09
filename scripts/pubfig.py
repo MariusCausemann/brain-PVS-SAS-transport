@@ -250,7 +250,7 @@ class RasterImage:
         import numpy as np
         file = Path(file)
         if crop is not None:
-            tmpfile = Path.cwd() / ".cropped" / (f" {np.random.randint(1e6)}_" + file.name)
+            tmpfile = Path.cwd() / ".cropped" / (f"{np.random.randint(1e6)}_" + file.name)
             print(tmpfile)
             makedirs(tmpfile.parent, exist_ok=True)
             with Image.open(file) as img:
