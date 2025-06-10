@@ -791,9 +791,9 @@ capacity.
 
 \section*{Methods}
 
-For an extended description of the mathematical model and simulation
-scenarios, see the Supplementary information S1.
-
+This section gives a condensed summary of the in-silico modelling
+framework. For a complete description of the mathematical models and
+simulation scenarios, we refer to the Supplementary information S1.
 
 \subsection*{Intracranial compartments: ventricular system, SAS, and brain parenchyma}
 
@@ -838,26 +838,44 @@ ends as leaf nodes. The resulting perivenous network graph consists of
 $24\,829$ edges connected at $23\,881$ inner nodes and with $949$ end nodes, and the associated domain is denoted by $\Lambda_v$. Finally, we label the outer surface of the PVSs associated with $\Lambda_a$ and $\Lambda_v$, by $\Gamma_a$ and $\Gamma_v$ respectively.
 
 
-\subsection*{CSF flow in the SAS and ventricular system}
+\subsection*{Steady flow in the CSF spaces induced by CSF production}
 
 We model CSF as an incompressible Newtonian fluid at low Reynolds and
-Womersley numbers via the Stokes equations with viscosity $\mu$, and
-account for the convective contribution of the flow induced by CSF
-production in the choroid plexus. Specifically, we compute the
-velocity $\bm u_{\rm CSF}$ and associated pressure $p_{\rm CSF}$ in
-the SAS and ventricular system induced by a constant production at a
-rate of $u_{\rm in}$ across the lateral ventricle walls and with
-efflux across the upper, outer (arachnoid) boundary with efflux
-resistance $R_0$; and then set $\bm u = \bm u_{\rm CSF}$ in
-$\Omega_{\rm CSF}$ in~\eqref{eq:multi_transport}
-(\Cref{tab:parameters}, \Cref{fig:csf}A--E, see also
-the Supplementary information (S1)). We do not model bulk flow within the brain
-parenchyma, except within the perivascular network segments extending
-below the pial surface, and thus set $\bm u = 0$ in $\Omega_{\rm PAR}$
-in~\eqref{eq:multi_transport}.
+Womersley numbers via the Stokes equations with viscosity $\mu$ (see
+\Cref{tab:parameters} for parameter values). To account for steady
+flow induced by CSF production, we compute the CSF velocity field $\bm
+u_{\rm CSF}$ and associated pressure field $p_{\rm CSF}$ in the SAS
+and ventricular system $\Omega_{\rm CSF}$ that result from a steady
+CSF production at a rate of $u_{\rm in}$ across the lateral ventricle
+walls (\Cref{fig:csf}A--E). We allow for CSF efflux across the upper,
+outer (arachnoid) boundary with efflux resistance $R_0$.
 
+%then set $\bm u = \bm u_{\rm CSF}$ in $\Omega_{\rm CSF}$
+%in~\eqref{eq:multi_transport}
 
-\subsection*{Dispersion in the CSF spaces}
+%% We do not model bulk flow within the brain parenchyma, except within
+%% the perivascular network segments extending below the pial surface,
+%% and thus set $\bm u = 0$ in $\Omega_{\rm PAR}$
+%% in~\eqref{eq:multi_transport}.
+
+\subsection*{Perivascular fluid flow induced by CSF production}
+
+To estimate the contribution also to perivascular fluid flow from CSF
+production, we impose the fluid pressure $p_{\rm CSF}$ induced by CSF
+production, computed in the SAS and ventricular system, at the end
+nodes of the periarterial network. For the end nodes located within
+the SAS ($v \in \Omega_{\rm CSF}$), the value $p_{\rm CSF}(v)$ is used
+directly, while for the end nodes located within the parenchyma ($v \in
+\Omega_{\rm PAR}$), we compute and apply a harmonic extension
+$E(p_{\rm CSF})(v)$. We then numerically solve a system of hydraulic
+network equations to compute $\hat{u}^p_a$ defined over $\Lambda_a$;
+i.e., the CSF production-induced velocity field in the periarterial
+network. We refer to Supplementary information S1.1.4 \emph{Steady
+flow in perivascular networks induced by pressure differences} for
+details. We repeat this procedure to compute a corresponding velocity
+field $\hat{u}^p_v$ in the perivenous network $\Lambda_v$.
+
+\subsection*{Dispersion in the CSF spaces induced by pulsatile CSF flow}
 
 The pulsatile flow of CSF in the SAS and ventricular system,
 associated with the cardiac and respiratory cycles, substantially
@@ -866,34 +884,19 @@ dispersion~\cite{taylor1953dispersion, watson1983diffusion,
   asgari2016glymphatic, sharp2019dispersion, ray2021quantitative,
   troyetsky2021dispersion}. To account for these dispersive effects,
 while bridging from the pulsatile flow time scale of seconds to a
-molecular transport time scale of hours, we compute cardiac and
-respiratory dispersion factors $R_c$ and $R_r$, both
-spatially-varying, in $\Omega_{\rm CSF}$ (\Cref{fig:csf}A) by
-combining computational estimates of the respective peak CSF pressure
-gradients with theoretical estimates for shear-augmented (Taylor)
-dispersion \cite{taylor1953dispersion, watson1983diffusion,
-  sharp2019dispersion} (see Supplementary information S1.3 for a
-complete description). Combining these effects, we then set $R = R_c +
-R_r$ and define the effective diffusion coefficient $D = (1 + R)
-D^{\rm Gad}$ in $\Omega_{\rm CSF}$ in~\eqref{eq:multi_transport} in
-the baseline model.
+molecular transport time scale of hours, we estimate cardiac- and
+respiratory dispersion factors ($R_c$ and $R_r$) in $\Omega_{\rm CSF}$
+(\Cref{fig:csf}G, I). To compute these spatially-varying factors, we
+combine computational estimates of peak CSF pressure gradients with
+theoretical estimates for shear-augmented (Taylor) dispersion
+\cite{taylor1953dispersion, watson1983diffusion, sharp2019dispersion}
+(see Supplementary information S1.3 Estimating dispersion factors from
+pulsatile CSF flow for a complete description). Combining the cardiac
+and respiratory effects, we set $R = R_c + R_r$ in $\Omega_{\rm CSF}$. 
 
-\subsection*{Perivascular fluid flow induced by CSF pressure differences}
-
-To estimate the contribution also to perivascular fluid flow from CSF
-production, we impose the fluid pressure $p_{\rm CSF}$ induced by CSF
-production, computed in the SAS and ventricular system, at the end
-nodes of the periarterial network located within the SAS. For the
-network end nodes located within the parenchyma, we compute a harmonic
-extension of the CSF pressure field (by solving a Laplace equation in
-$\Omega_{\rm PAR}$ with $p_{\rm CSF}$ as the boundary value), and set
-the corresponding value at these end nodes. We then numerically solve
-a system of hydraulic network equations to compute $\hat{u}^p_a$
-defined over $\Lambda_a$; i.e., the pressure-difference induced CSF
-flow velocity in the periarterial network (see
-also Supplementary information S1.1.4). We repeat this procedure to
-compute a corresponding velocity $\hat{u}^p_v$ in the perivenous
-network $\Lambda_v$. 
+%and define the effective diffusion coefficient $D = (1 + R) D^{\rm
+%Gad}$ in $\Omega_{\rm CSF}$ in~\eqref{eq:multi_transport} in the
+%baseline model.
 
 \subsection*{Perivascular fluid flow induced by arterial wall motion}
 
