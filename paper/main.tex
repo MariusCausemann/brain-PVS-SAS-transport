@@ -750,19 +750,20 @@ parenchyma before returning to the SAS. Higher resolution MRI data
 subjects would immediately allow for more detailed studies of this
 aspect. As a result of the lack of an accurate representation of the
 cortical and subcortical white matter vasculature, we have considered
-a conservative transport model within the parenchyma, modelling
-extracellular diffusion alone. To compensate, we have focused on
-reporting detailed predictions in the CSF spaces and surface PVS after
-not more than 24 hours. In particular, we note that, we observe tracer
-accumulation at the perivascular network ends after 12 hours,
-similar to that previously observed for
-microspheres~\cite{bedussi2018paravascular, mestre2018flow}, which
-here can be interpreted as an artifact of the incomplete network
-creating a barrier for tracer movement. Previously, we have found
-that enrichment within the parenchyma is well-represented by $\approx
-3\times$ enhanced diffusion augmented by local clearance e.g.~across
-the blood-brain barrier or diffusion-convection with a complex pattern
-of spatially-varying convective velocities of 1-10 \textmu
+a basic transport model within the parenchyma, modelling extracellular
+diffusion alone. To compensate, we have focused on reporting detailed
+predictions in the CSF spaces and surface PVS after not more than 24
+hours. In particular, we note that, we observe tracer accumulation at
+the perivascular network ends after 12 hours, similar to that
+previously observed for microspheres~\cite{bedussi2018paravascular,
+  mestre2018flow}, which here can be interpreted as an artifact of the
+incomplete network creating a barrier for tracer movement. Previously,
+by inferring transport parameters within the human brain from
+glymphatic MRI data, we have found that molecular transport within the
+parenchyma is well-represented by $\approx 3\times$ enhanced diffusion
+augmented by local clearance e.g.~across the blood-brain barrier, or
+by diffusion-convection with a complex pattern of spatially-varying
+interstitial fluid flow on the order of 1-10 \textmu
 m/min~\cite{vinje2023human}. We will incorporate such transport
 mechanisms within the parenchyma in future work. Finally, we also note
 that we simulate the intracranial distribution of a tracer
@@ -771,8 +772,6 @@ an intrathecal injection. We therefore overestimate the amount of
 tracer entering into the intracranial spaces; however, due to the
 linearity of the mathematical model, it is valid to directly interpret
 the in-silico concentrations relative to the total amount of tracer.
-
-
 
 % Outlook
 In conclusion, our findings transfer insights from experimental
@@ -887,12 +886,13 @@ while bridging from the pulsatile flow time scale of seconds to a
 molecular transport time scale of hours, we estimate cardiac- and
 respiratory dispersion factors ($R_c$ and $R_r$) in $\Omega_{\rm CSF}$
 (\Cref{fig:csf}G, I). To compute these spatially-varying factors, we
-combine computational estimates of peak CSF pressure gradients with
-theoretical estimates for shear-augmented (Taylor) dispersion
-\cite{taylor1953dispersion, watson1983diffusion, sharp2019dispersion}
-(see Supplementary information S1.3 Estimating dispersion factors from
-pulsatile CSF flow for a complete description). Combining the cardiac
-and respiratory effects, we set $R = R_c + R_r$ in $\Omega_{\rm CSF}$. 
+combine computational estimates of peak CSF pressure gradients
+(\Cref{fig:csf}F, H) with theoretical estimates for shear-augmented
+(Taylor) dispersion \cite{taylor1953dispersion, watson1983diffusion,
+  sharp2019dispersion} (see Supplementary information S1.3 \emph{Estimating
+dispersion factors from pulsatile CSF flow} for a complete
+description). Combining the cardiac and respiratory effects, we set $R
+= R_c + R_r$ in $\Omega_{\rm CSF}$.
 
 %and define the effective diffusion coefficient $D = (1 + R) D^{\rm
 %Gad}$ in $\Omega_{\rm CSF}$ in~\eqref{eq:multi_transport} in the
@@ -910,21 +910,21 @@ frequency $f$, amplitude $\varepsilon$ and wave lengths $\lambda$
 periarterial flow velocity is defined for each segment $\Lambda_i$ as
 $\langle Q'_i \rangle/A_i$ where $A_i = \pi (R_2^i - R_1^i)$ is the
 cross-section area of the PVS segment and $\langle Q_i' \rangle$ is
-the estimated mean flow rate (see Supplementary information S1.4 for
-more details). Two wall motion patterns are considered, yielding
-$\hat{u}_a^c$ and $\hat{u}_a^v$ respectively: \emph{cardiac}
-pulsations with $f = 1.0$Hz, $\lambda = 2$ m and $\varepsilon = 1\%$
-(\Cref{fig:pvs_a}D), and very low-frequency \emph{vasomotion} with $f
-= 0.1$Hz, $\lambda = 0.02$m, and $\varepsilon = 10\%$
+the estimated mean flow rate (see Supplementary information S1.4
+\emph{Estimating net perivascular flow induced by peristaltic waves}
+for more details). Two wall motion patterns are considered:
+\emph{cardiac} pulsations with $f = 1.0$Hz, $\lambda = 2$ m and
+$\varepsilon = 1\%$ yielding $\hat{u}_a^c$ (\Cref{fig:pvs_a}D), and
+very low-frequency \emph{vasomotion} with $f = 0.1$Hz, $\lambda =
+0.02$m, and $\varepsilon = 10\%$ yielding $\hat{u}_a^v$
 (\Cref{fig:pvs_a}E). No flow induced by peristalsis is considered for
 the perivenous network. In the baseline model, we combine the
 contributions from CSF production and cardiac peristalsis to set
-$\hat{u}$ in~\eqref{eq:multi_transport} as $\hat{u}_a = \hat{u}_a^p +
-\hat{u}_a^c$ in $\Lambda_a$, and $\hat{u}_v = \hat{u}_v^p$ in
-$\Lambda_v$. We remark that none of these models account for fluid
-exchange across the lateral outer interface of the PVSs (over
-$\Gamma_a, \Gamma_v$), while fluid entry and exit is allowed at the
-end nodes of the PVS networks.
+$\hat{u}$ as $\hat{u}_a = \hat{u}_a^p + \hat{u}_a^c$ in $\Lambda_a$,
+and $\hat{u}_v = \hat{u}_v^p$ in $\Lambda_v$. We remark that none of
+these models account for fluid exchange across the lateral outer
+interface of the PVSs (over $\Gamma_a, \Gamma_v$), while fluid entry
+and exit is allowed at the end nodes of the PVS networks.
 
 \subsection*{Molecular transport equations}
 
