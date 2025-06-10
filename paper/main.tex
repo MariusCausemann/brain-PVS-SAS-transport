@@ -299,7 +299,7 @@ pulsatility would affect the intracranial enrichment characteristics.
 For the CSF dynamics in our baseline model, we combine the net
 contribution to CSF flow induced by CSF production with the integrated
 dispersive effects of cardiac and respiratory pulsatile CSF flow
-(\Cref{fig:csf}A--C). Beginning with the advective, net flow flield driven by 
+(\Cref{fig:csf}A--C). Beginning with the advective, net flow field driven by 
 CSF production, we impose a constant CSF inflow of $400\,$ml/day across the surface
 of the lateral ventricles. Simultaneously allowing for efflux across the upper 
 convexity yields a total CSF pressure drop of $26\,$mPa (0.00020 mmHg) (\Cref{fig:csf}D) with a
@@ -378,7 +378,7 @@ Our periarterial network extends from the internal carotid arteries
 and basilar artery through up to 18 bifurcations to reach upstream
 network ends located within the SAS or up to 6 mm inside the
 parenchyma (\Cref{fig:results1}A--B, \Cref{fig:pvs_a}A) and includes
-major surface arteries of radius 0.5--1.4 mm. Due to imaging limitiations, the network primarily covers the supratentorial regions, with the lowest network point located approximately $4\,$cm above the craniocervical junction.
+major surface arteries of radius 0.5--1.4 mm. Due to imaging limitations, the network primarily covers the supratentorial regions, with the lowest network point located approximately $4\,$cm above the craniocervical junction.
 Imposing the pressure field induced by CSF production at the periarterial network ends induces slow steady CSF flow of variable direction in these PVSs, with
 an average velocity of 0.08 \textmu m/s (antegrade) and a maximum
 velocity of 0.55 \textmu m/s (\Cref{fig:pvs_a}B). On the other hand,
@@ -892,7 +892,7 @@ combine computational estimates of peak CSF pressure gradients
   sharp2019dispersion} (see Supplementary information S1.3 \emph{Estimating
 dispersion factors from pulsatile CSF flow} for a complete
 description). Combining the cardiac and respiratory effects, we set $R
-= R_c + R_r$ in $\Omega_{\rm CSF}$.
+= R_c + R_r$ in $\Omega_{\rm CSF}$. 
 
 %and define the effective diffusion coefficient $D = (1 + R) D^{\rm
 %Gad}$ in $\Omega_{\rm CSF}$ in~\eqref{eq:multi_transport} in the
@@ -955,27 +955,30 @@ $s \in \Lambda_a, \Lambda_v$) satisfying the following equations:
 \label{eq:multi_transport}%
 \end{subequations}%
 In~\eqref{eq:multi_transport_3d_CSF}, $D$ is the (free) diffusion
-coefficient of the solute, $R$ is a dispersion coefficient, $\bm
-u_{\rm CSF}$ is a CSF velocity, $\xi$ is a permeability allowing for
-transfer/exchange across the interfaces $\Gamma_a, \Gamma_v$ between
-the periarterial and perivenous networks and their surroundings, the
-overlined $\overline{c}$ denotes the average of $c$ over
-cross-sections of $\Gamma_a, \Gamma_v$, and $\delta_{\Gamma}$ is a
-Dirac term concentrated on $\Gamma_a, \Gamma_v$. Additionally, in
-\eqref{eq:multi_transport_3d_PAR}, $\phi$ is the brain extracellular
-volume fraction\footnote{We set $\phi = 1.0$ in $\Omega_{\rm CSF}$ and
-therefore omit $\phi$ in~\eqref{eq:multi_transport_3d_CSF}.},
-$D^{\ast}$ is the effective diffusion coefficient in the parenchyma,
-and $\bm u_{\rm PAR}$ is an interstitial fluid velocity. In this
-study, we set $\bm u_{\rm PAR} = 0$. In~\eqref{eq:multi_transport_1d},
-$A = \pi (R_2^2 - R_1^2)$ is the area and $P = 2 \pi R_2$ is the
-perimeter of the PVS cross-sections, $\hat{D}$ is the effective
-diffusion coefficient in the PVSs, and $\hat{u}$ is the fluid velocity
-(in the axial direction) in the PVS. Further, we model the membrane
-between the parenchyma and the CSF spaces as a semi-permeable membrane
-with permeability coefficient $\beta_{\rm pia}$. The initial
-concentrations in the three-dimensional domain $\Omega$ and networks
-$\Lambda_a, \Lambda_v$ are all set to zero.
+coefficient of the solute, $R$ is the dispersion coefficient in the
+CSF spaces, $\bm u_{\rm CSF}$ is the steady CSF velocity, $\xi$ is a
+permeability allowing for transfer/exchange across the interfaces
+$\Gamma_a, \Gamma_v$ between the periarterial and perivenous networks
+and their surroundings, the overlined $\overline{c}$ denotes the
+average of $c$ over cross-sections of $\Gamma_a, \Gamma_v$, and
+$\delta_{\Gamma}$ is a Dirac term concentrated on $\Gamma_a,
+\Gamma_v$. Additionally, in \eqref{eq:multi_transport_3d_PAR}, $\phi$
+is the brain extracellular volume fraction\footnote{We set $\phi =
+1.0$ in $\Omega_{\rm CSF}$ and therefore omit $\phi$
+in~\eqref{eq:multi_transport_3d_CSF}.}, $D^{\ast}$ is the effective
+diffusion coefficient in the parenchyma, and $\bm u_{\rm PAR}$ is an
+interstitial fluid velocity. In this study, we set $\bm u_{\rm PAR} =
+0$. In~\eqref{eq:multi_transport_1d}, $A = \pi (R_2^2 - R_1^2)$ is the
+area and $P = 2 \pi R_2$ is the perimeter of the PVS cross-sections,
+$\hat{D}$ is the effective diffusion coefficient in the PVSs, and
+$\hat{u}$ is the fluid velocity (in the axial direction) in the PVS
+defined for the periarterial and perivenous spaces separately
+($\hat{u}|_{\Lambda_a} = \hat{u}_a$, $\hat{u}|_{\Lambda_v} =
+\hat{u}_v$). Further, we model the membrane between the parenchyma and
+the CSF spaces as a semi-permeable membrane with permeability
+coefficient $\beta_{\rm pia}$, allowing for a jump in $c$ there. The
+initial concentrations in $\Omega$ and networks $\Lambda_a, \Lambda_v$
+are all set to zero.
 
 %% \subsection*{Molecular transport equations}
 
@@ -1045,24 +1048,35 @@ which expresses a hat-shaped influx function with a peak at $T_{\rm max}$ and a 
 
 Model and material parameters are summarized in \Cref{tab:parameters},
 and~\Cref{tab:scenarios} gives an overview of the different in-silico
-scenarios. We assume that the porosity equals the extracellular space
-volume fraction $\phi = \phi_{\rm PAR}$ within the parenchyma and
-$\phi = 1$ elsewhere. The effective diffusion coefficient is set equal
-to that of Gadubutrol in free water in the PVS networks: $\hat{D} =
-D^{\rm Gad}$; weighted by a dispersion factor $R$ in the CSF spaces:
-$D|_{\Omega_{\rm CSF}} = ( 1 + R) D^{\rm Gad}$; and modulated by the
-porosity and tortuosity ($\lambda = 1.78$) in the parenchyma:
-$D|_{\Omega_{\rm PAR}} = D^{\rm Gad}_{\rm PAR}$. We set $\xi$
-depending on whether the PVS segment is fully embedded within the CSF
-spaces ($\xi = \xi_{\rm CSF}$) or parenchyma ($\xi = \xi_{\rm EF}$),
-or neither (see also Supplementary information S1). To account for the unresolved continuation of the perivascular network beyond the imaging resolution limit, we implemented a permeability gradient to avoid artificial tracer buildup. At the terminal 'leaf nodes' of $\Lambda_a$, permeability was increased by a factor of 100 to simulate tracer exchange with the surrounding CSF/tissue, before linearly decreasing to the baseline value at the adjacent network node.
+scenarios.
+%
+%We assume that the porosity equals the extracellular space
+%volume fraction $\phi = \phi_{\rm PAR}$ within the parenchyma and
+%$\phi = 1$ elsewhere.
+%
+The effective diffusion coefficient is set equal to that of Gadubutrol
+in water in the PVS networks: $\hat{D} = D \equiv D^{\rm Gad}$; weighted by
+the dispersion factor $R$ in the CSF spaces: $(1 + R) D$;
+and modulated by the porosity and tortuosity ($\lambda = 1.78$) in the
+parenchyma $D^{\ast} = D^{\rm Gad}_{\rm PAR}$. We set
+$\xi$ depending on whether the PVS segment is fully embedded within
+the CSF spaces ($\xi = \xi_{\rm CSF}$) or parenchyma ($\xi = \xi_{\rm
+  EF}$), or neither (see also Supplementary information S1). To
+account for the unresolved continuation of the perivascular network
+beyond the imaging resolution limit, we implemented a permeability
+gradient to avoid artificial tracer buildup. At the terminal leaf
+nodes of $\Lambda_a$, permeability was increased by a factor of 100
+to simulate tracer exchange with the surrounding CSF/tissue, and
+linearly decreasing to the baseline value at the adjacent network
+node.
 \begin{table}
   \begin{center}
     \begin{tabular}{ll|ccc}
       \toprule
       Parameter& Symbol & Value & Unit& Reference\\
       \midrule
-      Extracellular space volume fraction & $\phi_{\rm PAR}$ & 0.2 & -- & \cite{nicholson1981ion} \\
+      %Extracellular space volume fraction & $\phi_{\rm PAR}$ & 0.2 & -- & \cite{nicholson1981ion} \\
+      Extracellular space volume fraction & $\phi$ & 0.2 & -- & \cite{nicholson1981ion} \\
       Free diffusion coefficient, Gadubutrol & $D^{\rm Gad}$ & $3.8 \times 10^{-4}$& $\text{mm}^2/\text{s}$ & \cite{valnes2020apparent}\\
       Parenchymal diffusion coefficient, Gadubutrol & $D^{\rm Gad}_{\rm PAR}$ & $1.2 \times 10^{-4}$ & $\text{mm}^2/\text{s}$  & \cite{hornkjol2022csf} \\
       Permeability coefficient, pia & $\beta_{\rm pia}$ & $2.6 \cdot 10^{-8}$ & m/s & \cite{riseth2025twocompartment} \\
