@@ -17,7 +17,7 @@ final:
 diff: diff_main diff_supp
 
 diff_main: 
-	latexdiff main_r0.tex main.tex > diff_main_r0.tex
+	latexdiff --graphics-markup=none main_r0.tex main.tex > diff_main_r0.tex
 	pdflatex -interaction=nonstopmode diff_main_r0.tex
 	bibtex diff_main_r0
 	pdflatex -interaction=nonstopmode diff_main_r0.tex
