@@ -1037,10 +1037,11 @@ over the interface towards the spinal CSF compartment with the condition
   (D \nabla c - \bm u c ) \cdot \bm{n} = g_{\mathrm{influx}},  \quad \mathrm{on}  \quad \Gamma_{\mathrm{SSAS}}.
 \end{equation*}
 Here we set
-\begin{equation*}
+\begin{equation}
   g_\mathrm{influx}(t) = \frac{m_{\rm tot}}{T_{\rm max}^2 |\Gamma_{\rm SSAS}|} \max(0, T_{\rm max} - |t - T_{\rm max}|), 
-\end{equation*}
-which expresses a hat-shaped influx function with a peak at $T_{\rm max}$ and a total tracer injection of $m_{\rm tot}$ (\Cref{tab:parameters}).
+  \label{eq:g}
+\end{equation}
+which expresses a hat-shaped influx function with a peak at $T_{\max}$ and a total tracer injection of $m_{\rm tot}$ (\Cref{tab:parameters}). We here consider a fixed $T_{\max} = 1.0$ h in~\eqref{eq:g}, and do not consider the effect of e.g.~reduced pulsatility on spinal transit time.
 
 \subsection*{Model and material parameters}
 
