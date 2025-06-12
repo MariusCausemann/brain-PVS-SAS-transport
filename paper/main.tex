@@ -1112,8 +1112,8 @@ the baseline value at the adjacent network node.
     \midrule
     0 & baseline & $\bm u_{\rm CSF}$ & $\hat{u}_a^p + \hat{u}_a^c$ & $\hat{u}_v^p$                & $R_c + R_r$ & $\xi_{\rm EF}$ & $2 R_1$   \\ 
     1 & no CSF production & \blue{$\bm 0$} & \blue{$\hat{u}_a^c$} & \blue{0}                    & $R_c + R_r$ & $\xi_{\rm EF}$ & $2 R_1$   \\ 
-    2 & reduced CSF pulsatility & $\bm u_{\rm CSF}$ & $\hat{u}_a^p + \hat{u}_a^c$ & $\hat{u}_v^p$  & \blue{$ R_{\rm red}$} & $\xi_{\rm EF}$ & $2 R_1$  \\ 
-    3 & increased CSF pulsatility & $\bm u_{\rm CSF}$ & $\hat{u}_a^p + \hat{u}_a^c$ & $\hat{u}_v^p$  & \blue{$R_{\rm inc}$} & $\xi_{\rm EF}$ & $2 R_1$  \\ 
+    2 & reduced CSF pulsatility & $\bm u_{\rm CSF}$ & $\hat{u}_a^p + \hat{u}_a^c$ & $\hat{u}_v^p$  & \blue{$ R_c^{\rm red} + R_r^{\rm red}$} & $\xi_{\rm EF}$ & $2 R_1$  \\ 
+    3 & increased CSF pulsatility & $\bm u_{\rm CSF}$ & $\hat{u}_a^p + \hat{u}_a^c$ & $\hat{u}_v^p$  & \blue{$ R_c^{\rm inc} + R_r^{\rm inc}$} & $\xi_{\rm EF}$ & $2 R_1$  \\ 
     4 & higher PVS flow & $\bm u_{\rm CSF}$ & \blue{$\hat{u}_a^p + \hat{u}_a^c + \hat{u}_a^v$} & $\hat{u}_v^p$  & $R_c + R_r$ & $\xi_{\rm EF}$ & $2 R_1$  \\ 
     5 & higher PVS exchange & $\bm u_{\rm CSF}$ & \blue{$\hat{u}_a^p + \hat{u}_a^c + \hat{u}_a^v$} & $\hat{u}_v^p$ & $R_c + R_r$ & \blue{100 $\xi_{\rm EF}$} & $2 R_1$   \\ 
     6 & dilated PVS in the SAS & $\bm u_{\rm CSF}$ & \blue{$\tilde{u}_a^p + \tilde{u}_a^c + \tilde{u}_a^v$} & \blue{$\tilde{u}_v^p$} & $R_c + R_r$ & $\xi_{\rm EF}$ & \blue{$3 R_1$}\\ 
@@ -1132,7 +1132,7 @@ the baseline value at the adjacent network node.
     u_{\rm CSF} = 0$, $p_{\rm CSF} = 0$, and thus $\hat{u}_a^p =
     \hat{u}_v^p = 0$. $R_c + R_r$ is the combined cardiac and
     respiratory dispersion factor in the CSF spaces, with model
-    variations $R_{\rm red}$ and $R_{\rm inc}$ corresponding to
+    variations $R_{r/c}^{\rm red}$ and $R_{r/c}^{\rm inc}$ corresponding to
     reduced pulsatility and increased pulsatility, respectively.  Each
     PVS cross-section is modelled as a concentric annulus with inner
     radius $R_1$ and outer radius $R_2 > R_1$. Finally,
