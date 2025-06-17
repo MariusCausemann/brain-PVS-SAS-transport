@@ -728,8 +728,18 @@ activity level. More broadly, we consider this as a key strength of
 the current in-silico framework: allowing for integrating and
 exploring the mechanistic macroscale implications of changes in
 pulsatility at smaller spatial or temporal scales.
-This approach of modeling pulsatility through an effective dispersion factor is a simplification that does not capture the full complexity of transient fluid dynamics, for instance caused by non-uniform wall motion and ependymal cilia within the ventricular system~\cite{siyahhan2014flow}.
-However, it is further supported by recent clinical observations. High-resolution MRI measurements by Hirschler et al.~\cite{hirschler2024region} revealed that CSF mobility in regions with high pulsatility is approximately tenfold greater than the self-diffusion of water, an enhancement factor consistent with the values computed in our model. 
+This approach of modeling pulsatility through an effective dispersion 
+factor is a simplification that does not capture the full complexity
+of transient fluid dynamics, such as non-uniform wall motion and ependymal
+cilia within the ventricular system~\cite{siyahhan2014flow}, dynamic CSF
+flow at the craniocervical junction, or the effect of microanatomical
+features such as subarachnoid trabeculae on flow resitance and dispersion
+in the SAS. However, our approach is supported by recent clinical 
+observations. High-resolution MRI measurements by Hirschler et
+al.~\cite{hirschler2024region} revealed that CSF mobility in regions
+with high pulsatility is approximately tenfold greater than the 
+self-diffusion of water, an enhancement factor consistent with 
+the values computed in our model. 
 
 % Not discussed variations with disease states
 
@@ -1176,10 +1186,10 @@ interior penalty approaches~\cite{hong2016robust}. Optimal
 approximation properties are expected for this scheme. These numerical
 methods were implemented using the FEniCS finite element
 framework~\cite{alnaes2015fenics}, and the 3D-1D coupling is handled
-by the extension
-FEniCS\textsubscript{ii}~\cite{kuchta2020assembly}. The correctness
-and accuracy of the numerical solutions were verified by a series of
+by the extension FEniCS\textsubscript{ii}~\cite{kuchta2020assembly}.
+The correctness and accuracy of the numerical solutions were verified by a series of
 numerical verification experiments (see Supplementary information S1.5).
+The majority of the simulation time was spend on the Stokes flow and transport model simulations. Each Stokes flow simulation utilizes a hybrid parallel approach with 16 MPI processes and 4 threads each, requiring approximately 300 GB of RAM and completing in 23 minutes. The transport model is limited to serial execution by FEniCS\textsubscript{ii}, but employes 16 threads for the linear system factorization, taking 22 minutes and consuming about 50 GB of memory on a AMD EPYC 9684X machine.
 
 \subsection*{Comparison with literature results}
 
