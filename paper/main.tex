@@ -792,41 +792,46 @@ subjects would immediately allow for more detailed studies of this
 aspect. As a result of the lack of an accurate representation of the
 cortical and subcortical white matter vasculature, we have considered
 a basic transport model within the parenchyma, modelling extracellular
-diffusion alone and zero bulk interstitial fluid flow. To compensate, we have focused on reporting detailed
-predictions in the CSF spaces and surface PVS after not more than 24
-hours. In particular, we note that, we observe tracer accumulation at
-the perivascular network ends after 12 hours, similar to that
-previously observed for microspheres~\cite{bedussi2018paravascular,
-  mestre2018flow}, which here can be interpreted as an artifact of the
-incomplete network creating a barrier for tracer movement. Previously,
-by inferring transport parameters within the human brain from
-glymphatic MRI data, we have found that molecular transport within the
-parenchyma is well-represented by $\approx 3\times$ enhanced diffusion
-augmented by local clearance e.g.~across the blood-brain barrier, or
-by diffusion-convection with a complex pattern of spatially-varying
+diffusion alone and no bulk interstitial fluid flow. To compensate, we
+have focused on reporting detailed predictions in the CSF spaces and
+surface PVS after not more than 24 hours. In particular, we note that,
+we observe tracer accumulation at the perivascular network ends after
+12 hours, similar to that previously observed for
+microspheres~\cite{bedussi2018paravascular, mestre2018flow}, which
+here can be interpreted as an artifact of the incomplete network
+creating a barrier for tracer movement. Previously, by inferring
+transport parameters within the human brain from glymphatic MRI data,
+we have found that molecular transport within the parenchyma is
+well-represented by $\approx 3\times$ enhanced diffusion augmented by
+local clearance e.g.~across the blood-brain barrier, or by
+diffusion-convection with a complex pattern of spatially-varying
 interstitial fluid flow on the order of 1-10 \textmu
 m/min~\cite{vinje2023human}. We will incorporate such transport
 mechanisms within the parenchyma in future work. Finally, we also note
 that we simulate the intracranial distribution of a tracer
 concentration appearing at the craniocervical junction rather than as
-an intrathecal injection. We thus neglect absorption of both CSF and tracer in the spinal compartment, and therefore overestimate the amount of
-tracer entering into the intracranial spaces; however, due to the
-linearity of the mathematical model, it is valid to directly interpret
-the in-silico concentrations relative to the total amount of tracer.
+an intrathecal injection. We thus neglect absorption of both CSF and
+tracer in the spinal compartment, and therefore overestimate the
+amount of tracer entering into the intracranial spaces; however, due
+to the linearity of the mathematical model, it is valid to directly
+interpret the in-silico concentrations relative to the total amount of
+tracer.
 
 % Outlook
 In conclusion, our findings transfer insights from experimental
 studies and theoretical analysis to the in-silico human setting,
 reconcile seemingly conflicting observations in particular relating to
 directionality of perivascular flow, and integrate different physical
-mechanisms across spatial and temporal scales. The complete
-simulation pipeline is openly available, including interactive
-visualization of simulation results for all model
-variations~\cite{ZENODO}. Looking ahead, this platform establishes a
-foundation for in-silico studies of molecular movement within the
-human brain environment, such as tailored predictions of intrathecal
-chemotherapy delivery or personalized diagnostics of brain clearance
-capacity.
+mechanisms across spatial and temporal scales. The complete simulation
+pipeline is openly available, including interactive visualization of
+simulation results for all model variations~\cite{ZENODO}. Future work
+will focus on further model validation including comparisons between
+in-silico predictions and glymphatic MRI for a number of subjects
+across several patient cohorts. Looking ahead, this platform
+establishes a foundation for in-silico studies of molecular movement
+within the human brain environment, such as tailored predictions of
+intrathecal chemotherapy delivery or personalized diagnostics of brain
+clearance capacity.
 
 
 \section*{Methods}
