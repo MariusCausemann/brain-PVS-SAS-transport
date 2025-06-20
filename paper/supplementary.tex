@@ -81,6 +81,7 @@ $\Gamma_{\mathrm{AM\text{-}L}}$, $\Gamma_{\mathrm{AM\text{-}U}}$ & Lower/upper p
 $\Gamma_{\mathrm{SC}}$ & Parenchyma–spinal‐cord boundary: $\partial\Omega_{\mathrm{PAR}}\setminus\partial\Omega_{\mathrm{CSF}}$ \\
 $\Lambda_{a},\Lambda_{v}$ & Arterial/venous PVS centerline networks \\
 $\Lambda_{i}$ & Individual PVS centerline segment ($\Lambda_a^i$, $\Lambda_v^i$ corresponding to arterial and venous segments) \\
+$L_i$ & Length of a PVS segment $\Lambda_i$ \\
 $\Omega_{i}$ & Perivascular space around $\Lambda_{i}$ \\
 $R_{1}^{i},\,R_{2}^{i}$ & Inner/outer radii of the annular PVS $\Omega_{i}$ \\
 $\Gamma_{a},\,\Gamma_{v}$ & Outer lateral surfaces of periarterial/perivenous PVSs \\
@@ -102,7 +103,7 @@ $\mathcal N\subset  \mathcal V$ & End (leaf) nodes \\
 \textbf{Symbol} & \textbf{Description} \\
 \hline
 $\phi$ & Fluid volume fraction (porosity) \\
-$D$ & Effective diffusion coefficient ($D_{\mathrm{PAR}} = D^*$ or $D_{\mathrm{CSF}} = D(1+R)$ (see eq. (1)) \\
+$D$ & Effective diffusion coefficient ($D_{\mathrm{PAR}} = D^*$ or $D_{\mathrm{CSF}} = D(1+R)$ \\
 $\mathbf{u}$ & Convective velocity ($\mathbf{u}_{\mathrm{PAR}} = 0$ or $\mathbf{u}_{\mathrm{CSF}}$ computed from steady state flow) \\
 $c$ & Solute concentration in 3D domains \\
 $\bar c$ & Lateral average of $c$ on the PVS boundary \\
@@ -116,12 +117,16 @@ $A(s)$ & Cross‐sectional area of PVS at $s$ \\
 $\hat D$ & 1D effective diffusion in PVS \\
 $\hat u$ & 1D convective velocity in PVS \\
 $p$ & Pressure in CSF (Stokes) or PVS (network) \\
-$q$ & Volumetric flux in PVS network \\
+$\hat{q}$ & Volumetric flux in PVS network \\
 $\kappa$ & Hydraulic conductivity in annular PVS \\
 $\mu$ & Dynamic viscosity of CSF \\
-$R_{0}$ & Resistance parameter for CSF efflux \\
+$R_{\rm CSF, 0}$ & Resistance parameter for CSF efflux \\
 $u_{\mathrm{in}}$ & Imposed fluid influx on $\Gamma_{\mathrm{LV}}$ \\
-$\omega,\;\rho$ & Angular frequency, CSF density (in dispersion estimates) \\
+$\omega,\;\rho$ & Angular frequency, CSF density (for dispersion estimates) \\
+$\alpha_c,\, \alpha_r$ & Womersley number (cardiac, respiratory) \\
+$h_{\rm SAS}$ & Mean width of the subarachnoid space (for dispersion estimates) \\
+$R_c,\,R_r$ & Spatially-varying dispersion enhancement factors (cardiac, respiratory) \\
+
 \hline
 \end{tabular}
 \end{table}
@@ -135,8 +140,8 @@ $\omega,\;\rho$ & Angular frequency, CSF density (in dispersion estimates) \\
 \hline
 \textbf{Symbol} & \textbf{Description} \\
 \hline
-$\mathcal T$ & Tetrahedral mesh of $\Omega$ \\
-$\mathcal{T}_{\mathrm{PAR}},\,T_{\mathrm{CSF}}$ & Restrictions of $\mathcal T$ to $\Omega_{\mathrm{PAR}},\Omega_{\mathrm{CSF}}$ \\
+$\mathcal{T}$ & Tetrahedral mesh of $\Omega$ \\
+$\mathcal{T}_{\mathrm{PAR}},\,\mathcal{T}_{\mathrm{CSF}}$ & Restrictions of $\mathcal T$ to $\Omega_{\mathrm{PAR}},\Omega_{\mathrm{CSF}}$ \\
 $E$ & Tetrahedral cell in $\mathcal T$ \\
 $\mathcal F_{i}$ & Interior facets of $\mathcal T$ \\
 $\mathcal F_{i,\mathrm{PAR}},\, \mathcal F_{i,\mathrm{CSF}}$ & Interior facets in $\Omega_{\mathrm{PAR}}$, $\Omega_{\mathrm{CSF}}$ \\
@@ -145,18 +150,18 @@ $\mathcal F _{\mathrm{pia}},\,\mathcal F_{\mathrm{LV}},\, \mathcal F_{\mathrm{AM
 $V_{h}$ & Discontinuous Galerkin space on $\Omega$ of degree $1$\\
 $\widehat V_{h}$ & Continuous Galerkin space on $\Lambda$ of degree $1$.  \\
 % $\widehat V_{h,0}$, $\widehat V_{h,g}$ & Continuous Galerkin space on network with homogeneous or prescribed BCs \\
-$\mathit{BDM}_{2}$ & Brezzi–Douglas–Marini space of degree 2 \\
+$\mathrm{BDM}_{2}$ & Brezzi–Douglas–Marini space of degree 2 \\
 $Q_{h}$ & Pressure space on $\mathcal T_{\mathrm{CSF}}$  \\
-$I_{a},I_{v}$ & 1D meshes of arterial/venous networks $\Lambda_{a},\Lambda_{v}$ \\
-$\widehat V_{h}(I)$ & Space of piecewise constants ($P^0$) on network mesh $I$ \\
+$\mathcal{I}_a, \mathcal{I}_v$ & 1D meshes of arterial/venous networks $\Lambda_{a},\Lambda_{v}$ \\
+$\widehat{Z}_{h}(\mathcal{I})$ & Space of piecewise constants ($P^0$) on network mesh $I$ \\
+$\tau$ & Time step size \\
 \hline
 \end{tabular}
 \end{table}
 
-\subsection{Flow and mixed-dimensional models: governing equations and corresponding finite element methods }
-\label{sec:app:more_maths}
 
-\subsubsection{Notation pertaining to the geometry and variables}
+
+\subsection{Notation pertaining to the geometry, variables and computational domains}
 
 In terms of geometrical domains, we consider the parenchyma
 $\Omega_{\rm PAR} \subset \R^3$ and CSF spaces $\Omega_{\rm CSF}
@@ -199,7 +204,7 @@ graph with the centerlines $\{ \Lambda^i \}$ as oriented edges and the
 connections as nodes $\mathcal{V}$.
 
 
-\subsubsection{Computational mesh entities: definitions and common notation}
+% \subsection{Computational mesh entities: definitions and common notation}
 
 We consider a mesh $\mathcal{T} = \{ E \}$ of $\Omega = \Omega_{\rm
   PAR} \cup \Omega_{\rm CSF}$, consisting of tetrahedral mesh cells
@@ -216,8 +221,9 @@ $\mathcal{T}_{ \rm PAR}$ and $\mathcal{T}_{ \rm CSF}$ as
 $\mathcal{F}_i = \mathcal{F}_{i, \rm PAR} \cup \mathcal{F}_{i, \rm
   CSF}$. 
 
-
-\subsubsection{Modelling and simulating steady state CSF flow via the incompressible Stokes equations}
+%\subsection{Flow and mixed-dimensional models: governing equations and corresponding finite element methods }
+%\label{sec:app:more_maths} 
+\subsection{Modelling and simulating steady state CSF flow via the incompressible Stokes equations}
 \label{sec:app:csf_flow}
 The time-independent, incompressible Stokes equations model the flow
 of an incompressible Newtonian fluid at low Reynolds numbers, and read
@@ -300,7 +306,7 @@ where on exterior facets the average and jump operators take the one-sided value
 \end{subequations}
 
 
-\subsubsection{Modeling and simulating steady flow in perivascular networks induced by pressure differences}
+\subsection{Modeling and simulating steady flow in perivascular networks induced by pressure differences}
 \label{sec:app:hydraulic_network}
 
 To model steady flow induced by pressure differences between end nodes
@@ -371,7 +377,7 @@ in~\Cref{sec:app:peristalsis}.
 We consider meshes $\mathcal{I}_a, \mathcal{I}_v$ representing a
 conforming subdivision of each of the perivascular networks
 $\Lambda_a$, $\Lambda_v$. Relative to each mesh $\mathcal{I}$, we define the
-space of (discontinuous) piecewise constants $\hat{Z}_h(\mathcal{I})$ and define
+space of (discontinuous) piecewise constants $\widehat{Z}_h(\mathcal{I})$ and define
 spaces of continuous piecewise linears $\hat{V}_{h, g}(\mathcal{I})$ with
 prescribed boundary node values (on $\mathcal{N}$) given by $g$:
 \begin{align}
@@ -394,7 +400,165 @@ bifurcation points, while the conservation of flux is enforced
 where $\langle \cdot, \cdot \rangle$ denotes the $L^2(\mathcal{I})$-inner product and is defined segment-wise. For a stability and convergence analysis of this discrete model, we refer to the reference\cite{gjerde2024directional}. 
 
 
-\subsubsection{Modeling and simulating solute transport and exchange in intracranial domains (3D) and perivascular networks (1D)}
+\subsection{Estimating dispersion factors from pulsatile CSF flow}
+\label{sec:app:dispersion}
+
+The cardiac ($\sim$1Hz) and respiratory ($\sim$0.25Hz) cycles induce
+pulsatile flow of CSF in the ventricular system and in the cranial and
+spinal SAS. Pulsatile flow leads to dispersion which in turn may
+enhance molecular transport~\cite{taylor1953dispersion,
+  watson1983diffusion, asgari2016glymphatic, sharp2019dispersion,
+  ray2021quantitative, troyetsky2021dispersion}. To account for the
+dispersive effects over a longer time scale (hours to days), and in
+the absence of measurements or estimates of dispersion coefficients in
+human CSF spaces, we adapt existing theoretical
+estimates~\cite{watson1983diffusion, sharp2019dispersion}. More
+specifically, we compute spatially-varying dispersion enhancement
+fields $R_c$ and $R_r$ (Fig.~2G, I), associated with the
+cardiac and respiratory cycles respectively, via the algorithm
+presented below. These fields then contribute to the diffusion
+coefficient in $\Omega_{\rm CSF}$ in~\eqref{eq:3d_pde} as $D = (1 +
+R_c + R_r) D^{\rm Gad}$.
+\begin{enumerate}[label=\roman*)]
+\item
+  To account for viscous forces, we compute spatially-varying CSF
+  pressure fields $p^0_c, p^0_r$ in $\Omega_{\rm CSF}$ corresponding
+  to the Stokes flow induced by the peak volumetric reduction of the
+  CSF space in the respective cycle (Fig.~2F, H). More
+  precisely, we numerically solve the incompressible Stokes
+  equations~\eqref{eq:stokes} equipped with the following boundary
+  conditions mimicking a dilation of the brain parenchyma with the
+  spinal SAS as the only route for CSF efflux:
+  \begin{equation}\label{eq:pulsatility:bcs}
+    \bm u = 0 \text{ on } \Gamma_{\rm Pia}; \quad 
+    \mu \nabla \bm u \cdot \bm n - p \bm n = 0 \text{ on } \Gamma_{\rm SSAS}; \quad 
+    \bm u = \frac{u^{\rm in}_{\rm LV} \cdot \bm n}{|\Gamma_{\rm LV}|} \text{ on } \Gamma_{\rm LV}; \quad
+    \bm u = \frac{u^{\rm in}_{\rm AM} \cdot \bm n}{|\Gamma_{\rm skull}|} \text{ on } \Gamma_{\rm AM}.
+\end{equation}
+  In the cardiac cycle case, we set $u^{\rm in}_{\rm AM} = 6\,$ml/s \cite{causemann2022human,baledent2014imaging} and $u^{\rm in}_{\rm LV}=0.31\,$ml/s \cite{vinje2019respiratory} to solve for $p^0_c$. In the respiratory cycle case, we set $u^{\rm{in}}_{\rm{AM}} = 1\,$ml/s \cite{gutierrez2022effect} and $u^{\rm in}_{\rm{LV}}=0.121\,$ml/s \cite{liu2024using} to solve for $p^0_r$.
+\item
+  We also estimate the Womersley numbers $\alpha_c, \alpha_r$
+  associated with the cardiac and respiratory flow patterns,
+  respectively, by the definition
+  \begin{equation}
+    \alpha^2_i = \frac{h_{\rm SAS}^2 \omega_i \rho}{\mu} \qquad i \in \{c, r\},
+  \end{equation}
+  with CSF density $\rho = 10^3$ kg/m$^3$, a mean CSF space width $h_{\rm SAS} =
+  1.5$mm, and CSF viscosity $\mu$ given in~Table.~1.  For
+  the cardiac cycle, we consider an angular frequency $\omega_c = 2
+  \pi$, while for the respiratory cycle, we set $\omega_r = 0.5
+  \pi$. The resulting (square) Womersley numbers are $\alpha_c^2 = 20.2$
+  for the cardiac cycle and $\alpha_r^2 = 5.05$ for the respiratory
+  cycle.
+\item
+  To account for inertial forces in addition to the viscous forces, we
+  use the Womersley numbers $\alpha_c, \alpha_r$ to calculate upscaled
+  pressure fields $p^1_c, p^1_r$ from $p^0_c, p^0_r$ as:
+  \begin{equation}
+    p^1_i(x) = \left ( 1 + \frac{\alpha_i^2}{8} \right ) p_i^0(x)
+    \qquad \text{for } x \in \Omega_{\rm CSF}, \qquad i \in \{c, r\}.
+  \end{equation}
+  Note that this scaling is based on theoretical considerations on the
+  ratio of oscillatory flow to steady flow impedances in a
+  tube~\cite[Chap.~4.3.]{van1998cardiovascular}.
+\item
+  Further, assuming unsteady dispersion, we follow Sharp et
+  al.~\cite{sharp2019dispersion} to estimate local enhancement factors
+  $S_c, S_r$ from the non-dimensionalized pressure gradients:
+  \begin{equation}
+    S_i(x) = \frac{1}{\alpha_i^3} \frac{1}{\omega_i \mu/h_{\rm SAS}} | \nabla p_i^1(x) |
+    \qquad i \in \{c, r\}.
+  \end{equation}
+\item
+  Finally, we define the cardiac and respiratory dispersion
+  enhancement factors $R_c$ and $R_r$ by smoothing $S_c$ and $S_r$,
+  respectively, to account for the non-local nature of
+  dispersion. Specifically, for $i \in \{c, r\}$, we define $R_i :
+  \Omega_{\rm CSF} \rightarrow \R^{+}$ by solving a heuristic weighted
+  Helmholtz problem over $\Omega_{\rm CSF}$ with $S_i$ as the
+  right-hand side:
+  \begin{equation}
+    - 10^{-4} \Delta R_i + R_i
+    = S_i \quad \text{ on } \Omega_{\rm CSF}
+    \qquad \text{ and } \quad
+    \nabla R_i \cdot \bm n = 0, \quad \text{ on } \partial \Omega_{\rm CSF} .
+\end{equation}
+\end{enumerate}
+Considering the uncertainty associated with the validity of
+simplifying assumptions, the resulting estimates of the cardiac and
+respiratory dispersion factors $R_c$ and $R_r$ 
+should be viewed as heuristic rather than absolute.
+
+\subsection{Estimating net perivascular flow induced by peristaltic waves}
+\label{sec:app:peristalsis}
+
+We use the theoretical framework previously introduced by Gjerde et al.~\cite{gjerde2023directional} to compute an analytic estimate of the time-averaged (or \emph{net}) flow rates $\langle Q'_i \rangle$ (mm$^3$/s) induced by peristaltic pumping in a perivascular network $\Lambda = \cup_i \Lambda_i$. The motion of the (inner) vascular wall is assumed to be described by a periodic traveling (peristaltic) wave of relative amplitude $\varepsilon$, wave length $\lambda$ (mm) and frequency $f$, acting normal to the wall and traveling in the antegrade direction (with the blood flow). By definition, the wave number is $k = 2 \pi/\lambda$ and the angular frequency is $\omega = 2 \pi f$. Each PVS segment $\Lambda_i$ has length $L_i$ with wave-relative length $\ell_i = k L_i$, baseline inner radius $R_1^i$, fixed outer radius $R_2^i$, and outer-to-inner ratio $\beta_i = R_2^i/R_1^i$. These geometric parameters and the assumption of annular cylindrical PVS segments yield hydraulic resistances and additional characteristic parameters, see \cite{gjerde2023directional} for the complete definitions and schematics. Since the analytical estimate is derived under the assumption that $k L_i \approx \mathcal{O} (1)$~\cite{gjerde2023directional} and has been verified against numerical simulations for $k L_i$ of the order $10^{-1}-10^2$~\cite[Table I]{gjerde2023directional}, we consider it applicable for the wave lengths and vascular network data considered here in which $k L_i$ range from 0.15 to 30 for the strong vasomotion and 0.0015 to 0.30 for the cardiac waves (\Cref{tab:pvs:parameters}).
+\begin{table}
+\centering
+  \small
+  \begin{tabular}{llrc}
+    \toprule
+    Parameter & Description & Value(s)  & Ref.\\ 
+    \midrule
+    Relative PVS size $\beta$ & $\beta = \beta_i = R_2^i / R_1^i$ & 2 & $\approx$\cite{eide2024functional} \\
+    Wave frequency $f$ & Traveling wave frequency of vascular motion & $0.1-1.0$ Hz & \cite{gjerde2023directional} \\
+    Wave length $\lambda$ & Traveling wave length of vascular motion & $0.02-2$ mm & \cite{broggini2024long, gjerde2023directional} \\
+    Wave amplitude & Relative amplitude of inner wall motion & $1-10\%$ & \cite{gjerde2023directional} \\
+    \midrule
+    Cardiac frequency $f_c$ & Frequency of human cardiac pulse wave  & $1.0$ Hz & \cite{jung2021novel} \\
+    Cardiac wave length $\lambda_c$ & Wave length of human cardiac pulse wave & $2.0$m & \\
+    Cardiac amplitude $\varepsilon_c$ & Wall displacement amplitude of cardiac pulse wave & 1\%  & \\
+    \midrule
+    Vasomotion frequency $f_v$ & Frequency of slow vasomotion wave  & $0.1$ Hz & \cite{jung2021novel} \\
+    Vasomotion wave length $\lambda_v$ & Wave length of vasomotion wave & $0.02$ m & \cite{broggini2024long, gjerde2023directional} \\
+    Vasomotion amplitude $\varepsilon_v$ & Wall displacement amplitude of vasomotion wave & 10\%  & \cite{broggini2024long, gjerde2023directional}\\
+    \bottomrule
+  \end{tabular}
+  \caption{Perivascular flow induced by vascular wall motion: overview of parameters.}
+  \label{tab:pvs:parameters}
+\end{table}
+% Vascular radii r_o (min, max, avg, std) (mm):  ....
+% Vascular branch lengths L (avg, std, min, max) (mm): ...
+
+\input{tikz/fig_pvs_flow}
+
+This theoretical formalism~\cite{gjerde2023directional} is defined
+relative to a network in the form of a directed, bifurcating tree with
+a single supply node/root $i_0$. To extend to a network of cerebral
+arteries with multiple supply nodes (such as the basilar and two
+internal carotid arteries in the current data
+set~\cite{hodneland2019new}), we separate the network $\Lambda$ into
+edge-disjoint subnetworks $\Lambda^1, \Lambda^2, \Lambda^3$, one for
+each of the supply nodes (Fig.~1A--B,
+\Cref{fig:app:peristalsis}). Each node is assigned to the subnetwork
+associated with the nearest supply node, and edges between nodes are
+preserved (\Cref{fig:app:peristalsis}B). Next, we compute a minimal,
+bifurcating and directed tree representation of each subnetwork:
+$\mathcal{T}^1, \mathcal{T}^2, \mathcal{T}^3$
+(\Cref{fig:app:peristalsis}C). Each tree $\mathcal{T}^j = \cup E_n^j$
+consists of the subset of the nodes from $\Lambda^j$ that have degree
+1 (are leaf or root nodes) or degree $3$ (are true bifurcation
+points), and each path between nodes with degree $\not = 2$ in
+$\Lambda^j$ is represented in $\mathcal{T}^j$ by an edge $E^j$ with
+edge length $L$ corresponding to the total length of the original path
+and edge radius $R^j$ as the average of the path radii.
+
+For each subtree $\mathcal{T}^j = \cup_n E_n^j$, we compute the
+time-averaged downstream flow rate $\langle Q'_n \rangle$ induced by
+the vascular wall motion for each edge $n$ via~\cite[eq.~(5),
+  (34)]{gjerde2023directional} (\Cref{fig:app:peristalsis}D). We next
+assign this flow rate $\langle Q'_n \rangle$ to each of the branches
+$\Lambda_i$ that form the path $E_n^j$, thus yielding $\langle Q'_i
+\rangle$ for each perivascular segment $\Lambda_i$ while ensuring that
+mass is conserved (\Cref{fig:app:peristalsis}E). For the segment(s)
+ignored in the separation step (\Cref{fig:app:peristalsis}B), we set a
+flow rate of zero. Finally, we define the mean longitudinal
+perivascular velocity induced by the peristaltic wave $\langle
+\hat{u}^x_i \rangle$ by dividing the flow rate $\langle Q'_i \rangle$
+by the cross-section area $A_i = \pi ({R_2^i}^2 - {R_1^i}^2) = \pi
+(\beta_i^2 - 1) {R_1^i}^2$.
+
+\subsection{Modeling and simulating solute transport and exchange in intracranial domains (3D) and perivascular networks (1D)}
 \label{sec:app:transport_eqs}
 
 In this section, we describe the mathematical model (eq.~(1)), the
@@ -686,95 +850,6 @@ Note that the condition \eqref{eq:flux_conservation} is enforced weakly in the a
 
 
 
-\subsection{Estimating dispersion factors from pulsatile CSF flow}
-\label{sec:app:dispersion}
-
-The cardiac ($\sim$1Hz) and respiratory ($\sim$0.25Hz) cycles induce
-pulsatile flow of CSF in the ventricular system and in the cranial and
-spinal SAS. Pulsatile flow leads to dispersion which in turn may
-enhance molecular transport~\cite{taylor1953dispersion,
-  watson1983diffusion, asgari2016glymphatic, sharp2019dispersion,
-  ray2021quantitative, troyetsky2021dispersion}. To account for the
-dispersive effects over a longer time scale (hours to days), and in
-the absence of measurements or estimates of dispersion coefficients in
-human CSF spaces, we adapt existing theoretical
-estimates~\cite{watson1983diffusion, sharp2019dispersion}. More
-specifically, we compute spatially-varying dispersion enhancement
-fields $R_c$ and $R_r$ (Fig.~2G, I), associated with the
-cardiac and respiratory cycles respectively, via the algorithm
-presented below. These fields then contribute to the diffusion
-coefficient in $\Omega_{\rm CSF}$ in~\eqref{eq:3d_pde} as $D = (1 +
-R_c + R_r) D^{\rm Gad}$.
-\begin{enumerate}[label=\roman*)]
-\item
-  To account for viscous forces, we compute spatially-varying CSF
-  pressure fields $p^0_c, p^0_r$ in $\Omega_{\rm CSF}$ corresponding
-  to the Stokes flow induced by the peak volumetric reduction of the
-  CSF space in the respective cycle (Fig.~2F, H). More
-  precisely, we numerically solve the incompressible Stokes
-  equations~\eqref{eq:stokes} equipped with the following boundary
-  conditions mimicking a dilation of the brain parenchyma with the
-  spinal SAS as the only route for CSF efflux:
-  \begin{equation}\label{eq:pulsatility:bcs}
-    \bm u = 0 \text{ on } \Gamma_{\rm Pia}; \quad 
-    \mu \nabla \bm u \cdot \bm n - p \bm n = 0 \text{ on } \Gamma_{\rm SSAS}; \quad 
-    \bm u = \frac{u^{\rm in}_{\rm LV} \cdot \bm n}{|\Gamma_{\rm LV}|} \text{ on } \Gamma_{\rm LV}; \quad
-    \bm u = \frac{u^{\rm in}_{\rm AM} \cdot \bm n}{|\Gamma_{\rm skull}|} \text{ on } \Gamma_{\rm AM}.
-\end{equation}
-  In the cardiac cycle case, we set $u^{\rm in}_{\rm AM} = 6\,$ml/s \cite{causemann2022human,baledent2014imaging} and $u^{\rm in}_{\rm LV}=0.31\,$ml/s \cite{vinje2019respiratory} to solve for $p^0_c$. In the respiratory cycle case, we set $u^{\rm{in}}_{\rm{AM}} = 1\,$ml/s \cite{gutierrez2022effect} and $u^{\rm in}_{\rm{LV}}=0.121\,$ml/s \cite{liu2024using} to solve for $p^0_r$.
-\item
-  We also estimate the Womersley numbers $\alpha_c, \alpha_r$
-  associated with the cardiac and respiratory flow patterns,
-  respectively, by the definition
-  \begin{equation}
-    \alpha^2_i = \frac{h_{\rm SAS}^2 \omega_i \rho}{\mu} \qquad i \in \{c, r\},
-  \end{equation}
-  with CSF density $\rho = 10^3$ kg/m$^3$, a mean CSF space width $h_{\rm SAS} =
-  1.5$mm, and CSF viscosity $\mu$ given in~Table.~1.  For
-  the cardiac cycle, we consider an angular frequency $\omega_c = 2
-  \pi$, while for the respiratory cycle, we set $\omega_r = 0.5
-  \pi$. The resulting (square) Womersley numbers are $\alpha_c^2 = 20.2$
-  for the cardiac cycle and $\alpha_r^2 = 5.05$ for the respiratory
-  cycle.
-\item
-  To account for inertial forces in addition to the viscous forces, we
-  use the Womersley numbers $\alpha_c, \alpha_r$ to calculate upscaled
-  pressure fields $p^1_c, p^1_r$ from $p^0_c, p^0_r$ as:
-  \begin{equation}
-    p^1_i(x) = \left ( 1 + \frac{\alpha_i^2}{8} \right ) p_i^0(x)
-    \qquad \text{for } x \in \Omega_{\rm CSF}, \qquad i \in \{c, r\}.
-  \end{equation}
-  Note that this scaling is based on theoretical considerations on the
-  ratio of oscillatory flow to steady flow impedances in a
-  tube~\cite[Chap.~4.3.]{van1998cardiovascular}.
-\item
-  Further, assuming unsteady dispersion, we follow Sharp et
-  al.~\cite{sharp2019dispersion} to estimate local enhancement factors
-  $S_c, S_r$ from the non-dimensionalized pressure gradients:
-  \begin{equation}
-    S_i(x) = \frac{1}{\alpha_i^3} \frac{1}{\omega_i \mu/h_{\rm SAS}} | \nabla p_i^1(x) |
-    \qquad i \in \{c, r\}.
-  \end{equation}
-\item
-  Finally, we define the cardiac and respiratory dispersion
-  enhancement factors $R_c$ and $R_r$ by smoothing $S_c$ and $S_r$,
-  respectively, to account for the non-local nature of
-  dispersion. Specifically, for $i \in \{c, r\}$, we define $R_i :
-  \Omega_{\rm CSF} \rightarrow \R^{+}$ by solving a heuristic weighted
-  Helmholtz problem over $\Omega_{\rm CSF}$ with $S_i$ as the
-  right-hand side:
-  \begin{equation}
-    - 10^{-4} \Delta R_i + R_i
-    = S_i \quad \text{ on } \Omega_{\rm CSF}
-    \qquad \text{ and } \quad
-    \nabla R_i \cdot \bm n = 0, \quad \text{ on } \partial \Omega_{\rm CSF} .
-\end{equation}
-\end{enumerate}
-Considering the uncertainty associated with the validity of
-simplifying assumptions, the resulting estimates of the cardiac and
-respiratory dispersion factors $R_c$ and $R_r$ 
-should be viewed as heuristic rather than absolute.
-
 %% \mar{To examine cardiac-driven dispersion, we compute a steady CSF flow field at peak systolic blood inflow. We mimic the resulting reduction of CSF space volume by imposing an inflow of $6\,$ml/s \cite{baledent2014imaging, causemann2022human} and $0.31\,$ml/s \cite{vinje2019respiratory} across the upper arachnoid mater ($\Gamma_{\rm AM-U}$) and the lateral ventricle ($\Gamma_{\rm LV}$) surface, respectively. We allow free outflow into the spinal SAS ($\Gamma_{\rm SSAS}$). In addition, we upscale the obtained pressure field to account for the lack of pulsatile inertial effects in our model.}
 
 %% % respiratory pulsatility
@@ -815,75 +890,6 @@ should be viewed as heuristic rather than absolute.
 % \end{equation}
 
 % to obtain the locally averaged, spatially varying diffusion enhancement factor $R$.
-
-\subsection{Estimating net perivascular flow induced by peristaltic waves}
-\label{sec:app:peristalsis}
-
-We use the theoretical framework previously introduced by Gjerde et al.~\cite{gjerde2023directional} to compute an analytic estimate of the time-averaged (or \emph{net}) flow rates $\langle Q'_i \rangle$ (mm$^3$/s) induced by peristaltic pumping in a perivascular network $\Lambda = \cup_i \Lambda_i$. The motion of the (inner) vascular wall is assumed to be described by a periodic traveling (peristaltic) wave of relative amplitude $\varepsilon$, wave length $\lambda$ (mm) and frequency $f$, acting normal to the wall and traveling in the antegrade direction (with the blood flow). By definition, the wave number is $k = 2 \pi/\lambda$ and the angular frequency is $\omega = 2 \pi f$. Each PVS segment $\Lambda_i$ has length $L_i$ with wave-relative length $\ell_i = k L_i$, baseline inner radius $R_1^i$, fixed outer radius $R_2^i$, and outer-to-inner ratio $\beta_i = R_2^i/R_1^i$. These geometric parameters and the assumption of annular cylindrical PVS segments yield hydraulic resistances $\mathcal{R}_{o, i}$ and additional characteristic parameters, see \cite{gjerde2023directional} for the complete definitions and schematics. Since the analytical estimate is derived under the assumption that $k L_i \approx \mathcal{O} (1)$~\cite{gjerde2023directional} and has been verified against numerical simulations for $k L_i$ of the order $10^{-1}-10^2$~\cite[Table I]{gjerde2023directional}, we consider it applicable for the wave lengths and vascular network data considered here in which $k L_i$ range from 0.15 to 30 for the strong vasomotion and 0.0015 to 0.30 for the cardiac waves (\Cref{tab:pvs:parameters}).
-\begin{table}
-\centering
-  \small
-  \begin{tabular}{llrc}
-    \toprule
-    Parameter & Description & Value(s)  & Ref.\\ 
-    \midrule
-    Relative PVS size $\beta$ & $\beta = \beta_i = R_2^i / R_1^i$ & 2 & $\approx$\cite{eide2024functional} \\
-    Wave frequency $f$ & Traveling wave frequency of vascular motion & $0.1-1.0$ Hz & \cite{gjerde2023directional} \\
-    Wave length $\lambda$ & Traveling wave length of vascular motion & $0.02-2$ mm & \cite{broggini2024long, gjerde2023directional} \\
-    Wave amplitude & Relative amplitude of inner wall motion & $1-10\%$ & \cite{gjerde2023directional} \\
-    \midrule
-    Cardiac frequency $f_c$ & Frequency of human cardiac pulse wave  & $1.0$ Hz & \cite{jung2021novel} \\
-    Cardiac wave length $\lambda_c$ & Wave length of human cardiac pulse wave & $2.0$m & \\
-    Cardiac amplitude $\varepsilon_c$ & Wall displacement amplitude of cardiac pulse wave & 1\%  & \\
-    \midrule
-    Vasomotion frequency $f_v$ & Frequency of slow vasomotion wave  & $0.1$ Hz & \cite{jung2021novel} \\
-    Vasomotion wave length $\lambda_v$ & Wave length of vasomotion wave & $0.02$ m & \cite{broggini2024long, gjerde2023directional} \\
-    Vasomotion amplitude $\varepsilon_v$ & Wall displacement amplitude of vasomotion wave & 10\%  & \cite{broggini2024long, gjerde2023directional}\\
-    \bottomrule
-  \end{tabular}
-  \caption{Perivascular flow induced by vascular wall motion: overview of parameters.}
-  \label{tab:pvs:parameters}
-\end{table}
-% Vascular radii r_o (min, max, avg, std) (mm):  ....
-% Vascular branch lengths L (avg, std, min, max) (mm): ...
-
-\input{tikz/fig_pvs_flow}
-
-This theoretical formalism~\cite{gjerde2023directional} is defined
-relative to a network in the form of a directed, bifurcating tree with
-a single supply node/root $i_0$. To extend to a network of cerebral
-arteries with multiple supply nodes (such as the basilar and two
-internal carotid arteries in the current data
-set~\cite{hodneland2019new}), we separate the network $\Lambda$ into
-edge-disjoint subnetworks $\Lambda^1, \Lambda^2, \Lambda^3$, one for
-each of the supply nodes (Fig.~1A--B,
-\Cref{fig:app:peristalsis}). Each node is assigned to the subnetwork
-associated with the nearest supply node, and edges between nodes are
-preserved (\Cref{fig:app:peristalsis}B). Next, we compute a minimal,
-bifurcating and directed tree representation of each subnetwork:
-$\mathcal{T}^1, \mathcal{T}^2, \mathcal{T}^3$
-(\Cref{fig:app:peristalsis}C). Each tree $\mathcal{T}^j = \cup E_n^j$
-consists of the subset of the nodes from $\Lambda^j$ that have degree
-1 (are leaf or root nodes) or degree $3$ (are true bifurcation
-points), and each path between nodes with degree $\not = 2$ in
-$\Lambda^j$ is represented in $\mathcal{T}^j$ by an edge $E^j$ with
-edge length $L$ corresponding to the total length of the original path
-and edge radius $R^j$ as the average of the path radii.
-
-For each subtree $\mathcal{T}^j = \cup_n E_n^j$, we compute the
-time-averaged downstream flow rate $\langle Q'_n \rangle$ induced by
-the vascular wall motion for each edge $n$ via~\cite[eq.~(5),
-  (34)]{gjerde2023directional} (\Cref{fig:app:peristalsis}D). We next
-assign this flow rate $\langle Q'_n \rangle$ to each of the branches
-$\Lambda_i$ that form the path $E_n^j$, thus yielding $\langle Q'_i
-\rangle$ for each perivascular segment $\Lambda_i$ while ensuring that
-mass is conserved (\Cref{fig:app:peristalsis}E). For the segment(s)
-ignored in the separation step (\Cref{fig:app:peristalsis}B), we set a
-flow rate of zero. Finally, we define the mean longitudinal
-perivascular velocity induced by the peristaltic wave $\langle
-\hat{u}^x_i \rangle$ by dividing the flow rate $\langle Q'_i \rangle$
-by the cross-section area $A_i = \pi ({R_2^i}^2 - {R_1^i}^2) = \pi
-(\beta_i^2 - 1) {R_1^i}^2$.
 
 \subsection{Numerical verification}
 \label{sec:app:verification}

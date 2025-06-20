@@ -190,7 +190,7 @@ personalized intrathecal drug delivery and brain clearance.
      \textbf{In-silico modelling of transport of the PVS, SAS and parenchyma.}
      A) Illustration of the model geometry including the CSF-filled spaces (ventricles and SAS) $\Omega_{\rm CSF}$, the parenchyma $\Omega_{\rm PAR}$ and the PVS surrounding arteries $\Lambda_{\rm artery}$ and veins $\Lambda_{\rm vein}$, as well as their interfaces and boundaries; 
      B) 3D rendering of the computational geometry: the parenchyma, CSF (clipped, blue), arterial network (red), and venous network (blue); 
-     C) illustration of model representation of the intrathecal tracer injection; 
+     C) illustration of the intrathecal tracer injection protocol;  
      D) in-silico predictions of tracer concentration after 1, 6, 12, and 24 hours (opacity increasing linearly from 0 to 2 mmol/l); 
      E) sagittal, coronal and axial view of in-silico tracer concentrations overlayed on T1-weighted MR image after 1, 6, 12 and 24\,h (low concentrations transparent, pial surface in pink, arachnoid membrane in cyan, and arteries in dark red); 
      F) average tracer concentration in each compartment over the first 24\,h; 
@@ -615,11 +615,15 @@ spaces between 6 and 9 hours, with parenchymal tracer content still
 increasing after 24 hours, but with large individual
 differences. Watts et al~\cite{watts2019measuring} report of a similar
 enrichment pattern and a concentration peak in the SAS of $\approx$0.5
-mmol/l (relative to a total amount of 1.0 mmol) occuring after 10 to 15 hours. Our in-silico enrichment
+mmol/l (relative to a total amount of 1.0 mmol) occuring after 10 to 15 hours. 
+Our in-silico enrichment
 patterns agree with these observations, though with an earlier rather than later peak in the CSF spaces (2 hours after first tracer appearance at the craniocervical junction). In particular, we note that the substantial individual variation observed clinically is comparable to the variation in in-silico enrichment patterns associated with reduced CSF production or reduced intracranial pulsatility. We find that about 20\% of the tracer reaching the cranium enters the parenchyma, which aligns with the reported peak concentration values of $0.5\,$mmol/l in the SAS and $0.1\,$mmol/l in the parenchyma reported by Watts et al~\cite{watts2019measuring}.
 
-Our simulation results highlight that reproducing clinically observed tracer timings requires flow drivers beyond CSF production and cardiac peristalsis. To illustrate, we compared our findings to tracer arrival times reported by Eide and Ringstad~\cite{eide2024functional}, who observed a delay of just 15.3 min between the M1 and M2 segments of the MCA. Our baseline model, accounting only for CSF production and cardiac-driven flow, predicted a physiologically unrealistic delay of over three hours. In sharp contrast, our 'high PVS flow' scenario, which incorporates the effects of low-frequency vasomotion, yielded a much more consistent delay of 24 minutes. Furthermore, after adjusting for the 13 min travel time from injection to the craniocervical junction~\cite{eide2024functional}, the 'high PVS flow' model's FTAs (84––108 min for M1) aligns well with the upper end of the reported clinical range (37.8 $\pm$ 47.0), particularly when considering potentially delayed transport due to the limited caudal extend of our PVS network.
+Our simulation results highlight that reproducing clinically observed tracer timings requires flow drivers beyond CSF production and cardiac peristalsis.
+Similar to the CSF spaces, dispersion due to cardiac and respiratory pulsation has been hypothesized to enhance transport in the perivascular spaces. However, recent estimates indicate that the effect of dispersion does not exceed a factor of 2 compared to diffusion alone \cite{asgari2016glymphatic,sharp2019dispersion,bojarskaite2023sleep,asgari2016glymphatic,troyetsky2021dispersion}. This conclusion is supported by our own model, where a 100-fold increase in the PVS dispersion coefficient did not substantially accelerate transport (\cref{fig:pvs_b}H). 
+To illustrate the need for a stronger advective driver, we compared our findings to tracer arrival times reported by Eide and Ringstad~\cite{eide2024functional}, who observed a delay of just 15.3 min between the M1 and M2 segments of the MCA. Our baseline model, accounting only for CSF production and cardiac-driven flow, predicted a physiologically unrealistic delay of over three hours. In sharp contrast, our 'high PVS flow' scenario, which incorporates the effects of low-frequency vasomotion, yielded a much more consistent delay of 24 minutes. Furthermore, after adjusting for the 13 min travel time from injection to the craniocervical junction~\cite{eide2024functional}, the 'high PVS flow' model's FTAs (84––108 min for M1) aligns well with the upper end of the reported clinical range (37.8 $\pm$ 47.0), particularly when considering potentially delayed transport due to the limited caudal extend of our PVS network.
 Therefore, we interpret these results as strong indication that PVS flow driven by CSF production and cardiac peristalsis alone is insufficient to explain rapid perivascular transport observed in humans.
+
 
 % PVS flow predictions. 
 The existence, magnitude, and directionality of flow in surface and
@@ -669,6 +673,7 @@ entirely) in the retrograde direction. To the best of our knowledge,
 less is known about vasomotion wave characteristics in the human
 cerebral vasculature, though Gokina et al\cite{gokina1996electrical}
 report of spontaneous vasomotion also in human pial arteries ex-vivo.
+
 
 % Compartmentalization of the PVS
 To what extent are surface PVSs in communication with the surrounding
@@ -776,7 +781,7 @@ m/min~\cite{vinje2023human}. We will incorporate such transport
 mechanisms within the parenchyma in future work. Finally, we also note
 that we simulate the intracranial distribution of a tracer
 concentration appearing at the craniocervical junction rather than as
-an intrathecal injection. We therefore overestimate the amount of
+an intrathecal injection. We thus neglect absorption of both CSF and tracer in the spinal compartment, and therefore overestimate the amount of
 tracer entering into the intracranial spaces; however, due to the
 linearity of the mathematical model, it is valid to directly interpret
 the in-silico concentrations relative to the total amount of tracer.
