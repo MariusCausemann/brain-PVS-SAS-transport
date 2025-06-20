@@ -1225,9 +1225,11 @@ approximation properties are expected for this scheme. These numerical
 methods were implemented using the FEniCS finite element
 framework~\cite{alnaes2015fenics}, and the 3D-1D coupling is handled
 by the extension FEniCS\textsubscript{ii}~\cite{kuchta2020assembly}.
-The correctness and accuracy of the numerical solutions were verified by a series of
-numerical verification experiments (see Supplementary information S1.5).
-The majority of the simulation time was spend on the Stokes flow and transport model simulations. Each Stokes flow simulation utilizes a hybrid parallel approach with 16 MPI processes and 4 threads each, requiring approximately 300 GB of RAM and completing in 23 minutes. The transport model is limited to serial execution by FEniCS\textsubscript{ii}, but employs 16 threads for the linear system factorization, taking 22 minutes and consuming about 50 GB of memory on a AMD EPYC 9684X machine.
+The correctness and accuracy of the numerical solutions were verified
+by a series of numerical verification experiments (see Supplementary
+information S1.5).
+
+The majority of the simulation time was spent on the Stokes flow and transport model simulations. Each Stokes flow simulation utilizes a hybrid parallel approach with 16 MPI processes and 4 threads each, requiring approximately 300 GB of RAM and completing in 23 minutes. The transport model is limited to serial execution by FEniCS\textsubscript{ii}, but employs 16 threads for the linear system factorization, taking 22 minutes and consuming about 50 GB of memory on a AMD EPYC 9684X machine.
 
 \subsection*{Comparison with literature results}
 
