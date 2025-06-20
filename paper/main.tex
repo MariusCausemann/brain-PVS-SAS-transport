@@ -142,25 +142,27 @@ In this study, by leveraging geometric model reduction and
 mixed-dimensional modelling~\cite{masri2024modelling}, structural
 magnetic resonance (MR) images~\cite{hodneland2019new}, and high
 performance computing, we introduce an integrated computational model
-of intracranial molecular transport. Focusing on the
-interplay between perivascular pathways, pulsatility and CSF flow
-dynamics, the model predicts the temporal evolution and spatial
-distribution of a solute concentration within a detailed geometric
-representation of the human SAS and ventricular system, networks of
-surface PVSs and the brain parenchyma. In terms of transport dynamics,
-we account for heterogeneous diffusion, dispersive mixing induced by
-cardiac and respiratory pulsatility in the CSF spaces and PVSs,
-convective fluid flow driven by CSF production and peristaltic
-pumping, as well as solute exchange and clearance across
-semi-permeable membranes. Comparing with glymphatic MRI
+of intracranial molecular transport. Focusing on the interplay between
+perivascular pathways, pulsatility and CSF flow dynamics, the model
+predicts the temporal evolution and spatial distribution of a solute
+concentration within a detailed geometric representation of the human
+SAS and ventricular system, in networks of surface PVSs (i.e.~those
+surrounding arteries and veins in the SAS), and in the brain
+parenchyma. In terms of transport dynamics, we account for
+heterogeneous diffusion, dispersive mixing induced by cardiac and
+respiratory pulsatility in the CSF spaces and PVSs, convective fluid
+flow driven by CSF production and peristaltic pumping, as well as
+solute exchange and clearance across semi-permeable
+membranes. Comparing with glymphatic MRI
 studies~\cite{ringstad2017glymphatic, ringstad2018brain,
-  watts2019measuring}, the in-silico predictions accurately represent
-molecular enrichment patterns, timing and intercompartmental
-distributions. This open platform~\cite{ZENODO} thus provides a
-technological opportunity for qualitatively and quantitatively
-exploring key open questions relating to molecular movement within the
-human brain environment such as the role of pulsatility, perivascular
-pathways, structural compartmentalization, or morphology.
+  watts2019measuring, eide2024functional}, the in-silico predictions
+accurately represent molecular enrichment patterns, timing and
+intercompartmental distributions. This open platform~\cite{ZENODO}
+thus provides a technological opportunity for qualitatively and
+quantitatively exploring key open questions relating to molecular
+movement within the human brain environment such as the role of
+pulsatility, perivascular pathways, structural compartmentalization,
+or morphology.
 
 % Main findings and outlook
 By exploring this high-dimensional parameter space, we propose that
@@ -445,7 +447,7 @@ this question.
     \includegraphics[width=0.95\textwidth]{figures/figure3a.png}
     \caption{\textbf{A static pressure gradient and peristaltic pumping are potential drivers of perivascular flow.}
     A) Surface arterial network colored by arterial radius with vessel locations labeled;
-    B) Net PVS flow induced by CSF production alone (see also ~\Cref{fig:csf}D).
+    B) Net PVS flow induced by CSF production alone (see also~\Cref{fig:csf}D).
     Histograms show the relative frequencies of local periarterial velocities. Positive values indicate antegrade PVS flow, while negative values indicate retrograde PVS flow;
     C) Illustration of the concept of peristaltic pumping;
     D) histograms of estimated net PVS flow induced by pulse wave or vasomotion peristaltic pumping;
@@ -616,14 +618,40 @@ increasing after 24 hours, but with large individual
 differences. Watts et al~\cite{watts2019measuring} report of a similar
 enrichment pattern and a concentration peak in the SAS of $\approx$0.5
 mmol/l (relative to a total amount of 1.0 mmol) occuring after 10 to 15 hours. 
-Our in-silico enrichment
-patterns agree with these observations, though with an earlier rather than later peak in the CSF spaces (2 hours after first tracer appearance at the craniocervical junction). In particular, we note that the substantial individual variation observed clinically is comparable to the variation in in-silico enrichment patterns associated with reduced CSF production or reduced intracranial pulsatility. We find that about 20\% of the tracer reaching the cranium enters the parenchyma, which aligns with the reported peak concentration values of $0.5\,$mmol/l in the SAS and $0.1\,$mmol/l in the parenchyma reported by Watts et al~\cite{watts2019measuring}.
+Our in-silico enrichment patterns agree with these observations, though with an earlier rather than later peak in the CSF spaces (2 hours after first tracer appearance at the craniocervical junction). In particular, we note that the substantial individual variation observed clinically is comparable to the variation in in-silico enrichment patterns associated with reduced CSF production or reduced intracranial pulsatility. We find that about 20\% of the tracer reaching the cranium enters the parenchyma, which aligns with the reported peak concentration values of $0.5\,$mmol/l in the SAS and $0.1\,$mmol/l in the parenchyma reported by Watts et al~\cite{watts2019measuring}.
 
-Our simulation results highlight that reproducing clinically observed tracer timings requires flow drivers beyond CSF production and cardiac peristalsis.
-Similar to the CSF spaces, dispersion due to cardiac and respiratory pulsation has been hypothesized to enhance transport in the perivascular spaces. However, recent estimates indicate that the effect of dispersion does not exceed a factor of 2 compared to diffusion alone \cite{asgari2016glymphatic,sharp2019dispersion,bojarskaite2023sleep,asgari2016glymphatic,troyetsky2021dispersion}. This conclusion is supported by our own model, where a 100-fold increase in the PVS dispersion coefficient did not substantially accelerate transport (\cref{fig:pvs_b}H). 
-To illustrate the need for a stronger advective driver, we compared our findings to tracer arrival times reported by Eide and Ringstad~\cite{eide2024functional}, who observed a delay of just 15.3 min between the M1 and M2 segments of the MCA. Our baseline model, accounting only for CSF production and cardiac-driven flow, predicted a physiologically unrealistic delay of over three hours. In sharp contrast, our 'high PVS flow' scenario, which incorporates the effects of low-frequency vasomotion, yielded a much more consistent delay of 24 minutes. Furthermore, after adjusting for the 13 min travel time from injection to the craniocervical junction~\cite{eide2024functional}, the 'high PVS flow' model's FTAs (84––108 min for M1) aligns well with the upper end of the reported clinical range (37.8 $\pm$ 47.0), particularly when considering potentially delayed transport due to the limited caudal extend of our PVS network.
-Therefore, we interpret these results as strong indication that PVS flow driven by CSF production and cardiac peristalsis alone is insufficient to explain rapid perivascular transport observed in humans.
-
+Importantly, our simulation results indicate that the tracer
+enrichment observed clinically relies on the presence of one or more
+flow drivers in addition to CSF production and cardiac
+peristalsis. Dispersion due to cardiac and respiratory pulsations has
+been hypothesized to enhance transport in the perivascular spaces as
+well as in the CSF spaces. However, recent estimates indicate that the
+effect of dispersion in the PVS does not exceed a factor of 2 compared
+to diffusion alone
+\cite{asgari2016glymphatic,sharp2019dispersion,bojarskaite2023sleep,asgari2016glymphatic,troyetsky2021dispersion}. Our
+model demonstrates that not even a 100-fold increase in the PVS
+dispersion coefficient accelerates transport substantially
+(\Cref{fig:pvs_b}H). To illustrate the need for a stronger advective
+driver, we compared our findings to tracer arrival times reported by
+Eide and Ringstad~\cite{eide2024functional}, who observed a delay of
+just 15.3 min between the M1 and M2 segments of the MCA. First, we
+note that the spaces studied by Eide and
+Ringstad~\cite{eide2024functional}, labeled therein as the PVSAS, are
+naturally compared to the parts of our surface PVS networks embedded
+within the SAS. Our baseline model, accounting only for CSF production
+and cardiac-driven flow, predicted a physiologically unrealistic delay
+of over three hours. In contrast, our high PVS flow scenario, which
+incorporates the effects of low-frequency vasomotion, yielded a more
+consistent delay of 24 minutes. Furthermore, after adjusting for the
+13 min travel time from injection to the craniocervical
+junction~\cite{eide2024functional}, the high PVS flow model's FTAs
+(84--108 min for M1) aligns well with the upper end of the reported
+clinical range (37.8 $\pm$ 47.0), particularly when considering
+potentially delayed transport due to the limited caudal extent of our
+PVS network. All in all, we interpret these results as strongly
+indicative of that PVS flow driven by CSF production and cardiac
+peristalsis alone is insufficient to explain the rapid perivascular
+transport observed in humans.
 
 % PVS flow predictions. 
 The existence, magnitude, and directionality of flow in surface and
@@ -738,7 +766,7 @@ factor is a simplification that does not capture the full complexity
 of transient fluid dynamics, such as non-uniform wall motion and ependymal
 cilia within the ventricular system~\cite{siyahhan2014flow}, dynamic CSF
 flow at the craniocervical junction, or the effect of microanatomical
-features such as subarachnoid trabeculae on flow resitance and dispersion
+features such as subarachnoid trabeculae on flow resistance and dispersion
 in the SAS. However, our approach is supported by recent clinical 
 observations. High-resolution MRI measurements by Hirschler et
 al.~\cite{hirschler2024region} revealed that CSF mobility in regions
@@ -1194,7 +1222,7 @@ framework~\cite{alnaes2015fenics}, and the 3D-1D coupling is handled
 by the extension FEniCS\textsubscript{ii}~\cite{kuchta2020assembly}.
 The correctness and accuracy of the numerical solutions were verified by a series of
 numerical verification experiments (see Supplementary information S1.5).
-The majority of the simulation time was spend on the Stokes flow and transport model simulations. Each Stokes flow simulation utilizes a hybrid parallel approach with 16 MPI processes and 4 threads each, requiring approximately 300 GB of RAM and completing in 23 minutes. The transport model is limited to serial execution by FEniCS\textsubscript{ii}, but employes 16 threads for the linear system factorization, taking 22 minutes and consuming about 50 GB of memory on a AMD EPYC 9684X machine.
+The majority of the simulation time was spend on the Stokes flow and transport model simulations. Each Stokes flow simulation utilizes a hybrid parallel approach with 16 MPI processes and 4 threads each, requiring approximately 300 GB of RAM and completing in 23 minutes. The transport model is limited to serial execution by FEniCS\textsubscript{ii}, but employs 16 threads for the linear system factorization, taking 22 minutes and consuming about 50 GB of memory on a AMD EPYC 9684X machine.
 
 \subsection*{Comparison with literature results}
 
