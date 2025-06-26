@@ -24,6 +24,7 @@
 
 \renewcommand\thefigure{S\arabic{figure}}    
 \renewcommand\thesection{S\arabic{section}}    
+\renewcommand\thetable{S\arabic{table}}    
 
 \captionsetup[subfigure]{justification=justified,singlelinecheck=false}
 
@@ -53,112 +54,8 @@
 
 \section{Supplementary methods}
 
-These sections provide more detailed descriptions of the mathematical models and numerical approximations considered.
-We solve the models presented in Methods numerically
-using finite element methods. The following subsections provide more
-details, model-by-model. 
-
-\subsection{Nomenclature and notation} We begin by including \Cref{table:geometry_notation}, \Cref{table:variable}, and \Cref{table:mesh}, which summarize the common notation used for the geometry, model variables and parameters, and finite element discretization, respectively.
-\begin{table}[h!] 
-\centering
-\caption{Geometrical notation, refer to (Fig.~1A, Fig.~2A--C)}
-\label{table:geometry_notation}
-\begin{tabular}{ll}
-\hline
-\textbf{Symbol} & \textbf{Description} \\
-\hline
-$\Omega$ & Full intracranial domain: $\Omega = \Omega_{\mathrm{PAR}} \cup \Omega_{\mathrm{CSF}}$ \\
-$\Omega_{\mathrm{PAR}}$ & Brain parenchyma domain \\
-$\Omega_{\mathrm{CSF}}$ & Cerebrospinal‐fluid (CSF) domain \\
-$\partial\Omega_{\mathrm{PAR}}\cap\partial\Omega_{\mathrm{CSF}}$ & Parenchyma–CSF interface: $\partial \Omega_{\rm CSF} \bigcap \partial
-\Omega_{\rm PAR} = \Gamma_{\rm LV} \cup \Gamma_{\rm pia}$ \\
-$\Gamma_{\mathrm{LV}}$ & Lateral‐ventricle surface (part of parenchyma–CSF interface) \\
-$\Gamma_{\mathrm{pia}}$ & Pial surface (remainder of parenchyma–CSF interface) \\
-$\Gamma_{\mathrm{SSAS}}$ & Lower CSF boundary toward spinal subarachnoid space \\
-$\Gamma_{\mathrm{AM}}$ & Outer CSF boundary toward arachnoid/dura \\
-$\Gamma_{\mathrm{AM\text{-}L}}$, $\Gamma_{\mathrm{AM\text{-}U}}$ & Lower/upper parts of $\Gamma_{\mathrm{AM}}$ \\
-$\Gamma_{\mathrm{SC}}$ & Parenchyma–spinal‐cord boundary: $\partial\Omega_{\mathrm{PAR}}\setminus\partial\Omega_{\mathrm{CSF}}$ \\
-$\Lambda_{a},\Lambda_{v}$ & Arterial/venous PVS centerline networks \\
-$\Lambda_{i}$ & Individual PVS centerline segment ($\Lambda_a^i$, $\Lambda_v^i$ corresponding to arterial and venous segments) \\
-$L_i$ & Length of a PVS segment $\Lambda_i$ \\
-$\Omega_{i}$ & Perivascular space around $\Lambda_{i}$ \\
-$R_{1}^{i},\,R_{2}^{i}$ & Inner/outer radii of the annular PVS $\Omega_{i}$ \\
-$\Gamma_{a},\,\Gamma_{v}$ & Outer lateral surfaces of periarterial/perivenous PVSs \\
-$P$ & Perimeter of the PVS cross‐section \\
-$\mathcal V$ & Graph nodes of the PVS network \\
-$\mathcal B\subset  \mathcal V$ & Internal (bifurcation) nodes \\
-$\mathcal N\subset  \mathcal V$ & End (leaf) nodes \\
-\hline
-\end{tabular}
-\end{table}
-
-
-\begin{table}[htb!]
-\centering 
-\caption{Variable and parameter notation}
-\label{table:variable}
-\begin{tabular}{ll}
-\hline
-\textbf{Symbol} & \textbf{Description} \\
-\hline
-$\phi$ & Fluid volume fraction (porosity) \\
-$D$ & Effective diffusion coefficient ($D_{\mathrm{PAR}} = D^*$ or $D_{\mathrm{CSF}} = D(1+R)$ \\
-$\mathbf{u}$ & Convective velocity ($\mathbf{u}_{\mathrm{PAR}} = 0$ or $\mathbf{u}_{\mathrm{CSF}}$ computed from steady state flow) \\
-$c$ & Solute concentration in 3D domains \\
-$\bar c$ & Lateral average of $c$ on the PVS boundary \\
-$\xi$ & Permeability coefficient between the periarterial and perivenous networks
-and their surroundings\\
-$\delta_{\Gamma}$ & Dirac term on the PVS outer surfaces \\
-$\beta_{\mathrm{pia}}$ & Permeability of pial/ventricle interface \\
-$\beta_{\mathrm{exit}}$ & Efflux rate on $\Gamma_{\mathrm{AM\text{-}U}}$ \\
-$g_{\mathrm{influx}}$ & Influx on $\Gamma_{\mathrm{SSAS}}$ \\
-$A(s)$ & Cross‐sectional area of PVS at $s$ \\
-$\hat D$ & 1D effective diffusion in PVS \\
-$\hat u$ & 1D convective velocity in PVS \\
-$p$ & Pressure in CSF (Stokes) or PVS (network) \\
-$\hat{q}$ & Volumetric flux in PVS network \\
-$\kappa$ & Hydraulic conductivity in annular PVS \\
-$\mu$ & Dynamic viscosity of CSF \\
-$R_{\rm CSF, 0}$ & Resistance parameter for CSF efflux \\
-$u_{\mathrm{in}}$ & Imposed fluid influx on $\Gamma_{\mathrm{LV}}$ \\
-$\omega,\;\rho$ & Angular frequency, CSF density (for dispersion estimates) \\
-$\alpha_c,\, \alpha_r$ & Womersley number (cardiac, respiratory) \\
-$h_{\rm SAS}$ & Mean width of the subarachnoid space (for dispersion estimates) \\
-$R_c,\,R_r$ & Spatially-varying dispersion enhancement factors (cardiac, respiratory) \\
-
-\hline
-\end{tabular}
-\end{table}
-
-
-\begin{table}[h!]
-\centering
-\caption{Common mesh and finite‐element notation}
-\label{table:mesh}
-\begin{tabular}{ll}
-\hline
-\textbf{Symbol} & \textbf{Description} \\
-\hline
-$\mathcal{T}$ & Tetrahedral mesh of $\Omega$ \\
-$\mathcal{T}_{\mathrm{PAR}},\,\mathcal{T}_{\mathrm{CSF}}$ & Restrictions of $\mathcal T$ to $\Omega_{\mathrm{PAR}},\Omega_{\mathrm{CSF}}$ \\
-$E$ & Tetrahedral cell in $\mathcal T$ \\
-$\mathcal F_{i}$ & Interior facets of $\mathcal T$ \\
-$\mathcal F_{i,\mathrm{PAR}},\, \mathcal F_{i,\mathrm{CSF}}$ & Interior facets in $\Omega_{\mathrm{PAR}}$, $\Omega_{\mathrm{CSF}}$ \\
-$\mathcal F_{e}$ & Exterior facets of CSF mesh ($\mathcal F_{\mathrm{pia}}\cup \mathcal F_{\mathrm{LV}}\cup \mathcal F_{\mathrm{AM\text{-}L}}\cup \mathcal \mathcal F_{\mathrm{AM\text{-}U}}\cup \mathcal F_{\mathrm{SSAS}}$) \\
-$\mathcal F _{\mathrm{pia}},\,\mathcal F_{\mathrm{LV}},\, \mathcal F_{\mathrm{AM\text{-}L}},\,\mathcal F_{\mathrm{AM\text{-}U}},\, \mathcal F_{\mathrm{SSAS}}$ & Facets on corresponding boundaries \\
-$V_{h}$ & Discontinuous Galerkin space on $\Omega$ of degree $1$\\
-$\widehat V_{h}$ & Continuous Galerkin space on $\Lambda$ of degree $1$.  \\
-% $\widehat V_{h,0}$, $\widehat V_{h,g}$ & Continuous Galerkin space on network with homogeneous or prescribed BCs \\
-$\mathrm{BDM}_{2}$ & Brezzi–Douglas–Marini space of degree 2 \\
-$Q_{h}$ & Pressure space on $\mathcal T_{\mathrm{CSF}}$  \\
-$\mathcal{I}_a, \mathcal{I}_v$ & 1D meshes of arterial/venous networks $\Lambda_{a},\Lambda_{v}$ \\
-$\widehat{Z}_{h}(\mathcal{I})$ & Space of piecewise constants ($P^0$) on network mesh $I$ \\
-$\tau$ & Time step size \\
-\hline
-\end{tabular}
-\end{table}
-
-
+These sections provide more detailed descriptions of the mathematical
+models and numerical approximations considered. 
 
 \subsection{Notation pertaining to the geometry, variables and computational domains}
 
@@ -185,22 +82,124 @@ $\Gamma_{\rm{SC}} = \partial \Omega_{\rm PAR} \setminus \partial
 In addition, we consider two sets of perivascular networks: a
 periarterial network $\Lambda_a$ represented by the (connected)
 centerlines $\Lambda^i_{a}$ of the arterial tree, and a perivenous
-network $\Lambda_v$ associated with the centerlines $\Lambda^i_{v}$
-of the veins. Recall that we represent the vascular domains as the
-union of cylindrical vessels of radius $R_1^i$ surrounding the
-centerlines $\Lambda^i$. Moreover, we consider the surrounding
-perivascular spaces as the union of annular cylinders $\Omega^i$ of
-inner radius $R_1^i$ and outer radius $R_2^i > R_1^i$ and thus of
-width $R_2^i - R_1^i$, and remark that we interpret $R^i_2$ and $R^i_1$ as temporal averages (fixed in time), as the pulsations considered in \Cref{sec:app:peristalsis} are beyond the temporal resolution of our model. We denote the outer lateral surface of the
-periarterial and perivenous spaces by $\Gamma_a$ and $\Gamma_v$,
-respectively. We omit the subscript $a$ or $v$ when referring to any
-such network, vessel segment or perivascular outer surface. We assume
-that $\Lambda$ is parametrized by the coordinate $s$, and with a minor
-abuse of notation, simply write $s \in \Lambda$ to represent the point
-${\bm \lambda}(s)$ on $\Lambda$ corresponding to $s$. Finally, we view
+network $\Lambda_v$ associated with the centerlines $\Lambda^i_{v}$ of
+the veins. Recall that we represent the vascular domains as the union
+of cylindrical vessels of radius $R_1^i$ surrounding the centerlines
+$\Lambda^i$. Moreover, we consider the surrounding perivascular spaces
+as the union of annular cylinders $\Omega^i$ of inner radius $R_1^i$
+and outer radius $R_2^i > R_1^i$ and thus of width $R_2^i - R_1^i$,
+and remark that we interpret $R^i_2$ and $R^i_1$ as temporal averages
+(fixed in time), as the pulsations considered in
+\Cref{sec:app:peristalsis} are beyond the temporal resolution of our
+model. We denote the outer lateral surface of the periarterial and
+perivenous spaces by $\Gamma_a$ and $\Gamma_v$, respectively. We omit
+the subscript $a$ or $v$ when referring to any such network, vessel
+segment or perivascular outer surface. We assume that $\Lambda$ is
+parametrized by the coordinate $s$, and with a minor abuse of
+notation, simply write $s \in \Lambda$ to represent the point ${\bm
+  \lambda}(s)$ on $\Lambda$ corresponding to $s$. Finally, we view
 each perivascular network both as a geometric domain and as a directed
 graph with the centerlines $\{ \Lambda^i \}$ as oriented edges and the
-connections as nodes $\mathcal{V}$.
+connections as nodes $\mathcal{V}$. The notation used for the
+geometry, model variables and parameters is summarized in
+Table~\ref{table:geometry_notation} and \ref{table:variable}.
+\begin{table}[h!] 
+\centering
+\begin{tabular}{ll}
+\toprule
+\textbf{Symbol} & \textbf{Description} \\
+\midrule
+$\Omega$ & Full intracranial domain: $\Omega = \Omega_{\mathrm{PAR}} \cup \Omega_{\mathrm{CSF}}$ \\
+$\Omega_{\rm PAR}$ & Brain parenchyma domain \\
+$\Omega_{\mathrm{CSF}}$ & Cerebrospinal fluid (CSF) domain \\
+$\partial\Omega_{\mathrm{PAR}}\cap\partial\Omega_{\mathrm{CSF}}$ & Parenchyma–CSF interface: $\partial \Omega_{\rm CSF} \bigcap \partial
+\Omega_{\rm PAR} = \Gamma_{\rm LV} \cup \Gamma_{\rm pia}$ \\
+$\Gamma_{\mathrm{LV}}$ & Lateral ventricle surface (part of parenchyma–CSF interface) \\
+$\Gamma_{\mathrm{pia}}$ & Pial surface (remainder of parenchyma–CSF interface) \\
+$\Gamma_{\mathrm{SSAS}}$ & Lower CSF boundary toward spinal subarachnoid space \\
+$\Gamma_{\mathrm{AM}}$ & Outer CSF boundary toward arachnoid/dura \\
+$\Gamma_{\mathrm{AM\text{-}L}}$, $\Gamma_{\mathrm{AM\text{-}U}}$ & Lower/upper parts of $\Gamma_{\mathrm{AM}}$ \\
+$\Gamma_{\mathrm{SC}}$ & Parenchyma–spinal‐cord boundary: $\partial\Omega_{\mathrm{PAR}}\setminus\partial\Omega_{\mathrm{CSF}}$ \\
+$\Lambda_{a},\Lambda_{v}$ & Arterial/venous PVS networks \\
+$\Lambda^{i}$ & Individual PVS centerline segment \\
+$L_i$ & Length of a PVS segment $\Lambda^i$ \\
+$R_{1}^{i},\,R_{2}^{i}$ & Inner/outer radii of the annular PVS \\
+$\Gamma_{a},\,\Gamma_{v}$ & Outer lateral surfaces of periarterial/perivenous PVSs \\
+$A^i$ & Area of the cross‐section for PVS segment $\Lambda^i$ \\
+$P^i$ & Perimeter of the cross‐section for PVS segment $\Lambda^i$ \\
+$\mathcal V$ & Graph nodes of the PVS network \\
+$\mathcal B\subset  \mathcal V$ & Internal (bifurcation) nodes \\
+$\mathcal N\subset  \mathcal V$ & End (leaf) nodes \\
+\bottomrule
+\end{tabular}
+\caption{Geometrical notation, refer to (Fig.~1A, Fig.~2A--C)}
+\label{table:geometry_notation}
+\end{table}
+\begin{table}[htb!]
+\centering 
+\begin{tabular}{ll}
+\toprule
+\textbf{Symbol} & \textbf{Description} \\
+\midrule
+$\phi$ & Fluid volume fraction (porosity) \\
+$D$ & Effective diffusion coefficient ($D_{\mathrm{PAR}} = D^*$ or $D_{\mathrm{CSF}} = D(1+R)$ \\
+$\bm u$ & Convective velocity (${\bm u}_{\mathrm{PAR}} = 0$ or ${\bm u}_{\mathrm{CSF}}$ computed from steady state flow) \\
+$c$ & Solute concentration in 3D domains \\
+$\overline{c}$ & Lateral average of $c$ on the PVS boundary \\
+$\xi$ & Permeability coefficient between the periarterial and perivenous networks
+and their surroundings\\
+$\delta_{\Gamma}$ & Dirac term on the PVS outer surfaces \\
+$\beta_{\mathrm{pia}}$ & Permeability of pial/ventricle interface \\
+$\beta_{\mathrm{exit}}$ & Efflux rate on $\Gamma_{\mathrm{AM\text{-}U}}$ \\
+$g_{\mathrm{influx}}$ & Influx on $\Gamma_{\mathrm{SSAS}}$ \\
+$\hat D$ & Effective diffusion coefficient in the PVS networks \\
+$\hat u$ & Convective velocity in PVS networks \\
+$p$, $\hat{p}$ & Pressures in the CSF spaces and PVS networks \\
+$\hat{q}$ & Volumetric flux in PVS network \\
+$\kappa$ & Hydraulic conductivity in annular PVS \\
+$\mu$ & Dynamic viscosity of CSF \\
+$R_{\rm CSF, 0}$ & Resistance parameter for CSF efflux \\
+$u_{\mathrm{in}}$ & Imposed fluid influx on $\Gamma_{\mathrm{LV}}$ \\
+$\omega,\;\rho$ & Angular frequency, CSF density (for dispersion estimates) \\
+$\alpha_c,\, \alpha_r$ & Womersley number (cardiac, respiratory) \\
+$h_{\rm SAS}$ & Mean width of the subarachnoid space (for dispersion estimates) \\
+$R_c,\,R_r$ & Spatially-varying dispersion enhancement factors (cardiac, respiratory) \\
+\bottomrule
+\end{tabular}
+\caption{Variable and parameter notation}
+\label{table:variable}
+\end{table}
+
+
+
+
+
+%% \begin{table}[h!]
+%% \centering
+%% \caption{Common mesh and finite element notation}
+%% \label{table:mesh}
+%% \begin{tabular}{ll}
+%% \hline
+%% \textbf{Symbol} & \textbf{Description} \\
+%% \hline
+%% $\mathcal{T}$ & Tetrahedral mesh of $\Omega$ \\
+%% $\mathcal{T}_{\mathrm{PAR}},\,\mathcal{T}_{\mathrm{CSF}}$ & Restrictions of $\mathcal T$ to $\Omega_{\mathrm{PAR}},\Omega_{\mathrm{CSF}}$ \\
+%% $E$ & Tetrahedral cell in $\mathcal T$ \\
+%% $\mathcal F_{i}$ & Interior facets of $\mathcal T$ \\
+%% $\mathcal F_{i,\mathrm{PAR}},\, \mathcal F_{i,\mathrm{CSF}}$ & Interior facets in $\Omega_{\mathrm{PAR}}$, $\Omega_{\mathrm{CSF}}$ \\
+%% $\mathcal F_{e}$ & Exterior facets of CSF mesh ($\mathcal F_{\mathrm{pia}}\cup \mathcal F_{\mathrm{LV}}\cup \mathcal F_{\mathrm{AM\text{-}L}}\cup \mathcal \mathcal F_{\mathrm{AM\text{-}U}}\cup \mathcal F_{\mathrm{SSAS}}$) \\
+%% $\mathcal F _{\mathrm{pia}},\,\mathcal F_{\mathrm{LV}},\, \mathcal F_{\mathrm{AM\text{-}L}},\,\mathcal F_{\mathrm{AM\text{-}U}},\, \mathcal F_{\mathrm{SSAS}}$ & Facets on corresponding boundaries \\
+%% $V_{h}(\mathcal{T})$ & Space of piecewise linear polynomials on $\mathcal{T}$\\
+%% $Q_{h}(\mathcal{T})$ & Pressure space on $\mathcal T_{\mathrm{CSF}}$  \\
+%% $\mathcal{I}_a, \mathcal{I}_v$ & 1D meshes of arterial/venous networks $\Lambda_{a},\Lambda_{v}$ \\
+%% $\widehat V_{h}(\mathcal{I})$ & Space of continuous piecewise linear polynomials on $\mathcal{I}$, $\mathcal{I}$ omitted when superfluous \\
+%% $\widehat{Z}_{h}(\mathcal{I})$ & Space of piecewise constants ($P^0$) on $\mathcal{I}$, , $\mathcal{I}$ omitted when superfluous \\% $\widehat V_{h,0}$, $\widehat V_{h,g}$ & Continuous Galerkin space on network with homogeneous or prescribed BCs
+%% $\mathrm{BDM}_{2}$ & Brezzi–Douglas–Marini space of degree 2 \\
+%% $\tau$ & Time step size \\
+%% \hline
+%% \end{tabular}
+%% \end{table}
+
 
 
 % \subsection{Computational mesh entities: definitions and common notation}
@@ -257,7 +256,7 @@ induced by CSF production in the choroid plexus with $\Gamma_{\rm AM-U}$ as the 
 \end{subequations}%
 where $\bm n$ and $\bm t$ denote the unit outward normal and tangent vectors to the boundary respectively,  $\mu$ is the (dynamic) CSF viscosity, $R_{\rm CSF, 0} > 0$ is a resistance parameter for CSF efflux, and $u_{\rm in}$ is a given fluid influx, here across the lateral ventricle wall $\Gamma_{\rm LV}$. We consider alternative variations of these boundary conditions in connection with estimating dispersion effects induced by CSF pulsatility, see~\Cref{sec:app:dispersion}.
 
-\textit{Finite element solution of the incompressible Stokes equations}.
+\subsubsection{Finite element solution of the incompressible Stokes equations}
 We consider an H(div)-based finite element approximation of the incompressible Stokes equations~\eqref{eq:stokes} defined over $\Omega_{\rm CSF}$ with the boundary conditions~\eqref{eq:stokes_bcs}. Following\cite{hong2016robust}, we approximate the velocity field $\bm u$ and the pressure field $p$ with the following finite element spaces:
 \begin{align*}
   \bm V_{h,g} &= \{ \bm v  \in H(\mathrm{div}, \Omega_{\mathrm{CSF}}): \;
@@ -372,7 +371,7 @@ fluid pressures $p_0$. Note that we here consider steady PVS flow in a
 non-moving domain; the effect of domain motion is addressed
 in~\Cref{sec:app:peristalsis}.
 
-\textit{Finite element solution of the perivascular network equations}. 
+\subsubsection{Finite element solution of the perivascular network equations} 
 We consider meshes $\mathcal{I}_a, \mathcal{I}_v$ representing a
 conforming subdivision of each of the perivascular networks
 $\Lambda_a$, $\Lambda_v$. Relative to each mesh $\mathcal{I}$, we define the
@@ -380,9 +379,9 @@ space of (discontinuous) piecewise constants $\widehat{Z}_h(\mathcal{I})$ and de
 spaces of continuous piecewise linears $\hat{V}_{h, g}(\mathcal{I})$ with
 prescribed boundary node values (on $\mathcal{N}$) given by $g$:
 \begin{align}
-  \hat{Z}_h(\mathcal{I}) &= \{z \in L^2(\Lambda) ; \, z \vert_{\Lambda_i} \in \mathrm{P}^{0}(\Lambda_i) \, \foralls \Lambda^i \in \mathcal{I}\}, \\
-  \hat{V}_{h, g}(\mathcal{I}) &= \{ v \in C^0(\Lambda) ; \, v \vert_{\Lambda^i} \in \mathrm{P}^1(\Lambda_i), \, v(x) = g(x) \, \foralls x \in \mathcal{N} \} .
-  %Q_h^{\rm PVS} &= \{ q_h \in C^0(\Lambda),  q_h \vert_{\Lambda^i} \in \mathrm{P}^k(\Lambda_i), q_h \vert_{\Gamma_{\rm Pia}} = p_{\rm CSF} \}
+  \hat{Z}_h(\mathcal{I}) &= \{z \in L^2(\Lambda) ; \, z \vert_{\Lambda^i} \in \mathrm{P}^{0}(\Lambda^i) \, \foralls \Lambda^i \in \mathcal{I}\}, \\
+  \hat{V}_{h, g}(\mathcal{I}) &= \{ v \in C^0(\Lambda) ; \, v \vert_{\Lambda^i} \in \mathrm{P}^1(\Lambda^i), \, v(x) = g(x) \, \foralls x \in \mathcal{N} \} .
+  %Q_h^{\rm PVS} &= \{ q_h \in C^0(\Lambda),  q_h \vert_{\Lambda^i} \in \mathrm{P}^k(\Lambda^i), q_h \vert_{\Gamma_{\rm Pia}} = p_{\rm CSF} \}
 \end{align}
 To discretize~\eqref{eq:1d_flow} with the bifurcation
 conditions~\eqref{eq:1d_flow:bifurcations} and boundary
@@ -396,7 +395,7 @@ bifurcation points, while the conservation of flux is enforced
   \langle \hat{q}, \partial_s w \rangle &= 0 \quad  \forall w \in \hat{V}_{h, 0}(\mathcal{I}).
 \end{align}
 \end{subequations}%
-where $\langle \cdot, \cdot \rangle$ denotes the $L^2(\mathcal{I})$-inner product and is defined segment-wise. For a stability and convergence analysis of this discrete model, we refer to the reference\cite{gjerde2024directional}. 
+where $\langle \cdot, \cdot \rangle$ denotes the $L^2(\mathcal{I})$-inner product and is defined segment-wise. For a stability and convergence analysis of this discrete model, we refer to previously presented results\cite{gjerde2024directional}. 
 
 
 \subsection{Estimating dispersion factors from pulsatile CSF flow}
@@ -491,7 +490,7 @@ should be viewed as heuristic rather than absolute.
 \subsection{Estimating net perivascular flow induced by peristaltic waves}
 \label{sec:app:peristalsis}
 
-We use the theoretical framework previously introduced by Gjerde et al.~\cite{gjerde2023directional} to compute an analytic estimate of the time-averaged (or \emph{net}) flow rates $\langle Q'_i \rangle$ (mm$^3$/s) induced by peristaltic pumping in a perivascular network $\Lambda = \cup_i \Lambda_i$. The motion of the (inner) vascular wall is assumed to be described by a periodic traveling (peristaltic) wave of relative amplitude $\varepsilon$, wave length $\lambda$ (mm) and frequency $f$, acting normal to the wall and traveling in the antegrade direction (with the blood flow). By definition, the wave number is $k = 2 \pi/\lambda$ and the angular frequency is $\omega = 2 \pi f$. Each PVS segment $\Lambda_i$ has length $L_i$ with wave-relative length $\ell_i = k L_i$, baseline inner radius $R_1^i$, fixed outer radius $R_2^i$, and outer-to-inner ratio $\beta_i = R_2^i/R_1^i$. These geometric parameters and the assumption of annular cylindrical PVS segments yield hydraulic resistances and additional characteristic parameters, see \cite{gjerde2023directional} for the complete definitions and schematics. Since the analytical estimate is derived under the assumption that $k L_i \approx \mathcal{O} (1)$~\cite{gjerde2023directional} and has been verified against numerical simulations for $k L_i$ of the order $10^{-1}-10^2$~\cite[Table I]{gjerde2023directional}, we consider it applicable for the wave lengths and vascular network data considered here in which $k L_i$ range from 0.15 to 30 for the strong vasomotion and 0.0015 to 0.30 for the cardiac waves (\Cref{tab:pvs:parameters}).
+We use the theoretical framework previously introduced by Gjerde et al.~\cite{gjerde2023directional} to compute an analytic estimate of the time-averaged (or \emph{net}) flow rates $\langle Q'_i \rangle$ (mm$^3$/s) induced by peristaltic pumping in a perivascular network $\Lambda = \cup_i \Lambda^i$. The motion of the (inner) vascular wall is assumed to be described by a periodic traveling (peristaltic) wave of relative amplitude $\varepsilon$, wave length $\lambda$ (mm) and frequency $f$, acting normal to the wall and traveling in the antegrade direction (with the blood flow). By definition, the wave number is $k = 2 \pi/\lambda$ and the angular frequency is $\omega = 2 \pi f$. Each PVS segment $\Lambda^i$ has length $L_i$ with wave-relative length $\ell_i = k L_i$, baseline inner radius $R_1^i$, fixed outer radius $R_2^i$, and outer-to-inner ratio $\beta_i = R_2^i/R_1^i$. These geometric parameters and the assumption of annular cylindrical PVS segments yield hydraulic resistances and additional characteristic parameters, see \cite{gjerde2023directional} for the complete definitions and schematics. Since the analytical estimate is derived under the assumption that $k L_i \approx \mathcal{O} (1)$~\cite{gjerde2023directional} and has been verified against numerical simulations for $k L_i$ of the order $10^{-1}-10^2$~\cite[Table I]{gjerde2023directional}, we consider it applicable for the wave lengths and vascular network data considered here in which $k L_i$ range from 0.15 to 30 for the strong vasomotion and 0.0015 to 0.30 for the cardiac waves (\Cref{tab:pvs:parameters}).
 \begin{table}
 \centering
   \small
@@ -547,8 +546,8 @@ time-averaged downstream flow rate $\langle Q'_n \rangle$ induced by
 the vascular wall motion for each edge $n$ via~\cite[eq.~(5),
   (34)]{gjerde2023directional} (\Cref{fig:app:peristalsis}D). We next
 assign this flow rate $\langle Q'_n \rangle$ to each of the branches
-$\Lambda_i$ that form the path $E_n^j$, thus yielding $\langle Q'_i
-\rangle$ for each perivascular segment $\Lambda_i$ while ensuring that
+$\Lambda^i$ that form the path $E_n^j$, thus yielding $\langle Q'_i
+\rangle$ for each perivascular segment $\Lambda^i$ while ensuring that
 mass is conserved (\Cref{fig:app:peristalsis}E). For the segment(s)
 ignored in the separation step (\Cref{fig:app:peristalsis}B), we set a
 flow rate of zero. Finally, we define the mean longitudinal
@@ -746,7 +745,7 @@ along penetrating vessels, this condition should be revisited.
 %The restriction of $\mathcal{T}_h $ to $\Omega_{\mathrm{CSF}}$ is
 %denoted by $\mathcal{E}_{h}$.
 
-\textit{Finite element solution of coupled 3D-1D solute transport equations}. 
+\subsubsection{Finite element solution of coupled 3D-1D solute transport equations}
 We consider the system of coupled 3D-1D solute transport equations
 given by~\eqref{eq:3d_pde} and~\eqref{eq:1d_pde} with the interface
 conditions~\eqref{eq:3d_interface}, the bifurcation
@@ -843,9 +842,7 @@ where $\mathrm{P}^1(\Lambda^i)$ is the space of linear polynomials on each $\Lam
  where $h_{\Lambda^i}$ is the mesh--size of $\Lambda^i$.
 Note that the condition \eqref{eq:flux_conservation} is enforced weakly in the above formulation.
 
- \textit{Summary.} The discretization for \eqref{eq:3d_pde} and \eqref{eq:1d_pde} complemented with boundary conditions (\eqref{eq:3d_bcs} and \eqref{eq:1d_bcs}), interface and bifurcation  conditions (\eqref{eq:3d_interface}, \eqref{eq:1d_flow:bifurcations}, and \eqref{eq:conc_continuity}), and intial conditions $c_h^0 =0 $ and $\hat c_h^0 = 0 $ is the following: 
-
- For $n = 1,2, \ldots $, find  $c_h^n \in V_h$ and $\hat c^n_h \in \hat V_h$ such that the coupled equations \eqref{eq:3d_dg_disc} and \eqref{eq:1d_dg_disc} hold for all $v \in V_h$ and for all $\hat v \in \hat V_h$. 
+ \textit{Summary.} The discretization for \eqref{eq:3d_pde} and \eqref{eq:1d_pde} complemented with boundary conditions (\eqref{eq:3d_bcs} and \eqref{eq:1d_bcs}), interface and bifurcation  conditions (\eqref{eq:3d_interface}, \eqref{eq:1d_flow:bifurcations}, and \eqref{eq:conc_continuity}), and intial conditions $c_h^0 =0 $ and $\hat c_h^0 = 0 $ is the following. For $n = 1,2, \ldots $, find  $c_h^n \in V_h$ and $\hat c^n_h \in \hat V_h$ such that the coupled equations \eqref{eq:3d_dg_disc} and \eqref{eq:1d_dg_disc} hold for all $v \in V_h$ and for all $\hat v \in \hat V_h$. 
 
 
 
@@ -990,7 +987,7 @@ over time after the initial influx phase
 
 \section{Supplementary discussion}
 
-\subsection{Extended model validation}
+\subsection{Extended comparison with literature}
 \label{sec:app:model_validation}
 
 In addition to the comparison of our in-silico predictions of tracer
@@ -1060,7 +1057,7 @@ enhancement factors $R_c, R_r$ (with $D = (1 + R_c + R_r) D^{\rm
 to 320 for the respiratory contribution $R_r$; and is thus compatible
 within the previously reported spectrum. 
 
-Investigating the link between cardiac pulsatility and the resulting diffusion enhancement factor, we compute for $R$ different levels of cardiac pulsatility. We reduce the inflow boundary conditions of $6\,$ml/s (across the SAS outer surface) and $0.31\,$ml/s (across the lateral ventricle surface) by $25\,\%$, $50\,\%$, $75\,\%$ and $100\,\%$ to model lower cardiac pulsatility, revealing that $R$ scales quadratically with the reduction of inflow (\cref{fig:R_comparison}). This behaviour directly reflects the nature of our model - the Stokes flow is linear in its boundary conditions, and the diffusion enhancement factor quadratic in the predicted pressure gradient - and simultaneously underscores the substantial role of pulsatility in shaping intracranial transport. 
+Investigating the link between cardiac pulsatility and the resulting diffusion enhancement factor, we compute for $R$ different levels of cardiac pulsatility. We reduce the inflow boundary conditions of $6\,$ml/s (across the SAS outer surface) and $0.31\,$ml/s (across the lateral ventricle surface) by $25\,\%$, $50\,\%$, $75\,\%$ and $100\,\%$ to model lower cardiac pulsatility, revealing that $R$ scales quadratically with the reduction of inflow (\Cref{fig:R_comparison}). This behaviour directly reflects the nature of our model - the Stokes flow is linear in its boundary conditions, and the diffusion enhancement factor quadratic in the predicted pressure gradient - and simultaneously underscores the substantial role of pulsatility in shaping intracranial transport. 
 
 \begin{figure}
     \centering
