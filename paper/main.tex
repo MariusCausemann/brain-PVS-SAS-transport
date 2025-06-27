@@ -47,7 +47,7 @@
 \newcommand{\foralls}{\forall \,}
 
 \begin{abstract}
-  The mechanisms of intracranial solute transport are fundamental to human brain health, with alterations often linked to disease and functional impairment, and with distinct opportunities for personalized diagnostics and treatment. However, our understanding of these mechanisms and their interplay remains incomplete, in part due to the complexity of integrating insights across scales, between species and from different modalities. Here, we combine mixed-dimensional modelling, multi-modal magnetic resonance images, and high performance computing to construct and explore a high-fidelity in-silico model of human intracranial molecular enrichment.  This model predicts the temporo-spatial spreading of a solute within an image-derived geometric representation of the subarachnoid space, ventricular system and brain parenchyma, including networks of surface perivascular spaces (PVSs). Our findings highlight the significant impact of cerebrospinal fluid (CSF) production and intracranial pulsatility on molecular enrichment following intrathecal tracer injection. We demonstrate that low-frequency vasomotion induces moderate CSF flow in surface PVS networks which substantially enhances tracer enrichment, and that impaired enrichment is a direct natural consequence of enlarged surface PVSs. This openly available technology platform thus provides an opportunity for integrating separate observations on diffusion in neuropil, vascular dynamics, intracranial pulsatility, CSF production, and efflux, and for exploring drug delivery and clearance in the human brain.
+  The mechanisms of intracranial solute transport are fundamental to human brain health, with alterations often linked to disease and functional impairment, and with distinct opportunities for personalized diagnostics and treatment. However, our understanding of these mechanisms and their interplay remains incomplete, in part due to the complexity of integrating insights across scales, between species and from different modalities. Here, we combine mixed-dimensional modelling, multi-modal magnetic resonance images, and high performance computing to construct and explore a high-fidelity in-silico model of human intracranial molecular transport.  This model predicts the temporo-spatial spreading of a solute within an image-derived geometric representation of the subarachnoid space, ventricular system and brain parenchyma, including networks of surface perivascular spaces (PVSs). Our findings highlight the significant impact of cerebrospinal fluid (CSF) production and intracranial pulsatility on molecular transport following intrathecal tracer injection. We demonstrate that low-frequency vasomotion induces moderate CSF flow in surface PVS networks which substantially enhances tracer enrichment, and that impaired enrichment is a direct natural consequence of enlarged surface PVSs. This openly available technology platform thus provides an opportunity for integrating separate observations on diffusion in neuropil, vascular dynamics, intracranial pulsatility, CSF production, and efflux, and for exploring drug delivery and clearance in the human brain.
 \end{abstract}
 \begin{document}
 
@@ -73,7 +73,7 @@ of protein aggregates together with alterations in transport and
 clearance characteristics~\cite{rasmussen2018glymphatic,
   harrison2020impaired, eide2023plasma, liu2024glymphatic}. Moreover,
 sleep and conversely sleep-deprivation play a definite yet enigmatic
-role in modulating molecular enrichment and
+role in modulating molecular transport and
 clearance~\cite{xie2013sleep, eide2021sleep, eide2022altered,
   miao2024brain, hauglund2025norepinephrine}. In the last decade,
 established theories have been challenged by new findings on molecular
@@ -156,7 +156,7 @@ solute exchange and clearance across semi-permeable
 membranes. Comparing with glymphatic MRI
 studies~\cite{ringstad2017glymphatic, ringstad2018brain,
   watts2019measuring, eide2024functional}, the in-silico predictions
-accurately represent molecular enrichment patterns, timing and
+accurately represent tracer enrichment patterns, timing and
 intercompartmental distributions. This open platform~\cite{ZENODO}
 thus provides a technological opportunity for qualitatively and
 quantitatively exploring key open questions relating to molecular
@@ -259,7 +259,7 @@ venous PVS (8\%) and the arterial PVS
 \begin{figure}%[h!]
 \centering 
 \includegraphics[width = 0.95\textwidth]{figures/figure2.png}
-\caption{\textbf{The balance between CSF pulsatility and production shapes molecular enrichment patterns.}
+\caption{\textbf{The balance between CSF pulsatility and production shapes tracer enrichment patterns.}
 A) CSF spaces: the third and fourth ventricle (V3\&4), lateral ventricles (LV) and SAS; 
 B) Boundaries and interfaces: the spinal subarachnoid space (SSAS), upper and lower arachnoid membrane (AM-U and AM-L), pia (Pia) and lateral ventricles (LV); 
 C) Schematic of the CSF flow model; 
@@ -512,7 +512,7 @@ outer PVS surface (dotted) for the BA, MCA-R, MCA-L, ACA-2, and ACA3 segments ov
 F) Effect of varying the PVS-CSF permeability on first-time-of-arrival (FTA), time difference ($\Delta t$) between concentration peaks in the PVS and surrounding tissue, time of PVS peak concentration, PVS peak concentration and difference in peak concentration between PVS and surrounding tissue.}
 \end{figure}
   
-\subsection*{Enlarged PVSs in the SAS delay periarterial and intracranial molecular enrichment}
+\subsection*{Enlarged PVSs in the SAS delay periarterial and intracranial tracer enrichment}
 
 Idiopathic normal pressure hydrocephalus (iNPH), a dementia subtype,
 is associated with enlarged PVS in the SAS and impaired periarterial
@@ -576,7 +576,7 @@ morphology, physiological factors such as cardiac and respiratory
 pulsatility, as well as of pathological conditions such as enlarged
 PVSs in the SAS. A key observation is that the balance between CSF
 production and intracranial pulsatility significantly shapes the
-large-scale features of molecular enrichment, with e.g.~ventricular
+large-scale features of tracer enrichment, with e.g.~ventricular
 tracer reflux after intrathecal injection in the absence of CSF
 production, and preference towards anterior brain regions with reduced
 pulsatility. Indeed, the simulated distribution patterns cover a
@@ -600,7 +600,7 @@ perivascular transport.
 %% Comparison with others
 
 % Tracer enrichment predictions
-While molecular enrichment of the brain and surrounding CSF spaces
+While tracer enrichment of the brain and surrounding CSF spaces
 have been extensively studied in animal models, especially in murine
 models in connection with studies of the glymphatic system, there are
 fewer reports of contrast enrichment in human subjects over 0--24h. We
@@ -745,7 +745,7 @@ effective under both of these configurations, resulting in higher
 estimated net PVS flow velocities~\cite{gjerde2023directional}. Even
 higher PVS velocities would amplify the PVS flow effects simulated
 here, with earlier arrival times along the PVSs, clear enrichment in
-adjacent spaces, and accelerated molecular enrichment
+adjacent spaces, and accelerated tracer enrichment
 overall. Moreover, sleep is linked with low-frequency oscillations in
 human CSF flow~\cite{fultz2019coupled}. As we have shown here, the
 level of dispersion in the CSF spaces strongly shapes molecular
