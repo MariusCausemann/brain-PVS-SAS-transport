@@ -23,12 +23,12 @@ m2mm = 1e3
 m2mum = 1e6
 Pa2mPa = 1e3
 
-def plot_pvs_velocity(mesh, uh_mag, artery_radii, filename):
+def plot_pvs_velocity(mesh, uh_mag, artery_radii, filename, col="white"):
     CG1 = FunctionSpace(mesh, "CG", 1)
     bar_args=dict(title="velocity (μm/s)", vertical=False,
-                    height=0.07, width=0.6, position_x=0.2,
-                    position_y=0.0, title_font_size=28, font_family="arial",
-                    label_font_size=28, fmt="%.0f")
+                    height=0.07, width=0.6, position_x=0.2, color=col,
+                    position_y=0.0, title_font_size=32, font_family="arial",
+                    label_font_size=32, fmt="%.0f")
     topology, cell_types, x = create_vtk_structures(CG1)
     grid = pv.UnstructuredGrid(topology, cell_types, x)
     grid["u"] = uh_mag.vector()[:] *m2mum
@@ -71,8 +71,8 @@ def compute_pvs_flow(pvs_flow_file):
     plot_dir = f"plots/{'/'.join(modelstr)}"
     os.makedirs(plot_dir, exist_ok=True)
 
-    plot_pvs_velocity(mesh, uh_mag, pvs_radii,
-                      plot_dir + "/vel3D.png")
+    for col in ["white", "black"]: plot_pvs_velocity(mesh, uh_mag, pvs_radii,
+                      plot_dir + f"/vel3D_{col}.png", col=col)
 
     segments, segids ,_ = color_branches(mesh)
     dxs = Measure("dx", mesh, subdomain_data=segments)
