@@ -38,6 +38,10 @@ def make_movie(imagedir: str):
     filename = "personalized_images.mp4"
     pl.open_movie(filename, framerate=fps, quality=qlty)
 
+    # Movie title
+    title = "The brain waterscape: in-silico molecular transport"
+    add_heading(pl, title, 2*fps)
+
     # Subject details as intro
     add_heading(pl, "Subject: healthy male (26 y)", 2*fps)
 
@@ -48,7 +52,9 @@ def make_movie(imagedir: str):
     print(filename, "done")
 
     return filename
-    
+
+def 
+
 if __name__ == "__main__":
 
     # Set global plotting options for Pyvista
