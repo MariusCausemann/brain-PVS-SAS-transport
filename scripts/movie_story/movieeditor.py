@@ -1,17 +1,5 @@
-# Author: Marie E. Rognes (meg@simula.no)
-# License: MIT
-#
-# Make sure to have dependencies installed/available:
-# conda activate pvs_transport_env 
-# 
-#
-# How to run: 
-# python3 scripts/movie_story/make_story_video.py .
-#
-
-#import pyvista as pv
+import os
 import typer
-from pathlib import Path
 
 from moviepy.editor import (TextClip, ColorClip, CompositeVideoClip,
                             VideoFileClip, concatenate_videoclips) 
@@ -21,19 +9,23 @@ width = 1920 # pixels
 height = 1080 # pixels
 black = (0, 0, 0)
 
-
 def section_clip(title, duration):
+
+    # Create background
     background = ColorClip(size=(width, height), color=black, duration=duration)
+
+    # Create overlay text
     clip = TextClip(title, fontsize=70, color="white", font="Arial-Bold",
                     method="label")
     clip = clip.set_position('center').set_duration(duration)
     clip = clip.fadein(1.0).fadeout(1.0) # 1 sec fade-in and 1 sec fade-out
 
+    # Combine background and text
     composite = CompositeVideoClip([background, clip])
-
-    return composite
     
-def generate_full_movie(framedir: str, videofile: str):
+    return composite
+
+def generate_full_movie():#, videofile: str):
     
     # A list of clips to be concatenated at the end
     clips = []
@@ -77,7 +69,8 @@ def generate_full_movie(framedir: str, videofile: str):
     video = concatenate_videoclips(clips)
     
     # Write final file
-    filename = "insilico_transport.mp4"
+    os.makedirs("movies", exist_ok=True)
+    filename = "movies/insilico_transport.mp4"
     video.write_videofile(filename, fps=24)
 
     return filename
@@ -86,25 +79,3 @@ if __name__ == "__main__":
 
     typer.run(generate_full_movie)
     
-# def add_heading(pl, heading, frames):
-#     # Show the heading for the given number of frames 
-#     pl.add_text(heading, position=(200, 600), name="heading", font_size=24)
-#     pl.show(auto_close=False)
-#     for i in range(frames):
-#         pl.write_frame()  
-
-# def add_T1w_images(pl, datadir):
-
-#     # Open and read the data first 
-#     filename = Path(datadir, "data", "T1_synthseg.nii.gz")
-    
-#     print("Reading image from ", filename)
-#     reader = pv.get_reader(filename) 
-#     img = reader.read()
-#     print(img)
-
-    # # Set global plotting options for Pyvista
-    # pv.set_plot_theme("dark")
-    # pv.global_theme.font.family = "arial"
-    # pv.global_theme.font.color = "white"
-
