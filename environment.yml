@@ -27,6 +27,7 @@ dependencies:
   - cmap
   - joypy 
   - imageio-ffmpeg
+  - moviepy
   - pip:
     - cmocean
     - kimimaro<5.0.0
