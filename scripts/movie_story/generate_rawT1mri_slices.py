@@ -2,15 +2,13 @@ import pyvista as pv
 import numpy as np
 import os
 
-filename = "data/T1_synthseg.nii"
-#filename = "data/T1.nii.gz"
+filename = "data/T1.nii.gz"
 width = 1920
 height = 1080
 
 # Setup folders
-#colormap = "twilight_shifted"
 colormap = "gist_gray"
-output_dir = f"frames/mri_frames_{colormap}"
+output_dir = f"frames/mri_slices_T1raw_{colormap}"
 os.makedirs(output_dir, exist_ok=True)
 
 # 1. Load data
@@ -32,12 +30,11 @@ spacing = img.spacing
 origin = img.origin
 z_max = dims[2]
 
-for k in range(0, z_max, 1):
+for k in range(1, z_max, 1):
 
-    print("k", k)
-    # We slice the raw MRI volume
-    slice = img.slice_orthogonal(z=k)
-    
+    # Single slice of the raw MRI volume
+    slice = img.slice(normal=(0, 0, 1), origin=(0, 0, k))
+
     plotter.clear()
     plotter.add_mesh(outline, opacity=0.0) # Keep camera locked
     
