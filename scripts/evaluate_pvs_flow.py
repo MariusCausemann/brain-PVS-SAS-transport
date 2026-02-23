@@ -54,10 +54,11 @@ def sig_to_space(sig, mesh):
 def compute_pvs_flow(pvs_flow_file):
     artcolor = "#94221F"
     color = "#95AAD3"
-    mesh = Mesh()
+
+    from solver import read_vtk_network
+    mesh, _, artery_roots = read_vtk_network("mesh/networks/arteries_smooth.vtk", rescale_mm2m=False)
 
     with HDF5File(MPI.comm_world, pvs_flow_file,'r') as f:
-        f.read(mesh, "mesh", False)
         p_sig = f.attributes("/p").to_dict()["signature"]
         umag_sig = f.attributes("/umag").to_dict()["signature"]
         r_sig = f.attributes("/radii").to_dict()["signature"]
@@ -70,6 +71,19 @@ def compute_pvs_flow(pvs_flow_file):
     model = modelstr[-1]
     plot_dir = f"plots/{'/'.join(modelstr)}"
     os.makedirs(plot_dir, exist_ok=True)
+
+    m3s_to_mlday = 1e6*(60*60*24)
+    import xii
+    from pvs_flow_prod import get_blood_flow_orientation
+    tau = xii.TangentCurve(mesh)
+    downstream = get_blood_flow_orientation(tau, artery_radii, artery_roots)
+    n = FacetNormal(mesh)
+    A = np.pi*(pvs_radii**2 - artery_radii**2)
+    ds = Measure("ds", mesh, subdomain_data=artery_roots)
+    tot = assemble(dot(n, tau*downstream*uh_mag*A)*ds)  * m3s_to_mlday
+    root = assemble(dot(n, tau*downstream*uh_mag*A)*ds(2)) * m3s_to_mlday
+    print(tot)
+    print(root)
 
     for col in ["white", "black"]: plot_pvs_velocity(mesh, uh_mag, pvs_radii,
                       plot_dir + f"/vel3D_{col}.png", col=col)

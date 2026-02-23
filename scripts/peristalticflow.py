@@ -521,7 +521,17 @@ def compute_pvs_flow(meshfile, output, args):
         print(f"reading downstream from {downstream_file}")
         xdmf.read(downstream)
     u_directed = df.project(u*tangent*mf_to_dg(downstream), df.VectorFunctionSpace(mesh, "DG", 0))
+    q_directed = df.project(Q*tangent*mf_to_dg(downstream), df.VectorFunctionSpace(mesh, "DG", 0))
 
+    m3s_to_mlday = 1e6*(60*60*24)
+    n = df.FacetNormal(mesh)
+    A_pvs = np.pi*((mf_to_dg(radii)*beta)**2 - mf_to_dg(radii)**2)
+
+    tot = df.assemble(df.dot(n, u_directed*A_pvs)*df.ds)
+    n_inlets =  df.assemble(df.conditional(df.dot(n, tangent*mf_to_dg(downstream)) < 0, 1,0 )*df.ds)
+    print(n_inlets)
+    print(tot * m3s_to_mlday)
+    #from IPython import embed; embed()
     udirfile = os.path.join(output, "pvs_u_directed.xdmf")
     with df.XDMFFile(mesh.mpi_comm(), udirfile) as xdmf:
         print("Saving net velocity (as mf) to %s" % udirfile)
