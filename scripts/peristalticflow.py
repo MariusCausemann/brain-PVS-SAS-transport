@@ -458,6 +458,8 @@ def compute_pvs_flow(meshfile, output, args):
         # Compute the PVS net flow rates in T
         network_data = (indices, paths, r_o, r_e, L, k, omega, varepsilon)
         avg_Q, avg_u = pnf.estimate_net_flow(network_data)
+
+        print("avg_Q = ", avg_Q)
         
         # Read cell_index_map from file for mapping back to the original mesh 
         mapfile = os.path.join(output, "original_to_minimal_map_%d.xdmf" % i0)
@@ -514,8 +516,8 @@ def compute_pvs_flow(meshfile, output, args):
         t = coords[1,:] - coords[0,:]
         t /= np.linalg.norm(t)
         tangent.vector()[3*i] = t[0]
-        tangent.vector()[3*i +1] = t[1]
-        tangent.vector()[3*i +2] = t[2]
+        tangent.vector()[3*i+1] = t[1]
+        tangent.vector()[3*i+2] = t[2]
 
     with df.XDMFFile(mesh.mpi_comm(), downstream_file) as xdmf:
         print(f"reading downstream from {downstream_file}")
@@ -529,8 +531,8 @@ def compute_pvs_flow(meshfile, output, args):
 
     tot = df.assemble(df.dot(n, u_directed*A_pvs)*df.ds)
     n_inlets =  df.assemble(df.conditional(df.dot(n, tangent*mf_to_dg(downstream)) < 0, 1,0 )*df.ds)
-    print(n_inlets)
-    print(tot * m3s_to_mlday)
+    print("n_inlets = ", n_inlets)
+    print("tot * m3s_to_mlday = ", tot * m3s_to_mlday)
     #from IPython import embed; embed()
     udirfile = os.path.join(output, "pvs_u_directed.xdmf")
     with df.XDMFFile(mesh.mpi_comm(), udirfile) as xdmf:
