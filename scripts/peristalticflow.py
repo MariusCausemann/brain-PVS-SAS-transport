@@ -570,9 +570,7 @@ if __name__ == '__main__':
     # image-based network
 
     # To run:
-    # $ mambda .... (FIXME) marie_environment.xml
-    # $ mamba activate pvs_transport_env
-    # $ pip install git+https://github.com/MiroK/fenics_ii.git@ufl_legacy
+    # $ conda activate pvs_transport_env
     # 
     # $ python3 peristalticflow.py --frequency 1.0 --wavelength 2.0 --amplitude 0.01 --beta 2.0 --recompute # Cardiac ~1 Hz, 2m/s pulse wave speed
     # $ python3 peristalticflow.py --frequency 0.1 --wavelength 0.02 --amplitude 0.1 --beta 2.0 # 
