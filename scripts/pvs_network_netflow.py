@@ -1,5 +1,4 @@
-"""
-About
+"""About
 =====
 
 This Python script implements the analytical estimates for directional
@@ -10,8 +9,7 @@ flow induced by peristalsis in perivascular networks described in:
   networks—Theoretical and numerical reduced-order descriptions."
   Journal of Applied Physics 134.17 (2023).
   
-The code is based on an original implementation by Gjerde and Rognes
-available at https://github.com/scientificcomputing/perivascular-peristalsis (extracted Feb 1 2024).
+The code is based on an original implementation by Gjerde and Rognes available at https://github.com/scientificcomputing/perivascular-peristalsis (extracted Feb 1 2024).
 
 Dependencies
 ============
@@ -47,10 +45,10 @@ Data structures for the network and parameters:
   its bifurcations. For each bifurcation/junction, give the mother
   (e0) and daughter edge indices (e1, e2) as (e0, e1, e2).
 
-* paths (list): list of root-to-leaf-paths, one tuple (n0, n1, n2,
-  ..., nl) for each leaf node where n0 is the root node, nl is the
-  leaf node, and n1, n2, ... are the bifurcation nodes on the path
-  between n0 and nl.
+* paths (list): list of root-to-leaf-paths, one tuple (e0, e1, e2,
+  ..., el) for each leaf node where e0 is the root edge, el is the
+  leaf edges, and e1, e2, ... are the edges on the path between e0 and
+  el.
 
 The remaining parameters can be given in any dimensions, but sample
 units are given here for illustration purposes:
@@ -217,7 +215,7 @@ def solve_bifurcating_tree(network):
     return (P, dP, avg_Q_1)
 
 def Qprime(Q, varepsilon, omega, k, r_o):
-    """Dimensionalize Q to yield Q', see eq. (5)."""
+    """Dimensionalize Q to yield Q', see eq. (5), Gjerde et al (2023)."""
     alpha = 2*np.pi*varepsilon*omega*np.power(r_o, 2)/k
     val = alpha*Q
     return val
@@ -253,6 +251,8 @@ def estimate_net_flow(network):
     # Dimensionalize <Q>_n to yield <Q'>_n for each branch n, see eq. (5)
     avg_Q_prime = Qprime(avg_Q, varepsilon, omega, k, r_o)
 
+    # Compute net velocity based on net flow rate (divide by area of
+    # cross-section)
     avg_u_prime = avg_u(avg_Q_prime, r_e, r_o)
     
     return avg_Q_prime, avg_u_prime
@@ -542,10 +542,10 @@ def test():
     print("")
     Qp = run_single_bifurcation_test(0.1)
     diff = (Qp - 1.341e-04)/1.341e-04
-    assert(diff < 0.001), "WARNING: Check correctness of results! (%r)" % diff
+    assert (diff < 0.001), "WARNING: Check correctness of results! (%r)" % diff
     Qp = run_single_bifurcation_test(1.0)
     diff = (Qp - 1.341e-03)/1.341e-03
-    assert(diff < 0.001), "WARNING: Check correctness of results! (%r)" % diff
+    assert (diff < 0.001), "WARNING: Check correctness of results! (%r)" % diff
 
     print("")
     success = test_murray_data()
@@ -556,26 +556,58 @@ def test():
     print("")
     success = test_estimate_net_flow()
 
-if __name__ == "__main__":
+    print("")
+    success = test_volume_conservation()
+    
+def check_volume_conservation(indices, paths, avg_Q_prime):
+    """Check that volume is conserved: net flow rate through inlet
+    should be equal to sum of net flow rates through outlets."""
 
-    # # Run all tests:
-    # test()
+    inlet = paths[0][0]
+    outlets = [e[-1] for e in paths]
+    #print("inlet =", inlet)
+    #print("outlets =", outlets)
 
-    # ... or just a quick single bifurcation tree:
-    print("Running single bifurcation test case via general solution algorithm")
+    Q_in = avg_Q_prime[inlet]
+    Q_outs = [avg_Q_prime[o] for o in outlets]
+    Q_out = sum(Q_outs)
+
+    #print("Q_in =", Q_in)
+    #print("Q_outs =", Q_outs)
+    #print("Q_out =", Q_out)
+    assert abs(Q_in - Q_out) < 1.e-10, f"WARNING: Q_in != Q_out: %{Q_in}g vs %{Q_out}g"
+
+def test_volume_conservation():
+
+    # Check that volume is conserved with a single bifurcation:
+    print("Testing volume conservation for single bifurcation")
     data = single_bifurcation_data(0.1)
     (indices, paths, r_o, r_e, L, k, omega, varepsilon) = data
-    (P, dP, avg_Q_1) = solve_bifurcating_tree(data)
+    avg_Q_prime, avg_u_prime = estimate_net_flow(data)
+    check_volume_conservation(indices, paths, avg_Q_prime)
 
-    print("P = ", P)
-    print("dP = ", dP)
-    print("<Q_1> = ", avg_Q_1)
-    print("eps*<Q_1_0> = %.3e" % (varepsilon*avg_Q_1[0]))
-    
-    Q10 = varepsilon*avg_Q_1[0]
-    Qp = Qprime(Q10, varepsilon, omega, k, r_o[0])
-    print("eps*<Q_1_0>' (mm^3/s) = %.3e" % Qp)
+    # Check that volume is conserved with the three-junction data
+    print("Testing volume conservation with three junction")
+    data = three_junction_data()
+    (indices, paths, r_o, r_e, L, k, omega, varepsilon) = data
+    avg_Q_prime, avg_u_prime = estimate_net_flow(data)
+    check_volume_conservation(indices, paths, avg_Q_prime)
 
-    diff = (Qp - 1.341e-04)/1.341e-04
-    assert(diff < 0.001), "WARNING: Check correctness of results! (%r)" % diff
+    # Check that volume is conserved with a simple assymetric tree
+    print("Testing volume conservation simple assymetric")
+    data = simple_asymmetric_data(0.1)
+    (indices, paths, r_o, r_e, L, k, omega, varepsilon) = data
+    avg_Q_prime, avg_u_prime = estimate_net_flow(data)
+    check_volume_conservation(indices, paths, avg_Q_prime)
 
+    # Check that volume is conserved with more complex Murray tree
+    print("Testing volume conservation Murray tree")
+    data = murray_tree_data(m=3, r=0.1, gamma=0.7, beta=2.0, L0=10)
+    (indices, paths, r_o, r_e, L, k, omega, varepsilon) = data
+    avg_Q_prime, avg_u_prime = estimate_net_flow(data)
+    check_volume_conservation(indices, paths, avg_Q_prime)
+
+if __name__ == "__main__":
+
+    # Run all tests:
+    test()
