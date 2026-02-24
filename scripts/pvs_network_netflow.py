@@ -557,4 +557,24 @@ def test():
     success = test_estimate_net_flow()
 
 if __name__ == "__main__":
-    test()
+
+    # # Run all tests:
+    # test()
+
+    # ... or just a quick single bifurcation tree:
+    print("Running single bifurcation test case via general solution algorithm")
+    data = single_bifurcation_data(0.1)
+    (indices, paths, r_o, r_e, L, k, omega, varepsilon) = data
+    (P, dP, avg_Q_1) = solve_bifurcating_tree(data)
+
+    print("P = ", P)
+    print("dP = ", dP)
+    print("<Q_1> = ", avg_Q_1)
+    print("eps*<Q_1_0> = %.3e" % (varepsilon*avg_Q_1[0]))
+    print("eps*<Q_1_0>' (mm^3/s) = %.3e" % Qp)
+    
+    Q10 = varepsilon*avg_Q_1[0]
+    Qp = Qprime(Q10, varepsilon, omega, k, r_o[0])
+    diff = (Qp - 1.341e-04)/1.341e-04
+    assert(diff < 0.001), "WARNING: Check correctness of results! (%r)" % diff
+
