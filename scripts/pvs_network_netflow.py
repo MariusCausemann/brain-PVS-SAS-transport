@@ -571,10 +571,11 @@ if __name__ == "__main__":
     print("dP = ", dP)
     print("<Q_1> = ", avg_Q_1)
     print("eps*<Q_1_0> = %.3e" % (varepsilon*avg_Q_1[0]))
-    print("eps*<Q_1_0>' (mm^3/s) = %.3e" % Qp)
     
     Q10 = varepsilon*avg_Q_1[0]
     Qp = Qprime(Q10, varepsilon, omega, k, r_o[0])
+    print("eps*<Q_1_0>' (mm^3/s) = %.3e" % Qp)
+
     diff = (Qp - 1.341e-04)/1.341e-04
     assert(diff < 0.001), "WARNING: Check correctness of results! (%r)" % diff
 
