@@ -459,7 +459,9 @@ def compute_pvs_flow(meshfile, output, args):
         network_data = (indices, paths, r_o, r_e, L, k, omega, varepsilon)
         avg_Q, avg_u = pnf.estimate_net_flow(network_data)
 
-        print("avg_Q = ", avg_Q)
+        (Q_in, Q_out) = pnf.check_volume_conservation(indices, paths, avg_Q)
+        print("\tQ'_in (m^3/s) = ", Q_in)
+        print("\tQ'_out (m^3/s) = ", Q_out)
         
         # Read cell_index_map from file for mapping back to the original mesh 
         mapfile = os.path.join(output, "original_to_minimal_map_%d.xdmf" % i0)

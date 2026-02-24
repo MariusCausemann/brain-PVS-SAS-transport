@@ -577,6 +577,8 @@ def check_volume_conservation(indices, paths, avg_Q_prime):
     #print("Q_out =", Q_out)
     assert abs(Q_in - Q_out) < 1.e-10, f"WARNING: Q_in != Q_out: %{Q_in}g vs %{Q_out}g"
 
+    return (Q_in, Q_out)
+    
 def test_volume_conservation():
 
     # Check that volume is conserved with a single bifurcation:
