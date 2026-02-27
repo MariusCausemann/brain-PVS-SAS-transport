@@ -12,6 +12,8 @@ import numpy as np
 
 import pvs_network_netflow as pnf
 
+m3s_to_mlday = 1e6*(60*60*24)
+
 def my_read_vtk_network(filename):
     """Read the VTK file given by filename, return a FEniCS 1D Mesh representing the network, a FEniCS MeshFunction (double) representing the radius of each vessel segment (defined over the mesh cells), and a FEniCS MeshFunction (size_t) defining the roots of the network (defined over the mesh vertices, roots are labelled by 2 or 1.) 
 
@@ -459,10 +461,10 @@ def compute_pvs_flow(meshfile, output, args):
         network_data = (indices, paths, r_o, r_e, L, k, omega, varepsilon)
         avg_Q, avg_u = pnf.estimate_net_flow(network_data)
 
-        (Q_in, Q_out) = pnf.check_volume_conservation(indices, paths, avg_Q)
-        print("\tQ'_in (m^3/s) = ", Q_in)
-        print("\tQ'_out (m^3/s) = ", Q_out)
-        
+        # Check that volume is conserved (what flows in, flows out) in
+        # the estimated net flow
+        (Q_in, Q_out, inlet, outlets) = pnf.check_volume_conservation(indices, paths, avg_Q)
+
         # Read cell_index_map from file for mapping back to the original mesh 
         mapfile = os.path.join(output, "original_to_minimal_map_%d.xdmf" % i0)
         index_map = df.MeshFunction("size_t", mesh, 1, 0)
@@ -480,14 +482,28 @@ def compute_pvs_flow(meshfile, output, args):
                 avg_Q_i = avg_Q[index_map[i]]
                 Q.vector()[i] = avg_Q_i
                 u.vector()[i] = avg_Q_i/area(i)
-                
+
+        # Add a volume conservation check here
+        if True:
+            inflows = {}
+            outflows = {}
+            outlets = set(outlets)
+            for i, _ in enumerate(mesh.cells()):
+                T_i = index_map[i]
+
+                if T_i == inlet:
+                    inflows[T_i] = Q.vector()[i]
+                elif T_i in outlets:
+                    outflows[T_i] = Q.vector()[i]
+
+            print("\t<Q'>_in (mL/day) = ", inflows[inlet]*m3s_to_mlday)
+            print("\t<Q'>_out (mL/day) = ", sum(outflows.values())*m3s_to_mlday)
+            print("")
+            
     print_stats("Vascular branch lengths L", np.array(Ls), "m")            
     print_stats("Vascular branch lengths L", 1.e3*np.array(Ls), "mm")            
     print_stats("... k L", k*np.array(Ls), "AU, (k = %3.4g)" % k )
-    print_stats("<Q'_i>", Q.vector(), "m^3/s")
-    print_stats("<Q'_i>", Q.vector()*1.e9, "mm^3/s")
-    print_stats("<u'_i>", u.vector(), "m/s")
-    print_stats("<u'_i>", u.vector()*1.e3, "mm/s")
+    print_stats("<Q'_i>", Q.vector()*m3s_to_mlday, "mL/day")
     print_stats("<u'_i>", u.vector()*1.e6, "mum/s")
 
     fluxfile = os.path.join(output, "pvs_Q.xdmf")
@@ -527,7 +543,6 @@ def compute_pvs_flow(meshfile, output, args):
     u_directed = df.project(u*tangent*mf_to_dg(downstream), df.VectorFunctionSpace(mesh, "DG", 0))
     q_directed = df.project(Q*tangent*mf_to_dg(downstream), df.VectorFunctionSpace(mesh, "DG", 0))
 
-    m3s_to_mlday = 1e6*(60*60*24)
     n = df.FacetNormal(mesh)
     A_pvs = np.pi*((mf_to_dg(radii)*beta)**2 - mf_to_dg(radii)**2)
 
