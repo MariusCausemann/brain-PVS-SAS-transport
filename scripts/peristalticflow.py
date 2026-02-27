@@ -490,7 +490,6 @@ def compute_pvs_flow(meshfile, output, args):
             outlets = set(outlets)
             for i, _ in enumerate(mesh.cells()):
                 T_i = index_map[i]
-
                 if T_i == inlet:
                     inflows[T_i] = Q.vector()[i]
                 elif T_i in outlets:
@@ -498,6 +497,7 @@ def compute_pvs_flow(meshfile, output, args):
 
             print("\t<Q'>_in (mL/day) = %6.3g" % (inflows[inlet]*m3s_to_mlday))
             print("\t<Q'>_out (mL/day) = %6.3g" % (sum(outflows.values())*m3s_to_mlday))
+            print("\t #outlets = ", len(outlets))
             print("")
             
     print_stats("Vascular branch lengths L", 1.e3*np.array(Ls), "mm")
@@ -545,6 +545,9 @@ def compute_pvs_flow(meshfile, output, args):
 
     # How about we just compute the total flux in and out, this MER
     # expects to be Q_in + Q_out, except it is not
+    one = df.Function(DG0)
+    one.vector()[:] = 1.0
+    print("one*ds = ", df.assemble(one*df.ds))
     print("Q*ds * m3s_to_mlday = ", df.assemble(Q*df.ds)*m3s_to_mlday)
     
     n = df.FacetNormal(mesh)
