@@ -496,8 +496,8 @@ def compute_pvs_flow(meshfile, output, args):
                 elif T_i in outlets:
                     outflows[T_i] = Q.vector()[i]
 
-            print("\t<Q'>_in (mL/day) = ", inflows[inlet]*m3s_to_mlday)
-            print("\t<Q'>_out (mL/day) = ", sum(outflows.values())*m3s_to_mlday)
+            print("\t<Q'>_in (mL/day) = %6.3g" % (inflows[inlet]*m3s_to_mlday))
+            print("\t<Q'>_out (mL/day) = %6.3g" % (sum(outflows.values())*m3s_to_mlday))
             print("")
             
     print_stats("Vascular branch lengths L", 1.e3*np.array(Ls), "mm")
