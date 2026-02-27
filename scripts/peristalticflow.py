@@ -543,13 +543,19 @@ def compute_pvs_flow(meshfile, output, args):
     u_directed = df.project(u*tangent*mf_to_dg(downstream), df.VectorFunctionSpace(mesh, "DG", 0))
     q_directed = df.project(Q*tangent*mf_to_dg(downstream), df.VectorFunctionSpace(mesh, "DG", 0))
 
+    # How about we just compute the total flux in and out, this MER
+    # expects to be Q_in + Q_out, except it is not
+    print("Q*ds * m3s_to_mlday = ", df.assemble(Q*df.ds)*m3s_to_mlday)
+    
     n = df.FacetNormal(mesh)
     A_pvs = np.pi*((mf_to_dg(radii)*beta)**2 - mf_to_dg(radii)**2)
 
     tot = df.assemble(df.dot(n, u_directed*A_pvs)*df.ds)
+    tot_q_dir = df.assemble(df.dot(n, q_directed)*df.ds)
     n_inlets =  df.assemble(df.conditional(df.dot(n, tangent*mf_to_dg(downstream)) < 0, 1,0 )*df.ds)
     print("n_inlets = ", n_inlets)
-    print("tot * m3s_to_mlday = ", tot * m3s_to_mlday)
+    print("tot * m3s_to_mlday = ", tot * m3s_to_mlday)             # u*A same
+    print("tot_q_dir * m3s_to_mlday = ", tot_q_dir * m3s_to_mlday) # as q_dir? 
     #from IPython import embed; embed()
     udirfile = os.path.join(output, "pvs_u_directed.xdmf")
     with df.XDMFFile(mesh.mpi_comm(), udirfile) as xdmf:
@@ -591,8 +597,8 @@ if __name__ == '__main__':
     # To run:
     # $ conda activate pvs_transport_env
     # 
-    # $ python3 peristalticflow.py --frequency 1.0 --wavelength 2.0 --amplitude 0.01 --beta 2.0 --recompute # Cardiac ~1 Hz, 2m/s pulse wave speed
-    # $ python3 peristalticflow.py --frequency 0.1 --wavelength 0.02 --amplitude 0.1 --beta 2.0 # 
+    # $ python3 scripts/peristalticflow.py --frequency 1.0 --wavelength 2.0 --amplitude 0.01 --beta 2.0 --recompute # Cardiac ~1 Hz, 2m/s pulse wave speed
+    # $ python3 scripts/peristalticflow.py --frequency 0.1 --wavelength 0.02 --amplitude 0.1 --beta 2.0 # 
     #
     # --recompute is only needed upon first run)
     
