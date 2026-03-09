@@ -137,7 +137,7 @@ structural barriers~\cite{zhang1990interrelationships,
 and in turn to what extent such structural compartmentalization is a
 prerequisite for effective perivascular transport.
  
-% What are our research questions and how do we answer them
+% Main contribution
 In this study, by leveraging geometric model reduction and
 mixed-dimensional modelling~\cite{masri2024modelling}, structural
 magnetic resonance (MR) images~\cite{hodneland2019new}, and high
@@ -150,38 +150,38 @@ SAS and ventricular system, in networks of surface PVSs (i.e.~those
 surrounding arteries and veins in the SAS), and in the brain
 parenchyma. In terms of transport dynamics, we account for
 heterogeneous diffusion, dispersive mixing induced by cardiac and
-respiratory pulsatility in the CSF spaces and PVSs, convective fluid
-flow driven by CSF production and peristaltic pumping, as well as
-solute exchange and clearance across semi-permeable
-membranes. Comparing with contrast-enhanced MRI
-studies~\cite{ringstad2017glymphatic, ringstad2018brain,
-  watts2019measuring, eide2024functional}, the in-silico predictions
-accurately represent tracer distribution patterns, timing and
-intercompartmental distributions. This open platform~\cite{ZENODO}
-thus provides a technological opportunity for qualitatively and
-quantitatively exploring key open questions relating to molecular
-movement within the human brain environment such as the role of
-pulsatility, perivascular pathways, structural compartmentalization,
-or morphology.
+respiratory pulsatility in the CSF spaces, convective fluid flow
+driven by CSF production in the CSF spaces and peristaltic pumping in
+the PVSs, as well as solute exchange and clearance across
+semi-permeable membranes. Our key contribution is the in-silico
+representation of perivascular solute transport via topologically
+one-dimensional transport equations interacting with transport in the
+three-dimensional intracranial compartments. This concept provides a
+missing link to bridge mesoscale phenomena -- such as perivascular
+pulsations occuring every few seconds -- with macroscale observations
+of tissue-level tracer distribution over hours to days. Preliminary
+comparisons indicate that the in-silico predictions align well with
+the range of tracer distribution patterns reported in
+contrast-enhanced MRI studies~\cite{ringstad2017glymphatic,
+  ringstad2018brain, watts2019measuring, eide2024functional}. 
 
 % Main findings and outlook
-By exploring this high-dimensional parameter space, we propose that
-the balance between CSF production and intracranial pulsatility is key
-to shaping the large-scale features of intracranial tracer distribution
-patterns, with the potential to span a wide range of individual and
-cohort variability. Moreover, we predict that CSF production, cardiac-
-and respiratory pulsatility is not sufficient to explain early
-perivascular tracer appearance, but that fluid flow induced by low-frequency
-vasomotion in surface periarterial spaces (on the order of 10 \textmu
-m/s) is sufficient, even in the absence of a structural
-compartmentalization of the PVS. Conversely, enlarged PVSs in the SAS
-will cause a substantial reduction in cardiac- and vasomotion-driven
-flow velocities, strongly delay perivascular transport, and thus
-impair intracranial tracer spread. These findings transfer, reconcile, 
-integrate and extend insights from clinical, experimental, and theoretical 
-studies, and provide a framework for future in-silico studies of personalized
- intrathecal drug delivery and brain clearance.
-
+We illustrate the potential of this computational framework via a
+series of model scenarios targeting key questions relating to
+molecular movement within the human brain environment. In particular,
+we explore how the balance between CSF production and intracranial
+pulsatility can shape large-scale features of the tracer
+distribution. We examine how perivascular fluid flow induced by
+cardiac pulsations or low-frequency vasomotion can be expected to
+impact tracer arrival times within the surrounding CSF spaces and
+parenchyma. Finally, we study how changes in structural properties,
+such as the absence of a structural compartmentalization of the PVS or
+enlarged PVSs, can impact perivascular transport and intracranial
+tracer spread. This openly available technology platform\cite{ZENODO}
+allows for transferring, integrating, and examining insights from
+clinical, experimental, and theoretical studies, and provides a
+starting-point for future in-silico studies of brain drug delivery.
+ 
 \section*{Results}
 
 \subsection*{In-silico predictions of intracranial transport after intrathecal injection}
@@ -436,7 +436,7 @@ PVS is clearly visible in the space adjacent to the PVS of the ACA, MCA, and oth
 there are no clear signs of early appearance of tracer surrounding the PVS in
 the baseline model (\Cref{fig:pvs_b}F).
 
-A natural question is whether early apperance of tracer in the PVS
+A natural question is whether early appearance of tracer in the PVS
 could be the result of increased dispersion rather than net flow in
 the PVS\cite{asgari2016glymphatic,sharp2019dispersion,bojarskaite2023sleep,asgari2016glymphatic,troyetsky2021dispersion}. Interestingly,
 even increasing the dispersion factor by $100 \times$ in the PVS,

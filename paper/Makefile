@@ -17,7 +17,7 @@ final:
 diff: diff_main diff_supp
 
 diff_main: 
-	latexdiff --graphics-markup=none main_r1.tex main.tex > diff_main_r1.tex
+	latexdiff --subtype=INVISIBLE --graphics-markup=none main_r1.tex main.tex > diff_main_r1.tex
 	pdflatex -interaction=nonstopmode diff_main_r1.tex
 	bibtex diff_main_r1
 	pdflatex -interaction=nonstopmode diff_main_r1.tex
