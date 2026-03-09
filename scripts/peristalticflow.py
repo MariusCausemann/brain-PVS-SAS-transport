@@ -46,10 +46,12 @@ def my_read_vtk_network(filename):
     return mesh, radii, roots
 
 
-def mark_shortest_paths(mesh, G, roots, output, use_precomputed=False):
+def mark_shortest_paths(mesh, G, roots, output, use_precomputed=False, remove_connections=True):
     """Identify the shortest path (weighted by "length") from each node in
     G to a root node (in roots). Create a node-based mesh function mf
-    that labels each note by its nearest root. Returns mf.
+    that labels each note by its nearest root. 
+    If remove_connections, set the connecting branch between subtrees to zero.
+    Returns mf.
     """
 
     # Helper function to compute path length based on edge data
@@ -96,9 +98,40 @@ def mark_shortest_paths(mesh, G, roots, output, use_precomputed=False):
         mf.array()[paths[shortest]] = labels[shortest]
     print("Longest shortest path is %g (m)" % longest_shortest_path)
 
-    # Check that all nodes have been marked
-    if not np.all(mf.array()):
-        print("WARNING: Not all nodes have been marked, still zeros in mf.")
+    if remove_connections:
+        mf_array = mf.array()
+        nodes_to_zero = set()
+
+        for u, v in G.edges():
+            # Look for edges where the assigned root changes (the split point)
+            if mf_array[u] != mf_array[v] and mf_array[u] != 0 and mf_array[v] != 0:
+                
+                # Helper to trace along the branch (degree == 2) and collect nodes
+                def trace_branch(start_node, from_node):
+                    curr, prev = start_node, from_node
+                    trace_nodes = set()
+                    # Stop if we hit a bifurcation (degree > 2), an endpoint (degree == 1), 
+                    # or a node we already visited (to prevent infinite loops in cycles)
+                    while G.degree(curr) == 2 and curr not in trace_nodes:
+                        trace_nodes.add(curr)
+                        neighbors = list(G.neighbors(curr))
+                        # Move to the neighbor we didn't just come from
+                        next_node = neighbors[0] if neighbors[1] == prev else neighbors[1]
+                        prev, curr = curr, next_node
+                    return trace_nodes
+
+                # Trace outward from both sides of the boundary edge
+                nodes_to_zero.update(trace_branch(u, v))
+                nodes_to_zero.update(trace_branch(v, u))
+
+        # Protect predefined root nodes from accidentally being zeroed
+        nodes_to_zero -= set(roots)
+
+        # Apply the zeros to the mesh function array
+        if nodes_to_zero:
+            mf_array[list(nodes_to_zero)] = 0
+
+    print(f"Not all nodes have been marked, {(mf_array==0).sum()} zeros in mf.")
 
     # Store computed data as XDMF (for easy reading/writing)
     print("... saving nearest root labels as MeshFunction to %s" % filename)
