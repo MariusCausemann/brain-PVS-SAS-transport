@@ -219,7 +219,7 @@ under substantial uncertainty and debate\cite{smith2019going,
 introduce a computational framework that allows for evaluating the
 integrated effect of different proposed transport mechanisms bridging
 from the vascular mesoscale to the organ-level macroscale and across
-time scales of seconds to hours, in subject-specific geometries. To
+time scales of seconds to days, in subject-specific geometries. To
 this end, we introduce the following modelling choices. We assume that
 the solute will diffuse within all compartments, with diffusivity
 depending on the effective properties of the relevant
@@ -236,8 +236,7 @@ peristaltic pumping~\cite{mestre2018flow,
   gjerde2023directional}. Specifically, we introduce the
 geometrically-reduced representation of the PVSs to bridge spatial
 scales, and model pulsatility via dispersion in the CSF and
-time-averaged PVS flow to bridge temporal scales. These assumptions
-and choices are discussed further in Limitations.
+time-averaged PVS flow to bridge temporal scales (see also Limitations). 
 
 Mathematically, the solute transport model is represented by a
 mixed-dimensional system of coupled time-dependent partial
@@ -251,58 +250,47 @@ computational framework is implemented in the FEniCS finite element
 software \cite{alnaes2015fenics, kuchta2020assembly}, and all
 associated software is all openly available~\cite{ZENODO}.
 
-\subsection*{In-silico predictions of tracer distribution after intrathecal injection in moderate flow regimes}
+\subsection*{In-silico predictions of tracer distribution after intrathecal injection in cardiac and respiratory flow regimes}
 
-our first target is to establish a baseline model accounting for a
-reasonably conservative set of mechanisms and their integrated effect
-over a timescale of several minutes to 24 hours.
-
-our first target is to establish a baseline model accounting for a
-reasonably conservative set of mechanisms and their integrated effect
-over a timescale of several minutes to 24 hours. To this end, we
-assume that the solute will (i) diffuse within all compartments, with
-diffusivity depending on the effective properties of the relevant
-medium\cite{sykova2008diffusion}; (ii) experience significant
-dispersive effects due to the pulsatile flow of CSF in the ventricular
-system induced by the cardiac and respiratory
-cycles\cite{sweetman2011cerebrospinal, vinje2019respiratory, ray2021quantitative}; and (iii) be
-convected by a (small) net flow of CSF resulting from production in
-the choroid plexus with CSF efflux across the upper
-convexity\cite{hornkjol2022csf} and from the peristaltic pumping
-effect of pulse wave pulsations in surface periarterial
-spaces~\cite{mestre2018flow, gjerde2023directional}. Mathematically,
-this model is represented by a mixed-dimensional system of coupled
-time-dependent partial differential
-equations\cite{masri2024modelling}, which we solve numerically with
-high accuracy using a mass-conserving finite element scheme and the
-FEniCS finite element software\cite{alnaes2015fenics,
-  kuchta2020assembly} (see Methods). The computational framework and
-associated software are all openly available~\cite{ZENODO}.
-
-Simulating a contrast-enhanced MRI protocol~\cite{ringstad2017glymphatic,
+Intrathecal administration of gadolinium-based contrast agents in
+combination with MR imaging has emerged as a key technique to study
+solute distribution and clearance in the human
+brain~\cite{ringstad2017glymphatic, ringstad2018brain,
+  eide2024functional, van2024human, kipnis2025resolving}. To simulate
+such a contrast-enhanced MRI protocol~\cite{ringstad2017glymphatic,
   ringstad2018brain, eide2024functional}(\Cref{fig:results1}C), we
-then predict the spreading of $0.5$ mmol intrathecally injected
-Gadobutrol after its appearance at the craniocervical junction,
-represented by tracer inflow across the spinal SAS boundary over the
-first two hours (\Cref{fig:results1}D--E).  After one hour, the
-in-silico tracer moves upwards in the SAS frontally of the brainstem,
-and quickly reaches the supratentorial regions. Here, it spreads both
-posterior through the quadrigeminal cistern and the longitudinal
-fissure, and anteriorly through the outer SAS, reaching the top of the
-cerebral cortex after around 12 hours. After 24 hours, the tracer
-covers most of the brain surface (with the exception of some posterior
-regions) and has penetrated substantially into the parenchymal
-tissue. This pattern is reflected in the mean tracer concentrations in
-each compartment, where the CSF space reaches its peak of
-$1.4\,$mmol/l after 2 hours, followed by the arterial PVS
-concentration peak ($2.9\,$mmol/l after 4 hours)
+apply our computational framework to predict the spreading of $0.5$
+mmol intrathecally injected Gadobutrol after its appearance at the
+craniocervical junction, represented by tracer inflow across the
+spinal SAS boundary over the first two hours
+(\Cref{fig:results1}D--E). To begin with, we consider a reasonably
+conservative set of flow patterns: modelling the dispersive effects of
+pulsatile CSF flow induced by the cardiac and respiratory
+cycles~\cite{sweetman2011cerebrospinal, vinje2019respiratory} and a
+perivascular net flow induced by cardiac
+pulsations~\cite{mestre2018flow, gjerde2023directional} on the order
+of $\fixme{10.5}$ mL/day (see Methods).
+
+After one hour, the in-silico tracer moves upwards in the SAS
+frontally of the brainstem, and quickly reaches the supratentorial
+regions. Here, it spreads both posterior through the quadrigeminal
+cistern and the longitudinal fissure, and anteriorly through the outer
+SAS, reaching the top of the cerebral cortex after around 12
+hours. After 24 hours, the tracer covers most of the brain surface
+(with the exception of some posterior regions) and has penetrated
+substantially into the parenchymal tissue. This pattern is reflected
+in the mean tracer concentrations in each compartment, where the CSF
+space reaches its peak of $1.4\,$mmol/l after 2 hours, followed by the
+arterial PVS concentration peak ($2.9\,$mmol/l after 4 hours)
 (\Cref{fig:results1}F). While the mean concentrations in these
-compartments drop soon after peaking, the parenchymal concentration
-increases more slowly over the first 24 hours, with a final value of $0.3$
-mmol/l. Overall, about 40\% of the total amount of tracer remains in
-the cranium 24 hours post-injection, with the largest share in the CSF
-(53\%), followed by the parenchyma (35\%), the venous PVS (8\%) and
-the arterial PVS (5\%) (\Cref{fig:results1}G).
+compartments drop soon after peaking, the concentration in the
+parenchyma increases more slowly over the first 24 hours, with a final
+value of $0.3$ mmol/l. Overall, about 40\% of the total amount of
+tracer remains in the cranium 24 hours post-injection in this baseline
+simulation, with the largest share in the CSF (53\%), followed by the
+parenchyma (35\%), the venous PVS (8\%) and the arterial PVS (5\%)
+(\Cref{fig:results1}G).
+
 
 \subsection*{Reduced CSF pulsatility strongly shifts intracranial tracer distribution patterns}
 \begin{figure}%[h!]
