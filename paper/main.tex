@@ -271,6 +271,25 @@ imaging limitations, the network primarily covers the supratentorial
 regions, with the lowest network point located approximately $4\,$cm
 above the craniocervical junction.
 
+\mer{Just moved this from Results 3. Will edit, and maybe move some to
+  Methods.}
+
+\fixme{Applying a semi-analytic model of the net flow
+  induced by peristalsis in perivascular
+  networks~\cite{gjerde2023directional} (see Methods), we estimate
+  that the cardiac pulse wave alone, traveling at a frequency of 1 Hz
+  with a wavelength of 2.0 m and a 1\% wall
+  displacement~\cite{jung2021novel}, will induce mainly antegrade PVS
+  flow with an average net velocity of 0.92 \textmu m/s while reaching
+  up to 7.31 \textmu m/s near larger, ventral vessels such as the MCA
+  (\Cref{fig:pvs}D,E). The same theory predicts that strong ultraslow
+  vasomotions, if traveling antegrade at 0.1Hz with a wavelength of
+  0.02 m and a 10\% displacement~\cite{broggini2024long}, will induce
+  both retrograde and antegrade net PVS flow with an average velocity
+  of 13.05 \textmu m/s and maximum velocity 54.44 \textmu m/s
+  (\Cref{fig:pvs}D,F).}
+
+
 The computational framework is implemented in the FEniCS finite
 element software \cite{alnaes2015fenics, kuchta2020assembly}, and all
 associated software is all openly available~\cite{ZENODO}.
@@ -464,8 +483,7 @@ intracranial solute transport.
 %direction in these PVSs, with an average velocity of 0.08 \textmu m/s
 %(antegrade) and a maximum velocity of 0.55 \textmu m/s (\Cref{fig:pvs}B).
 
-\mer{MER: Stopped here. Will move some of this PVS flow description to
-the first Results section and some to Methods}
+\mer{MER: Stopped here.}
 
 Traveling waves of arterial wall motion (\Cref{fig:pvs}C), such as the
 pulse wave or other vasomotion~\cite{vanveluw2020vasomotion,
@@ -476,19 +494,21 @@ directional flow in the PVS~\cite{kedarasetti2020arterial,
   gjerde2023directional, nozaleda2024arterial} -- of magnitude and
 direction depending on the amplitude, frequency, and length of the
 waves and the characteristics of the perivascular
-network~\cite{gjerde2023directional}. Applying a semi-analytic model
-of the net flow induced by peristalsis in perivascular
-networks~\cite{gjerde2023directional} (see Methods), we estimate that
-the cardiac pulse wave alone, traveling at a frequency of 1 Hz with a
-wavelength of 2.0 m and a 1\% wall displacement~\cite{jung2021novel},
-will induce mainly antegrade PVS flow with an average net velocity of
-0.92 \textmu m/s while reaching up to 7.31 \textmu m/s near larger,
-ventral vessels such as the MCA (\Cref{fig:pvs}D,E). The same theory
-predicts that strong ultraslow vasomotions, if traveling antegrade at
-0.1Hz with a wavelength of 0.02 m and a 10\%
-displacement~\cite{broggini2024long}, will induce both retrograde and
-antegrade net PVS flow with an average velocity of 13.05 \textmu m/s
-and maximum velocity 54.44 \textmu m/s (\Cref{fig:pvs}D,F).
+network~\cite{gjerde2023directional}.
+
+%% Applying a semi-analytic model
+%% of the net flow induced by peristalsis in perivascular
+%% networks~\cite{gjerde2023directional} (see Methods), we estimate that
+%% the cardiac pulse wave alone, traveling at a frequency of 1 Hz with a
+%% wavelength of 2.0 m and a 1\% wall displacement~\cite{jung2021novel},
+%% will induce mainly antegrade PVS flow with an average net velocity of
+%% 0.92 \textmu m/s while reaching up to 7.31 \textmu m/s near larger,
+%% ventral vessels such as the MCA (\Cref{fig:pvs}D,E). The same theory
+%% predicts that strong ultraslow vasomotions, if traveling antegrade at
+%% 0.1Hz with a wavelength of 0.02 m and a 10\%
+%% displacement~\cite{broggini2024long}, will induce both retrograde and
+%% antegrade net PVS flow with an average velocity of 13.05 \textmu m/s
+%% and maximum velocity 54.44 \textmu m/s (\Cref{fig:pvs}D,F).
 
 We study the effect of such rapid PVS flow on intracranial molecular
 transport by comparing the more conservative baseline model and a
