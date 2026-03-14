@@ -184,10 +184,15 @@ starting-point for future in-silico studies of brain solute transport.
  
 \section*{Results}
 
-\subsection*{A computational framework for intracranial solute transport integrating surface perivascular networks}
+\fixme{We present a computational framework first, and then
+  demonstrate it by simulating a contrast-enhanced MRI protocol,
+  including a series of model variations.}
+
+\subsection*{An integrative computational framework for intracranial solute transport informed by multi-modal MRI}
 
 \begin{figure}
     \centering
+    \vspace{40em}
     %\includegraphics[width=1\textwidth]{figures/figure1.png}
      \caption{
      \textbf{An integrative computational framework for intracranial solute transport.}
@@ -228,72 +233,81 @@ debate\cite{smith2019going, proulx2021cerebrospinal,
   bohr2022glymphatic, hladky2022glymphatic, betsholtz2024advances,
   kipnis2025resolving}, our target is to introduce a computational
 framework that allows for evaluating the integrated effect of
-different proposed transport mechanisms bridging from the vascular
+different proposed transport mechanisms, bridging from the vascular
 mesoscale to the organ-level macroscale and across time scales of
 seconds to days, in subject-specific geometries.
 
 To this end, we introduce the following modelling choices
-(\Cref{fig:results1} and Methods). We introduce \fixme{three} solute
-concentration fields, each varying in space and time, one in the 3D
-domains and one in each of the PVS networks, and assume that the
-solute can cross between the 3D and 1D domains via semi-permeable
+(\Cref{fig:results1}, see also Methods). We define \fixme{three}
+solute concentration fields, each varying in space and time, one in
+the 3D domains and one in each of the PVS networks, and assume that
+the solute can cross between the 3D and 1D domains via semi-permeable
 membranes. We assume that the solute will diffuse within all
 compartments, with diffusivity depending on the effective properties
 of the relevant medium\cite{sykova2008diffusion}. We assume that flow
 in the CSF spaces will substantially affect solute transport, and we
-account for two main mechanisms: (i) convection via a (small) net flow
-of CSF resulting from production in the choroid plexus with CSF efflux
-across the upper convexity\cite{hornkjol2022csf}, and (ii) dispersive
-effects resulting from the pulsatile flow of
-CSF~\cite{sweetman2011cerebrospinal, vinje2019respiratory,
-  ray2021quantitative} (\Cref{fig:results1}). Moreover, in the
-periarterial spaces, we account for convection via directional (net)
-fluid flow induced by peristaltic pumping~\cite{mestre2018flow,
+account for two main mechanisms (\Cref{fig:results1}): (i) convection
+via a (small) net flow of CSF resulting from production in the choroid
+plexus with CSF efflux across the upper
+convexity\cite{hornkjol2022csf}, and (ii) dispersive effects resulting
+from the pulsatile flow of CSF~\cite{sweetman2011cerebrospinal,
+  vinje2019respiratory, ray2021quantitative}. In the surface
+periarterial spaces, we account for convection via net fluid flow
+induced by peristaltic pumping~\cite{mestre2018flow,
   gjerde2023directional} (\Cref{fig:pvs}).  Specifically, we introduce
 the geometrically-reduced representation of the PVSs to bridge spatial
 scales, and model pulsatility via dispersion in the CSF and
-time-averaged PVS flow to bridge temporal scales (see also
-Limitations). Mathematically, the solute transport model is
-represented by a mixed-dimensional system of coupled time-dependent
-partial differential equations\cite{masri2024modelling}, which we
-solve numerically with high accuracy using a mass-conserving finite
-element scheme.
+time-averaged PVS flow to bridge temporal scales. Mathematically, the
+solute transport model is represented by a mixed-dimensional system of
+coupled time-dependent partial differential
+equations\cite{masri2024modelling}, which we solve numerically with
+high accuracy using a mass-conserving finite element scheme.
 
 To inform the convective velocity fields and dispersion factors
-entering as input parameters in the transport equations, we also
-define a set of auxiliary CSF and PVS flow models
-(\Cref{fig:results1}, \Cref{fig:pvs}). The periarterial network
-extends from the internal carotid arteries and basilar artery through
-up to 18 bifurcations to reach upstream network ends located within
-the SAS or up to 6 mm inside the parenchyma and includes major surface
-arteries of radius 0.5--1.4 mm (\Cref{fig:pvs}\fixme{?}). Due to
-imaging limitations, the network primarily covers the supratentorial
-regions, with the lowest network point located approximately $4\,$cm
-above the craniocervical junction.
+entering as coefficients in the transport equations, we define a set
+of auxiliary CSF and PVS flow models (\Cref{fig:results1},
+\Cref{fig:pvs}). Beginning with flow field driven by CSF production,
+we impose a CSF inflow of $400$ mL/day into the lateral ventricles
+(\Cref{fig:results1}), yielding a maximum flow velocity of
+$1.85\,$mm/s (in the aqueduct) and a mean velocity in the SAS of
+$2.6$\textmu m/s (\Cref{fig:results1}). To estimate the dispersive
+effect of pulsatile CSF flow, we employ the theory of shear-augmented
+dispersion together with computational fluid dynamics to determine
+spatially-varying dispersion factors $R_c, R_r$ enhancing the
+effective solute diffusivity in the CSF spaces by $R = R_c + R_r$ (see
+Methods). Assuming a cardiac frequency of $1\,$Hz, we infer that the
+cardiac-induced pulsatile CSF flow increases the effective diffusion
+by more than two orders of magnitude in the aqueduct and near the
+cisterna magna, but has little effect ($R < 1$) in most of the SAS
+(\Cref{fig:results1}). The respiratory dispersive mixing reaches a
+factor of up to 320 due the lower respiratory frequency of $0.25\,$Hz
+(\Cref{fig:results1}).
 
-\mer{Just moved this from Results 3. Will edit, and maybe move some to
-  Methods.}
-
-\fixme{Applying a semi-analytic model of the net flow
-  induced by peristalsis in perivascular
-  networks~\cite{gjerde2023directional} (see Methods), we estimate
-  that the cardiac pulse wave alone, traveling at a frequency of 1 Hz
-  with a wavelength of 2.0 m and a 1\% wall
-  displacement~\cite{jung2021novel}, will induce mainly antegrade PVS
-  flow with an average net velocity of 0.92 \textmu m/s while reaching
-  up to 7.31 \textmu m/s near larger, ventral vessels such as the MCA
-  (\Cref{fig:pvs}D,E). The same theory predicts that strong ultraslow
-  vasomotions, if traveling antegrade at 0.1Hz with a wavelength of
-  0.02 m and a 10\% displacement~\cite{broggini2024long}, will induce
-  both retrograde and antegrade net PVS flow with an average velocity
-  of 13.05 \textmu m/s and maximum velocity 54.44 \textmu m/s
-  (\Cref{fig:pvs}D,F).}
-
+The periarterial network extends from the internal carotid arteries
+and basilar artery through up to 18 bifurcations to reach upstream
+network ends located within the SAS or up to 6 mm inside the
+parenchyma and includes major surface arteries of radius 0.5--1.4 mm
+(\Cref{fig:pvs}). Due to imaging limitations, the network primarily
+covers the supratentorial regions, with the lowest network point
+located approximately $4\,$cm above the craniocervical
+junction. Applying a semi-analytic model of the net flow induced by
+peristalsis in perivascular networks~\cite{gjerde2023directional} (see
+Methods), we estimate that the cardiac pulse wave alone, traveling at
+a frequency of 1 Hz with a wavelength of 2.0 m and a 1\% wall
+displacement~\cite{jung2021novel}, will induce mainly antegrade PVS
+flow with an average net velocity of 0.92 \textmu m/s while reaching
+up to 7.31 \textmu m/s near larger, ventral vessels such as the MCA
+(\Cref{fig:pvs}D,E), and a total flow through the periarterial network
+of $\fixme{10.5}$ mL/day. The same theory predicts that strong
+ultraslow vasomotions, if traveling antegrade at 0.1Hz with a
+wavelength of 0.02 m and a 10\% displacement~\cite{broggini2024long},
+will induce both retrograde and antegrade net PVS flow with an average
+velocity of 13.05 \textmu m/s and maximum velocity 54.44 \textmu m/s,
+and a total flow of $\fixme{X}$ mL/day (\Cref{fig:pvs}D,F).
 
 The computational framework is implemented in the FEniCS finite
 element software \cite{alnaes2015fenics, kuchta2020assembly}, and all
 associated software is all openly available~\cite{ZENODO}.
-
 
 \subsection*{In-silico predictions of tracer distribution after intrathecal injection in cardiac and respiratory flow regimes}
 
@@ -311,10 +325,9 @@ spinal SAS boundary over the first two hours
 (\Cref{fig:intrathecal}D--E). To begin with, we consider a reasonably
 conservative set of flow patterns: modelling the dispersive effects of
 pulsatile CSF flow induced by the cardiac and respiratory
-cycles~\cite{sweetman2011cerebrospinal, vinje2019respiratory} and a
-perivascular net flow induced by cardiac
-pulsations~\cite{mestre2018flow, gjerde2023directional} on the order
-of $\fixme{10.5}$ mL/day (see Methods).
+cycles~\cite{sweetman2011cerebrospinal, vinje2019respiratory} and the
+periarterial net flow induced by cardiac pulse waves
+alone~\cite{mestre2018flow, gjerde2023directional}.
 
 After one hour, the in-silico tracer moves upwards in the SAS
 frontally of the brainstem, and quickly reaches the supratentorial
@@ -353,11 +366,11 @@ parenchyma (35\%), the venous PVS (8\%) and the arterial PVS (5\%)
 
 
 % Reduced CSF pulsatility strongly shifts intracranial tracer distribution patterns
-\subsection*{Changes in the balance between CSF convection and dispersion substantially alter predicted tracer patterns}
+\subsection*{Can variations in CSF convection and dispersion shape these tracer distribution patterns?} 
 
 \begin{figure}%[h!]
-\centering 
-\includegraphics[width = 0.8\textwidth]{figures/figure2.png}
+\centering \includegraphics[width =
+  0.8\textwidth]{figures/figure2.png}
 \caption{\textbf{Changes in the balance between convection and
     dispersion in the CSF spaces substantially alter computational
     predictions of tracer distribution patterns.} A) CSF flow induced
@@ -403,16 +416,14 @@ parenchyma (35\%), the venous PVS (8\%) and the arterial PVS (5\%)
 %% \end{figure}  
 
 Tracer distribution patterns observed after intrathecal injection
-differ substantially between subjects and in pathological
-conditions~\cite{ringstad2018brain, eide2021direction,
-  eide2021impaired, eide2022altered}. These neurological conditions
-are also associated with alterations in the pulsatile flow of CSF in
-the ventricular system and SAS~\cite{eide2021direction}. Moreover,
-cardiac and respiratory pulsatility clearly varies from subject to
-subject and between physiological states. Motivated by these
-observations, we asked whether and how the tracer distribution
-patterns predicted by our computational framework would be affected by
-changes in CSF production or pulsatility.
+differ substantially between subjects and in pathological conditions,
+conditions also associated with alterations in the pulsatile flow of
+CSF~\cite{ringstad2018brain, eide2021direction, eide2021impaired,
+  eide2022altered}. Cardiac and respiratory pulsatility clearly also
+varies from subject to subject and between physiological
+states. Motivated by these observations, we asked whether and how the
+tracer distribution patterns predicted by our computational framework
+would be affected by changes in CSF production or pulsatility.
 %
 %% For the CSF dynamics in our baseline model, we combine the net
 %% contribution to CSF flow induced by CSF production with the integrated
@@ -435,9 +446,9 @@ computed the reduced and increased pulsatility scenarios by halving
 and doubling the inflow rates associated with both cardiac and
 respiratory pulsations, which changed the dispersion factors by
 0.25$\times$ and 4$\times$, respectively. Note that this behaviour
-directly reflects the nature of our model: Stokes flow is linear in
-its inflow boundary conditions, and the diffusion enhancement factor
-is quadratic in the predicted pressure gradient.
+directly reflects the nature of our CSF model model: Stokes flow is
+linear in its inflow boundary conditions, and the diffusion
+enhancement factor is quadratic in the predicted pressure gradient.
 
 Without the convective contribution from CSF production, transport is
 considerably delayed (\Cref{fig:csf}G, H). Even after $12$ hours,
@@ -450,7 +461,7 @@ pulsatility, we observe rapid transport towards the upper convexity of
 the cranium, as in the baseline model, but the tracer spreads
 exclusively within the anterior regions (\Cref{fig:csf}I). This
 feature can be attributed to the CSF flow bifurcation posterior to the
-ambient cistern (\Cref{fig:csf}A): without sufficient diffusion, the
+ambient cistern (\Cref{fig:results1}): without sufficient diffusion, the
 tracer is unable to cross into the posterior SAS. Indeed, in the model
 variation with higher dispersion, the tracer moves through the
 quadrigeminal cistern and further upwards into the longitudinal
@@ -981,94 +992,77 @@ Womersley numbers via the Stokes equations with viscosity $\mu$ (see
 flow induced by CSF production, we compute the CSF velocity field $\bm
 u_{\rm CSF}$ and associated pressure field $p_{\rm CSF}$ in the SAS
 and ventricular system $\Omega_{\rm CSF}$ that result from a steady
-CSF production at a rate of $u_{\rm in}$ across the lateral ventricle
-walls (\Cref{fig:csf}A--E). We allow for CSF efflux across the upper,
-outer (arachnoid) boundary with efflux resistance $R_{\rm CSF, 0}$.
-
-% MER: Moved from Results
-\fixme{Beginning with the advective, net flow field driven by CSF
-  production, we impose a constant CSF inflow of $400\,$ml/day across
-  the surface of the lateral ventricles. Simultaneously allowing for
-  efflux across the upper convexity yields a total CSF pressure drop
-  of $26\,$mPa (0.00020 mmHg) (\Cref{fig:csf}D) with a maximum flow
-  velocity of $1.85\,$mm/s (in the aqueduct) and a mean velocity in
-  the SAS of $2.6$\textmu m/s (\Cref{fig:csf}E).} In model variations
-with no CSF prodution, we set $u_{\rm CSF} = 0$, $p_{\rm CSF} = 0$.
-
+CSF production at a rate of $u_{\rm in} = 400$ mL/day across the
+lateral ventricle walls (\Cref{fig:results1}). We allow for CSF efflux
+across the upper, outer (arachnoid) boundary with efflux resistance
+$R_{\rm CSF, 0}$. In model variations with no CSF prodution, we set
+$u_{\rm CSF} = 0$, $p_{\rm CSF} = 0$.
 
 %then set $\bm u = \bm u_{\rm CSF}$ in $\Omega_{\rm CSF}$
 %in~\eqref{eq:multi_transport}
 
-%% We do not model bulk flow within the brain parenchyma, except within
-%% the perivascular network segments extending below the pial surface,
-%% and thus set $\bm u = 0$ in $\Omega_{\rm PAR}$
-%% in~\eqref{eq:multi_transport}.
+%% %% We do not model bulk flow within the brain parenchyma, except within
+%% %% the perivascular network segments extending below the pial surface,
+%% %% and thus set $\bm u = 0$ in $\Omega_{\rm PAR}$
+%% %% in~\eqref{eq:multi_transport}.
 
-\subsection*{Perivascular fluid flow induced by CSF production}
+%% \mer{We are removing this, right?}
+%% \subsection*{Perivascular fluid flow induced by CSF production}
+%% To estimate the contribution also to perivascular fluid flow from CSF
+%% production, we impose the fluid pressure $p_{\rm CSF}$ induced by CSF
+%% production, computed in the SAS and ventricular system, at the end
+%% nodes of the periarterial network. For the end nodes located within
+%% the SAS ($v \in \Omega_{\rm CSF}$), the value $p_{\rm CSF}(v)$ is used
+%% directly, while for the end nodes located within the parenchyma ($v \in
+%% \Omega_{\rm PAR}$), we compute and apply a harmonic extension
+%% $E(p_{\rm CSF})(v)$. We then numerically solve a system of hydraulic
+%% network equations to compute $\hat{u}^p_a$ defined over $\Lambda_a$;
+%% i.e., the CSF production-induced velocity field in the periarterial
+%% network. We refer to Supplementary information S1.1.4 \emph{Steady
+%% flow in perivascular networks induced by pressure differences} for
+%% details. We repeat this procedure to compute a corresponding velocity
+%% field $\hat{u}^p_v$ in the perivenous network $\Lambda_v$.
 
-To estimate the contribution also to perivascular fluid flow from CSF
-production, we impose the fluid pressure $p_{\rm CSF}$ induced by CSF
-production, computed in the SAS and ventricular system, at the end
-nodes of the periarterial network. For the end nodes located within
-the SAS ($v \in \Omega_{\rm CSF}$), the value $p_{\rm CSF}(v)$ is used
-directly, while for the end nodes located within the parenchyma ($v \in
-\Omega_{\rm PAR}$), we compute and apply a harmonic extension
-$E(p_{\rm CSF})(v)$. We then numerically solve a system of hydraulic
-network equations to compute $\hat{u}^p_a$ defined over $\Lambda_a$;
-i.e., the CSF production-induced velocity field in the periarterial
-network. We refer to Supplementary information S1.1.4 \emph{Steady
-flow in perivascular networks induced by pressure differences} for
-details. We repeat this procedure to compute a corresponding velocity
-field $\hat{u}^p_v$ in the perivenous network $\Lambda_v$.
 
-\subsection*{Dispersion in the CSF spaces induced by pulsatile CSF flow}
+\subsection*{Dispersion in the CSF spaces induced by pulsatile CSF flow associated with cardiac and respiratory cycles}
 
-The pulsatile flow of CSF in the SAS and ventricular system,
-associated with the cardiac and respiratory cycles, substantially
-enhances molecular diffusion through
+The pulsatile flow of CSF in the SAS and ventricular system
+substantially enhances molecular diffusion through
 dispersion~\cite{taylor1953dispersion, watson1983diffusion,
   asgari2016glymphatic, sharp2019dispersion, ray2021quantitative,
-  troyetsky2021dispersion}. To account for these dispersive effects,
+  troyetsky2021dispersion}. To account for such dispersive effects,
 while bridging from the pulsatile flow time scale of seconds to a
-molecular transport time scale of hours, we estimate cardiac- and
-respiratory dispersion factors ($R_c$ and $R_r$) in $\Omega_{\rm CSF}$
-(\Cref{fig:csf}G, I). To compute these spatially-varying factors, we rely on a simplified model that combines computational estimates of peak CSF pressure gradients
-(\Cref{fig:csf}F, H) with theoretical estimates for shear-augmented
-(Taylor) dispersion \cite{taylor1953dispersion, watson1983diffusion,
-  sharp2019dispersion} (see Supplementary information S1.3 \emph{Estimating
-dispersion factors from pulsatile CSF flow} for a complete
-description). Combining the cardiac and respiratory effects, we set $R
-= R_c + R_r$ in $\Omega_{\rm CSF}$. 
+molecular transport time scale of hours, we estimate
+spatially-varying, cardiac- and respiratory dispersion factors ($R_c$
+and $R_r$) in $\Omega_{\rm CSF}$ (\Cref{fig:results1}). Combining the
+cardiac and respiratory effects, we set $R = R_c + R_r$ in
+$\Omega_{\rm CSF}$. To compute $R_c$ and $R_r$, we rely on a
+simplified model that combines computational estimates of peak CSF
+pressure gradients (\Cref{fig:results1}) with theoretical estimates
+for shear-augmented (Taylor) dispersion \cite{taylor1953dispersion,
+  watson1983diffusion, sharp2019dispersion}. We present the method in
+brief here, and refer the Supplementary information S1.3
+\emph{Estimating dispersion factors from pulsatile CSF flow} for a
+comprehensive description.
 
-% MER Moved from Results, needs editing.
-\fixme{Next, to examine the
-dispersive effects of pulsatile CSF flow, we employ the theory of
-shear-augmented dispersion together with computational fluid dynamics
-to determine a dispersion factor $R$ enhancing the effective solute
-diffusivity (see Supplementary information S1.3 for a complete description). 
-To estimate the cardiac contribution, we compute the steady state
-CSF pressure and flow fields at peak systolic blood inflow.
-Modelling the reduction in CSF space volume corresponding to peak systolic
-conditions, we assume a total inflow rate of $6\,$ml/s~\cite{baledent2014imaging, causemann2022human}
-in the SAS across its outer surface and $0.31\,$ml/s 
-across the lateral ventricle surface\cite{vinje2019respiratory}. 
-This scenario sets up a pressure
+To estimate the cardiac contribution, we compute the steady state CSF
+pressure and flow fields at peak systolic blood inflow. Modelling the
+reduction in CSF space volume corresponding to peak systolic
+conditions, we assume a total inflow rate of
+$6\,$ml/s~\cite{baledent2014imaging, causemann2022human} in the SAS
+across its outer surface and $0.31\,$ml/s across the lateral ventricle
+surface\cite{vinje2019respiratory}. This scenario sets up a pressure
 drop of $10\,$Pa ($0.075$ mmHg) between the lateral ventricles and the
-spinal SAS and a maximum flow velocity of $19.8\,$cm/s
-(\Cref{fig:csf}F, J). Assuming a cardiac frequency of $1\,$Hz, we
-infer that this cardiac-induced pulsatile CSF flow increases the
-effective diffusion by more than two orders of magnitude in the
-aqueduct and near the cisterna magna, but has little effect ($R <
-1$) in most of the SAS (\Cref{fig:csf}G, K). For the respiratory
-contribution, we employ the same methodology, but with a total rate of
-$1\,$ml/s \cite{gutierrez2022effect} in the SAS and $0.121\,$ml/s
+spinal SAS and a maximum flow velocity of $19.8\,$cm/s (\fixme{Figure
+  SX}). For the respiratory contribution, we employ the same
+methodology, but with a total rate of $1\,$ml/s
+\cite{gutierrez2022effect} in the SAS and $0.121\,$ml/s
 \cite{liu2024using} in the lateral ventricles, yielding a respiratory
-peak flow volume of $1.121\,$ ml/s at the craniocervical
-junction. While the resulting flow velocities are only about one
-fourth of their cardiac-induced counterparts (\Cref{fig:csf}H, L),
-respiratory dispersive mixing reaches a factor of up to 320 due the
-lower respiratory frequency of $0.25\,$Hz (\Cref{fig:csf}I, M).}
-
+peak flow volume of $1.121\,$ ml/s at the craniocervical junction
+(\fixme{Figure SX})). While the resulting flow velocities are only
+about one fourth of their cardiac-induced counterparts, the
+respiratory dispersive effect reaches a factor of up to 320 due the
+lower respiratory frequency of $0.25\,$Hz.
 
 %and define the effective diffusion coefficient $D = (1 + R) D^{\rm
 %Gad}$ in $\Omega_{\rm CSF}$ in~\eqref{eq:multi_transport} in the
