@@ -193,19 +193,13 @@ brain solute transport.
 
 \begin{figure}
     \centering
-    \vspace{40em}
+    %\vspace{40em}
     %\includegraphics[width=1\textwidth]{figures/figure1.png}
      \caption{
-     \textbf{An integrative computational framework for intracranial solute transport.}
-     A) Illustration of the model geometry including the CSF-filled spaces (ventricles and SAS) $\Omega_{\rm CSF}$, the parenchyma $\Omega_{\rm PAR}$ and the PVS surrounding arteries $\Lambda_{\rm artery}$ and veins $\Lambda_{\rm vein}$, as well as their interfaces and boundaries; 
-     B) 3D rendering of the computational geometry: the parenchyma, CSF (clipped, blue), arterial network (red), and venous network (blue); 
-     C) illustration of the intrathecal tracer injection protocol;  
-     D) in-silico predictions of tracer concentration after 1, 6, 12, and 24 hours (opacity increasing linearly from 0 to 2 mmol/l); 
-     E) sagittal, coronal and axial view of in-silico tracer concentrations overlayed on T1-weighted MR image after 1, 6, 12 and 24\,h (low concentrations transparent, pial surface in pink, arachnoid membrane in cyan, and arteries in dark red); 
-     F) average tracer concentration in each compartment over the first 24\,h; 
-     G) total amount of tracer in each compartment over the first 24\,h.}
+     \textbf{An integrative computational framework for intracranial solute transport.}}
      \label{fig:results1}
 \end{figure}
+
 \begin{figure}
     \centering
     \includegraphics[width=0.95\textwidth]{figures/figure3a.png}
@@ -233,10 +227,9 @@ intracranial transport are under substantial uncertainty and
 debate\cite{smith2019going, proulx2021cerebrospinal,
   bohr2022glymphatic, hladky2022glymphatic, betsholtz2024advances,
   kipnis2025resolving}, our target is to introduce a computational
-framework that allows for evaluating the integrated effect of
-different proposed transport mechanisms, bridging from the vascular
-mesoscale to the organ-level macroscale and across time scales of
-seconds to days, in subject-specific geometries.
+framework that allows for integrating and evaluating different
+transport mechanisms, and in particular perivascular pathways, in
+subject-specific geometries.
 
 To this end, we introduce the following modelling choices
 (\fixme{\Cref{fig:results1}}, see also Methods). We define
@@ -259,35 +252,37 @@ pumping~\cite{mestre2018flow, gjerde2023directional}
 (\fixme{\Cref{fig:pvs}}).  Specifically, we introduce the
 geometrically-reduced representation of the PVSs to bridge spatial
 scales, and model pulsatility via dispersion in the CSF and
-time-averaged PVS flow to bridge temporal scales. Mathematically, the
-solute transport model is represented by a mixed-dimensional system of
-coupled time-dependent partial differential
-equations\cite{masri2024modelling}, which we solve numerically with
-high accuracy using a mass-conserving finite element scheme. The
-complete computational framework is implemented in the FEniCS finite
-element software \cite{alnaes2015fenics, kuchta2020assembly}, and all
-associated software is all openly available~\cite{ZENODO}.
+time-averaged flow in the PVS to bridge temporal
+scales. Mathematically, the solute transport model is represented by a
+mixed-dimensional system of coupled time-dependent partial
+differential equations\cite{masri2024modelling}, which we solve
+numerically with high accuracy using a mass-conserving finite element
+scheme. The complete computational framework is implemented in the
+FEniCS finite element software \cite{alnaes2015fenics,
+  kuchta2020assembly}, and all associated software is all openly
+available~\cite{ZENODO}.
 
 
 To inform the convective velocity fields and dispersion factors
-entering as coefficients in the transport equations, we define a set
-of auxiliary CSF and PVS flow models (\fixme{\Cref{fig:results1}},
-\fixme{\Cref{fig:pvs}}). Beginning with flow field driven by CSF production,
-we impose a CSF inflow of $400$ mL/day into the lateral ventricles
-(\Cref{fig:results1}), yielding a maximum flow velocity of
-$1.85\,$mm/s (in the aqueduct) and a mean velocity in the SAS of
-$2.6$\textmu m/s (\fixme{\Cref{fig:results1}}). To estimate the dispersive
-effect of pulsatile CSF flow, we employ the theory of shear-augmented
-dispersion together with computational fluid dynamics to determine
+entering as coefficients in the transport equations, we define
+auxiliary flow models in the CSF spaces and PVSs
+(\fixme{\Cref{fig:results1}}, \fixme{\Cref{fig:pvs}}). Beginning with
+flow field driven by CSF production, we impose a CSF inflow of $400$
+mL/day into the lateral ventricles (\fixme{\Cref{fig:results1}}),
+yielding a maximum flow velocity of $1.85\,$mm/s (in the aqueduct) and
+a mean velocity in the SAS of $2.6$\textmu m/s
+(\fixme{\Cref{fig:results1}}). To estimate the dispersive effect of
+pulsatile CSF flow, we employ the theory of shear-augmented dispersion
+together with computational fluid dynamics to determine
 spatially-varying dispersion factors $R_c, R_r$ enhancing the
 effective solute diffusivity in the CSF spaces by $R = R_c + R_r$ (see
 Methods). Assuming a cardiac frequency of $1\,$Hz, we infer that the
 cardiac-induced pulsatile CSF flow increases the effective diffusion
 by more than two orders of magnitude in the aqueduct and near the
-cisterna magna, but has little effect ($R < 1$) in most of the SAS
-(\fixme{\Cref{fig:results1}}). The respiratory dispersive mixing reaches a
-factor of up to 320 due the lower respiratory frequency of $0.25\,$Hz
-(\fixme{\Cref{fig:results1}}). 
+cisterna magna, but has little effect ($R_c < 1$) in most of the SAS
+(\fixme{\Cref{fig:results1}}). The dispersive effect from respiration
+reaches a factor of up to 320 due the lower respiratory frequency of
+$0.25\,$Hz (\fixme{\Cref{fig:results1}}).
 
 Traveling waves of arterial wall motion (\fixme{\Cref{fig:pvs}C}),
 such as the pulse wave or other
@@ -330,14 +325,15 @@ solute distribution and clearance in the human
 brain~\cite{ringstad2017glymphatic, ringstad2018brain,
   eide2024functional, van2024human, kipnis2025resolving}. To simulate
 such a contrast-enhanced MRI protocol~\cite{ringstad2017glymphatic,
-  ringstad2018brain, eide2024functional}(\fixme{\Cref{fig:intrathecal}C}), we
-apply our computational framework to predict the spreading of $0.5$
-mmol intrathecally injected Gadobutrol after its appearance at the
+  ringstad2018brain,
+  eide2024functional}(\fixme{\Cref{fig:intrathecal}C}), we now apply
+our computational framework to predict the spreading of $0.5$ mmol
+intrathecally injected Gadobutrol after its appearance at the
 craniocervical junction, represented by tracer inflow across the
 spinal SAS boundary over the first two hours
-(\fixme{\Cref{fig:intrathecal}D--E}). To begin with, we consider a reasonably
-conservative set of flow patterns: modelling the dispersive effects of
-pulsatile CSF flow induced by the cardiac and respiratory
+(\fixme{\Cref{fig:intrathecal}D--E}). To begin with, we consider a
+reasonably conservative set of flow patterns: modelling the dispersive
+effects of pulsatile CSF flow induced by the cardiac and respiratory
 cycles~\cite{sweetman2011cerebrospinal, vinje2019respiratory} and the
 periarterial net flow induced by cardiac pulse waves
 alone~\cite{mestre2018flow, gjerde2023directional}.
@@ -364,7 +360,7 @@ parenchyma (35\%), the venous PVS (8\%) and the arterial PVS (5\%)
 
 \begin{figure}
     \centering
-    \includegraphics[width=1\textwidth]{figures/figure1.png}
+    \includegraphics[width=0.7\textwidth]{figures/figure1.png}
      \caption{
      \textbf{In-silico modelling of tracer transport in the PVS, SAS and parenchyma.}
      A) Illustration of the model geometry including the CSF-filled spaces (ventricles and SAS) $\Omega_{\rm CSF}$, the parenchyma $\Omega_{\rm PAR}$ and the PVS surrounding arteries $\Lambda_{\rm artery}$ and veins $\Lambda_{\rm vein}$, as well as their interfaces and boundaries; 
@@ -380,27 +376,6 @@ parenchyma (35\%), the venous PVS (8\%) and the arterial PVS (5\%)
 
 % Reduced CSF pulsatility strongly shifts intracranial tracer distribution patterns
 \subsection*{Can variations in CSF convection and dispersion shift these tracer distribution patterns?} 
-
-\begin{figure}%[h!]
-\centering \includegraphics[width =
-  0.8\textwidth]{figures/figure2.png}
-\caption{\textbf{Changes in the balance between convection and
-    dispersion in the CSF spaces substantially alter computational
-    predictions of tracer distribution patterns.} A) CSF flow induced
-  by CSF production; B) Histograms of the production-induced CSF
-  velocities in the SAS and third and fourth ventricle (V3 \& V4) in
-  terms of the relative frequency of the mean flow speed in each
-  computational cell weighted by its volume; C) Cardiac-induced
-  dispersion factor $R_c$ with histogram in D); E) Respiration-induced
-  dispersion factor $R_r$ with histogram in F). In the baseline model,
-  A) represents the convective flow in the CSF spaces, while the
-  factors $R_c$ in C) and $R_r$ in E) represent dispersion: $D = (1 +
-  R_c + R_r) D^{\rm Gad}$.  G)--J): Sagittal, coronal and axial planes
-  of tracer concentration after 12h for different model variations:
-  baseline (G), no CSF production (H), low dispersion (I), and high
-  dispersion (J).}
-\label{fig:csf}
-\end{figure}
 
 %% \begin{figure}%[h!]
 %% \centering 
@@ -481,46 +456,40 @@ moves through the quadrigeminal cistern and further upwards into the
 longitudinal fissure, also spreading into the cerebellum
 (\fixme{\Cref{fig:csf}}).
 
+\begin{figure}%[h!]
+\centering \includegraphics[width=0.8\textwidth]{figures/figure2.png}
+\caption{\textbf{Changes in the balance between convection and
+    dispersion in the CSF spaces substantially alter computational
+    predictions of tracer distribution patterns.} A) CSF flow induced
+  by CSF production; B) Histograms of the production-induced CSF
+  velocities in the SAS and third and fourth ventricle (V3 \& V4) in
+  terms of the relative frequency of the mean flow speed in each
+  computational cell weighted by its volume; C) Cardiac-induced
+  dispersion factor $R_c$ with histogram in D); E) Respiration-induced
+  dispersion factor $R_r$ with histogram in F). In the baseline model,
+  A) represents the convective flow in the CSF spaces, while the
+  factors $R_c$ in C) and $R_r$ in E) represent dispersion: $D = (1 +
+  R_c + R_r) D^{\rm Gad}$.  G)--J): Sagittal, coronal and axial planes
+  of tracer concentration after 12h for different model variations:
+  baseline (G), no CSF production (H), low dispersion (I), and high
+  dispersion (J).}
+\label{fig:csf}
+\end{figure}
+
 \subsection*{Can perivascular flow shape and accelerate molecular transport?}
 \label{sec:pvs_flow_results}
 
 The PVSs are recognized across species as critical pathways for solute
 transport in and around the brain, and thus as potential targets for
 enhancing brain drug delivery and metabolic waste clearance. However,
-whether CSF flows more rapidly in human PVSs stand as a point of
-debate~\cite{bohr2022glymphatic, van2024caa, kipnis2025resolving}. In
-light of the interest in this question,
-
-
-here introduce a high PVS
-flow model variation and compare the predicted tracer distribution
-patterns between the baseline and the high PVS flow models.
-
-here compare predictions
-from the baseline model, accounting for cardiac peristalsis only, with
-a high PVS flow model variation, adding also the estimated
-contribution from ultraslow vasomotion (\fixme{\Cref{fig:pvs}X, Y}).
-
-%Imposing the pressure field induced by CSF production at the
-%periarterial network ends induces slow steady CSF flow of variable
-%direction in these PVSs, with an average velocity of 0.08 \textmu m/s
-%(antegrade) and a maximum velocity of 0.55 \textmu m/s (\Cref{fig:pvs}B).
-
-
-%% Applying a semi-analytic model
-%% of the net flow induced by peristalsis in perivascular
-%% networks~\cite{gjerde2023directional} (see Methods), we estimate that
-%% the cardiac pulse wave alone, traveling at a frequency of 1 Hz with a
-%% wavelength of 2.0 m and a 1\% wall displacement~\cite{jung2021novel},
-%% will induce mainly antegrade PVS flow with an average net velocity of
-%% 0.92 \textmu m/s while reaching up to 7.31 \textmu m/s near larger,
-%% ventral vessels such as the MCA (\Cref{fig:pvs}D,E). The same theory
-%% predicts that strong ultraslow vasomotions, if traveling antegrade at
-%% 0.1Hz with a wavelength of 0.02 m and a 10\%
-%% displacement~\cite{broggini2024long}, will induce both retrograde and
-%% antegrade net PVS flow with an average velocity of 13.05 \textmu m/s
-%% and maximum velocity 54.44 \textmu m/s (\Cref{fig:pvs}D,F).
-
+whether CSF flows more rapidly in human PVSs stand as an open
+question~\cite{bohr2022glymphatic, van2024caa,
+  kipnis2025resolving}. In light of this, we asked to what extent our
+predicted tracer distributions would be affected by the flow in the
+PVSs. Specifically, we here introduce a model variation with
+substantially higher net flow in the PVS, by adding the contribution
+from strong ultraslow vasomotion to that from the cardiac pulse wave
+(\fixme{\Cref{fig:pvs}X, Y}), and compare with the baseline model.
 
 In both models, tracers were first observed at the basal artery after
 48 minutes (\Cref{fig:high_low_pvs}A), defined by their first-time
@@ -549,13 +518,32 @@ the space adjacent to the PVS of the ACA, MCA, and other arteries
 early appearance of tracer surrounding the PVS in the baseline model
 (\Cref{fig:high_low_pvs}F).
 
-A natural question is whether early appearance of tracer in the PVS
+A related question is whether early appearance of tracer in the PVS
 could be the result of increased dispersion rather than net flow in
-the PVS\cite{asgari2016glymphatic,sharp2019dispersion,bojarskaite2023sleep,asgari2016glymphatic,troyetsky2021dispersion}. Interestingly,
-even increasing the dispersion factor by $100 \times$ in the PVS,
-induced only minor changes in the global spreading rate compared to
-the baseline (\Cref{fig:high_low_pvs}F, H), thus indicating a negative answer
-to this question.
+the PVS
+\cite{asgari2016glymphatic,sharp2019dispersion,bojarskaite2023sleep,asgari2016glymphatic,troyetsky2021dispersion}. Interestingly,
+in our model, even increasing the dispersion factor by $100 \times$ in
+the PVS, induced only minor changes in the global spreading rate
+compared to the baseline (\Cref{fig:high_low_pvs}F, H).
+
+%Imposing the pressure field induced by CSF production at the
+%periarterial network ends induces slow steady CSF flow of variable
+%direction in these PVSs, with an average velocity of 0.08 \textmu m/s
+%(antegrade) and a maximum velocity of 0.55 \textmu m/s (\Cref{fig:pvs}B).
+
+%% Applying a semi-analytic model
+%% of the net flow induced by peristalsis in perivascular
+%% networks~\cite{gjerde2023directional} (see Methods), we estimate that
+%% the cardiac pulse wave alone, traveling at a frequency of 1 Hz with a
+%% wavelength of 2.0 m and a 1\% wall displacement~\cite{jung2021novel},
+%% will induce mainly antegrade PVS flow with an average net velocity of
+%% 0.92 \textmu m/s while reaching up to 7.31 \textmu m/s near larger,
+%% ventral vessels such as the MCA (\Cref{fig:pvs}D,E). The same theory
+%% predicts that strong ultraslow vasomotions, if traveling antegrade at
+%% 0.1Hz with a wavelength of 0.02 m and a 10\%
+%% displacement~\cite{broggini2024long}, will induce both retrograde and
+%% antegrade net PVS flow with an average velocity of 13.05 \textmu m/s
+%% and maximum velocity 54.44 \textmu m/s (\Cref{fig:pvs}D,F).
 
 \begin{figure}
     \centering
@@ -575,7 +563,7 @@ to this question.
 
 \subsection*{Structural versus functional compartmentalization of perivascular spaces}
 
-Human and rodent observations indicate that tracers concentrate in perivascular spaces surrounding the pial and subarachnoid vasculature \cite{zhang1990interrelationships,zhang1992directional, bedussi2017paravascular, mestre2018flow, bedussi2018paravascular, eide2024functional}. However, it remains unclear whether such distribution patterns necessitate a structural barrier, such as a membrane with limited permeability, or if the patterns could result from enhanced flow or mixing in these areas alone. We therefore next investigate how the permeability of the interface between the PVS and the surrounding CSF affects tracer distribution around the major arterial trunks (\Cref{fig:compartmentalization}A--B). To this end, we compare models with high and low  permeabilities, representing a highly permeable PVS-CSF interface (functional compartmentalization) and a less permeable interface (structural compartmentalization), respectively. For the low permeability model, we set the permeability to $3.8 \cdot 10^{-7}\,$m/s, consistent with previous estimates for the endfoot sheath surrounding penetrating arterioles \cite{koch2023estimates}, which we consider to be a lower bound for the surface PVS-CSF permeability. For the high permeability model, we increase this permeability by a factor of 100. We emphasize that, for both scenarios, we consider the high PVS flow regime as examined in the previous section. 
+Human and rodent observations indicate that tracers concentrate in perivascular spaces surrounding the pial and subarachnoid vasculature \cite{zhang1990interrelationships,zhang1992directional, bedussi2017paravascular, mestre2018flow, bedussi2018paravascular, eide2024functional}. However, it remains unclear whether such distribution patterns necessitate a structural barrier, such as a membrane with limited permeability, or if the patterns could result from enhanced flow or mixing in these areas alone. We therefore next investigate how the permeability of the interface between the PVS and the surrounding CSF affects tracer distribution around the major arterial trunks in our model (\Cref{fig:compartmentalization}A--B). To this end, we compare models with high and low permeabilities, representing a highly permeable PVS-CSF interface (functional compartmentalization) and a less permeable interface (structural compartmentalization), respectively. For the low permeability model, we set the permeability to $3.8 \cdot 10^{-7}\,$m/s, consistent with previous estimates for the endfoot sheath surrounding penetrating arterioles \cite{koch2023estimates}, which we consider to be a lower bound for the surface PVS-CSF permeability. For the high permeability model, we increase this permeability by a factor of 100. We emphasize that, for both scenarios, we consider the high PVS flow regime as examined in the previous section. 
 
 At the basal artery (BA), tracer appears within one hour in the surrounding CSF in both models (\Cref{fig:compartmentalization}C, E). With a more permeable PVS-CSF interface, tracer quickly crosses from the CSF into the PVS, resulting in similar peak concentrations of 25\,mmol/l in the PVS and at its outer surface, while values up to 50\,mmol/l are attained in the vicinity. In contrast, the low permeability model exhibits substantially lower perivascular tracer concentrations, with a maximum concentration of 10\,mmol/l after approximately two hours.
 %The high permeability model allows for more tracer crossing into the PVS, leading to higher concentrations further downstream. Notably, crossover into the parenchyma is also observed, most clearly at 4 hours.
