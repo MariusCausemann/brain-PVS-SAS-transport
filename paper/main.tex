@@ -176,12 +176,12 @@ cardiac and respiratory pulsatility in the CSF spaces, convective
 fluid flow driven by CSF production in the CSF spaces and peristaltic
 pumping in the PVSs, as well as solute exchange and clearance across
 semi-permeable membranes. Preliminary comparisons indicate that the
-in-silico predictions align well with the range of tracer distribution
+in-silico model predictions align well with the range of tracer distribution
 patterns reported in contrast-enhanced MRI
 studies~\cite{ringstad2017glymphatic, ringstad2018brain,
   watts2019measuring, eide2024functional}.
 
-Our key contribution is thus an in-silico framework that allows for
+Our key contribution is thus an in-silico modelling framework that allows for
 evaluating the integrated effect of different proposed transport
 mechanisms, bridging from the vascular mesoscale to the organ-level
 macroscale and across time scales of seconds to days, in
@@ -290,7 +290,7 @@ auxiliary flow models in the CSF spaces and PVSs
 flow field driven by CSF production, we impose a CSF inflow of $400$
 mL/day into the lateral ventricles (\fixme{\Cref{fig:results1}}),
 yielding a maximum flow velocity of $1.85\,$mm/s (in the aqueduct) and
-a mean velocity in the SAS of $2.6$\textmu m/s
+a mean velocity in the SAS of $2.6$ \textmu m/s
 (\fixme{\Cref{fig:results1}}). To estimate the dispersive effect of
 pulsatile CSF flow, we employ the theory of shear-augmented dispersion
 together with computational fluid dynamics to determine
@@ -424,14 +424,14 @@ parenchyma (35\%), the venous PVS (8\%) and the arterial PVS (5\%)
 %% \end{figure}  
 
 Tracer distribution patterns observed after intrathecal injection
-differ substantially between subjects and in pathological conditions,
-conditions also associated with alterations in the pulsatile flow of
-CSF~\cite{ringstad2018brain, eide2021direction, eide2021impaired,
-  eide2022altered}. Cardiac and respiratory pulsatility clearly also
-varies from subject to subject and between physiological
-states. Motivated by these observations, we asked whether and how the
-tracer distribution patterns predicted by our computational framework
-would be affected by changes in CSF production or pulsatility.
+differ substantially between subjects and in conditions associated
+with alterations in the pulsatile flow of CSF~\cite{ringstad2018brain,
+  eide2021direction, eide2021impaired, eide2022altered}. Cardiac and
+respiratory pulsatility clearly also varies from subject to subject
+and between physiological states. Motivated by these observations, we
+asked whether and how the tracer distribution patterns predicted by
+our computational framework would be affected by changes in CSF
+production or pulsatility.
 %
 %% For the CSF dynamics in our baseline model, we combine the net
 %% contribution to CSF flow induced by CSF production with the integrated
@@ -501,7 +501,7 @@ longitudinal fissure, also spreading into the cerebellum
 
 The PVSs are recognized across species as critical pathways for solute
 transport in and around the brain, and thus as potential targets for
-enhancing brain drug delivery and metabolic waste clearance. However,
+enhancing brain solute transport and metabolic waste clearance. However,
 whether CSF flows more rapidly in human PVSs stands as an open
 question~\cite{bohr2022glymphatic, van2024caa,
   kipnis2025resolving}. In light of this, we asked to what extent our
@@ -682,70 +682,81 @@ H) mean concentration in the CSF, parenchyma and arterial and venous PVS over ti
 \section*{Discussion}
 
 %% Summary of findings
-We have presented a high-fidelity in-silico model of molecular
-transport and clearance in human intracranial spaces, enabling
-tailored predictions of the influence of CSF space and (peri)vascular
-morphology, physiological factors such as cardiac and respiratory
-pulsatility, as well as of pathological conditions such as enlarged
-PVSs in the SAS. A key observation is that the balance between CSF
-production and intracranial pulsatility significantly shapes the
-macroscale tracer distribution patterns, with e.g.~ventricular tracer
-reflux after intrathecal injection in the absence of CSF production,
-and preference towards anterior brain regions with reduced
-pulsatility. Indeed, the simulated distribution patterns cover a
-substantial range of the individual variations observed clinically
-\cite{ringstad2018brain}. In terms of perivascular pathways, we find
-that even moderate CSF flow on the order of 0.1--1.0 \textmu m/s in
-the surface PVSs results in earlier appearance of tracer around major
-cerebral arteries. This effect is more pronounced -- with up to a
-three-hour difference in time of arrival -- with mean PVS flow rates
-of approximately 10 \textmu m/s. Our models of CSF flow in
-perivascular networks, based on first principles and asymptotic
-analysis, predict net flow of such magnitudes and both antegrade and
-retrograde flow within the perivascular network. The PVS may thus
-function as highways facilitating rapid transport, even in the absence
-of structural barriers, though a sharp concentration difference
-between the PVS and surrounding tissues is unlikely without such
-barriers. Finally, dilated PVS in the SAS will cause a substantial
-reduction in cardiac- and vasomotion-driven flow velocities, which in
-turn impedes perivascular transport.
+We have presented an in-silico modelling framework for solute
+transport in human intracranial spaces, informed by multi-modal
+structural MRI, and integrating transport mechanisms across spatial
+and temporal scales. To demonstrate its features and relevance, we
+have presented a series of simulation scenarios relating to
+intracranial distribution of an gadolinium-based contrast agent after
+intrathecal injection, exploring the influence of CSF space and
+(peri)vascular morphology, physiological factors such as cardiac and
+respiratory pulsatility, as well as of pathological conditions such as
+enlarged PVSs in the SAS. In our simulations, the balance
+between CSF production and intracranial pulsatility significantly
+affects tracer distribution patterns at the macroscale, with
+e.g.~ventricular tracer reflux after intrathecal injection in the
+absence of CSF production, and preference towards anterior brain
+regions with reduced pulsatility. In terms of perivascular
+pathways, even moderate net flow on the order of 0.1--1.0 \textmu m/s
+in the surface PVSs results in earlier appearance of tracer around
+major cerebral arteries in our model scenarios. This effect is more
+pronounced -- with up to a three-hour difference in time of arrival --
+with mean PVS flow rates of approximately 10 \textmu m/s. Our models
+of CSF flow in perivascular networks, based on first principles and
+asymptotic analysis, predict net flow of such magnitudes and both
+antegrade and retrograde flow within the periarterial network. In our
+simulations, the PVSs thus function as highways facilitating rapid
+transport, even in the absence of tight structural barriers.
+
+%Finally, dilated PVS in the SAS will cause a substantial reduction in cardiac- and vasomotion-driven flow velocities, which in turn impedes perivascular transport.
 
 %% Comparison with others
 
 % Tracer distribution predictions
-While tracer spread of the brain and surrounding CSF spaces
-have been extensively studied in animal models, especially in murine
-models in connection with studies of the glymphatic system, there are
-fewer reports of \mer{contrast imaging} in human subjects over 0--24h. We
-therefore mainly compare our in-silico predictions with the series of
-papers by Eide and colleagues~\cite{ringstad2017glymphatic,
-  ringstad2018brain, eide2021sleep, eide2024functional} and Watts et
+While tracer spread of the brain and surrounding CSF spaces have been
+extensively studied in animal models, especially in murine models,
+there are fewer reports of intracranial tracer distribution in human
+subjects over 0--24h after intrathecal injection. Direct validation of
+our transport model predictions is therefore not possible with the
+current data availability. Instead, we mainly compare our in-silico
+tracer predictions with the series of papers by Eide and
+colleagues~\cite{ringstad2017glymphatic, ringstad2018brain,
+  eide2021sleep, eide2024functional} and Watts et
 al~\cite{watts2019measuring}. Ringstad et al.~\cite{ringstad2018brain}
 report of tracer distributing in a centripetal pattern, primarily in
 regions near large cerebral surface arteries, peaking in the CSF
 spaces between 6 and 9 hours, with parenchymal tracer content still
 increasing after 24 hours, but with large individual
 differences. Watts et al~\cite{watts2019measuring} report of a similar
-distribution pattern and a concentration peak in the SAS of $\approx$0.5
-mmol/l (relative to a total amount of 1.0 mmol) occuring after 10 to 15 hours. 
-Our in-silico tracer distribution patterns agree with these observations, though with an earlier rather than later peak in the CSF spaces (2 hours after first tracer appearance at the craniocervical junction). In particular, we note that the substantial individual variation observed clinically is comparable to the variation in in-silico distribution patterns associated with reduced CSF production or reduced intracranial pulsatility. We find that about 20\% of the tracer reaching the cranium enters the parenchyma, which aligns with the reported peak concentration values of $0.5\,$mmol/l in the SAS and $0.1\,$mmol/l in the parenchyma reported by Watts et al~\cite{watts2019measuring}.
+distribution pattern and a concentration peak in the SAS of
+$\approx$0.5 mmol/l (relative to a total amount of 1.0 mmol) occuring
+after 10 to 15 hours. Our in-silico tracer distribution patterns agree
+with these observations, though with an earlier rather than later peak
+in the CSF spaces (2 hours after first tracer appearance at the
+craniocervical junction). In particular, we note that the variation in
+predicted distribution patterns associated with reduced CSF production
+or reduced intracranial pulsatility is compatible with the substantial
+individual variation observed clinically. In our simulations, about
+20\% of the tracer reaching the cranium enters the parenchyma, which
+aligns with the reported peak concentration values of $0.5\,$mmol/l in
+the SAS and $0.1\,$mmol/l in the parenchyma reported by Watts et
+al~\cite{watts2019measuring}.
 
-Importantly, our simulation results indicate that the tracer
-distribution observed clinically relies on the presence of one or more
-flow drivers in addition to CSF production and cardiac
-peristalsis. Dispersion due to cardiac and respiratory pulsations has
-been hypothesized to enhance transport in the perivascular spaces as
-well as in the CSF spaces. However, recent estimates indicate that the
-effect of dispersion in the PVS does not exceed a factor of 2 compared
-to diffusion alone
-\cite{asgari2016glymphatic,sharp2019dispersion,bojarskaite2023sleep,asgari2016glymphatic,troyetsky2021dispersion}. Our
-model demonstrates that not even a 100-fold increase in the PVS
-dispersion coefficient accelerates transport substantially
-(\Cref{fig:high_low_pvs}H). To illustrate the need for a stronger advective
-driver, we compared our findings to tracer arrival times reported by
-Eide and Ringstad~\cite{eide2024functional}, who observed a delay of
-just 15.3 min between the M1 and M2 segments of the MCA. First, we
-note that the spaces studied by Eide and
+Our simulation results are compatible with the concept that intracranial
+tracer transport relies one or more mechanisms in addition to CSF
+production and cardiac peristalsis. Dispersion due to cardiac and
+respiratory pulsations has been hypothesized to enhance transport in
+the perivascular spaces as well as in the CSF spaces. However, recent
+estimates indicate that the effect of dispersion in the PVS does not
+exceed a factor of 2 compared to diffusion alone
+\cite{asgari2016glymphatic,sharp2019dispersion,bojarskaite2023sleep,asgari2016glymphatic,troyetsky2021dispersion}. In
+our model, not even a 100-fold increase in the PVS dispersion
+coefficient accelerates transport substantially
+(\Cref{fig:high_low_pvs}H). To illustrate the need for a stronger
+advective driver, we compared our findings to tracer arrival times
+reported by Eide and Ringstad~\cite{eide2024functional}, who observed
+a delay of just 15.3 min between the M1 and M2 segments of the
+MCA. First, we note that the spaces studied by Eide and
 Ringstad~\cite{eide2024functional}, labeled therein as the PVSAS, are
 naturally compared to the parts of our surface PVS networks embedded
 within the SAS. Our baseline model, accounting only for CSF production
@@ -758,10 +769,7 @@ junction~\cite{eide2024functional}, the high PVS flow model's FTAs
 (84--108 min for M1) aligns well with the upper end of the reported
 clinical range (37.8 $\pm$ 47.0), particularly when considering
 potentially delayed transport due to the limited caudal extent of our
-PVS network. All in all, we interpret these results as strongly
-indicative of that PVS flow driven by CSF production and cardiac
-peristalsis alone is insufficient to explain the rapid perivascular
-transport observed in humans.
+PVS network.
 
 % PVS flow predictions. 
 The existence, magnitude, and directionality of flow in surface and
@@ -783,34 +791,27 @@ of oscillatory flow, with an average (net) CSF velocity of 17 $\pm$ 2
 networks, Boster et al~\cite{boster2023artificial} estimate PVS
 velocities of $12.75 \pm 6.25$ \textmu m/s. Less is known about the
 magnitude and directionality of CSF flow in surface PVSs in
-humans. Here, assuming that human surface PVS follow the major surface
-vessels and are CSF-filled but otherwise open regions of width
-proportional to the vessel radius, our estimates indicate that the CSF
-pressure differences due to CSF production, cardiac peristaltic
-pumping and low-frequency vasomotion all yield spatially-varying net
-CSF flow with both antegrade and retrograde PVS segments. This
-observation is thus in agreement with the experimental
-observations~\cite{mestre2018flow, bedussi2018paravascular}, and
-inherently supports the original notion that antegrade and retrograde
-solute transport along PVSs may coexist~\cite{rennels1985evidence}. In
-terms of magnitude, the contribution from CSF production and cardiac
-wall motion are small (0.08 \textmu m/s and 0.92 \textmu m/s on
-average), but intriguingly, our estimates of the contribution from
-vasomotion (13.05 \textmu m/s) are comparable to the experimental
-reports. We do note that this estimate is based on the presence of
+humans. Our estimates of time-averaged net flow in the periarterial
+networks, induced by cardiac pulsations and ultraslow vasomotion,
+feature spatially-varying net flow rates with both antegrade and
+retrograde flow segments. In terms of magnitude, the contribution from
+cardiac wall motion is low to moderate (on average 0.92 \textmu m/s),
+but intriguingly, our estimates of the contribution from vasomotion
+(13.05 \textmu m/s) are comparable to the experimental reports. We do
+note that this estimate is based on the theoretical presence of
 rhythmic waves of vasomotion at a frequency of 0.1Hz, a wavelength of
-20 mm, and a wall displacement of 10\% -- in the antegrade direction,
-all values currently associated with major
+20 mm, and an inner wall displacement of up to 10\% -- in the antegrade
+direction, all values currently associated with major
 uncertainty~\cite{gokina1996electrical, vanveluw2020vasomotion,
   munting2023spontaneous, broggini2024long}. In particular, Broggini
 et al\cite{broggini2024long} report of near-0.1Hz vasomotion waves
-traveling both antegrade and retrograde along pial arterioles in
-mice, while Munting et al\cite{munting2023spontaneous} report of
-vessel diameter changes at similar frequencies mainly (but not
-entirely) in the retrograde direction. To the best of our knowledge,
-less is known about vasomotion wave characteristics in the human
-cerebral vasculature, though Gokina et al\cite{gokina1996electrical}
-report of spontaneous vasomotion also in human pial arteries ex-vivo.
+traveling both antegrade and retrograde along pial arterioles in mice,
+while Munting et al\cite{munting2023spontaneous} report of vessel
+diameter changes at similar frequencies mainly (but not entirely) in
+the retrograde direction. To the best of our knowledge, less is known
+about vasomotion wave characteristics in the human cerebral
+vasculature, though Gokina et al\cite{gokina1996electrical} report of
+spontaneous vasomotion also in human pial arteries ex-vivo.
 
 
 % Compartmentalization of the PVS
@@ -830,19 +831,17 @@ vasculature and the CSF within the SAS~\cite{pizzo2018intrathecal,
 al~\cite{mestre2022periarteriolar} study the properties of pial
 perivascular spaces in mice, and report of pial cells forming sheaths
 for larger surface arteries and partially cover smaller surface
-arteries, with higher coverage in ventral SAS regions. Our results
-demonstrate that the PVSs may act as rapid transport pathways even
-with only a partial barrier between the PVS and surrounding CSF, thus
-contributing to quantifying the properties of the human PVS-CSF
-interface~\cite{eide2024functional}. In this regard, we emphasize that
-we report on the isolated effect of variations in permeability on
-molecular transport, separated from any effects on fluid flow in the
-PVS. Clearly, one may expect that the presence and/or properties of
-such a barrier would affect also PVS flow. However, considering the
-uncertainty associated with PVS flow characteristics in the human SAS
-in general and the lack of computational models describing net PVS
-flow in the presence of fluid exchange, this remains challenging to
-quantify.
+arteries, with higher coverage in ventral SAS regions. In our
+simulations, the PVSs act as rapid transport pathways even with only a
+partial barrier between the PVS and surrounding CSF. Here, we
+emphasize that we report on the isolated effect of variations in
+permeability on molecular transport, separated from any effects on
+fluid flow in the PVS. Clearly, one may expect that the presence
+and/or properties of such a barrier would affect also PVS
+flow. However, considering the uncertainty associated with PVS flow
+characteristics in the human SAS in general and the lack of
+computational models describing net PVS flow in the presence of fluid
+exchange, this remains challenging to quantify.
 
 % Variations with sleep, exercise
 Lifestyle factors such as sleep~\cite{xie2013sleep, miao2024brain,
@@ -857,34 +856,32 @@ PVS width~\cite{bojarskaite2023sleep}. Peristaltic pumping is more
 effective under both of these configurations, resulting in higher
 estimated net PVS flow velocities~\cite{gjerde2023directional}. Even
 higher PVS velocities would amplify the PVS flow effects simulated
-here, with earlier arrival times along the PVSs, clear spread into
-adjacent spaces, and accelerated tracer spread
-overall. Moreover, sleep is linked with low-frequency oscillations in
-human CSF flow~\cite{fultz2019coupled}. As we have shown here, the
-level of dispersion in the CSF spaces strongly shapes molecular
-transport patterns. While we, at baseline, account for the dispersion
+here, with earlier arrival times along the PVSs, clear distribution
+into adjacent spaces, and accelerated tracer spread overall. Moreover,
+sleep is linked with low-frequency oscillations in human CSF
+flow~\cite{fultz2019coupled}. While we, at baseline, account for the dispersion
 induced by cardiac and respiratory pulsatility, the high dispersion
 scenarios considered can be viewed as representative of additional
 pulsatility induced by e.g.~neural waves~\cite{fultz2019coupled,
   williams2023neural} or other respiration patterns depending on
-activity level. More broadly, we consider this as a key strength of
-the current in-silico framework: allowing for integrating and
-exploring the mechanistic macroscale implications of changes in
-pulsatility at smaller spatial or temporal scales.
-This approach of modeling pulsatility through an effective dispersion 
-factor is a simplification that does not capture the full complexity
-of transient fluid dynamics, such as non-uniform wall motion and ependymal
-cilia within the ventricular system~\cite{siyahhan2014flow}, dynamic CSF
-flow at the craniocervical junction, or the effect of microanatomical
-features such as subarachnoid trabeculae on flow resistance and dispersion
-in the SAS. However, our approach is supported by recent clinical 
-observations. High-resolution MRI measurements by Hirschler et
-al.~\cite{hirschler2024region} revealed that CSF mobility in regions
-with high pulsatility is approximately tenfold greater than the 
-self-diffusion of water, an enhancement factor consistent with 
-the values computed in our model. 
+activity level. 
 
 % Not discussed variations with disease states
+
+\subsubsection*{Limitations}
+
+As the mechanisms underlying intracranial solute transport are only
+partially understood, our computational framework comes with clear
+limitations. ...
+
+\begin{itemize}
+\item
+  \fixme{We present an integrated model of transport. We do not
+    present a comprehensive model of fluid flow in the CSF and
+    perivascular spaces. This is out of scope. How CSF flow in PVS and
+    SAS, and parenchyam are connected very little data in the
+    literature, and we have therefore not modelled it either.}
+\end{itemize}
 
 % Limitations
 In terms of limitations, our primary constraint modelling-wise is the
@@ -899,7 +896,9 @@ surrounded by both domains and some vessels completely entering the
 parenchyma before returning to the SAS. Higher resolution MRI data
 (T1w and e.g. time-of-flight, QSM or other modalities) in more
 subjects would immediately allow for more detailed studies of this
-aspect. As a result of the lack of an accurate representation of the
+aspect.
+
+As a result of the lack of an accurate representation of the
 cortical and subcortical white matter vasculature, we have considered
 a basic transport model within the parenchyma, modelling extracellular
 diffusion alone and no bulk interstitial fluid flow. To compensate, we
@@ -917,32 +916,49 @@ local clearance e.g.~across the blood-brain barrier, or by
 diffusion-convection with a complex pattern of spatially-varying
 interstitial fluid flow on the order of 1-10 \textmu
 m/min~\cite{vinje2023human}. We will incorporate such transport
-mechanisms within the parenchyma in future work. Finally, we also note
-that we simulate the intracranial distribution of a tracer
-concentration appearing at the craniocervical junction rather than as
-an intrathecal injection. We thus neglect absorption of both CSF and
-tracer in the spinal compartment, and therefore overestimate the
-amount of tracer entering into the intracranial spaces; however, due
-to the linearity of the mathematical model, it is valid to directly
-interpret the in-silico concentrations relative to the total amount of
-tracer.
+mechanisms within the parenchyma in future work.
+
+Finally, we also note that we simulate the intracranial distribution
+of a tracer concentration appearing at the craniocervical junction
+rather than as an intrathecal injection. We thus neglect absorption of
+both CSF and tracer in the spinal compartment, and therefore
+overestimate the amount of tracer entering into the intracranial
+spaces; however, due to the linearity of the mathematical model, it is
+valid to directly interpret the in-silico concentrations relative to
+the total amount of tracer.
+
+Our estimates of time-averaged (net) flow in these surface
+perivascular spaces are based on the simplifying assumptions that
+human surface PVS follow the major surface vessels, are CSF-filled but
+otherwise open regions of width proportional to the vessel radius, and
+have fixed outer boundaries.
+
+This approach of modeling pulsatility through an effective dispersion
+factor is a simplification that does not capture the full complexity
+of transient fluid dynamics, such as non-uniform wall motion and
+ependymal cilia within the ventricular system~\cite{siyahhan2014flow},
+dynamic CSF flow at the craniocervical junction, or the effect of
+microanatomical features such as subarachnoid trabeculae on flow
+resistance and dispersion in the SAS. However, our approach is
+supported by recent clinical observations. High-resolution MRI
+measurements by Hirschler et al.~\cite{hirschler2024region} revealed
+that CSF mobility in regions with high pulsatility is approximately
+tenfold greater than the self-diffusion of water, an enhancement
+factor consistent with the values computed in our model.
 
 % Outlook
-In conclusion, our findings transfer insights from experimental
-studies and theoretical analysis to the in-silico human setting,
-reconcile seemingly conflicting observations in particular relating to
-directionality of perivascular flow, and integrate different physical
+\subsubsection*{Conclusions and outlook}
+In conclusion, this computational framework allows for transferring
+and integrating insights from experimental studies and theoretical
+analysis to a virtual human setting by integrating different physical
 mechanisms across spatial and temporal scales. The complete simulation
 pipeline is openly available, including interactive visualization of
-simulation results for all model variations~\cite{ZENODO}. Future work
-will focus on further model validation including comparisons between
-in-silico predictions and contrast-enhanced MRI for a number of subjects
-across several patient cohorts. Looking ahead, this platform
-establishes a foundation for in-silico studies of molecular movement
-within the human brain environment, such as tailored predictions of
-intrathecal chemotherapy delivery or personalized diagnostics of brain
-clearance capacity.
-
+simulation results for all model variations~\cite{ZENODO}. Future
+studies will focus on direct model validation including comparisons
+between in-silico predictions and contrast-enhanced MRI for a number
+of subjects across several patient cohorts. Looking ahead, this
+framework establishes a foundation for in-silico studies of molecular
+movement within the human brain environment.
 
 \section*{Methods}
 
@@ -1364,11 +1380,11 @@ The majority of the simulation time was spent on the Stokes flow and transport m
 \subsection*{Comparison with literature results}
 
 As the primary means of model validation, we compare the in-silico
-predictions of tracer distribution and clearance against contrast-enhanced MRI
-studies (Discussion). In addition, we compare auxiliary model
-quantities (CSF flow rates and pressure differences, dispersion factor
-estimates, and the shapes and sizes of PVSs) with the current
-literature (see Supplementary information S2.1).
+predictions of tracer distribution and clearance against
+contrast-enhanced MRI studies (Discussion). In addition, we compare
+auxiliary model quantities (CSF flow rates and pressure differences,
+dispersion factor estimates, and the shapes and sizes of PVSs) with
+the current literature (see Supplementary information S2.1).
 
 \section*{Data availability}
 
