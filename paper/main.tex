@@ -193,7 +193,7 @@ brain solute transport.
 
 \begin{figure}
     \centering
-    %\vspace{40em}
+    \vspace{30em}
     %\includegraphics[width=1\textwidth]{figures/figure1.png}
      \caption{
      \textbf{An integrative computational framework for intracranial solute transport.}}
@@ -305,14 +305,14 @@ flow induced by peristalsis in this periarterial
 network~\cite{gjerde2023directional} (see Methods), we estimate that
 the cardiac pulse wave alone, traveling at a frequency of 1 Hz with a
 wavelength of 2.0 m and a 1\% wall displacement~\cite{jung2021novel},
-will induce mainly antegrade PVS flow with an average net velocity of
+will induce mainly antegrade perivascular flow with an average net velocity of
 0.92 \textmu m/s while reaching up to 7.31 \textmu m/s near larger,
 ventral vessels such as the MCA (\Cref{fig:pvs}D,E), and a total flow
 through the periarterial network of $\fixme{10.5}$ mL/day. The same
 theory predicts that strong ultraslow vasomotions, if traveling
 antegrade at 0.1Hz with a wavelength of 0.02 m and a 10\%
 displacement~\cite{broggini2024long}, will induce both retrograde and
-antegrade net PVS flow with an average velocity of 13.05 \textmu m/s
+antegrade net perivascular flow with an average velocity of 13.05 \textmu m/s
 and maximum velocity 54.44 \textmu m/s, and a total flow of
 $\fixme{X}$ mL/day (\Cref{fig:pvs}D,F).
 
@@ -482,7 +482,7 @@ longitudinal fissure, also spreading into the cerebellum
 The PVSs are recognized across species as critical pathways for solute
 transport in and around the brain, and thus as potential targets for
 enhancing brain drug delivery and metabolic waste clearance. However,
-whether CSF flows more rapidly in human PVSs stand as an open
+whether CSF flows more rapidly in human PVSs stands as an open
 question~\cite{bohr2022glymphatic, van2024caa,
   kipnis2025resolving}. In light of this, we asked to what extent our
 predicted tracer distributions would be affected by the flow in the
@@ -496,7 +496,7 @@ In both models, tracers were first observed at the basal artery after
 arrival (FTA), the time at which the concentration first exceeds $0.1$
 mmol/l. At all upstream locations along the middle cerebral arteries
 (MCAs) and anterior cerebral artery (ACA), we found substantially
-reduced FTAs with higher PVS flow (\Cref{fig:high_low_pvs}B), up to
+reduced FTAs with higher perivascular flow (\Cref{fig:high_low_pvs}B), up to
 2.5 hours earlier in the left M2 segment of the MCA. PVS
 concentrations peaked before the surrounding tissue (0:48h vs 1:12h at
 the MCA and 1:00h vs 1:48h at MCA2) with high PVS flow, while these
@@ -505,10 +505,10 @@ earlier appearance and the delay in time-to-peak between the PVS and
 surrounding tissue clearly indicates the directionality of tracer
 movement in our model -- it first arrives in the PVS and subsequently
 spreads into the tissue and SAS (\Cref{fig:high_low_pvs}C, D), and
-especially so with higher PVS flow. These observations also hold on an
+especially so with higher perivascular flow. These observations also hold on an
 aggregated level: computing the total amount of tracer in the PVS as a
 function of the distance to the arterial network roots, we find
-accelerated tracer transport with higher PVS flow, especially at
+accelerated tracer transport with higher perivascular flow, especially at
 earlier time points (2--9 hours) (\Cref{fig:high_low_pvs}E). Moreover,
 differences in tracer transport along the PVS translate to altered
 distribution patterns on the whole-organ scale. For instance, after
@@ -563,7 +563,7 @@ compared to the baseline (\Cref{fig:high_low_pvs}F, H).
 
 \subsection*{Structural versus functional compartmentalization of perivascular spaces}
 
-Human and rodent observations indicate that tracers concentrate in perivascular spaces surrounding the pial and subarachnoid vasculature \cite{zhang1990interrelationships,zhang1992directional, bedussi2017paravascular, mestre2018flow, bedussi2018paravascular, eide2024functional}. However, it remains unclear whether such distribution patterns necessitate a structural barrier, such as a membrane with limited permeability, or if the patterns could result from enhanced flow or mixing in these areas alone. We therefore next investigate how the permeability of the interface between the PVS and the surrounding CSF affects tracer distribution around the major arterial trunks in our model (\Cref{fig:compartmentalization}A--B). To this end, we compare models with high and low permeabilities, representing a highly permeable PVS-CSF interface (functional compartmentalization) and a less permeable interface (structural compartmentalization), respectively. For the low permeability model, we set the permeability to $3.8 \cdot 10^{-7}\,$m/s, consistent with previous estimates for the endfoot sheath surrounding penetrating arterioles \cite{koch2023estimates}, which we consider to be a lower bound for the surface PVS-CSF permeability. For the high permeability model, we increase this permeability by a factor of 100. We emphasize that, for both scenarios, we consider the high PVS flow regime as examined in the previous section. 
+Human and rodent observations indicate that tracers concentrate in perivascular spaces surrounding the pial and subarachnoid vasculature \cite{zhang1990interrelationships,zhang1992directional, bedussi2017paravascular, mestre2018flow, bedussi2018paravascular, eide2024functional}. However, it remains unclear whether such distribution patterns necessitate a structural barrier, such as a membrane with limited permeability, or if the patterns could result from enhanced flow or mixing in these areas alone. We therefore next investigate how the permeability of the interface between the PVS and the surrounding CSF affects tracer distribution around the major arterial trunks in our model (\Cref{fig:compartmentalization}A--B). To this end, we compare models with high and low permeabilities, representing a highly permeable PVS-CSF interface (functional compartmentalization) and a less permeable interface (structural compartmentalization), respectively. For the low permeability model, we set the permeability to $3.8 \cdot 10^{-7}\,$m/s, consistent with previous estimates for the endfoot sheath surrounding penetrating arterioles \cite{koch2023estimates}, which we consider to be a lower bound for the surface PVS-CSF permeability. For the high permeability model, we increase this permeability by a factor of 100. We emphasize that, for both scenarios, we apply the high PVS flow model as described in the previous section. 
 
 At the basal artery (BA), tracer appears within one hour in the surrounding CSF in both models (\Cref{fig:compartmentalization}C, E). With a more permeable PVS-CSF interface, tracer quickly crosses from the CSF into the PVS, resulting in similar peak concentrations of 25\,mmol/l in the PVS and at its outer surface, while values up to 50\,mmol/l are attained in the vicinity. In contrast, the low permeability model exhibits substantially lower perivascular tracer concentrations, with a maximum concentration of 10\,mmol/l after approximately two hours.
 %The high permeability model allows for more tracer crossing into the PVS, leading to higher concentrations further downstream. Notably, crossover into the parenchyma is also observed, most clearly at 4 hours.
@@ -575,22 +575,22 @@ tracer to leak out of the PVS and spread within the Sylvian fissure to
 a greater extent. With a small delay, more tracer appears via
   the CSF pathway (\Cref{fig:compartmentalization}D). At the anterior cerebral artery (ACA-A2), the first tracer arrival in the PVS occurs after 3 hours, with a peak at 5 hours. The concentration peak in the PVS is tailed by a higher peak in the CSF (\Cref{fig:compartmentalization}E), indicating tracer arrival through a second pathway; i.e., directly through the CSF-filled space outside of the PVS. Similar patterns are observed for ACA-A3.
 
-Summarizing and quantifying these observations
+Summarizing and quantifying these model observations
 (\Cref{fig:compartmentalization}F), we find that neither the time of
 first arrival nor the time-to-peak are substantially affected by the
 PVS-CSF permeability at any of the periarterial segments considered
 (BA, MCAs, ACAs). However, the concentration difference between the
 PVS and its surrounding CSF quickly decreases with higher
 permeability, as does the time lag between the concentration peaks in
-these domains. Thus, fast transport along the PVS is not contingent
-upon a structural compartmentalization of the PVS, whereas a sharp
-concentration gradient between PVS and CSF is unlikely without a
-restricting barrier.
+these domains. Thus, in our model, fast transport along the PVS is not
+contingent upon a structural compartmentalization of the PVS, whereas
+a sharp concentration gradient between PVS and CSF is unlikely without
+a restricting barrier.
 \begin{figure}
     \centering
     \includegraphics[width=0.95\textwidth]{figures/figure4.png}
     \caption{\textbf{Does early appearance of tracer in the PVS rely on a structural compartmentalization of the PVS?}
-    A) The PVS-CSF membrane permeability regulates the exchange of solutes between the PVS and surrounding CSF spaces; 
+    A) In our model, the PVS-CSF membrane permeability regulates the exchange of solutes between the PVS and surrounding CSF spaces; 
     B) The arterial network with highlighted regions of interest; 
     C) 2D slices showing zoom-in to the region surrounding the basal artery after 1, 2, 3, and 4 hours for a low (above) and high (below) PVS-CSF permeability model. Innermost circle indicates the artery (blue), the surrounding annulus is the PVS (color represents concentration value), the surroundings are parenchyma and/or CSF spaces, separated by the pia (blue: towards the parenchyma, pink: towards the CSF). The cutting planes are normal to the blood vessels;
     D) As in (C) for regions surrounding (from upper to lower) the ACA-A3, ACA-A2, MCA-R and MCA-L segments;}
@@ -604,45 +604,46 @@ outer PVS surface (dotted) for the BA, MCA-R, MCA-L, ACA-2, and ACA3 segments ov
 F) Effect of varying the PVS-CSF permeability on first-time-of-arrival (FTA), time difference ($\Delta t$) between concentration peaks in the PVS and surrounding tissue, time of PVS peak concentration, PVS peak concentration and difference in peak concentration between PVS and surrounding tissue.}
 \end{figure}
   
-\subsection*{Enlarged PVSs in the SAS delay periarterial and intracranial tracer spread}
+\subsection*{Will dilated PVSs in the SAS impact the intracranial tracer distribution?}
 
 Idiopathic normal pressure hydrocephalus (iNPH), a dementia subtype,
 is associated with enlarged PVS in the SAS and impaired periarterial
 and parenchymal tracer transport~\cite{eide2024functional}. More
-generally, enlarged PVSs are associated with a range of pathophysiogical
-conditions and cognitive decline~\cite{bown2022physiology}. A key
-question is thus whether enlarged PVSs alone leads to delayed
-perivascular and intracranial tracer spread. To address this
-question from a fluid and transport dynamics perspective, we ask our
-in-silico model to predict the integrated effect of perivascular
-dilation on PVS flow velocities and tracer distribution patterns
-(\Cref{fig:enlargement}A).
+generally, enlarged PVSs are associated with a range of
+pathophysiogical conditions and cognitive
+decline~\cite{bown2022physiology}. A natural question is thus whether
+enlarged PVSs alone leads to delayed perivascular and intracranial
+tracer spread.
 
-Again we compute CSF production-, cardiac-, and vasomotion-induced net PVS flow velocities, but now in a perivascular geometry with an increased outer radius ($R^{\rm dilated}_2 = 3 R_1$) compared to the previous ($R^{\rm control}_2 = 2 R_1$), which corresponds to a $2.67 \times$ increase in PVS cross-section area.
+To address this question from a fluid and transport dynamics
+perspective, we consider a final model variation in which we examine
+the predicted effect of perivascular dilation on perivascular flow velocities
+and tracer distribution patterns (\Cref{fig:enlargement}A). We again
+compute cardiac and vasomotion-induced net perivascular flow velocities, but
+now in a periarterial geometry with an increased outer radius ($R^{\rm
+  dilated}_2 = 3 R_1$) compared to the previous ($R^{\rm control}_2 =
+2 R_1$), which corresponds to a $2.67 \times$ increase in PVS
+cross-section area.
 %% \begin{align*}
 %%   A_1 = \pi (R_2^2 - R_1^2) = \pi (2^2 R_1^2 - R_1^2) = 3 \pi R_1^2 \\
 %%   A_2 = \pi (\hat{R}_2^2 - R_1^2) = \pi (3^2 R_1^2 - R_1^2) = 8 \pi R_1^2 \\
 %%   A_2 / A_1 = 8/3 = 2.76
 %% \end{align*}
-The enlargement yields notable and non-uniform changes in the flow
-dynamics. On the one hand, the pressure-induced flow velocities
-increase from a mean of 0.08 \textmu m/s to 0.33 \textmu m/s due to
-the reduced effective resistance of the PVS. However, the peristaltic
-pumping becomes considerably less effective: the cardiac and
-vasomotion-induced net CSF flow velocities drop from a mean of 0.92
-\textmu m/s to 0.17 \textmu m/s and from 13.05 \textmu m/s to 2.33
-\textmu m/s, respectively (\Cref{fig:enlargement}B--D). In total, the
-net CSF velocity reduces, which in turn alters the tracer spread
-within the dilated PVS. Notably, we observe later tracer arrival in
-all MCA segments, with up to 96 min later arrival in the
-MCA2s for the high PVS flow scenario (\Cref{fig:enlargement}E, F). For
-the baseline model, which omits the vasomotion-induced net PVS flow,
-the effect is less pronounced in the MCA but clearly persists and is
-evident in the MCA2s (\Cref{fig:enlargement}F). Finally, we note that
-the larger volume of the dilated PVS results in a greater total
-accumulation of tracer in the PVS from 3--24 hours and reduced
-tracer \mer{amounts} in the parenchyma at 6 and 12 h, while the mean PVS
-concentration is initially lower, but later exceeds the baseline model (\Cref{fig:enlargement}G,H).
+With dilated PVSs, the peristaltic pumping becomes considerably
+less effective: the cardiac and vasomotion-induced net CSF flow
+velocities drop from a mean of 0.92 \textmu m/s to 0.17 \textmu m/s
+and from 13.05 \textmu m/s to 2.33 \textmu m/s, respectively
+(\Cref{fig:enlargement}B--D). In turn, this alters the tracer spread within the dilated
+PVS. Notably, we observe later tracer arrival in all MCA segments,
+with up to 96 min later arrival in the MCA2s for the high PVS flow
+scenario (\Cref{fig:enlargement}E, F). For the model without vasomotion-induced flow, the effect is less
+pronounced in the MCA but clearly persists and is evident in the MCA2s
+(\Cref{fig:enlargement}F). Finally, we note that the larger volume of
+the dilated PVS results in a greater total accumulation of tracer in
+the PVS from 3--24 hours and reduced amounts of tracer in the
+parenchyma at 6 and 12 h, while the mean PVS concentration is
+initially lower, but later exceeds the baseline model
+(\Cref{fig:enlargement}G,H).
 \begin{figure}
     \centering
     \includegraphics[width=1 \textwidth]{figures/figure5.png}
