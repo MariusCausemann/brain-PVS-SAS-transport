@@ -572,11 +572,11 @@ each of these domains, $c$ satisfies
 \begin{equation}
   \partial_t (\phi c) - \nabla \cdot (D \nabla (\phi c) ) + \nabla \cdot (\bm u c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma
   %= f
-   = 0
+   = S_{\text{0D} \to \text{3D}}
   \quad \quad \mathrm{in} \quad \Omega_{\rm CSF}, \Omega_{\rm{PAR}}.
   \label{eq:3d_pde}
 \end{equation}
-In~\eqref{eq:3d_pde}, $\phi$ is the fluid volume fraction (also known as the porosity) defined in the parenchyma ($\phi \ll 1$ in $\Omega_{\rm PAR}$) and in the CSF spaces ($\phi = 1$ in $\Omega_{\rm CSF}$). In the parenchyma, $\phi$ represents the extracellular space volume fraction, and thus $c$ here generally represents the intrinsic (in contrast to the superficial) concentration~\cite{sykova2008diffusion}. Moreover, $D$ is the effective diffusion coefficient of the relevant solute in the respective media which takes different values over the CSF spaces and the parenchyma, depending on tortuosity~\cite{sykova2008diffusion} and dispersive effects; and $\bm u$ is a convective velocity field representing the flow of CSF in $\Omega_{\rm CSF}$ and the flow of ISF in $\Omega_{\rm PAR}$. $\xi$ models a transfer or exchange parameter between the 3D domain ($\Omega_{\rm PAR}$ or $\Omega_{\rm CSF}$) and the perivascular networks $\Lambda_a, \Lambda_v$. To summarize,
+In~\eqref{eq:3d_pde}, Here, $S_{\text{0D} \to \text{3D}}$ is a localized mass transfer term coupling the 3D domains to unresolved perivascular continuations, $\phi$ is the fluid volume fraction (also known as the porosity) defined in the parenchyma ($\phi \ll 1$ in $\Omega_{\rm PAR}$) and in the CSF spaces ($\phi = 1$ in $\Omega_{\rm CSF}$). In the parenchyma, $\phi$ represents the extracellular space volume fraction, and thus $c$ here generally represents the intrinsic (in contrast to the superficial) concentration~\cite{sykova2008diffusion}. Moreover, $D$ is the effective diffusion coefficient of the relevant solute in the respective media which takes different values over the CSF spaces and the parenchyma, depending on tortuosity~\cite{sykova2008diffusion} and dispersive effects; and $\bm u$ is a convective velocity field representing the flow of CSF in $\Omega_{\rm CSF}$ and the flow of ISF in $\Omega_{\rm PAR}$. $\xi$ models a transfer or exchange parameter between the 3D domain ($\Omega_{\rm PAR}$ or $\Omega_{\rm CSF}$) and the perivascular networks $\Lambda_a, \Lambda_v$. To summarize,
 \begin{equation*}
 \phi =  \begin{cases}
   1  & \mathrm{in} \;  \Omega_{\rm{CSF}} \\ 
@@ -705,45 +705,29 @@ for each $y \in \mathcal{B}$:
   \label{eq:flux_conservation}
 \end{equation}
 Here the normal $n^i$ is as defined in ~\eqref{eq:def:sign}.
-%Here the (normal ``vector") function $n^i$ takes the values %in $\left\{-1, 1\right\}$ and 
-%defines an orientation of vertices of edge $\Lambda^i$. %Specifically, for an edge $\Lambda^i$ oriented from $y_{\rm %in}$ to $y_{\rm out}$ we set 
-%\begin{equation}
-%  n^i(y_{\rm in}) = 1,\quad
-%  n^i(y_{\rm{out}}) = -1. %\quad
-%  %\mk{n^i(y) = 0 \quad \foralls y \in 
-%  %\mathcal{V} \backslash \{ y_{\rm in}, y_{\rm out} \} }.  
-%\label{eq:def:sign}
-%\end{equation}
-%\mk{Why do we need the normal on non-IO vertices?}
 
-Finally, we impose a homogeneous Neumann condition at all network end
-nodes to augment~\eqref{eq:1d_pde}:
+Finally, to augment~\eqref{eq:1d_pde} at the network end nodes $y_k \in \mathcal{N}$, we represent the unresolved, continuous extension of the perivascular networks by coupling these tips to a set of 0D compartments. For each terminal node $y_k \in \mathcal{N}$, let $c^0_k(t)$ denote the solute concentration in a 0D compartment of effective volume $V_k$ (maybe just $|B_k|$, or weighted with fluid volume fraction $\phi$?). This compartment exchanges mass with the 3D domain over a local spherical neighborhood $B_k$ (with volume $|B_k|$) centered at $y_k$.
+
+The rate of change of mass in the 0D compartment is governed by advective and diffusive fluxes from the 1D network, alongside diffusive exchange with the 3D tissue:
 \begin{equation}
-    \hat D A \partial_s (\phi \hat c) - A \hat u \hat c  = 0 \quad \mathrm{on} \quad \mathcal{N}.
-    \label{eq:1d_bcs}
+  V_k \frac{d c^0_k}{dt} = q_k^+ \hat{c}(y_k) + q_k^- c^0_k + \alpha_k (\hat{c}(y_k) - c^0_k) + \beta_k ( \bar{c}_{B_k} - c^0_k ) \quad \forall y_k \in \mathcal{N},
+  \label{eq:0d_ode}
 \end{equation}
-This no-flux condition states that the network end nodes represent
-barriers for molecular efflux into or out of the perivascular network,
-and thus that all solute exchange between the PVSs and their
-surroundings takes place via the lateral outer PVS surface and is
-regulated by the exchange parameter $\xi$ cf.~\eqref{eq:3d_pde}
-and~\eqref{eq:1d_pde}. Larger particles have been observed to
-accumulate within the PVS as the surface arteries penetrate into the
-brain parenchyma~\cite{mestre2018flow, bedussi2018paravascular},
-and~\eqref{eq:1d_bcs} is appropriate to represent such
-behavior. However, to represent a continuously extending PVSs also
-along penetrating vessels, this condition should be revisited.
+where $q_k = (A\hat{u})(y_k) \cdot n(y_k)$ is the volumetric fluid flow rate leaving the 1D network at $y_k$ (with $n(y_k)$ denoting the outward normal), split into outflow $q_k^+ = \max(q_k, 0)$ and inflow $q_k^- = \min(q_k, 0)$ components to implement upwinding, and $\alpha_k$ is the 1D-0D diffusive conductance. $\beta_k$ is the 0D-3D diffusive exchange rate, and $\bar{c}_{B_k}(t) = \frac{1}{|B_k|} \int_{B_k} c(x, t) \, dx$ is the average 3D concentration within $B_k$.
 
-%% We consider non-zero convection in the CSF space $u_{\rm CSF} \not = 0$ in \eqref{eq:multi_transport_3d} resulting from steady state CSF production.  Recall that $\Omega_{\mathrm{CSF}}$ represents the CSF space and that $\Gamma_{\mathrm{skull^{u/l}}}$ and $\Gamma_{\mathrm{pia}}$, $\Gamma_{\mathrm{LV}}$ represent the boundaries facing the upper and lower parts of the dura, the pia and the lateral ventricles, respectively.  Assuming CSF production in the choroid plexus located at the lateral ventricle wall, we solve the  steady state Stokes equations for the velocity and the pressure $(\bm u_{\mathrm{CSF}}, p_{\mathrm{CSF}})$ in the CSF domain: 
+To conserve mass, the total flux (advective and diffusive) exiting the 1D domain at $y_k$ must equal the total flux entering the 0D compartment from the 1D network. This yields the following Robin-type boundary condition on the 1D network:
+\begin{equation}
+  -\hat{D}A \partial_{n} \hat{c} = (q_k^- - \alpha_k)( c^0_k - \hat{c} ) \quad \mathrm{on} \quad y_k \in \mathcal{N}.
+  \label{eq:1d_bcs}
+\end{equation}
+We note that if advection is purely outward ($q_k > 0$, so $q_k^- = 0$), the boundary condition simplifies to $-\hat{D}A\partial_{n}\hat{c} = \alpha_k(\hat{c} - c^0_k)$, indicating that the diffusive flux at the boundary is driven purely by the concentration difference between the two compartments. Conversely, if $q_k < 0$ (flow enters 1D from 0D), the boundary condition balances the total diffusive flux with both the advective influx from the 0D compartment and the 1D-0D diffusive exchange. 
 
+Finally, the diffusive exchange between the 0D compartments and the 3D domain acts via a localized volumetric source term $S_{\text{0D} \to \text{3D}}$ in~\eqref{eq:3d_pde}, defined using the indicator function $\chi_{B_k}(x)$ for each ball $B_k$:
+\begin{equation}
+  S_{\text{0D} \to \text{3D}}(x, t) = \sum_{y_k \in \mathcal{N}} \frac{\beta_k}{|B_k|} (c^0_k - c) \chi_{B_k}(x) .
+  \label{eq:3d_source}
+\end{equation}
 
-%\subsection{Numerical solution of the transport and flow equations}
-%\label{sec:app:details_numerical_method}
-%Note in particular that $\mathcal{F}_i \cap \mathcal{F}_{pia}} =
-%  \emptyset$.
-
-%The restriction of $\mathcal{T}_h $ to $\Omega_{\mathrm{CSF}}$ is
-%denoted by $\mathcal{E}_{h}$.
 
 \subsubsection{Finite element solution of coupled 3D-1D solute transport equations}
 We consider the system of coupled 3D-1D solute transport equations
