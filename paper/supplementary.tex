@@ -706,7 +706,7 @@ for each $y \in \mathcal{B}$:
 \end{equation}
 Here the normal $n^i$ is as defined in ~\eqref{eq:def:sign}.
 
-Finally, to augment~\eqref{eq:1d_pde} at the network end nodes $y_k \in \mathcal{N}$, we represent the unresolved, continuous extension of the perivascular networks by coupling these tips to a set of 0D compartments. For each terminal node $y_k \in \mathcal{N}$, let $c^0_k(t)$ denote the solute concentration in a 0D compartment of effective volume $V_k$ (maybe just $|B_k|$, or weighted with fluid volume fraction $\phi$?). This compartment exchanges mass with the 3D domain over a local spherical neighborhood $B_k$ (with volume $|B_k|$) centered at $y_k$.
+Finally, to augment~\eqref{eq:1d_pde} at the network end nodes $y_k \in \mathcal{N}$, we represent the unresolved, continuous extension of the perivascular networks by coupling these tips to a set of 0D compartments. For each terminal node $y_k \in \mathcal{N}$, let $c^0_k(t)$ denote the solute concentration in a 0D compartment of effective volume $V_k=\int_{B_k} \phi \, dx$. This compartment exchanges mass with the 3D domain over a local spherical neighborhood $B_k$ (with volume $|B_k|$) centered at $y_k$. 
 
 The rate of change of mass in the 0D compartment is governed by advective and diffusive fluxes from the 1D network, alongside diffusive exchange with the 3D tissue:
 \begin{equation}
@@ -724,7 +724,7 @@ We note that if advection is purely outward ($q_k > 0$, so $q_k^- = 0$), the bou
 
 Finally, the diffusive exchange between the 0D compartments and the 3D domain acts via a localized volumetric source term $S_{\text{0D} \to \text{3D}}$ in~\eqref{eq:3d_pde}, defined using the indicator function $\chi_{B_k}(x)$ for each ball $B_k$:
 \begin{equation}
-  S_{\text{0D} \to \text{3D}}(x, t) = \sum_{y_k \in \mathcal{N}} \frac{\beta_k}{|B_k|} (c^0_k - c) \chi_{B_k}(x) .
+  S_{\text{0D} \to \text{3D}}(x, t) = \sum_{y_k \in \mathcal{N}} \frac{\beta_k}{|B_k|} (c^0_k - \bar{c}_{B_k}) \chi_{B_k}(x) .
   \label{eq:3d_source}
 \end{equation}
 
