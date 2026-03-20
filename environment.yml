@@ -4,7 +4,6 @@ channels:
   - conda-forge
 dependencies:
   - fenics-dolfin=2019.2.0.dev
-  - python=3.9    
   - sympy<1.14.0
   - numpy
   - ipython
@@ -20,7 +19,7 @@ dependencies:
   - pykdtree
   - bioconda::snakemake
   - libopenblas=*=*openmp*
-  - vtk=*=*mesa*
+  - vtk>=9.4.0
   - mumps-mpi>=5.7.3
   - mpich
   - k3d
@@ -31,5 +30,5 @@ dependencies:
     - cmocean
     - kimimaro<5.0.0
     - git+https://github.com/MiroK/ulfy.git@ufl_legacy
-    - git+https://github.com/MiroK/fenics_ii.git@ufl_legacy
+    - git+https://github.com/MiroK/fenics_ii.git@insilico
     - git+https://github.com/blocknics/cbc.block.git@mirok/ufl_legacy
