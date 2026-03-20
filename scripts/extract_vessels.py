@@ -179,6 +179,25 @@ def smooth_coords(netw):
             coordsnew[i,:] = 0.5*coords[i,:] + 0.5*(coords[ns,:].mean(axis=0))
     netw.points[:,:] = coordsnew
 
+def mark_roots(netw, nroots):
+    degrees = np.array([len(netw.point_neighbors(i)) for i in range(netw.n_points)])
+    roots = np.where(degrees==1)[0]
+    zcoords = netw.points[:,2]
+
+    # rs are the nroots roots with the nroots lowest z-coordinate (so actual roots)
+    rs = roots[np.argsort(zcoords[roots])][:nroots]
+
+    ROOT = 2
+    EXITS = 1
+    NOTROOT = 0
+    def root_mark(i):
+        if i in rs: return ROOT
+        if i in roots: return EXITS
+        return NOTROOT
+
+    netw["root"] = [root_mark(i) for i in range(netw.n_points)]
+    return netw
+
 scale = 1.5
 const = 3.0
 
@@ -218,6 +237,7 @@ if __name__=="__main__":
             smooth_radius(smooth_netw)
         for i in range(3):
             smooth_coords(smooth_netw)
+        smooth_netw = mark_roots(smooth_netw, nroots=nr)
         smooth_netw.save(f"mesh/networks/{name}_smooth.vtk")
         netw_tubes = get_tubes(smooth_netw)
         netw_tubes.save(f"mesh/networks/{name}_tubes.vtk")
