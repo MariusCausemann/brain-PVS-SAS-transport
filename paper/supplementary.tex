@@ -706,7 +706,7 @@ for each $y \in \mathcal{B}$:
 \end{equation}
 Here the normal $n^i$ is as defined in ~\eqref{eq:def:sign}.
 
-Finally, to augment~\eqref{eq:1d_pde} at the network end nodes $y_k \in \mathcal{N}$, we represent the unresolved, continuous extension of the perivascular networks by coupling these tips to a set of 0D compartments. For each terminal node $y_k \in \mathcal{N}$, let $c^0_k(t)$ denote the solute concentration in a 0D compartment of effective volume $V_k$. This compartment exchanges mass with the 3D domain over a local spherical neighborhood $B_k$ (with volume $|B_k|$) centered at $y_k$. 
+Finally, to augment~\eqref{eq:1d_pde} at the network end nodes $y_k \in \mathcal{N}$, we represent the unresolved, continuous extension of the perivascular networks by coupling these tips to a set of 0D compartments, similar to the approach in \cite{fritz20221d}. For each terminal node $y_k \in \mathcal{N}$, let $c^0_k(t)$ denote the solute concentration in a 0D compartment of effective volume $V_k$. This compartment exchanges mass with the 3D domain over a local spherical neighborhood $B_k$ (with volume $|B_k|$) centered at $y_k$. 
 
 The rate of change of mass in the 0D compartment is governed by advective and diffusive fluxes from the 1D network, alongside diffusive exchange with the 3D tissue:
 \begin{equation}
@@ -728,13 +728,13 @@ Finally, the diffusive exchange between the 0D compartments and the 3D domain ac
   \label{eq:3d_source}
 \end{equation}
 
-To estimate the effective volume $V_k$ of the unresolved downstream perivascular network at each terminal node $y_k$, we model the vasculature as a branching tree. Assuming symmetric bifurcation and adherence to Murray's Law, the arterial radius at the $j$-th unresolved level scales as $r_{1,j} = R_1 2^{-j/3}$, and the outer PVS radius scales proportionally as $r_{2,j} = R_2 2^{-j/3}$. Assuming a constant length-to-arterial-radius ratio $\lambda = L_j / r_{1,j}$, the total perivascular volume of each level remains geometrically constant. Summing the segment volumes over $N$ unresolved levels down to the precapillary level yields the total downstream capacity of the 0D compartment of each terminal node:
+To estimate the effective volume $V_k$ of the unresolved downstream perivascular network at each terminal node $y_k$, we model the vasculature as a branching tree. Assuming symmetric bifurcation and adherence to Murray's Law, the arterial radius at the $j$-th unresolved level scales as $r_{1,j} = R_1 2^{-j/3}$, and the outer PVS radius scales proportionally as $r_{2,j} = R_2 2^{-j/3}$. Assuming a constant length-to-arterial-radius ratio $\lambda = L_j / r_{1,j}$, the total perivascular volume of each level remains constant. Summing the segment volumes over $N$ unresolved levels down to the precapillary level yields the total downstream volume of the 0D compartment of each terminal node:
 \begin{equation}
   V_k = A \lambda R_1 (N + 1).
   \label{eq:effective_volume}
 \end{equation}
 
-Similarly, the 0D-3D diffusive exchange rate $\beta_k$ is governed by the total outer surface area $S_k$ of the unresolved perivascular network interfacing with the surrounding 3D tissue. Unlike the geometrically constant perivascular volume, the cumulative outer surface area increases with each subsequent branching level. Applying the same branching assumptions, the surface area of a single PVS segment at the $j$-th unresolved level is $2 \pi r_{2,j} L_j = 2 \pi \lambda r_{1,j} r_{2,j}$. Multiplying by the $2^j$ vessels in that level and substituting $r_{1,j} = R_1 2^{-j/3}$ and $r_{2,j} = R_2 2^{-j/3}$, the total tissue-facing surface area over $N$ levels is given by:
+Similarly, the 0D-3D diffusive exchange rate $\beta_k$ is governed by the total outer surface area $S_k$ of the unresolved perivascular network interfacing with the surrounding 3D tissue. Unlike the geometrically constant perivascular volume, the outer surface area increases with each subsequent branching level. Applying the same branching assumptions, the surface area of a single PVS segment at the $j$-th unresolved level is $2 \pi r_{2,j} L_j = 2 \pi \lambda r_{1,j} r_{2,j}$. Multiplying by the $2^j$ vessels in that level and substituting $r_{1,j} = R_1 2^{-j/3}$ and $r_{2,j} = R_2 2^{-j/3}$, the total tissue-facing surface area over $N$ levels is given by:
 \begin{equation}
   S_k = 2 \pi \lambda R_1 R_2 \sum_{j=0}^{N} 2^{j/3}.
   \label{eq:surface_area}
