@@ -480,7 +480,7 @@ def compute_pvs_flow(meshfile, output, args):
     area = lambda i: np.pi*(beta**2-1.0)*radii[i]**2 
 
     print("Computing time-average perivascular flow rates...")
-    Q_tree = 0
+    Q_roots = 0
     for i0 in roots:
         # Read minimal subtree from file. Note that graphml converts
         # ints to strings ...
@@ -530,7 +530,7 @@ def compute_pvs_flow(meshfile, output, args):
                 elif T_i in outlets:
                     outflows[T_i] = Q.vector()[i]
 
-            Q_tree += inflows[inlet]        
+            Q_roots += inflows[inlet]        
             print("\t<Q'>_in (mL/day) = %6.3g" % (inflows[inlet]*m3s_to_mlday))
             print("\t<Q'>_out (mL/day) = %6.3g" % (sum(outflows.values())*m3s_to_mlday))
             print("\t #outlets = ", len(outlets))
@@ -580,8 +580,8 @@ def compute_pvs_flow(meshfile, output, args):
     q_directed = df.project(Q*tangent*mf_to_dg(downstream), df.VectorFunctionSpace(mesh, "DG", 0))
 
     # Quantify the difference between Q_in + Q_out and Q*ds:
-    print("Q_tree*2*m3s_to_mlday = ", Q_tree*m3s_to_mlday*2)
-    print("Q*ds*m3s_to_mlday = ", df.assemble(Q*df.ds)*m3s_to_mlday)
+    print("Q_roots (mL/day) = ", Q_roots*m3s_to_mlday)
+    print("Q*ds (mL/day)= ", df.assemble(Q*df.ds)*m3s_to_mlday)
     print("abs(Q)*ds*m3s_to_mlday = ", df.assemble(df.sqrt(df.dot(q_directed, q_directed))*df.ds)*m3s_to_mlday)
     n = df.FacetNormal(mesh)
     print("max(Q,0)*ds*m3s_to_mlday = ", df.assemble(ufl.max_value(df.dot(q_directed, n),0.0)*df.ds)*m3s_to_mlday)
