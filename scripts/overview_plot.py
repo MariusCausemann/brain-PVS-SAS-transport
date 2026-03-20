@@ -34,7 +34,10 @@ def clip_closed_surface(surf, normal='x', origin=None, tolerance=1e-06,
     alg.SetInputDataObject(surf)
     alg.SetTolerance(tolerance)
     alg.SetClippingPlanes(collection)
-    _update_alg(alg, False, 'Clipping Closed Surface')
+    try:
+        _update_alg(alg, False, 'Clipping Closed Surface')
+    except TypeError:
+        _update_alg(alg)
     result = _get_output(alg)
     if transfer_data: return result.sample(surf)
     return result
@@ -89,8 +92,8 @@ def generate_overview_plot(model:str,
             #parslice.field_data.update(dict(color="red", opacity=0.5))
             pia = mesh.extract_cells(mesh["label"]==PARID).extract_surface().slice(normal=n, origin=origin + nv*2e-10)
             dura = mesh.extract_surface().slice(normal=n, origin=origin + nv*2e-10)
-            pia.field_data.update(dict(color="violet", line_width=1))
-            dura.field_data.update(dict(color="cyan", line_width=1))
+            pia.field_data.update(dict(color="violet",))# line_width=1.0))
+            dura.field_data.update(dict(color="cyan",))# line_width=1.0))
             artclip.field_data["color"] = "red"
             pvsclip.field_data.update(csfslice.field_data)
             for i, t in enumerate(times):
