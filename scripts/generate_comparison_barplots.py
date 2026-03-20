@@ -124,7 +124,7 @@ def compare_models(models: List[str]):
     for dom in ["par", "csf","art", "ven"]:
         plt.figure()
 
-        for m,ls  in zip(models, linestyles):
+        for m,ls in zip(models, linestyles):
             tm = m
             tmconfig = read_config(f"configfiles/{tm}.yml")
             trmetrics = read_config(f"results/{tm}/{tm}_metrics.yml")
@@ -135,7 +135,7 @@ def compare_models(models: List[str]):
             plt.plot(times, dmin, label=f"min {m}", ls=ls, color="teal")
         plt.xlabel("time (h)")
         plt.ylabel("tracer concentration (mmol/l)")
-        plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol=3,
+        plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol=2,
                 columnspacing=0.7, frameon=False)
         plt.savefig(f"plots/comparisons/{v}/{dom}_minmax.png")
 
