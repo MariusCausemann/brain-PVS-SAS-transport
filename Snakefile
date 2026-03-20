@@ -11,11 +11,14 @@ num_mumps_threads = 16
 mesh_refine_models = ["modelALowRes", "modelA", "modelAHighRes"]
 time_refine_models = ["modelA","modelAsmalldt", "modelAlargedt"]
 model_variations = ["modelA" , "modelA-LowD","modelA-HighD", "modelAMassConservation",
+                    "modelA-strongVM-root1","modelA-strongVM-root10","modelA-strongVM-root1000",
+                    #"modelA-strongVM-tip",
+                    "modelA-strongVM-0D",
+                    "modelA-strongVM-0D-MC",
                     "modelA-OnlyDispersion",
                     "modelA-strongVM","modelA-PVS-disp",
                     "modelB1-10", "modelB1-100", "modelB1-1000",
                     "modelB2-10", "modelB2-100", "modelB2-1000",
-                    "adena-virus",
                     #"modelC", "modelA-NoResp", "modelA-NoDisp", "modelA-LowD",
                     "LargePVS", "LargePVSA"]
 
@@ -25,10 +28,12 @@ model_comparisons = [
                     # "modelA_modelB2-1000", "modelA_modelC",
                     # "modelA_modelA-NoResp",
                     "modelA_modelA-strongVM",
-                    "modelA_modelA-PVS-disp"            
+                    "modelA_modelA-PVS-disp",
+                    "modelA-strongVM-root1_modelA-strongVM-root1000",
+                    "modelA-strongVM_modelA-strongVM-tip",
                     ]
 
-models =  model_variations +time_refine_models+ mesh_refine_models
+models =  model_variations #+time_refine_models+ mesh_refine_models
 times = list(np.array([1, 3, 6, 12, 24])*60*60)
 conctimes =  list((np.array([0, 1/3, 2/3, 1, 4/3, 5/3, 2, 7/3, 8/3, 3, 4, 5, 6 ,9, 12, 15, 18, 21, 24])*60*60).astype(int))
 
@@ -57,6 +62,8 @@ rule all:
         expand("plots/{modelname}/{modelname}_overview_4-6.png", modelname=models),
         expand("plots/{modelname}/{modelname}.mp4", modelname=models),
         expand("plots/{modelname}/{modelname}_300.html", modelname=models),
+        expand("plots/{modelname}/{modelname}_ridgeline_pvs_total_smoothed.png", modelname=models),
+        expand("plots/{modelname}/{modelname}_conc_at_label_annotated.png", modelname=models),
         expand("results/csf_flow/cardiac_sas_flow_{proc}/R.png",proc=["0.25", "0.5", "0.75"]),
         expand("plots/{modelname}/{modelname}_1+2+3+6+9+12_all_0_details.png", modelname=models),
         "plots/pvs_flow_prod/sas_flow-arteries/",
@@ -91,7 +98,7 @@ rule runSimuation:
     resources:
         ncpuspertask=num_mumps_threads
     shell:
-        "export OMP_NUM_THREADS={threads} && python scripts/time_dependent.py {input.config}"
+        "export OMP_NUM_THREADS={threads} && python scripts/time_dependent_0D.py {input.config}"
 
 rule computeDispersionField:
     conda:"environment.yml"
@@ -373,6 +380,8 @@ rule makeVideo:
         art="results/{m}/{m}_artery.xdmf",
     output:
         "plots/{m}/{m}.mp4"
+    #resources:
+    #    partition="hgx2q"
     shell:
         "python scripts/make_video.py {wildcards.m}"
 
@@ -385,6 +394,29 @@ rule makeHtml:
         "plots/{m}/{m}_{N}.html"
     shell:
         "python scripts/make_html.py {wildcards.m} {wildcards.N}"
+
+
+rule makeRidgeLinePlot:
+    conda:"environment.yml"
+    input:
+        sas="results/{m}/{m}_sas.xdmf",
+        art="results/{m}/{m}_artery.xdmf",
+        metrics_yaml="results/{m}/mean_concentrations.yml",
+    output:
+        "plots/{m}/{m}_ridgeline_pvs_total_smoothed.png"
+    shell:
+        "python scripts/plot_conc_ridgeline.py {wildcards.m}"
+
+rule makeConcAtLabelPlot:
+    conda:"environment.yml"
+    input:
+        sas="results/{m}/{m}_sas.xdmf",
+        art="results/{m}/{m}_artery.xdmf",
+        metrics_yaml="results/{m}/mean_concentrations.yml",
+    output:
+        "plots/{m}/{m}_conc_at_label_annotated.png"
+    shell:
+        "python scripts/plot_conc_at_label.py {wildcards.m}"
 
 
 
