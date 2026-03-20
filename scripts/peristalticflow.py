@@ -6,6 +6,7 @@ import pyvista as pv
 
 import networkx as nx
 import dolfin as df
+import ufl_legacy as ufl
 import numpy as np
 
 #from solver import read_vtk_network
@@ -581,8 +582,11 @@ def compute_pvs_flow(meshfile, output, args):
     # Quantify the difference between Q_in + Q_out and Q*ds:
     print("Q_tree*2*m3s_to_mlday = ", Q_tree*m3s_to_mlday*2)
     print("Q*ds*m3s_to_mlday = ", df.assemble(Q*df.ds)*m3s_to_mlday)
-    
+    print("abs(Q)*ds*m3s_to_mlday = ", df.assemble(df.sqrt(df.dot(q_directed, q_directed))*df.ds)*m3s_to_mlday)
     n = df.FacetNormal(mesh)
+    print("max(Q,0)*ds*m3s_to_mlday = ", df.assemble(ufl.max_value(df.dot(q_directed, n),0.0)*df.ds)*m3s_to_mlday)
+    print("min(Q,0)*ds*m3s_to_mlday = ", df.assemble(ufl.min_value(df.dot(q_directed, n),0.0)*df.ds)*m3s_to_mlday)
+
     A_pvs = np.pi*((mf_to_dg(radii)*beta)**2 - mf_to_dg(radii)**2)
 
     tot = df.assemble(df.dot(n, u_directed*A_pvs)*df.ds)
