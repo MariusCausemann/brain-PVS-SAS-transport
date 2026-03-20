@@ -13,14 +13,16 @@ arterial_pvs_csf_permability: 3.8e-7
 venous_pvs_parenchyma_permability : 3.8e-7
 venous_pvs_csf_permability: 3.8e-7
 par_csf_permability: 2.6e-8 # Riseth, 2024 (MRI2FEM book)
-root_pvs_permability_factor : 100.0
+root_pvs_permability_factor : 1.0
+enable_tip_interaction : True
+k_tip_a : 1e-4
 pvs_ratio_artery : 2
 pvs_ratio_venes: 2
 initial_concentration : 0.0
-molecular_outflow_resistance : 0
-arterial_velocity_file : [ 
-                          "results/pvs_flow_peristaltic/cardiac_pvs_oscillation/pvs_flow.hdf"]
-venous_velocity_file : [ ]
+molecular_outflow_resistance : 8.0e-7
+arterial_velocity_file : ["results/pvs_flow_peristaltic/cardiac_pvs_oscillation/pvs_flow.hdf",
+                          "results/pvs_flow_peristaltic/vasomotion-strong/pvs_flow.hdf"]
+venous_velocity_file : []
 csf_velocity_file : "results/csf_flow/sas_flow/flow.hdf"
 csf_dispersion_file : ["results/csf_flow/cardiac_sas_flow/R.xdmf",
                        "results/csf_flow/respiratory_sas_flow/R.xdmf"]
