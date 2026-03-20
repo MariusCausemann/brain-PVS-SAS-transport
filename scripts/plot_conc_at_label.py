@@ -27,7 +27,7 @@ def plot_conc_at_label(model:str):
     artlabels = sum(artlabelsets, [])
 
     coldict = {"modelA-strongVM":"#6610f2","modelA":"#0b774d", "LargePVS":"green"}
-    col = coldict[model]
+    col = coldict.get(model, "blue")
     pvspeaktimedict = {n:results[f"{n}_pvs_peak_time"] for n in artlabels}
     pvsftadict = {n:results[f"{n}_fta"] for n in artlabels}
     lagdict = {n:results[f"{n}_lag"] for n in artlabels}

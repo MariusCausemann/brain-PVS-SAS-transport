@@ -1,6 +1,6 @@
 from fenics import *
 from xii import *
-from plotting_utils import get_result_fenics
+from plotting_utils import get_result_fenics, load_xdmf_timeseries
 import typer
 from typing import List
 import matplotlib.pyplot as plt
@@ -16,6 +16,7 @@ from label_arteries import pointlabels
 from test_map_on_global_coords_shift import map_kdtree
 from peristalticflow import mesh_to_weighted_graph, nx
 from subdomain_ids import CSFID, PARID, LVID, V34ID, CSFNOFLOWID
+import pyvista as pv
 
 def ii_project(f, V):
     u = TrialFunction(V)
@@ -37,6 +38,7 @@ def compare_concentrations(modelname:str):
     sas_conc, subd_marker = get_result_fenics(modelname, "sas", times)
     art_conc, art_radii, art_roots = get_result_fenics(modelname, "artery", times, getroots=True)
     ven_conc, ven_radii, ven_roots = get_result_fenics(modelname, "vein", times, getroots=True)
+    tip_conc = pv.read(f"results/{modelname}/{modelname}_tips.vtk")
     pvs_ratio_artery = config["pvs_ratio_artery"]
     pvs_ratio_vein = config["pvs_ratio_venes"]
     subd_marker.array()[np.isin(subd_marker.array(),[LVID, V34ID, CSFNOFLOWID])] = CSFID
@@ -52,21 +54,25 @@ def compare_concentrations(modelname:str):
     phi_dict = {CSFID: Constant(1),  PARID: Constant(ecs_share)}
     phi = pcws_constant(subd_marker, phi_dict)
 
+    Vi = tip_conc["vol"]
+    
     par_tot = np.array([assemble(phi*c*dx(PARID)) for c in sas_conc])
     csf_tot = np.array([assemble(phi*c*dx(CSFID)) for c in sas_conc])
     art_tot = np.array([assemble(area_artery*c*dxa) for c in art_conc])
     ven_tot = np.array([assemble(area_vein*c*dxv) for c in ven_conc])
+    tip_tot = np.array([(tip_conc[f"c_tips_{t}"]*Vi).sum() for t in times])
 
     #inflow = np.cumsum([k*max(0.0, t0 - t) for t in alltimes]) * dt
     set_plotting_defaults()
-    fig, ax = plt.subplots()
-    labels = ["CSF", "parenchyma", "PVS artery", "PVS vein"]
-    compartments = [csf_tot, par_tot, art_tot, ven_tot]
+    labels = ["CSF", "parenchyma", "PVS artery", "PVS vein", "Tips"]
+    compartments = [csf_tot, par_tot, art_tot, ven_tot, tip_tot]
     volumes = [assemble(phi*dx(CSFID)), assemble(phi*dx(PARID)),
-               assemble(area_artery*dxa),assemble(area_vein*dxv)]
+               assemble(area_artery*dxa),assemble(area_vein*dxv),
+               Vi.sum()]
 
     metrics = dict()
     for l,v, comp in zip(labels, volumes, compartments):
+        print(l,v,comp)
         metrics.update({f"cmean_{l}_{t}":float(c/v) for t,c in zip(times, comp)})
         metrics.update({f"ctot_{l}_{t}":float(c) for t,c in zip(times, comp)})
 
@@ -78,9 +84,9 @@ def compare_concentrations(modelname:str):
     pvs_radii.vector().set_local(pvs_ratio_artery*art_radii.vector().get_local())
     priority = InterfaceResolution(subdomains=subd_marker,
                                        resolve_conflicts={(CSFID, PARID): 4})
-    pvs_shape = Circle(radius=pvs_radii, degree=40, quad_rule='midpoint')
+    pvs_shape = Circle(radius=pvs_radii, degree=40, quad_scheme='midpoint')
     proximity_dist = 2e-3
-    nearby_shape = Circle(radius=project(pvs_radii + proximity_dist, DG0a), degree=40, quad_rule='midpoint')
+    nearby_shape = Circle(radius=project(pvs_radii + proximity_dist, DG0a), degree=40, quad_scheme='midpoint')
     csf_prio = InterfaceResolution(subdomains=subd_marker,
                                        resolve_conflicts={(CSFID, PARID): 1e6})
     c_averages = [ii_project(Average(c, artery, pvs_shape, resolve_interfaces=priority,

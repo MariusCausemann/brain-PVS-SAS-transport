@@ -16,15 +16,17 @@ def compare_concentrations(modelname:str):
 
     data = read_config(f"results/{modelname}/mean_concentrations.yml")
 
-    labels = ["CSF", "parenchyma", "PVS artery", "PVS vein"]
+    labels = ["CSF", "parenchyma", "PVS artery", "PVS vein",]
+    if f"ctot_Tips_0" in data.keys(): labels.append("Tips")
+
     tot_values = [[data[f"ctot_{l}_{t}"] for t in times] for l in labels]
     concentrations = [[data[f"cmean_{l}_{t}"] for t in times] for l in labels]
-    labels = ["CSF", "PAR", "PVS artery", "PVS vein"]
+    labels = ["CSF", "PAR", "PVS art.", "PVS vein", "PVS cont."]
 
     set_plotting_defaults()
     #sns.set_palette("BrBG", n_colors=4)
     #sns.set_palette(["#0a9396","#94d2bd", "#e9d8a6", "#ee9b00"])
-    sns.set_palette(["#0a9396","#81b8a5", "#ee6700", "#eea700"])
+    sns.set_palette(["#0a9396","#81b8a5", "#ee6700", "#f3e30d","#eea700",])
 
     fig, ax = plt.subplots(figsize=(5,4))
     tot = np.zeros_like(times)
@@ -35,7 +37,6 @@ def compare_concentrations(modelname:str):
                                alpha=1, label=l)
         ypos =  max(tot[-1], prev+0.04)
         final_tot = sum(t[-1] for t in tot_values)*mol2mmol
-        print(final_tot)
         #plt.scatter(times[-1]/(60*60), ypos, marker="o", color=fill.get_facecolor())
         plt.annotate(f"{100*mol2mmol*q[-1]/final_tot:.0f}%",(times[-1]/(60*60), ypos),
                      color=fill.get_facecolor(),
@@ -43,11 +44,13 @@ def compare_concentrations(modelname:str):
                      xycoords="data",)
         prev = ypos
         tot = new_tot
-    
+
+    print(tot[-5:].min())    
+    print(tot[-5:].max())    
     plt.xlabel("time (h)")
     #ax2.set_ylabel('mean tracer concentration (mmol/l)')
     ax.set_ylabel("total tracer content (mmol)")
-    ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.2), ncol=4, 
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.2), ncol=5, 
               columnspacing=0.5, frameon=False)
     plt.tight_layout()
     filename = f"plots/{modelname}/{modelname}_total_conc.png"
@@ -64,7 +67,7 @@ def compare_concentrations(modelname:str):
     plt.xlabel("time (h)")
     #ax2.set_ylabel('mean tracer concentration (mmol/l)')
     ax.set_ylabel("mean tracer concentration (mmol/l)")
-    ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.2), ncol=4, 
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.2), ncol=5, 
               columnspacing=0.5, frameon=False)
     plt.tight_layout()
     filename = f"plots/{modelname}/{modelname}_mean_conc.png"
