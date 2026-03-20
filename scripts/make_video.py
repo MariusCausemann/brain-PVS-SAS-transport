@@ -7,7 +7,7 @@ from tqdm import tqdm
 from plot_csf_flow import from_k3d
 import k3d.colormaps.paraview_color_maps as pcm
 from extract_vessels import get_tubes
-import seaborn as sns
+import numpy as np
 
 def make_movie(modelname:str):
     config = read_config(f"configfiles/{modelname}.yml")
@@ -34,6 +34,8 @@ def make_movie(modelname:str):
         sas[f"c_{t}"] = np.where(sas[f"c_{t}"] > clim[1], 
                                  clim[1], sas[f"c_{t}"])
     img = pv.create_grid(sas, dimensions=(N, N, N))
+
+
     img = img.sample(sas, progress_bar=True)
     print("interpolating...")
     for t in tqdm(times[:-1]):
@@ -62,15 +64,17 @@ def make_movie(modelname:str):
     # generate frames
     frametimes = np.arange(0, T + dt/2, dt/2, dtype=int)
     for t in tqdm(list(frametimes[1:]) + [times[-1]]*24*10):
+        print(img[f"c_{t}"].max())
         pl.add_text(f"{int(t/3600)} h", name='time-label', 
                     color="lightgray", font_size=24)
         arteries["c"] = arteries[f"c_{t}"]
-        pl.add_volume(img, scalars=f"c_{t}", specular=0.8, diffuse=1, 
+        volume = pl.add_volume(img, scalars=f"c_{t}", specular=0.8, diffuse=1, 
                       ambient=0.5,
                       cmap=cmap, opacity=[0, 0.15], clim=clim, shade=False,
                       show_scalar_bar=True, name="vol",
                       opacity_unit_distance=0.0002,
                       scalar_bar_args=scalarbar_args, mapper="gpu")
+        volume.mapper.SetAutoAdjustSampleDistances(True)
         pl.camera.azimuth += 360 / len(frametimes) * T/(24*60*60)
         pl.write_frame()  
 
