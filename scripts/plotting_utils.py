@@ -24,7 +24,7 @@ def minmax(arr_list, percentile=95):
 def get_result(modelname, domain, times):
     from vtk_adapter import create_vtk_structures
     import pyvista as pv
-    if not isinstance(times, collections.Iterable):
+    if not isinstance(times, collections.abc.Iterable):
         times = [times]
     res, label = get_result_fenics(modelname, domain, times)
     Vh = res[0].function_space()
@@ -226,6 +226,9 @@ def detail_plot(sas, networks, objects, filename, center, normal, clim, cmap, cb
     for obj in objects:
         obj_args = dict(line_width=20, show_scalar_bar=False, cmap=cmap,)
         obj_args.update(dict(obj.field_data))
+        if not np.isscalar(obj_args["line_width"]):
+            obj_args["line_width"] = obj_args["line_width"][0]
+        print(obj_args["line_width"])
         pl.add_mesh(obj, clim=clim, **obj_args)
 
     #pl.add_legend_scale()
@@ -236,3 +239,34 @@ def detail_plot(sas, networks, objects, filename, center, normal, clim, cmap, cb
     pl.camera.up = (0,0, 1)
 
     return slice.active_scalars.max(), pl.screenshot(filename, transparent_background=True, return_img=True)
+
+
+def load_xdmf_timeseries(filename, times=None):
+    """
+    Reads a single-mesh XDMF time series and returns a PyVista object 
+    where each time step's data is stored as a separate array.
+    """
+    import pyvista as pv
+    reader = pv.get_reader(filename)
+    if times is None:
+        times = reader.time_values
+            
+    # Read the first time step to establish the base geometry
+    reader.set_active_time_value(times[0])
+    base_mesh = reader.read()[0][1]
+    
+    # Loop through all time steps and append arrays
+    for t in times:
+        reader.set_active_time_value(t)
+        raw_data = reader.read()
+        current_mesh = raw_data[0] if isinstance(raw_data, pv.MultiBlock) else raw_data   
+        current_mesh = current_mesh[0] if isinstance(current_mesh, pv.MultiBlock) else current_mesh   
+
+        # Transfer Point Data
+        for name, array in current_mesh.point_data.items():
+            base_mesh.point_data[f"{name}_{int(t)}"] = array
+            
+        # Transfer Cell Data
+        for name, array in current_mesh.cell_data.items():
+            base_mesh.cell_data[f"{name}_{int(t)}"] = array
+    return base_mesh
