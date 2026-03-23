@@ -191,66 +191,49 @@ for further in-silico studies of brain solute transport.
 
 \begin{figure}
     \centering
-    \vspace{40em}
+    \vspace{30em}
     %\includegraphics[width=1\textwidth]{figures/figure1.png}
      \caption{
-     \textbf{An integrative computational framework for intracranial solute transport.}}
+     \textbf{An integrative computational framework for intracranial solute transport.} \fixme{A) Illustration of the intracranial compartments; B) Illustration of physical mechanisms; C-D) Subject-specific computational geometry representation of the human CSF spaces, including the ventricular system and SAS, and the brain parenchyma; E-F) and periarterial and perivenous networks.}}
      \label{fig:results1}
 \end{figure}
 
-\begin{figure}
-    \centering
-    \includegraphics[width=0.95\textwidth]{figures/figure3a.png}
-    \caption{\fixme{\textbf{A static pressure gradient and peristaltic pumping are potential drivers of perivascular flow.}}
-    A) Surface arterial network colored by arterial radius with vessel locations labeled;
-    B) Net PVS flow induced by CSF production alone (see also~\Cref{fig:csf}D).
-    Histograms show the relative frequencies of local periarterial velocities. Positive values indicate antegrade PVS flow, while negative values indicate retrograde PVS flow;
-    C) Illustration of the concept of peristaltic pumping;
-    D) histograms of estimated net PVS flow induced by pulse wave or vasomotion peristaltic pumping;
-    E) Estimated net PVS flow induced by pulse wave peristaltic pumping alone.
-    F) Estimated net PVS flow induced by vasomotion/slow wave peristaltic pumping alone.}
-    \label{fig:pvs}
-\end{figure}
-    
-Using previously published multi-modal magnetic resonance imaging
-(MRI) data~\cite{hodneland2019new, deistung2009tof,
+As the drivers and modes of intracranial transport are under
+substantial uncertainty and debate\cite{smith2019going,
+  proulx2021cerebrospinal, bohr2022glymphatic, hladky2022glymphatic,
+  betsholtz2024advances, kipnis2025resolving}, our target is to
+introduce a computational framework that allows for integrating and
+evaluating different solute transport mechanisms, in particular
+perivascular pathways, in subject-specific geometries
+(\Cref{fig:results1}A). To this end, we introduce the following
+modelling choices (\Cref{fig:results1}B). Using previously published
+multi-modal magnetic resonance imaging (MRI)
+data~\cite{hodneland2019new, deistung2009tof,
   schweser2012quantitative, reichenbach2012future,
   deistung2017overview}, we construct a multiscale computational
 representation of the human intracranial compartments consisting of
 the CSF spaces and brain parenchyma as three-dimensional (3D) domains
 and with the PVSs surrounding major surface arteries and veins as
-embedded networks of topologically one-dimensional (1D) curves
-(\fixme{\Cref{fig:results1}}). As the drivers and modes of
-intracranial transport are under substantial uncertainty and
-debate\cite{smith2019going, proulx2021cerebrospinal,
-  bohr2022glymphatic, hladky2022glymphatic, betsholtz2024advances,
-  kipnis2025resolving}, our target is to introduce a computational
-framework that allows for integrating and evaluating different
-transport mechanisms, and in particular perivascular pathways, in
-subject-specific geometries.
-
-To this end, we introduce the following modelling choices
-(\fixme{\Cref{fig:results1}}, see also Methods). We define
-\fixme{three} solute concentration fields, each varying in space and
-time, one in the 3D domains and one in each of the PVS networks, and
-assume that the solute can cross between the 3D and 1D domains via
-semi-permeable membranes. We assume that the solute will diffuse
-within all compartments, with diffusivity depending on the effective
-properties of the relevant medium\cite{sykova2008diffusion}. We assume
-that flow in the CSF spaces will substantially affect solute
-transport, and we account for two main mechanisms
-(\fixme{\Cref{fig:results1}}): (i) convection via a (small) net flow
-of CSF resulting from production in the choroid plexus with CSF efflux
-across the upper convexity\cite{hornkjol2022csf}, and (ii) dispersive
-effects resulting from the pulsatile flow of
-CSF~\cite{sweetman2011cerebrospinal, vinje2019respiratory,
-  ray2021quantitative}. In the surface periarterial spaces, we account
-for convection via net fluid flow induced by peristaltic
-pumping~\cite{mestre2018flow, gjerde2023directional}
-(\fixme{\Cref{fig:pvs}}).  Specifically, we introduce the
-geometrically-reduced representation of the PVSs to bridge spatial
-scales, and model pulsatility via dispersion in the CSF and
-time-averaged flow in the PVS to bridge temporal
+networks of topologically one-dimensional (1D) curves embedded therein
+(\Cref{fig:results1}C--F). Relative to this geometry, we define two
+solute concentration fields, both varying in space and time, one in
+the 3D domains, one in the PVS networks, and we assume that the solute
+can cross between the 3D and 1D domains via semi-permeable
+membranes. We assume that the solute will diffuse within all
+compartments, with diffusivity depending on the effective properties
+of the relevant medium and the solute
+itself\cite{sykova2008diffusion}. We assume that flow in the CSF
+spaces will substantially affect solute transport, and we account for
+two main mechanisms: (i) convection via net CSF
+flow~\cite{hornkjol2022csf} and (ii) dispersive effects resulting from
+pulsatile CSF flow~\cite{sweetman2011cerebrospinal,
+  vinje2019respiratory, ray2021quantitative}. In the surface
+periarterial spaces, in addition to diffusion, we account for
+convection via net fluid flow induced by peristaltic
+pumping~\cite{mestre2018flow, gjerde2023directional}. Specifically, we
+introduce the geometrically-reduced representation of the PVSs to
+bridge spatial scales, and model pulsatility via dispersion in the CSF
+and time-averaged flow in the PVS to bridge temporal
 scales. Mathematically, the solute transport model is represented by a
 mixed-dimensional system of coupled time-dependent partial
 differential equations\cite{masri2024modelling}, which we solve
@@ -260,6 +243,69 @@ FEniCS finite element software \cite{alnaes2015fenics,
   kuchta2020assembly}, and all associated software is all openly
 available~\cite{ZENODO}.
 
+\subsection*{In-silico predictions of tracer distribution after intrathecal injection in cardiac and respiratory flow regimes}
+
+Before describing the CSF and perivascular flow modelling in further
+detail, we present a first demonstration of the computational
+framework. Intrathecal administration of gadolinium-based contrast
+agents in combination with MR imaging has emerged as a key technique
+to study solute distribution and clearance in the human
+brain~\cite{ringstad2017glymphatic, ringstad2018brain,
+  eide2024functional, van2024human, kipnis2025resolving}. We apply our
+framework to simulate such a contrast-enhanced MRI
+protocol~\cite{ringstad2018brain} by predicting the spreading of $0.5$
+mmol intrathecally injected Gadobutrol after its appearance at the
+craniocervical junction, represented by tracer inflow across the
+spinal SAS boundary over the first two hours
+(\Cref{fig:intrathecal}A). To define a baseline model, we consider a
+reasonably conservative set of flow patterns: the (small) net flow of
+CSF resulting from production in the choroid plexus with CSF efflux
+into the spinal compartment and across the upper
+convexity\cite{hornkjol2022csf}, the dispersive effects of pulsatile
+CSF flow induced by the cardiac and respiratory
+cycles~\cite{sweetman2011cerebrospinal, vinje2019respiratory}, and the
+periarterial net flow induced by cardiac pulse waves
+alone~\cite{mestre2018flow, gjerde2023directional}.
+
+\mer{MER: WIP here. Just need to update Figure references.}
+
+In this model, after one hour, the in-silico tracer moves upwards in
+the SAS frontally of the brainstem, and quickly reaches the
+supratentorial regions. Here, it spreads both posterior through the
+quadrigeminal cistern and the longitudinal fissure, and anteriorly
+through the outer SAS, reaching the top of the cerebral cortex after
+around 12 hours. After 24 hours, the tracer covers most of the brain
+surface (with the exception of some posterior regions) and has
+penetrated substantially into the parenchymal tissue. This pattern is
+reflected in the mean tracer concentrations in each compartment, where
+the CSF space reaches its peak of $1.4\,$mmol/l after 2 hours,
+followed by the arterial PVS concentration peak ($2.9\,$mmol/l after 4
+hours) (\fixme{\Cref{fig:intrathecal}F}). While the mean
+concentrations in these compartments drop soon after peaking, the
+concentration in the parenchyma increases more slowly over the first
+24 hours, with a final value of $0.3$ mmol/l. Overall, about 40\% of
+the total amount of tracer remains in the cranium 24 hours
+post-injection in this simulation, with the largest share in the CSF
+(53\%), followed by the parenchyma (35\%), the venous PVS (8\%) and
+the arterial PVS (5\%) (\fixme{\Cref{fig:intrathecal}G}).
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.7\textwidth]{figures/figure1.png}
+     \caption{
+     \textbf{In-silico predictions of tracer distribution after intrathecal injection.}
+     %A) Illustration of the model geometry including the CSF-filled spaces (ventricles and SAS) $\Omega_{\rm CSF}$, the parenchyma $\Omega_{\rm PAR}$ and the PVS surrounding arteries $\Lambda_{\rm artery}$ and veins $\Lambda_{\rm vein}$, as well as their interfaces and boundaries; 
+     %B) 3D rendering of the computational geometry: the parenchyma, CSF (clipped, blue), arterial network (red), and venous network (blue); 
+     A) illustration of the intrathecal tracer injection protocol;  
+     B) in-silico predictions of tracer concentration after 1, 6, 12, and 24 hours (opacity increasing linearly from 0 to 2 mmol/l); 
+     C) sagittal, coronal and axial view of in-silico tracer concentrations overlayed on T1-weighted MR image after 1, 6, 12 and 24\,h (low concentrations transparent, pial surface in pink, arachnoid membrane in cyan, and arteries in dark red); 
+     D) average tracer concentration in each compartment over the first 24\,h; 
+     E) total amount of tracer in each compartment over the first 24\,h.}
+     \label{fig:intrathecal}
+\end{figure}
+
+
+\newpage
 
 To inform the convective velocity fields and dispersion factors
 entering as coefficients in the transport equations, we define
@@ -315,61 +361,20 @@ and maximum velocity 54.44 \textmu m/s, and a total flow of
 $\fixme{X}$ mL/day (\Cref{fig:pvs}D,F). \fixme{Add 1-2 sentence about decoupled flow modelling here.}
 
 
-\subsection*{In-silico predictions of tracer distribution after intrathecal injection in cardiac and respiratory flow regimes}
-
-Intrathecal administration of gadolinium-based contrast agents in
-combination with MR imaging has emerged as a key technique to study
-solute distribution and clearance in the human
-brain~\cite{ringstad2017glymphatic, ringstad2018brain,
-  eide2024functional, van2024human, kipnis2025resolving}. To simulate
-such a contrast-enhanced MRI protocol~\cite{ringstad2017glymphatic,
-  ringstad2018brain,
-  eide2024functional}(\fixme{\Cref{fig:intrathecal}C}), we now apply
-our computational framework to predict the spreading of $0.5$ mmol
-intrathecally injected Gadobutrol after its appearance at the
-craniocervical junction, represented by tracer inflow across the
-spinal SAS boundary over the first two hours
-(\fixme{\Cref{fig:intrathecal}D--E}). To begin with, we consider a
-reasonably conservative set of flow patterns: modelling the dispersive
-effects of pulsatile CSF flow induced by the cardiac and respiratory
-cycles~\cite{sweetman2011cerebrospinal, vinje2019respiratory} and the
-periarterial net flow induced by cardiac pulse waves
-alone~\cite{mestre2018flow, gjerde2023directional}.
-
-After one hour, the in-silico tracer moves upwards in the SAS
-frontally of the brainstem, and quickly reaches the supratentorial
-regions. Here, it spreads both posterior through the quadrigeminal
-cistern and the longitudinal fissure, and anteriorly through the outer
-SAS, reaching the top of the cerebral cortex after around 12
-hours. After 24 hours, the tracer covers most of the brain surface
-(with the exception of some posterior regions) and has penetrated
-substantially into the parenchymal tissue. This pattern is reflected
-in the mean tracer concentrations in each compartment, where the CSF
-space reaches its peak of $1.4\,$mmol/l after 2 hours, followed by the
-arterial PVS concentration peak ($2.9\,$mmol/l after 4 hours)
-(\fixme{\Cref{fig:intrathecal}F}). While the mean concentrations in these
-compartments drop soon after peaking, the concentration in the
-parenchyma increases more slowly over the first 24 hours, with a final
-value of $0.3$ mmol/l. Overall, about 40\% of the total amount of
-tracer remains in the cranium 24 hours post-injection in this baseline
-simulation, with the largest share in the CSF (53\%), followed by the
-parenchyma (35\%), the venous PVS (8\%) and the arterial PVS (5\%)
-(\fixme{\Cref{fig:intrathecal}G}).
-
 \begin{figure}
     \centering
-    \includegraphics[width=0.7\textwidth]{figures/figure1.png}
-     \caption{
-     \textbf{In-silico modelling of tracer transport in the PVS, SAS and parenchyma.}
-     A) Illustration of the model geometry including the CSF-filled spaces (ventricles and SAS) $\Omega_{\rm CSF}$, the parenchyma $\Omega_{\rm PAR}$ and the PVS surrounding arteries $\Lambda_{\rm artery}$ and veins $\Lambda_{\rm vein}$, as well as their interfaces and boundaries; 
-     B) 3D rendering of the computational geometry: the parenchyma, CSF (clipped, blue), arterial network (red), and venous network (blue); 
-     C) illustration of the intrathecal tracer injection protocol;  
-     D) in-silico predictions of tracer concentration after 1, 6, 12, and 24 hours (opacity increasing linearly from 0 to 2 mmol/l); 
-     E) sagittal, coronal and axial view of in-silico tracer concentrations overlayed on T1-weighted MR image after 1, 6, 12 and 24\,h (low concentrations transparent, pial surface in pink, arachnoid membrane in cyan, and arteries in dark red); 
-     F) average tracer concentration in each compartment over the first 24\,h; 
-     G) total amount of tracer in each compartment over the first 24\,h.}
-     \label{fig:intrathecal}
+    \includegraphics[width=0.95\textwidth]{figures/figure3a.png}
+    \caption{\fixme{\textbf{A static pressure gradient and peristaltic pumping are potential drivers of perivascular flow.}}
+    A) Surface arterial network colored by arterial radius with vessel locations labeled;
+    B) Net PVS flow induced by CSF production alone (see also~\Cref{fig:csf}D).
+    Histograms show the relative frequencies of local periarterial velocities. Positive values indicate antegrade PVS flow, while negative values indicate retrograde PVS flow;
+    C) Illustration of the concept of peristaltic pumping;
+    D) histograms of estimated net PVS flow induced by pulse wave or vasomotion peristaltic pumping;
+    E) Estimated net PVS flow induced by pulse wave peristaltic pumping alone.
+    F) Estimated net PVS flow induced by vasomotion/slow wave peristaltic pumping alone.}
+    \label{fig:pvs}
 \end{figure}
+
 
 
 % Reduced CSF pulsatility strongly shifts intracranial tracer distribution patterns
