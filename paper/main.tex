@@ -69,15 +69,14 @@ The mechanisms underlying molecular transport within the intracranial
 space are fundamental to human brain health and
 function. Neurodegenerative diseases such as Alzheimer's, Parkinson's,
 and Huntington's disease are all associated with abnormal accumulation
-of protein aggregates together with alterations in transport and
-clearance characteristics~\cite{rasmussen2018glymphatic,
-  harrison2020impaired, eide2023plasma, liu2024glymphatic}. Moreover,
-sleep and conversely sleep-deprivation play a definite yet enigmatic
-role in modulating molecular transport and
-clearance~\cite{xie2013sleep, eide2021sleep, eide2022altered,
-  miao2024brain, hauglund2025norepinephrine}. In the last decade,
-established theories have been challenged by new findings on molecular
-movement and exchange~\cite{iliff2012paravascular,
+of protein aggregates together with alterations in transport
+characteristics~\cite{rasmussen2018glymphatic, harrison2020impaired,
+  eide2023plasma, liu2024glymphatic}. Moreover, sleep and conversely
+sleep-deprivation play a definite yet enigmatic role in modulating
+molecular transport~\cite{xie2013sleep, eide2021sleep,
+  eide2022altered, miao2024brain, hauglund2025norepinephrine}. In the
+last decade, established theories have been challenged by new findings
+on molecular movement and exchange~\cite{iliff2012paravascular,
   ringstad2017glymphatic, louveau2017understanding,
   proulx2021cerebrospinal, bohr2022glymphatic}, including substantial
 variability between individuals and between patient
@@ -152,7 +151,7 @@ and in the brain parenchyma. In terms of transport dynamics, we
 account for heterogeneous diffusion, dispersive mixing induced by
 cardiac and respiratory pulsatility in the CSF spaces, convective
 fluid flow driven by CSF production in the CSF spaces and peristaltic
-pumping in the PVSs, as well as solute exchange and clearance across
+pumping in the PVSs, as well as solute exchange and efflux across
 semi-permeable membranes. Preliminary comparisons indicate that the
 in-silico model predictions align well with the range of tracer distribution
 patterns reported in contrast-enhanced MRI
@@ -249,7 +248,7 @@ Before describing the CSF and perivascular flow modelling in further
 detail, we present a first demonstration of the computational
 framework. Intrathecal administration of gadolinium-based contrast
 agents in combination with MR imaging has emerged as a key technique
-to study solute distribution and clearance in the human
+to study solute distribution patterns in the human
 brain~\cite{ringstad2017glymphatic, ringstad2018brain,
   eide2024functional, van2024human, kipnis2025resolving}. We apply our
 framework to simulate such a contrast-enhanced MRI
@@ -909,7 +908,7 @@ creating a barrier for tracer movement. Previously, by inferring
 transport parameters within the human brain from contrast-enhanced MRI data,
 we have found that molecular transport within the parenchyma is
 well-represented by $\approx 3\times$ enhanced diffusion augmented by
-local clearance e.g.~across the blood-brain barrier, or by
+local efflux e.g.~across the blood-brain barrier, or by
 diffusion-convection with a complex pattern of spatially-varying
 interstitial fluid flow on the order of 1-10 \textmu
 m/min~\cite{vinje2023human}. We will incorporate such transport
@@ -1211,14 +1210,14 @@ are all set to zero.
 %% in the three-dimensional domain $\Omega$ and networks $\Lambda_a,
 %% \Lambda_v$ are all set to zero.
 
-\subsection*{Molecular clearance from the intracranial space and perivascular network ends}
+\subsection*{Molecular efflux from the intracranial space and perivascular network ends}
 
-We model molecular clearance, into the meningeal lymphatics or other
+We model molecular efflux, into the meningeal lymphatics or other
 pathways, across the upper, outer (arachnoid) boundary
 (\Cref{fig:results1}A, \Cref{fig:csf}C), proportional to the
 concentration in the SAS with a rate constant $\beta_{\rm exit}$. We
 set a no-flux condition at the end nodes of the perivascular networks,
-not allowing for direct molecular clearance there.
+not allowing for direct molecular efflux there.
 
 \subsection*{Intracranial influx after intrathecal injection}
 To represent molecular influx into the intracranial compartments
@@ -1377,11 +1376,11 @@ The majority of the simulation time was spent on the Stokes flow and transport m
 \subsection*{Comparison with literature results}
 
 As the primary means of model validation, we compare the in-silico
-predictions of tracer distribution and clearance against
-contrast-enhanced MRI studies (Discussion). In addition, we compare
-auxiliary model quantities (CSF flow rates and pressure differences,
-dispersion factor estimates, and the shapes and sizes of PVSs) with
-the current literature (see Supplementary information S2.1).
+predictions of tracer distribution against contrast-enhanced MRI
+studies (Discussion). In addition, we compare auxiliary model
+quantities (CSF flow rates and pressure differences, dispersion factor
+estimates, and the shapes and sizes of PVSs) with the current
+literature (see Supplementary information S2.1).
 
 \section*{Data availability}
 
