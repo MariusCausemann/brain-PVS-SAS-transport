@@ -746,7 +746,7 @@ respiratory pulsations has been hypothesized to enhance transport in
 the perivascular spaces as well as in the CSF spaces. However, recent
 estimates indicate that the effect of dispersion in the PVS does not
 exceed a factor of 2 compared to diffusion alone
-\cite{asgari2016glymphatic,sharp2019dispersion,bojarskaite2023sleep,asgari2016glymphatic,troyetsky2021dispersion}. In
+\cite{asgari2016glymphatic,sharp2019dispersion,bojarskaite2023sleep,asgari2016glymphatic,troyetsky2021dispersion}. Moreover, the effective diffusion is generally reduced in conduits with permeable compared to non-permeable walls, see e.g.~\cite{decuzzi2006effective, dejam2021role} and references therein. In
 our model, not even a 100-fold increase in the PVS dispersion
 coefficient accelerates transport substantially
 (\Cref{fig:high_low_pvs}H). To illustrate the need for a stronger
@@ -837,7 +837,7 @@ arteries, with higher coverage in ventral SAS regions. In our
 simulations, the PVSs act as rapid transport pathways even with only a
 partial barrier between the PVS and surrounding CSF. Here, we
 emphasize that we report on the isolated effect of variations in
-permeability on molecular transport, separated from any effects on
+diffusive permeability on molecular transport, separated from any effects on
 fluid flow in the PVS. Clearly, one may expect that the presence
 and/or properties of such a barrier would affect also PVS
 flow. However, considering the uncertainty associated with PVS flow
@@ -1049,7 +1049,6 @@ $u_{\rm CSF} = 0$, $p_{\rm CSF} = 0$.
 %% details. We repeat this procedure to compute a corresponding velocity
 %% field $\hat{u}^p_v$ in the perivenous network $\Lambda_v$.
 
-
 \subsection*{Dispersion in the CSF spaces induced by pulsatile CSF flow associated with cardiac and respiratory cycles}
 
 The pulsatile flow of CSF in the SAS and ventricular system
@@ -1155,13 +1154,14 @@ $s \in \Lambda_a, \Lambda_v$) satisfying the following equations:
 In~\eqref{eq:multi_transport_3d_CSF}, $D$ is the (free) diffusion
 coefficient of the solute, $R$ is the dispersion coefficient in the
 CSF spaces, $\bm u_{\rm CSF}$ is the steady CSF velocity, $\xi$ is a
-permeability allowing for transfer/exchange across the interfaces
-$\Gamma_a, \Gamma_v$ between the periarterial and perivenous networks
-and their surroundings, the overlined $\overline{c}$ denotes the
-average of $c$ over cross-sections of $\Gamma_a, \Gamma_v$, and
-$\delta_{\Gamma}$ is a Dirac term concentrated on $\Gamma_a,
-\Gamma_v$. Additionally, in \eqref{eq:multi_transport_3d_PAR}, $\phi = \phi_{\rm ECS}$
-is the brain extracellular volume fraction, $D^{\ast}$ is the effective
+diffusive permeability allowing for solute transfer/exchange across
+the interfaces $\Gamma_a, \Gamma_v$ between the periarterial and
+perivenous networks and their surroundings, the overlined
+$\overline{c}$ denotes the average of $c$ over cross-sections of
+$\Gamma_a, \Gamma_v$, and $\delta_{\Gamma}$ is a Dirac term
+concentrated on $\Gamma_a, \Gamma_v$. Additionally, in
+\eqref{eq:multi_transport_3d_PAR}, $\phi = \phi_{\rm ECS}$ is the
+brain extracellular volume fraction, $D^{\ast}$ is the effective
 diffusion coefficient in the parenchyma, and $\bm u_{\rm PAR}$ is an
 interstitial fluid velocity. In this study, we set $\bm u_{\rm PAR} =
 0$. In~\eqref{eq:multi_transport_1d}, $A = \pi (R_2^2 - R_1^2)$ is the
@@ -1171,10 +1171,10 @@ $\hat{u}$ is the fluid velocity (in the axial direction) in the PVS
 defined for the periarterial and perivenous spaces separately
 ($\hat{u}|_{\Lambda_a} = \hat{u}_a$, $\hat{u}|_{\Lambda_v} =
 \hat{u}_v$). Further, we model the membrane between the parenchyma and
-the CSF spaces as a semi-permeable membrane with permeability
-coefficient $\beta_{\rm pia}$, allowing for a jump in $c$ there. The
-initial concentrations in $\Omega$ and networks $\Lambda_a, \Lambda_v$
-are all set to zero.
+the CSF spaces as a semi-permeable membrane with diffusive
+permeability coefficient $\beta_{\rm pia}$, allowing for a jump in $c$
+there. The initial concentrations in $\Omega$ and networks $\Lambda_a,
+\Lambda_v$ are all set to zero.
 
 %% \subsection*{Molecular transport equations}
 
@@ -1276,9 +1276,9 @@ the baseline value at the adjacent network node.
       Free diffusion coefficient, Gadubutrol & $D^{\rm Gad}$ & $3.8 \cdot 10^{-4}$& $\text{mm}^2/\text{s}$ & \cite{valnes2020apparent}\\
       Parenchymal diffusion coefficient, Gadubutrol & $D^{\rm Gad}_{\rm PAR}$ & $1.2 \cdot 10^{-4}$ & $\text{mm}^2/\text{s}$  & \cite{hornkjol2022csf} \\
       %Permeability coefficient, endfoot sheath & $\xi_{\rm EF}$ & $3.8\cdot 10^{-7}$  & m/s & \cite{koch2023estimates} \\
-      Permeability coefficient, endfoot sheath & $\xi_{\rm EF}$ & $3.8\cdot 10^{-7}$  & m/s & \cite{koch2023estimates} \\
-      Permeability coefficient, PVS--CSF & $\xi_{\rm PVS}$ & $3.8\cdot 10^{-7}$  & m/s & \cite{koch2023estimates} \\
-      Permeability coefficient, pia & $\beta_{\rm pia}$ & $2.6 \cdot 10^{-8}$ & m/s & \cite{riseth2025twocompartment} \\
+      Diffusive permeability coefficient, endfoot sheath & $\xi_{\rm EF}$ & $3.8\cdot 10^{-7}$  & m/s & \cite{koch2023estimates} \\
+      Diffusive permeability coefficient, PVS--CSF & $\xi_{\rm PVS}$ & $3.8\cdot 10^{-7}$  & m/s & \cite{koch2023estimates} \\
+      Diffusive permeability coefficient, pia & $\beta_{\rm pia}$ & $2.6 \cdot 10^{-8}$ & m/s & \cite{riseth2025twocompartment} \\
       Molecular efflux rate & $\beta_{\rm exit}$ & $8.0 \cdot 10^{-7}$ & m/s & $\ast$ \\
       Total amount of injected tracer & $m_{\rm tot}$ & $0.5$ & mmol & \cite{eide2024functional} \\
       Molecular influx, time-to-peak & $T_{\rm max}$ & $1$ & h & $\ast$ \\
@@ -1295,7 +1295,7 @@ the baseline value at the adjacent network node.
     CSF (water), and $D^{\rm Gad}_{\rm PAR}$ its effective diffusion
     coefficient in human cortical tissue, both at body
     temperature~\cite{sykova2008diffusion, valnes2020apparent,
-      hornkjol2022csf}. We use the astrocytic endfeet permeability
+      hornkjol2022csf}. We use the astrocytic endfeet diffusive permeability
     $\xi_{\rm EF}$ estimated by Koch et al.~\cite{koch2023estimates},
     and we set $\xi_{\rm PVS} = \xi_{\rm EF}$ as a baseline.}
   \label{tab:parameters}
