@@ -811,15 +811,21 @@ vasculature, though Gokina et al\cite{gokina1996electrical} report of
 spontaneous vasomotion also in human pial arteries ex-vivo.
 
 % Compartmentalization of the PVS
-To what extent are surface PVSs in communication with the surrounding
-SAS and to what extent are these structurally separated compartments?
+
+\mer{Remove/Revise: To what extent are surface PVSs in communication with the
+  surrounding SAS and to what extent are these structurally separated
+  compartments?}
 Originally, Weller and coauthors~\cite{zhang1990interrelationships,
   zhang1992directional, weller2005microscopic} identified thin sheaths
 of pial cells surrounding human surface arteries and penetrating
-arterioles (but not veins or venules). On the other hand, Bakker and
+arterioles (but not veins or venules).
+
+\mer{Remove/Revise: On the other hand, Bakker and
 coauthors report that the subarachnoid space, the cisterns, ventricles
 and penetrating periarteriolar spaces form a continuous CSF
-space~\cite{bedussi2017paravascular}. Thorne and colleagues study the
+space~\cite{bedussi2017paravascular}.}
+%
+Thorne and colleagues study the
 architectures of rat perivascular spaces in detail, emphasizing the
 presence of openings (stomata) on the interface between the
 vasculature and the CSF within the SAS~\cite{pizzo2018intrathecal,
@@ -1004,7 +1010,6 @@ and the basilar artery (BA) -- as root nodes, and designate the other
 ends as leaf nodes. The resulting perivenous network graph consists of
 $24\,829$ edges connected at $23\,881$ inner nodes and with $949$ end nodes, and the associated domain is denoted by $\Lambda_v$. Finally, we label the outer surface of the PVSs associated with $\Lambda_a$ and $\Lambda_v$, by $\Gamma_a$ and $\Gamma_v$ respectively.
 
-
 \subsection*{Steady flow in the CSF spaces induced by CSF production}
 
 We model CSF as an incompressible Newtonian fluid at low Reynolds and
@@ -1097,25 +1102,27 @@ for the time-average perivascular flow rate $\langle Q' \rangle$
 induced by peristalsis in the arterial network $\Lambda_a$; i.e.~the
 net flow induced by traveling waves of arterial wall motion of
 frequency $f$, amplitude $\varepsilon$ and wave lengths $\lambda$
-(\Cref{fig:pvs}C). The corresponding contribution to the
-periarterial flow velocity is defined for each segment $\Lambda_i$ as
-$\langle Q'_i \rangle/A_i$ where $A_i = \pi ({R_2^i}^2 - {R_1^i}^2)$ is the
+(\Cref{fig:pvs}C). The corresponding contribution to the periarterial
+flow velocity is defined for each segment $\Lambda_i$ as $\langle Q'_i
+\rangle/A_i$ where $A_i = \pi ({R_2^i}^2 - {R_1^i}^2)$ is the
 cross-section area of the PVS segment and $\langle Q_i' \rangle$ is
 the estimated mean flow rate (see Supplementary information S1.4
 \emph{Estimating net perivascular flow induced by peristaltic waves}
 for more details). Two wall motion patterns are considered:
 \emph{cardiac} pulsations with $f = 1.0$Hz, $\lambda = 2$ m and
-$\varepsilon = 1\%$ yielding $\hat{u}_a^c$ (\Cref{fig:pvs}D), and
-very low-frequency \emph{vasomotion} with $f = 0.1$Hz, $\lambda =
-0.02$m, and $\varepsilon = 10\%$ yielding $\hat{u}_a^v$
-(\Cref{fig:pvs}E). No flow induced by peristalsis is considered for
-the perivenous network. In the baseline model, we combine the
-contributions from CSF production and cardiac peristalsis to set
-$\hat{u}$ as $\hat{u}_a = \hat{u}_a^p + \hat{u}_a^c$ in $\Lambda_a$,
-and $\hat{u}_v = \hat{u}_v^p$ in $\Lambda_v$. We remark that none of
-these models account for fluid exchange across the lateral outer
-interface of the PVSs (over $\Gamma_a, \Gamma_v$), while fluid entry
-and exit is allowed at the end nodes of the PVS networks.
+$\varepsilon = 1\%$ yielding $\hat{u}_a^c$ (\Cref{fig:pvs}D), and very
+low-frequency \emph{vasomotion} with $f = 0.1$Hz, $\lambda = 0.02$m,
+and $\varepsilon = 10\%$ yielding $\hat{u}_a^v$ (\Cref{fig:pvs}E). No
+flow induced by peristalsis is considered for the perivenous
+network. In the baseline model, we combine the contributions from CSF
+production and cardiac peristalsis to set $\hat{u}$ as $\hat{u}_a =
+\hat{u}_a^p + \hat{u}_a^c$ in $\Lambda_a$, and $\hat{u}_v =
+\hat{u}_v^p$ in $\Lambda_v$. We remark that none of these models
+account for fluid exchange across the lateral outer interface of the
+PVSs (over $\Gamma_a, \Gamma_v$), while fluid entry and exit is
+allowed at the end nodes of the PVS networks. However, note that we do
+not account for any coupling between the fluid flow entering/exiting
+the PVS networks and flow in the CSF spaces/parenchyma.
 
 \subsection*{Molecular transport equations}
 
