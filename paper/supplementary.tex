@@ -223,6 +223,9 @@ $\mathcal{F}_i = \mathcal{F}_{i, \rm PAR} \cup \mathcal{F}_{i, \rm
 %\label{sec:app:more_maths} 
 \subsection{Modelling and simulating steady state CSF flow via the incompressible Stokes equations}
 \label{sec:app:csf_flow}
+
+\subsubsection{The incompressible Stokes equations}
+
 The time-independent, incompressible Stokes equations model the flow
 of an incompressible Newtonian fluid at low Reynolds numbers, and read
 as follows: over the domain $\Omega_{\rm CSF} \subset \R^3$, find the
@@ -304,99 +307,98 @@ where on exterior facets the average and jump operators take the one-sided value
 \end{subequations}
 
 
-\subsection{Modeling and simulating steady flow in perivascular networks induced by pressure differences}
-\label{sec:app:hydraulic_network}
+%% \subsection{Modeling and simulating steady flow in perivascular networks induced by pressure differences}
+%% \label{sec:app:hydraulic_network}
 
-To model steady flow induced by pressure differences between end nodes
-in a perivascular network $\Lambda$, with edges $\{\Lambda^i\}_i$,
-internal nodes $\mathcal{B}$ and end nodes $\mathcal{N}$, we consider
-the following system of hydraulic network
-equations~\cite{tithof2022network, daversin2022geometrically,
-  gjerde2024directional}. The unknowns are the PVS flux $\hat{q} :
-\Lambda \rightarrow \R$ and pressure $\hat{p} : \Lambda
-\rightarrow \R$, which represent the fluid flux and the average
-pressure across cross-sections of the PVSs, respectively. These are
-defined for each $\Lambda^i$ by solving:
-\begin{subequations}
-\begin{alignat}{2}
-  \hat{q} + \frac{A \kappa}{\mu} \partial_{s} \hat{p} & = 0 &&
-  \quad \text{ in } \Lambda^i , \\ 
-  - \partial_s \hat{q} & = 0 &&
-  \quad \text{ in } \Lambda^i ,  
-\end{alignat} 
-\label{eq:1d_flow}%
-\end{subequations}%
-where $A$ is the area of the PVS cross-sections, $\mu$ is the CSF viscosity as before, and $\kappa$ is derived from an assumption of Poiseuille flow in the annular cross-section of the PVS as~\cite{tithof2022network}: 
-\begin{equation}
-\kappa = \frac18 \left( R_2^2 + R_1^2 - \frac{1}{\ln(R_2/R_1)} (R_2^2- R_1^2) \right). 
-\end{equation}
-The PVS flux $\hat{q}$ and the associated average PVS velocity in the
-axial direction $\hat{u}$ are directly related by the cross-sectional area
-\begin{equation}
-  \hat{q}^i = A^i \hat{u}^i \qquad \foralls \Lambda^i.
-\end{equation}
+%% To model steady flow induced by pressure differences between end nodes
+%% in a perivascular network $\Lambda$, with edges $\{\Lambda^i\}_i$,
+%% internal nodes $\mathcal{B}$ and end nodes $\mathcal{N}$, we consider
+%% the following system of hydraulic network
+%% equations~\cite{tithof2022network, daversin2022geometrically,
+%%   gjerde2024directional}. The unknowns are the PVS flux $\hat{q} :
+%% \Lambda \rightarrow \R$ and pressure $\hat{p} : \Lambda
+%% \rightarrow \R$, which represent the fluid flux and the average
+%% pressure across cross-sections of the PVSs, respectively. These are
+%% defined for each $\Lambda^i$ by solving:
+%% \begin{subequations}
+%% \begin{alignat}{2}
+%%   \hat{q} + \frac{A \kappa}{\mu} \partial_{s} \hat{p} & = 0 &&
+%%   \quad \text{ in } \Lambda^i , \\ 
+%%   - \partial_s \hat{q} & = 0 &&
+%%   \quad \text{ in } \Lambda^i ,  
+%% \end{alignat} 
+%% \label{eq:1d_flow}%
+%% \end{subequations}%
+%% where $A$ is the area of the PVS cross-sections, $\mu$ is the CSF viscosity as before, and $\kappa$ is derived from an assumption of Poiseuille flow in the annular cross-section of the PVS as~\cite{tithof2022network}: 
+%% \begin{equation}
+%% \kappa = \frac18 \left( R_2^2 + R_1^2 - \frac{1}{\ln(R_2/R_1)} (R_2^2- R_1^2) \right). 
+%% \end{equation}
+%% The PVS flux $\hat{q}$ and the associated average PVS velocity in the
+%% axial direction $\hat{u}$ are directly related by the cross-sectional area
+%% \begin{equation}
+%%   \hat{q}^i = A^i \hat{u}^i \qquad \foralls \Lambda^i.
+%% \end{equation}
 
-In addition, to complete~\eqref{eq:1d_flow}, we impose continuity of
-the fluid pressure and conservation of flux at each internal node. Write
-$\hat{p}^i = \hat{p}|_{\Lambda^i}$. These conditions then read as: for
-each $y \in \mathcal{B}$ with connected edges $\mathcal{E}(y)$:
-\begin{subequations}
-\begin{align}
-  \hat{p}^i(y) &= \hat{p}^j(y) \qquad \foralls \Lambda^i, \Lambda^j \in \mathcal{E}(y), \\
-  \sum_{\Lambda^i \in \mathcal{E}(y)} \hat{q}^i n^i(y) &= 0  .
-\end{align}
-\label{eq:1d_flow:bifurcations}
-\end{subequations}
-Here the (normal ``vector") function $n^i$ takes the values in $\left\{-1, 1\right\}$ and 
-defines an orientation of vertices of edge $\Lambda^i$. Specifically, for an edge $\Lambda^i$ oriented from $y_{\rm in}$ to $y_{\rm out}$ we set 
-\begin{equation}
-  n^i(y_{\rm in}) = 1,\quad
-  n^i(y_{\rm{out}}) = -1. %\quad
-  %\mk{n^i(y) = 0 \quad \foralls y \in 
-  %\mathcal{V} \backslash \{ y_{\rm in}, y_{\rm out} \} }.  
-\label{eq:def:sign}
-\end{equation}
+%% In addition, to complete~\eqref{eq:1d_flow}, we impose continuity of
+%% the fluid pressure and conservation of flux at each internal node. Write
+%% $\hat{p}^i = \hat{p}|_{\Lambda^i}$. These conditions then read as: for
+%% each $y \in \mathcal{B}$ with connected edges $\mathcal{E}(y)$:
+%% \begin{subequations}
+%% \begin{align}
+%%   \hat{p}^i(y) &= \hat{p}^j(y) \qquad \foralls \Lambda^i, \Lambda^j \in \mathcal{E}(y), \\
+%%   \sum_{\Lambda^i \in \mathcal{E}(y)} \hat{q}^i n^i(y) &= 0  .
+%% \end{align}
+%% \label{eq:1d_flow:bifurcations}
+%% \end{subequations}
+%% Here the (normal ``vector") function $n^i$ takes the values in $\left\{-1, 1\right\}$ and 
+%% defines an orientation of vertices of edge $\Lambda^i$. Specifically, for an edge $\Lambda^i$ oriented from $y_{\rm in}$ to $y_{\rm out}$ we set 
+%% \begin{equation}
+%%   n^i(y_{\rm in}) = 1,\quad
+%%   n^i(y_{\rm{out}}) = -1. %\quad
+%%   %\mk{n^i(y) = 0 \quad \foralls y \in 
+%%   %\mathcal{V} \backslash \{ y_{\rm in}, y_{\rm out} \} }.  
+%% \label{eq:def:sign}
+%% \end{equation}
 
-Finally, to drive this flow, we impose given fluid pressures $p_0$ at the
-network end nodes:
-\begin{equation}
-  \hat{p}(y) = p_0(y) \qquad y \in \mathcal{N} .
-  \label{eq:1d_flow:bcs}
-\end{equation}
-When modelling flow in the perivascular networks
-$\Lambda_a, \Lambda_v$ induced by CSF production, we impose the fluid
-pressure $p_{\rm CSF}$ computed in the CSF spaces $\Omega_{\rm CSF}$
-(and its harmonic extensions into $\Omega_{\rm PAR}$) as the given
-fluid pressures $p_0$. Note that we here consider steady PVS flow in a
-non-moving domain; the effect of domain motion is addressed
-in~\Cref{sec:app:peristalsis}.
+%% Finally, to drive this flow, we impose given fluid pressures $p_0$ at the
+%% network end nodes:
+%% \begin{equation}
+%%   \hat{p}(y) = p_0(y) \qquad y \in \mathcal{N} .
+%%   \label{eq:1d_flow:bcs}
+%% \end{equation}
+%% When modelling flow in the perivascular networks
+%% $\Lambda_a, \Lambda_v$ induced by CSF production, we impose the fluid
+%% pressure $p_{\rm CSF}$ computed in the CSF spaces $\Omega_{\rm CSF}$
+%% (and its harmonic extensions into $\Omega_{\rm PAR}$) as the given
+%% fluid pressures $p_0$. Note that we here consider steady PVS flow in a
+%% non-moving domain; the effect of domain motion is addressed
+%% in~\Cref{sec:app:peristalsis}.
 
-\subsubsection{Finite element solution of the perivascular network equations} 
-We consider meshes $\mathcal{I}_a, \mathcal{I}_v$ representing a
-conforming subdivision of each of the perivascular networks
-$\Lambda_a$, $\Lambda_v$. Relative to each mesh $\mathcal{I}$, we define the
-space of (discontinuous) piecewise constants $\widehat{Z}_h(\mathcal{I})$ and define
-spaces of continuous piecewise linears $\hat{V}_{h, g}(\mathcal{I})$ with
-prescribed boundary node values (on $\mathcal{N}$) given by $g$:
-\begin{align}
-  \hat{Z}_h(\mathcal{I}) &= \{z \in L^2(\Lambda) ; \, z \vert_{\Lambda^i} \in \mathrm{P}^{0}(\Lambda^i) \, \foralls \Lambda^i \in \mathcal{I}\}, \\
-  \hat{V}_{h, g}(\mathcal{I}) &= \{ v \in C^0(\Lambda) ; \, v \vert_{\Lambda^i} \in \mathrm{P}^1(\Lambda^i), \, v(x) = g(x) \, \foralls x \in \mathcal{N} \} .
-  %Q_h^{\rm PVS} &= \{ q_h \in C^0(\Lambda),  q_h \vert_{\Lambda^i} \in \mathrm{P}^k(\Lambda^i), q_h \vert_{\Gamma_{\rm Pia}} = p_{\rm CSF} \}
-\end{align}
-To discretize~\eqref{eq:1d_flow} with the bifurcation
-conditions~\eqref{eq:1d_flow:bifurcations} and boundary
-conditions~\eqref{eq:1d_flow:bcs}, we use the space of continuous
-functions $\hat{Z}_h(\mathcal{I})$ to enforce the continuity of the pressure at
-bifurcation points, while the conservation of flux is enforced
-(weakly) through the variational formulation. The discrete variational form of the equations then reads: Find $(\hat{q}, \hat{p}) \in \hat{Z}_h(\mathcal{I}) \times \hat{V}_{h, p_0}(\mathcal{I})$ such that
-\begin{subequations}
-\begin{align}
-  \langle \hat{q}, z \rangle +  \langle z, \frac{A \kappa}{\mu} \partial_s \hat{p}  \rangle &= 0 \quad \forall z \in \hat{Z}_h(\mathcal{I}) \\
-  \langle \hat{q}, \partial_s w \rangle &= 0 \quad  \forall w \in \hat{V}_{h, 0}(\mathcal{I}).
-\end{align}
-\end{subequations}%
-where $\langle \cdot, \cdot \rangle$ denotes the $L^2(\mathcal{I})$-inner product and is defined segment-wise. For a stability and convergence analysis of this discrete model, we refer to previously presented results\cite{gjerde2024directional}. 
-
+%% \subsubsection{Finite element solution of the perivascular network equations} 
+%% We consider meshes $\mathcal{I}_a, \mathcal{I}_v$ representing a
+%% conforming subdivision of each of the perivascular networks
+%% $\Lambda_a$, $\Lambda_v$. Relative to each mesh $\mathcal{I}$, we define the
+%% space of (discontinuous) piecewise constants $\widehat{Z}_h(\mathcal{I})$ and define
+%% spaces of continuous piecewise linears $\hat{V}_{h, g}(\mathcal{I})$ with
+%% prescribed boundary node values (on $\mathcal{N}$) given by $g$:
+%% \begin{align}
+%%   \hat{Z}_h(\mathcal{I}) &= \{z \in L^2(\Lambda) ; \, z \vert_{\Lambda^i} \in \mathrm{P}^{0}(\Lambda^i) \, \foralls \Lambda^i \in \mathcal{I}\}, \\
+%%   \hat{V}_{h, g}(\mathcal{I}) &= \{ v \in C^0(\Lambda) ; \, v \vert_{\Lambda^i} \in \mathrm{P}^1(\Lambda^i), \, v(x) = g(x) \, \foralls x \in \mathcal{N} \} .
+%%   %Q_h^{\rm PVS} &= \{ q_h \in C^0(\Lambda),  q_h \vert_{\Lambda^i} \in \mathrm{P}^k(\Lambda^i), q_h \vert_{\Gamma_{\rm Pia}} = p_{\rm CSF} \}
+%% \end{align}
+%% To discretize~\eqref{eq:1d_flow} with the bifurcation
+%% conditions~\eqref{eq:1d_flow:bifurcations} and boundary
+%% conditions~\eqref{eq:1d_flow:bcs}, we use the space of continuous
+%% functions $\hat{Z}_h(\mathcal{I})$ to enforce the continuity of the pressure at
+%% bifurcation points, while the conservation of flux is enforced
+%% (weakly) through the variational formulation. The discrete variational form of the equations then reads: Find $(\hat{q}, \hat{p}) \in \hat{Z}_h(\mathcal{I}) \times \hat{V}_{h, p_0}(\mathcal{I})$ such that
+%% \begin{subequations}
+%% \begin{align}
+%%   \langle \hat{q}, z \rangle +  \langle z, \frac{A \kappa}{\mu} \partial_s \hat{p}  \rangle &= 0 \quad \forall z \in \hat{Z}_h(\mathcal{I}) \\
+%%   \langle \hat{q}, \partial_s w \rangle &= 0 \quad  \forall w \in \hat{V}_{h, 0}(\mathcal{I}).
+%% \end{align}
+%% \end{subequations}%
+%% where $\langle \cdot, \cdot \rangle$ denotes the $L^2(\mathcal{I})$-inner product and is defined segment-wise. For a stability and convergence analysis of this discrete model, we refer to previously presented results\cite{gjerde2024directional}. 
 
 \subsection{Estimating dispersion factors from pulsatile CSF flow}
 \label{sec:app:dispersion}
