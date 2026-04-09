@@ -677,33 +677,32 @@ H) mean concentration in the CSF, parenchyma and arterial and venous PVS over ti
   flow measurements, SOPHI (X, Rosen, Lewis, XXX et al) in the
   Discussion instead of the flow models.}
 
-
 %% Summary of findings
 We have presented an in-silico modelling framework for solute
 transport in human intracranial spaces, informed by multi-modal
-structural MRI, and integrating transport mechanisms across spatial
-and temporal scales. To demonstrate its features and relevance, we
+structural MRI and integrating transport mechanisms across spatial and
+temporal scales. To demonstrate its features and applicability, we
 have presented a series of simulation scenarios relating to
-intracranial distribution of an gadolinium-based contrast agent after
+intracranial distribution of a gadolinium-based contrast agent after
 intrathecal injection, exploring the influence of CSF space and
-(peri)vascular morphology, physiological factors such as cardiac and
-respiratory pulsatility, as well as of pathological conditions such as
-enlarged PVSs in the SAS. In our simulations, the balance
-between CSF production and intracranial pulsatility significantly
-affects tracer distribution patterns at the macroscale, with
-e.g.~ventricular tracer reflux after intrathecal injection in the
-absence of CSF production, and preference towards anterior brain
-regions with reduced pulsatility. In terms of perivascular
-pathways, even moderate net flow on the order of 0.1--1.0 \textmu m/s
-in the surface PVSs results in earlier appearance of tracer around
-major cerebral arteries in our model scenarios. This effect is more
-pronounced -- with up to a three-hour difference in time of arrival --
-with mean PVS flow rates of approximately 10 \textmu m/s. Our models
-of CSF flow in perivascular networks, based on first principles and
-asymptotic analysis, predict net flow of such magnitudes and both
-antegrade and retrograde flow within the periarterial network. In our
-simulations, the PVSs thus function as highways facilitating rapid
-transport, even in the absence of tight structural barriers.
+(peri)vascular morphology as well as physiological factors such as
+cardiac, respiratory, and low-frequency pulsatility. In our
+simulations, the balance between CSF production and intracranial
+pulsatility significantly affects tracer distribution patterns at the
+macroscale, with e.g.~ventricular tracer reflux after intrathecal
+injection in the absence of CSF production, and preference towards
+anterior brain regions with reduced pulsatility. In terms of
+perivascular pathways, even moderate net flow on the order of 0.1--1.0
+\textmu m/s in the surface PVSs results in earlier appearance of
+tracer around major cerebral arteries in our model scenarios. This
+effect is more pronounced -- with up to a three-hour difference in
+time of arrival -- with mean PVS flow rates of approximately 10
+\textmu m/s. Our models of CSF flow in perivascular networks, based on
+first principles and asymptotic analysis, predict net flow of such
+magnitudes and both antegrade and retrograde flow within the
+periarterial network. In our simulations, the PVSs thus function as
+highways facilitating rapid transport, even in the absence of tight
+structural barriers.
 
 %Finally, dilated PVS in the SAS will cause a substantial reduction in cardiac- and vasomotion-driven flow velocities, which in turn impedes perivascular transport.
 
@@ -733,40 +732,43 @@ in the CSF spaces (2 hours after first tracer appearance at the
 craniocervical junction). In particular, we note that the variation in
 predicted distribution patterns associated with reduced CSF production
 or reduced intracranial pulsatility is compatible with the substantial
-individual variation observed clinically. In our simulations, about
+individual variation observed clinically. \fixme{In our simulations, about
 20\% of the tracer reaching the cranium enters the parenchyma, which
 aligns with the reported peak concentration values of $0.5\,$mmol/l in
 the SAS and $0.1\,$mmol/l in the parenchyma reported by Watts et
-al~\cite{watts2019measuring}.
+al~\cite{watts2019measuring}}.
 
-Our simulation results are compatible with the concept that intracranial
-tracer transport relies one or more mechanisms in addition to CSF
-production and cardiac peristalsis. Dispersion due to cardiac and
-respiratory pulsations has been hypothesized to enhance transport in
-the perivascular spaces as well as in the CSF spaces. However, recent
-estimates indicate that the effect of dispersion in the PVS does not
-exceed a factor of 2 compared to diffusion alone
-\cite{asgari2016glymphatic,sharp2019dispersion,bojarskaite2023sleep,asgari2016glymphatic,troyetsky2021dispersion}. Moreover, the effective diffusion is generally reduced in conduits with permeable compared to non-permeable walls, see e.g.~\cite{decuzzi2006effective, dejam2021role} and references therein. In
-our model, not even a 100-fold increase in the PVS dispersion
-coefficient accelerates transport substantially
-(\Cref{fig:high_low_pvs}H). To illustrate the need for a stronger
-advective driver, we compared our findings to tracer arrival times
-reported by Eide and Ringstad~\cite{eide2024functional}, who observed
-a delay of just 15.3 min between the M1 and M2 segments of the
-MCA. First, we note that the spaces studied by Eide and
-Ringstad~\cite{eide2024functional}, labeled therein as the PVSAS, are
-naturally compared to the parts of our surface PVS networks embedded
-within the SAS. Our baseline model, accounting only for CSF production
-and cardiac-driven flow, predicted a physiologically unrealistic delay
-of over three hours. In contrast, our high PVS flow scenario, which
-incorporates the effects of low-frequency vasomotion, yielded a more
-consistent delay of 24 minutes. Furthermore, after adjusting for the
-13 min travel time from injection to the craniocervical
-junction~\cite{eide2024functional}, the high PVS flow model's FTAs
-(84--108 min for M1) aligns well with the upper end of the reported
-clinical range (37.8 $\pm$ 47.0), particularly when considering
-potentially delayed transport due to the limited caudal extent of our
-PVS network.
+Our simulation results are compatible with the concept that
+intracranial tracer transport relies one or more mechanisms in
+addition to CSF production and cardiac peristalsis. Dispersion due to
+cardiac and respiratory pulsations has been hypothesized to enhance
+transport in the perivascular spaces as well as in the CSF
+spaces. However, recent estimates indicate that the effect of
+dispersion in the PVS does not exceed a factor of 2 compared to
+diffusion alone
+\cite{asgari2016glymphatic,sharp2019dispersion,bojarskaite2023sleep,troyetsky2021dispersion}.
+Moreover, the effective diffusion is typically reduced in conduits
+with semi-permeable compared to non-permeable walls, see
+e.g.~the studies\cite{decuzzi2006effective, dejam2021role} and references
+therein. In our model, not even a 100-fold increase in the PVS
+dispersion coefficient accelerates transport substantially
+(\Cref{fig:high_low_pvs}H). We also compared our simulation results to
+tracer arrival times reported by Eide and
+Ringstad~\cite{eide2024functional}, who observed a delay of just 15.3
+min between the M1 and M2 segments of the MCA. First, we note that the
+spaces studied by Eide and Ringstad~\cite{eide2024functional}, labeled
+therein as the PVSAS, are naturally compared to the parts of our
+surface PVS networks embedded within the SAS. Our baseline model,
+accounting for CSF production and cardiac-driven periarterial flow,
+predicted a physiologically unrealistic delay of over three hours. In
+contrast, our high PVS flow scenario, which incorporates the effects
+of low-frequency vasomotion, yielded a more consistent delay of 24
+minutes. Furthermore, after adjusting for the 13 min travel time from
+injection to the craniocervical junction~\cite{eide2024functional},
+the high PVS flow model's FTAs (84--108 min for M1) aligns well with
+the upper end of the reported clinical range (37.8 $\pm$ 47.0),
+particularly when considering potentially delayed transport due to the
+limited caudal extent of our PVS network.
 
 % PVS flow predictions. 
 The existence, magnitude, and directionality of flow in surface and
