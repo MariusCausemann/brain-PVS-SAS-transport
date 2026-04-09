@@ -137,51 +137,39 @@ and in turn to what extent such structural compartmentalization is a
 prerequisite for effective perivascular transport.
  
 % Main contribution
-In this study, by leveraging geometric model reduction and
-mixed-dimensional modelling~\cite{masri2024modelling}, structural
-magnetic resonance (MR) images~\cite{hodneland2019new}, and high
-performance computing, we introduce an integrative computational
-framework for modelling intracranial molecular transport. Focusing on
-the interplay between perivascular pathways, pulsatility and CSF flow
+In this work, we present an integrative computational framework for
+modelling intracranial solute transport. Focusing on the interplay
+between perivascular pathways, intracranial pulsatility, and CSF flow
 dynamics, our models predict the temporal evolution and spatial
-distribution of a solute concentration within a detailed geometric
-representation of the human SAS and ventricular system, in networks of
-surface PVSs (i.e.~those surrounding arteries and veins in the SAS),
-and in the brain parenchyma. In terms of transport dynamics, we
-account for heterogeneous diffusion, dispersive mixing induced by
-cardiac and respiratory pulsatility in the CSF spaces, convective
-fluid flow driven by CSF production in the CSF spaces and peristaltic
-pumping in the PVSs, as well as solute exchange and efflux across
-semi-permeable membranes. Preliminary comparisons indicate that the
-in-silico model predictions align well with the range of tracer distribution
-patterns reported in contrast-enhanced MRI
-studies~\cite{ringstad2017glymphatic, ringstad2018brain,
-  watts2019measuring, eide2024functional}.
+distribution of a solute concentration within image-derived
+representations of the human SAS and ventricular system, in networks
+of surface PVSs (i.e.~those surrounding arteries and veins in the
+SAS), and in the brain parenchyma. We leverage a mixed-dimensional
+approach based on geometric model reduction~\cite{masri2024modelling},
+embedding one-dimensional PVS networks within geometrically-resolved,
+three-dimensional volumes, to connect rapid mesoscale phenomena --
+such as perivascular pulsations occurring every few seconds -- with
+macroscale observations of tissue-level tracer distribution over hours
+to days. In terms of transport dynamics, we account for heterogeneous
+diffusion, dispersive mixing induced by cardiac and respiratory
+pulsatility in the CSF spaces, convective fluid flow driven by CSF
+production in the CSF spaces and peristaltic pumping in the PVSs, as
+well as solute exchange and efflux across semi-permeable membranes. We
+demonstrate the applicability of this computational framework via a
+series of model scenarios motivated by current questions relating to
+molecular movement within the human brain environment. In particular,
+we simulate how the balance between CSF production and intracranial
+pulsatility can shape large-scale features of tracer distribution, how
+perivascular fluid flow induced by cardiac pulsations or low-frequency
+vasomotion can impact tracer arrival times within the surrounding CSF
+spaces and parenchyma, and how changes in structural properties, such
+as the diffusive permeability of the PVS interface or enlarged PVSs,
+can impact perivascular transport and intracranial tracer spread. This
+openly available technology platform\cite{ZENODO} allows for
+evaluating the integrated effect of different intracranial transport
+mechanisms in subject-specific geometries, and provides a foundation
+for future in-silico studies of brain solute transport.
 
-Our main contribution is an in-silico modelling framework that allows
-for evaluating the integrated effect of different proposed transport
-mechanisms in subject-specific geometries. The mixed-dimensional
-approach, embedding one-dimensional PVS networks within
-geometrically-resolved, three-dimensional volumes, is key to
-connecting rapid mesoscale phenomena -- such as perivascular
-pulsations occurring every few seconds -- with macroscale observations
-of tissue-level tracer distribution over hours to days. We demonstrate
-the applicability of this computational framework via a series of
-model scenarios motivated by current questions relating to molecular
-movement within the human brain environment. In particular, we
-simulate how the balance between CSF production and intracranial
-pulsatility can shape large-scale features of the tracer
-distribution. We examine how perivascular fluid flow induced by
-cardiac pulsations or low-frequency vasomotion can be expected to
-impact tracer arrival times within the surrounding CSF spaces and
-parenchyma. Finally, we study how changes in structural properties,
-such as the diffusive permeability of the PVS interface or enlarged
-PVSs, can impact perivascular transport and intracranial tracer
-spread. The openly available technology platform\cite{ZENODO} allows
-for transferring, integrating, and examining insights from clinical,
-experimental, and theoretical studies, and provides a starting-point
-for further in-silico studies of brain solute transport.
- 
 \section*{Results}
 
 %\fixme{We present a computational framework first, and then demonstrate it by simulating a contrast-enhanced MRI protocol, including a series of model variations.}
