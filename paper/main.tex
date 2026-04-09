@@ -287,10 +287,10 @@ The convective flow field and dispersion factors in the CSF spaces
 enter as coefficients in our computational framework for transport
 (${\bm u}_{\rm CSF}$ and $R$ in~\eqref{eq:multi_transport}). To inform
 these, we have defined auxiliary computational flow models in the CSF
-spaces (see Methods, \Cref{fig:results1}B--C, \fixme{Figure SX}).  To
-model the convective flow field, we impose a constant CSF inflow of
-$400$ mL/day at the lateral ventricle surfaces, representing the
-average daily physiological CSF production rate
+spaces (see Methods, \Cref{fig:results1}B--C, \fixme{Supplementary
+  Fig.~X}).  To model the convective flow field, we impose a constant
+CSF inflow of $400$ mL/day at the lateral ventricle surfaces,
+representing the average daily physiological CSF production rate
 \cite{lehtinen2013choroid}. This assumption yields a maximum flow
 velocity of $1.85\,$mm/s (in the aqueduct) and a mean velocity in the
 SAS of $2.6$ \textmu m/s (\Cref{fig:csf}A--B). To estimate the
@@ -947,7 +947,7 @@ of solute movement within the human brain environment.
 
 This section gives a condensed summary of the in-silico modelling
 framework. For a complete description of the mathematical models and
-simulation scenarios, we refer to the Supplementary information S1.
+simulation scenarios, we refer to the Supplementary Methods.
 
 \subsection*{Intracranial spaces: ventricular system, SAS, and parenchyma}
 
@@ -1038,18 +1038,17 @@ dispersion~\cite{taylor1953dispersion, watson1983diffusion,
   asgari2016glymphatic, sharp2019dispersion, ray2021quantitative,
   troyetsky2021dispersion}. To account for such dispersive effects,
 while bridging from the pulsatile flow time scale of seconds to a
-solute transport time scale of hours, we estimate
-spatially-varying, cardiac- and respiratory dispersion factors ($R_c$
-and $R_r$) in $\Omega_{\rm CSF}$ (\Cref{fig:results1}). Combining the
-cardiac and respiratory effects, we set $R = R_c + R_r$ in
-$\Omega_{\rm CSF}$. To compute $R_c$ and $R_r$, we rely on a
-simplified model that combines computational estimates of peak CSF
-pressure gradients (\Cref{fig:results1}) with theoretical estimates
-for shear-augmented (Taylor) dispersion \cite{taylor1953dispersion,
-  watson1983diffusion, sharp2019dispersion}. We present the method in
-brief here, and refer the Supplementary information S1.3
-\emph{Estimating dispersion factors from pulsatile CSF flow} for a
-comprehensive description.
+solute transport time scale of hours, we estimate spatially-varying,
+cardiac- and respiratory dispersion factors ($R_c$ and $R_r$) in
+$\Omega_{\rm CSF}$ (\Cref{fig:results1}). Combining the cardiac and
+respiratory effects, we set $R = R_c + R_r$ in $\Omega_{\rm CSF}$. To
+compute $R_c$ and $R_r$, we rely on a simplified model that combines
+computational estimates of peak CSF pressure gradients
+(\Cref{fig:results1}) with theoretical estimates for shear-augmented
+(Taylor) dispersion \cite{taylor1953dispersion, watson1983diffusion,
+  sharp2019dispersion}. We present the method in brief here, and refer
+the Supplementary Methods, S1.3 Estimating dispersion factors from
+pulsatile CSF flow, for a comprehensive description.
 
 To estimate the cardiac contribution, we compute the steady state CSF
 pressure and flow fields at peak systolic blood inflow. Modelling the
@@ -1059,14 +1058,14 @@ $6\,$ml/s~\cite{baledent2014imaging, causemann2022human} in the SAS
 across its outer surface and $0.31\,$ml/s across the lateral ventricle
 surface\cite{vinje2019respiratory}. This scenario sets up a pressure
 drop of $10\,$Pa ($0.075$ mmHg) between the lateral ventricles and the
-spinal SAS and a maximum flow velocity of $19.8\,$cm/s (\fixme{Figure
-  SX}). For the respiratory contribution, we employ the same
-methodology, but with a total rate of $1\,$ml/s
+spinal SAS and a maximum flow velocity of $19.8\,$cm/s
+(\fixme{Supplementary Fig.~X}). For the respiratory contribution, we
+employ the same methodology, but with a total rate of $1\,$ml/s
 \cite{gutierrez2022effect} in the SAS and $0.121\,$ml/s
 \cite{liu2024using} in the lateral ventricles, yielding a respiratory
 peak flow volume of $1.121\,$ ml/s at the craniocervical junction
-(\fixme{Figure SX})). While the resulting flow velocities are only
-about one fourth of their cardiac-induced counterparts, the
+(\fixme{Supplementary Fig.~X})). While the resulting flow velocities
+are only about one fourth of their cardiac-induced counterparts, the
 respiratory dispersive effect reaches a factor of up to 320 due the
 lower respiratory frequency of $0.25\,$Hz.
 
@@ -1086,20 +1085,23 @@ frequency $f$, amplitude $\varepsilon$ and wave lengths $\lambda$
 flow velocity is defined for each segment $\Lambda_i$ as $\langle Q'_i
 \rangle/A_i$ where $A_i = \pi ({R_2^i}^2 - {R_1^i}^2)$ is the
 cross-section area of the PVS segment and $\langle Q_i' \rangle$ is
-the estimated mean flow rate (see Supplementary information S1.4
-\emph{Estimating net perivascular flow induced by peristaltic waves}
-for more details). Two wall motion patterns are considered:
-\emph{cardiac} pulsations with $f = 1.0$Hz, $\lambda = 2$ m and
-$\varepsilon = 1\%$ yielding $\hat{u}_a^c$ (\Cref{fig:pvs}D), and very
-low-frequency \emph{vasomotion} with $f = 0.1$Hz, $\lambda = 0.02$m,
-and $\varepsilon = 10\%$ yielding $\hat{u}_a^v$ (\Cref{fig:pvs}E). No
-flow induced by peristalsis is considered for the perivenous
-network, and we thus set $\hat{u}_v = 0$ in $\Lambda_v$ in all simulations.
-For the periarterial network, we account for cardiac peristalsis in the baseline model, and set $\hat{u}$ as $\hat{u}_a = \hat{u}_a^c$ in $\Lambda_a$. 
-We remark that none of these models account for fluid exchange across the lateral outer interface of the PVSs (over $\Gamma_a, \Gamma_v$), while fluid entry and exit is
-allowed at the end nodes of the PVS networks. However, note that we do
-not account for any coupling between the fluid flow entering/exiting
-the PVS networks and flow in the CSF spaces/parenchyma.
+the estimated mean flow rate (see Supplementary Methods, S1.4
+Estimating net perivascular flow induced by peristaltic waves, for
+more details). Two wall motion patterns are considered: \emph{cardiac}
+pulsations with $f = 1.0$Hz, $\lambda = 2$ m and $\varepsilon = 1\%$
+yielding $\hat{u}_a^c$ (\Cref{fig:pvs}D), and very low-frequency
+\emph{vasomotion} with $f = 0.1$Hz, $\lambda = 0.02$m, and
+$\varepsilon = 10\%$ yielding $\hat{u}_a^v$ (\Cref{fig:pvs}E). No flow
+induced by peristalsis is considered for the perivenous network, and
+we thus set $\hat{u}_v = 0$ in $\Lambda_v$ in all simulations.  For
+the periarterial network, we account for cardiac peristalsis in the
+baseline model, and set $\hat{u}$ as $\hat{u}_a = \hat{u}_a^c$ in
+$\Lambda_a$.  We remark that none of these models account for fluid
+exchange across the lateral outer interface of the PVSs (over
+$\Gamma_a, \Gamma_v$), while fluid entry and exit is allowed at the
+end nodes of the PVS networks. However, note that we do not account
+for any coupling between the fluid flow entering/exiting the PVS
+networks and flow in the CSF spaces/parenchyma.
 
 \subsection*{solute transport equations}
 
@@ -1236,7 +1238,7 @@ and modulated by the porosity and tortuosity ($\lambda = 1.78$) in the
 parenchyma $D^{\ast} = D^{\rm Gad}_{\rm PAR}$. We set $\xi$ depending
 on whether the PVS segment is fully embedded within the CSF spaces
 ($\xi = \xi_{\rm PVS}$) or parenchyma ($\xi = \xi_{\rm EF}$), or
-neither (see also Supplementary information S1). To account for the
+neither (see also Supplementary Methods). To account for the
 unresolved continuation of the perivascular network beyond the imaging
 resolution limit, we implemented a permeability gradient to avoid
 artificial tracer buildup. At the end nodes of $\Lambda_a$,
@@ -1315,7 +1317,7 @@ the baseline value at the adjacent network node.
 \subsection*{Numerical approximation, implementation, and verification}
 
 We give a concise summary of the numerical approach here (see
-Supplementary methods for a comprehensive description). To
+Supplementary Methods for a comprehensive description). To
 solve~\eqref{eq:multi_transport} numerically, we use the interior
 penalty discontinuous Galerkin (DG) method with weighted averages and
 upwinding for the convection term in the 3D
@@ -1347,7 +1349,7 @@ framework~\cite{alnaes2015fenics}, and the 3D-1D coupling is handled
 by the extension FEniCS\textsubscript{ii}~\cite{kuchta2020assembly}.
 The correctness and accuracy of the numerical solutions were verified
 by a series of numerical verification experiments (see Supplementary
-information S1.5).
+Methods, S1.6 Numerical verification).
 
 The majority of the simulation time was spent on the Stokes flow and transport model simulations. Each Stokes flow simulation utilizes a hybrid parallel approach with 16 MPI processes and 4 threads each, requiring approximately 300 GB of RAM and completing in 23 minutes. The transport model is limited to serial execution by FEniCS\textsubscript{ii}, but employs 16 threads for the linear system factorization, taking 22 minutes and consuming about 50 GB of memory on a AMD EPYC 9684X machine.
 
@@ -1358,7 +1360,7 @@ predictions of tracer distribution against contrast-enhanced MRI
 studies (Discussion). In addition, we compare auxiliary model
 quantities (CSF flow rates and pressure differences, dispersion factor
 estimates, and the shapes and sizes of PVSs) with the current
-literature (see Supplementary information S2.1).
+literature (see Supplementary Discussion).
 
 \section*{Data availability}
 
