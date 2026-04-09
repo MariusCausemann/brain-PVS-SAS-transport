@@ -172,8 +172,6 @@ for future in-silico studies of brain solute transport.
 
 \section*{Results}
 
-%\fixme{We present a computational framework first, and then demonstrate it by simulating a contrast-enhanced MRI protocol, including a series of model variations.}
-
 \subsection*{An integrative computational framework for intracranial solute transport informed by multi-modal MRI}
 
 \begin{figure}
@@ -288,29 +286,30 @@ parenchyma (35\%), the venous PVS (8\%) and the arterial PVS (5\%)
      \label{fig:intrathecal}
 \end{figure}
 
-\newpage
 \subsection*{Modelling CSF flow and dispersion and variations induced by changes in pulsatility}
 
 The convective flow field and dispersion factors in the CSF spaces
 enter as coefficients in our computational framework for transport
-(${\bm u}_{\rm CSF}$ and $R$ in~\eqref{eq:multi_transport}).
-%\fixme{As MRI is improving, these could be informed by CSF velocity
-%  measurements or CSF mobility maps.}
-To inform these, we have defined auxiliary computational flow models
-in the CSF spaces (see Methods, \Cref{fig:results1}B--C, \fixme{Figure SX}).
-To model the convective flow field, we impose a constant CSF inflow of $400$ mL/day at the lateral ventricle surfaces, representing the average daily physiological CSF production rate \cite{lehtinen2013choroid}. This assumption yields a maximum flow velocity of $1.85\,$mm/s (in the aqueduct) and a mean velocity in the SAS of $2.6$ \textmu m/s
-(\Cref{fig:csf}A--B). To estimate the dispersive effect of pulsatile
-CSF flow, we employ the theory of shear-augmented dispersion together
-with computational fluid dynamics to determine spatially-varying
-dispersion factors $R_c, R_r$ enhancing the effective solute
-diffusivity in the CSF spaces by $R = R_c + R_r$. Assuming a cardiac
-frequency of $1\,$Hz, we infer that the cardiac-induced pulsatile CSF
-flow increases the effective diffusion by more than two orders of
-magnitude in the aqueduct and near the cisterna magna, but has little
-effect ($R_c < 1$) in most of the SAS (\Cref{fig:results1}C--D). The
-dispersive effect from respiration reaches a factor of up to 320 due
-the lower respiratory frequency of $0.25\,$Hz
-(\Cref{fig:results1}E--F).
+(${\bm u}_{\rm CSF}$ and $R$ in~\eqref{eq:multi_transport}). To inform
+these, we have defined auxiliary computational flow models in the CSF
+spaces (see Methods, \Cref{fig:results1}B--C, \fixme{Figure SX}).  To
+model the convective flow field, we impose a constant CSF inflow of
+$400$ mL/day at the lateral ventricle surfaces, representing the
+average daily physiological CSF production rate
+\cite{lehtinen2013choroid}. This assumption yields a maximum flow
+velocity of $1.85\,$mm/s (in the aqueduct) and a mean velocity in the
+SAS of $2.6$ \textmu m/s (\Cref{fig:csf}A--B). To estimate the
+dispersive effect of pulsatile CSF flow, we employ the theory of
+shear-augmented dispersion together with computational fluid dynamics
+to determine spatially-varying dispersion factors $R_c, R_r$ enhancing
+the effective solute diffusivity in the CSF spaces by $R = R_c +
+R_r$. Assuming a cardiac frequency of $1\,$Hz, we infer that the
+cardiac-induced pulsatile CSF flow increases the effective diffusion
+by more than two orders of magnitude in the aqueduct and near the
+cisterna magna, but has little effect ($R_c < 1$) in most of the SAS
+(\Cref{fig:results1}C--D). The dispersive effect from respiration
+reaches a factor of up to 320 due the lower respiratory frequency of
+$0.25\,$Hz (\Cref{fig:results1}E--F).
   
 Tracer distribution patterns observed after intrathecal injection
 differ substantially between subjects and in conditions associated
