@@ -897,13 +897,13 @@ $\approx 3\times$ enhanced diffusion augmented by local efflux
 e.g.~across the blood-brain barrier, or by diffusion-convection with a
 complex pattern of spatially-varying interstitial fluid flow on the
 order of 1-10 \textmu m/min~\cite{vinje2023human}. We will incorporate
-such transport mechanisms within the parenchyma in future work. We
+such transport mechanisms within the parenchyma in future work. \fixme{We
 also note that we observe tracer accumulation at the perivascular
 network ends after 12 hours, similar to that previously observed for
 microspheres~\cite{bedussi2018paravascular, mestre2018flow}, which
 here can be interpreted as as an artifact of our modelling of the
 solute exchange between the network ends and their surroundings,
-creating a bottleneck for tracer movement. To compensate, we have
+creating a bottleneck for tracer movement.} To compensate, we have
 focused on reporting detailed predictions in the CSF spaces and
 surface PVS after not more than 24 hours.
 
@@ -1202,9 +1202,9 @@ there. The initial concentrations in $\Omega$ and networks $\Lambda_a,
 We model solute efflux, into the meningeal lymphatics or other
 pathways, across the upper, outer (arachnoid) boundary
 (\Cref{fig:results1}A, \Cref{fig:csf}C), proportional to the
-concentration in the SAS with a rate constant $\beta_{\rm exit}$. We
+concentration in the SAS with a rate constant $\beta_{\rm exit}$. \fixme{We
 set a no-flux condition at the end nodes of the perivascular networks,
-not allowing for direct solute efflux there.
+not allowing for direct solute efflux there.}
 
 \subsection*{Intracranial influx after intrathecal injection}
 To represent solute influx into the intracranial compartments
@@ -1238,13 +1238,13 @@ and modulated by the porosity and tortuosity ($\lambda = 1.78$) in the
 parenchyma $D^{\ast} = D^{\rm Gad}_{\rm PAR}$. We set $\xi$ depending
 on whether the PVS segment is fully embedded within the CSF spaces
 ($\xi = \xi_{\rm PVS}$) or parenchyma ($\xi = \xi_{\rm EF}$), or
-neither (see also Supplementary Methods). To account for the
+neither (see also Supplementary Methods). \fixme{To account for the
 unresolved continuation of the perivascular network beyond the imaging
 resolution limit, we implemented a permeability gradient to avoid
 artificial tracer buildup. At the end nodes of $\Lambda_a$,
 permeability was increased by a factor of 100 to simulate tracer
 exchange with the surrounding CSF/tissue, and linearly decreasing to
-the baseline value at the adjacent network node.
+the baseline value at the adjacent network node.}
 \begin{table}
   \begin{center}
     \begin{tabular}{ll|ccc}
