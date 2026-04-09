@@ -1,4 +1,5 @@
 
+paper/*.pdf
 .DS_*
 *.aux
 *.bbl
