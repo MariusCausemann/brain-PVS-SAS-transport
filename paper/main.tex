@@ -594,9 +594,9 @@ with higher diffusive permeability, as does the time lag between the
 concentration peaks in these domains.
 
 %Thus, in our model, fast transport along the PVS is not contingent
-%upon a structural compartmentalization of the PVS.
-%, whereas a sharp concentration gradient between PVS and CSF is
-%unlikely without a restricting barrier.
+%upon a structural compartmentalization of the PVS, whereas a sharp
+%concentration gradient between PVS and CSF is unlikely without a
+%restricting barrier.
 \begin{figure}
     \centering
     \includegraphics[width=0.95\textwidth]{figures/figure4.png}
@@ -743,8 +743,8 @@ dispersion in the PVS does not exceed a factor of 2 compared to
 diffusion alone
 \cite{asgari2016glymphatic,sharp2019dispersion,bojarskaite2023sleep,troyetsky2021dispersion}.
 Moreover, the effective diffusion is typically reduced in conduits
-with semi-permeable compared to non-permeable walls, see
-e.g.~the studies\cite{decuzzi2006effective, dejam2021role} and references
+with semi-permeable compared to non-permeable walls, see e.g.~the
+analyses\cite{decuzzi2006effective, dejam2021role} and references
 therein. In our model, not even a 100-fold increase in the PVS
 dispersion coefficient accelerates transport substantially
 (\Cref{fig:high_low_pvs}H). We also compared our simulation results to
@@ -785,8 +785,8 @@ of oscillatory flow, with an average (net) CSF velocity of 17 $\pm$ 2
 networks, Boster et al~\cite{boster2023artificial} estimate PVS
 velocities of $12.75 \pm 6.25$ \textmu m/s. Less is known about the
 magnitude and directionality of CSF flow in surface PVSs in humans,
-though CSF flowmetry techniques that can measure slow flow in the SAS,
-e.g.~on the order of hundreds of $\mu$m/s, are beginning to
+though CSF flowmetry techniques that can measure slower flows, e.g.~on
+the order of hundreds of \textmu m/s in the SAS, are beginning to
 emerge~\cite{dong2025quantifying}. Our estimates of time-averaged net
 flow in the periarterial networks, induced by cardiac pulsations and
 ultraslow vasomotion, feature spatially-varying net flow rates with
@@ -796,12 +796,12 @@ average 0.92 \textmu m/s), but intriguingly, our estimates of the
 contribution from vasomotion (13.05 \textmu m/s) are comparable to the
 experimental reports. We do note that this estimate is based on the
 theoretical presence of rhythmic waves of vasomotion at a frequency of
-0.1Hz, a wavelength of 20 mm, and an inner wall displacement of up to
-10\% -- in the antegrade direction, all values currently associated
-with major uncertainty~\cite{gokina1996electrical,
-  vanveluw2020vasomotion, munting2023spontaneous,
-  broggini2024long}. In particular, Broggini et
-al\cite{broggini2024long} report of near-0.1Hz vasomotion waves
+0.1Hz, a wavelength of 20 mm, an inner wall displacement of up to 10\%
+in the antegrade direction, and an outer PVS membrane not permeable to
+fluid transport, all values currently associated with major
+uncertainty~\cite{gokina1996electrical, vanveluw2020vasomotion,
+  munting2023spontaneous, broggini2024long}. In particular, Broggini
+et al\cite{broggini2024long} report of near-0.1Hz vasomotion waves
 traveling both antegrade and retrograde along pial arterioles in mice,
 while Munting et al\cite{munting2023spontaneous} report of vessel
 diameter changes at similar frequencies mainly (but not entirely) in
@@ -810,45 +810,27 @@ about vasomotion wave characteristics in the human cerebral
 vasculature, though Gokina et al\cite{gokina1996electrical} report of
 spontaneous vasomotion also in human pial arteries ex-vivo.
 
-\mer{MER: Add note that we could have used estimates or emerging
-  non-invasive MR techniques for CSF mobility (Hirschler et al.) or
-  flow measurements, SOPHI (X, Rosen, Lewis, XXX et al) in the
-  Discussion instead of the flow models.}
-
 % Compartmentalization of the PVS
-
-\mer{Remove/Revise: To what extent are surface PVSs in communication with the
-  surrounding SAS and to what extent are these structurally separated
-  compartments?}
+To what extent are the surface PVS separated from the surrounding SAS?
 Originally, Weller and coauthors~\cite{zhang1990interrelationships,
   zhang1992directional, weller2005microscopic} identified thin sheaths
-of pial cells surrounding human surface arteries and penetrating
-arterioles (but not veins or venules).
-
-\mer{Remove/Revise: On the other hand, Bakker and
-coauthors report that the subarachnoid space, the cisterns, ventricles
-and penetrating periarteriolar spaces form a continuous CSF
-space~\cite{bedussi2017paravascular}.}
-%
-Thorne and colleagues study the
-architectures of rat perivascular spaces in detail, emphasizing the
-presence of openings (stomata) on the interface between the
-vasculature and the CSF within the SAS~\cite{pizzo2018intrathecal,
-  hannocks2018molecular}. Further, Mestre et
-al~\cite{mestre2022periarteriolar} study the properties of pial
-perivascular spaces in mice, and report of pial cells forming sheaths
-for larger surface arteries and partially cover smaller surface
-arteries, with higher coverage in ventral SAS regions. In our
+of pial cells surrounding human surface arteries (but not veins). On
+the other hand, Bakker and coauthors report that the SAS, the
+cisterns, and spaces surrounding major arteries and veins form a
+continuous CSF space~\cite{bedussi2017paravascular}. Thorne and
+colleagues study the architectures of rat perivascular spaces in
+detail, emphasizing the presence of openings (stomata) on the
+interface between the vasculature and the CSF within the
+SAS~\cite{pizzo2018intrathecal, hannocks2018molecular}. Further,
+Mestre et al~\cite{mestre2022periarteriolar} study the properties of
+pial perivascular spaces in mice, and report of pial cells forming
+sheaths for larger surface arteries and partially cover smaller
+surface arteries, with higher coverage in ventral SAS regions. In our
 simulations, the PVSs act as rapid transport pathways even with only a
 partial barrier between the PVS and surrounding CSF. Here, we
 emphasize that we report on the isolated effect of variations in
-diffusive permeability on molecular transport, separated from any effects on
-fluid flow in the PVS. Clearly, one may expect that the presence
-and/or properties of such a barrier would affect also PVS
-flow. However, considering the uncertainty associated with PVS flow
-characteristics in the human SAS in general and the lack of
-computational models describing net PVS flow in the presence of fluid
-exchange, this remains challenging to quantify.
+diffusive permeability on molecular transport, separated from any
+effects on fluid flow in the PVS, a point discussed further below.
 
 % Variations with sleep, exercise
 Lifestyle factors such as sleep~\cite{xie2013sleep, miao2024brain,
@@ -866,20 +848,34 @@ higher PVS velocities would amplify the PVS flow effects simulated
 here, with earlier arrival times along the PVSs, clear distribution
 into adjacent spaces, and accelerated tracer spread overall. Moreover,
 sleep is linked with low-frequency oscillations in human CSF
-flow~\cite{fultz2019coupled}. While we, at baseline, account for the dispersion
-induced by cardiac and respiratory pulsatility, the high dispersion
-scenarios considered can be viewed as representative of additional
-pulsatility induced by e.g.~neural waves~\cite{fultz2019coupled,
-  williams2023neural} or other respiration patterns depending on
-activity level. 
-
-% Not discussed variations with disease states
+flow~\cite{fultz2019coupled}. While we, at baseline, account for the
+dispersion induced by cardiac and respiratory pulsatility, the high
+dispersion scenarios considered can be viewed as representative of
+additional pulsatility induced by e.g.~neural
+waves~\cite{fultz2019coupled, williams2023neural} or other respiration
+patterns depending on activity level.
 
 \subsubsection*{Limitations}
 
 As the mechanisms underlying intracranial solute transport are only
 partially understood, our computational framework comes with clear
 limitations. ...
+
+\mer{MER: Add note that we could have used estimates or emerging
+  non-invasive MR techniques for CSF mobility (Hirschler et al.) or
+  flow measurements, SOPHI (X, Rosen, Lewis, XXX et al) in the
+  Discussion instead of the flow models.}
+
+Here, we emphasize that we report on the isolated effect of variations
+in diffusive permeability on molecular transport, separated from any
+effects on fluid flow in the PVS. Clearly, one may expect that the
+presence and/or properties of such a barrier would affect also PVS
+flow~\cite{romano2020peristaltic}. However, considering the
+uncertainty associated with PVS flow characteristics in the human SAS
+in general and the lack of computational models describing net PVS
+flow in the presence of fluid exchange, this remains challenging to
+quantify.
+
 
 \begin{itemize}
 \item
