@@ -60,11 +60,8 @@
 
 \thispagestyle{empty}
 
-%\mer{MER: Target length: 5000 words (Intro, Results, Discussion) plus <3000 words Methods: 700 words Introduction. 3100 words Results. 1200 words Discussion.}
-
 \section*{Introduction}
 
-% What is the big picture problem and why is it important? 
 The mechanisms underlying molecular transport within the intracranial
 space are fundamental to human brain health and
 function. Neurodegenerative diseases such as Alzheimer's, Parkinson's,
@@ -136,7 +133,6 @@ structural barriers~\cite{zhang1990interrelationships,
 and in turn to what extent such structural compartmentalization is a
 prerequisite for effective perivascular transport.
  
-% Main contribution
 In this work, we present an integrative computational framework for
 modelling intracranial solute transport. Focusing on the interplay
 between perivascular pathways, intracranial pulsatility, and CSF flow
@@ -172,7 +168,7 @@ for future in-silico studies of brain solute transport.
 
 \section*{Results}
 
-\subsection*{An integrative computational framework for intracranial solute transport informed by multi-modal MRI}
+\subsection*{A computational framework for intracranial solute transport}
 
 \begin{figure}
     \centering
@@ -189,18 +185,17 @@ substantial uncertainty and debate\cite{smith2019going,
   betsholtz2024advances, kipnis2025resolving}, our target is to
 introduce a computational framework that allows for integrating and
 evaluating different solute transport mechanisms, in particular
-perivascular pathways, in subject-specific geometries
-(\Cref{fig:results1}A). To this end, we introduce the following
-modelling choices (\Cref{fig:results1}B). Using previously published
-multi-modal magnetic resonance imaging (MRI)
-data~\cite{hodneland2019new, deistung2009tof,
-  schweser2012quantitative, reichenbach2012future,
+perivascular pathways, in subject-specific geometries. To this end, we
+introduce the following modelling choices
+(\Cref{fig:results1}A). Using previously published multi-modal
+magnetic resonance imaging (MRI) data~\cite{hodneland2019new,
+  deistung2009tof, schweser2012quantitative, reichenbach2012future,
   deistung2017overview}, we construct a multiscale computational
 representation of the human intracranial compartments consisting of
 the CSF spaces and brain parenchyma as three-dimensional (3D) domains
 and with the PVSs surrounding major surface arteries and veins as
 networks of topologically one-dimensional (1D) curves embedded therein
-(\Cref{fig:results1}C--F). Relative to this geometry, we define two
+(\fixme{\Cref{fig:results1}B--F}). Relative to this geometry, we define two
 solute concentration fields, both varying in space and time, one in
 the 3D domains, one in the PVS networks, and we assume that the solute
 can cross between the 3D and 1D domains via semi-permeable
@@ -228,7 +223,7 @@ FEniCS finite element software \cite{alnaes2015fenics,
   kuchta2020assembly}, and all associated software is all openly
 available~\cite{ZENODO}.
 
-\subsection*{In-silico predictions of tracer distribution after intrathecal injection in cardiac and respiratory flow regimes}
+\subsection*{In-silico tracer distribution after intrathecal injection}
 
 Before describing the CSF and perivascular flow modelling in further
 detail, we present a first demonstration of the computational
@@ -286,7 +281,7 @@ parenchyma (35\%), the venous PVS (8\%) and the arterial PVS (5\%)
      \label{fig:intrathecal}
 \end{figure}
 
-\subsection*{Modelling CSF flow and dispersion and variations induced by changes in pulsatility}
+\subsection*{Modelling CSF flow and dispersion induced by pulsatility}
 
 The convective flow field and dispersion factors in the CSF spaces
 enter as coefficients in our computational framework for transport
@@ -371,7 +366,7 @@ longitudinal fissure, also spreading into the cerebellum
 \label{fig:csf}
 \end{figure}
 
-\subsection*{Quantitative modelling of pulsation-induced net flow in human surface perivascular networks}
+\subsection*{Modelling net flow in human surface perivascular networks}
 \label{sec:pvs_flow_results}
 
 The PVSs are recognized across species as critical pathways for solute
@@ -519,7 +514,7 @@ compared to the baseline (\Cref{fig:high_low_pvs}F, H).
     F--H) sagittal (upper) and coronal (lower) views of the simulated tracer concentrations overlayed on the T1-weighted MR image after 4 and 6h for the baseline (K), high PVS flow (L) and high PVS dispersion (M) models (concentration opacity linearly increasing with concentration value, pial surface outlined in pink, arachnoid membrane in cyan, and arteries in dark red). An interactive visualization of the baseline and the high PVS flow model can be found \href{https://baseline-pvs-flow.surge.sh/}{here}, and \href{https://high-pvs-flow.surge.sh/}{here}.}
 \end{figure}  
 
-\subsection*{Exploring structure: varying the diffusive permeability of the PVS-CSF interfaces}
+\subsection*{The diffusive permeability of the PVS-CSF interfaces}
 
 Human and rodent observations indicate that tracers concentrate in
 perivascular spaces surrounding the subarachnoid and pial vasculature
@@ -597,7 +592,7 @@ outer PVS surface (dotted) for the BA, MCA-R, MCA-L, ACA-2, and ACA3 segments ov
 F) Effect of varying the PVS-CSF permeability on first-time-of-arrival (FTA), time difference ($\Delta t$) between concentration peaks in the PVS and surrounding tissue, time of PVS peak concentration, PVS peak concentration and difference in peak concentration between PVS and surrounding tissue.}
 \end{figure}
   
-\subsection*{Exploring structure: varying the width of the PVS} 
+\subsection*{The width of the PVS} 
 
 Idiopathic normal pressure hydrocephalus (iNPH), a dementia subtype,
 is associated with enlarged PVS in the SAS and impaired periarterial
