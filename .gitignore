@@ -1,4 +1,7 @@
 
+paper/*.pdf
+paper/diff_supplementary_r1.tex
+
 .DS_*
 *.aux
 *.bbl

@@ -289,7 +289,7 @@ parenchyma (35\%), the venous PVS (8\%) and the arterial PVS (5\%)
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.7\textwidth]{figures/figure1_edit.png}
+    \includegraphics[width=0.7\textwidth]{figures/figure1.png}
      \caption{
      \textbf{In-silico predictions of tracer distribution after intrathecal injection.}
      %A) Illustration of the model geometry including the CSF-filled spaces (ventricles and SAS) $\Omega_{\rm CSF}$, the parenchyma $\Omega_{\rm PAR}$ and the PVS surrounding arteries $\Lambda_{\rm artery}$ and veins $\Lambda_{\rm vein}$, as well as their interfaces and boundaries; 
@@ -370,7 +370,7 @@ longitudinal fissure, also spreading into the cerebellum
 (\Cref{fig:csf}J).
 
 \begin{figure}%[h!]
-\centering \includegraphics[width=0.8\textwidth]{figures/figure2_edit.png}
+\centering \includegraphics[width=0.8\textwidth]{figures/figure2.png}
 \caption{\textbf{Modelling convection and dispersion in the CSF spaces
     and how model variations alter computational predictions of tracer
     distribution patterns.} A) CSF flow induced
@@ -447,7 +447,7 @@ flow is not within the scope of this work. In particular, we here
 demonstrate using separate; i.e., not coupled, flow models in the CSF and PVS.
 \begin{figure}
     \centering
-    \includegraphics[width=0.95\textwidth]{figures/figure3a_edit.png}
+    \includegraphics[width=0.95\textwidth]{figures/figure3a.png}
     \caption{\textbf{Quantitative modelling of pulsation-induced net flow in human surface perivascular networks}
     A) Surface arterial network colored by arterial radius with vessel locations labeled;
     %B) Net PVS flow induced by CSF production alone (see also~\Cref{fig:csf}D).
@@ -1123,12 +1123,9 @@ $\varepsilon = 1\%$ yielding $\hat{u}_a^c$ (\Cref{fig:pvs}D), and very
 low-frequency \emph{vasomotion} with $f = 0.1$Hz, $\lambda = 0.02$m,
 and $\varepsilon = 10\%$ yielding $\hat{u}_a^v$ (\Cref{fig:pvs}E). No
 flow induced by peristalsis is considered for the perivenous
-network. In the baseline model, we combine the contributions from CSF
-production and cardiac peristalsis to set $\hat{u}$ as $\hat{u}_a =
-\hat{u}_a^p + \hat{u}_a^c$ in $\Lambda_a$, and $\hat{u}_v =
-\hat{u}_v^p$ in $\Lambda_v$. We remark that none of these models
-account for fluid exchange across the lateral outer interface of the
-PVSs (over $\Gamma_a, \Gamma_v$), while fluid entry and exit is
+network, and we thus set $\hat{u}_v = 0$ in $\Lambda_v$ in all simulations.
+For the periarterial network, we account for cardiac peristalsis in the baseline model, and set $\hat{u}$ as $\hat{u}_a = \hat{u}_a^c$ in $\Lambda_a$. 
+We remark that none of these models account for fluid exchange across the lateral outer interface of the PVSs (over $\Gamma_a, \Gamma_v$), while fluid entry and exit is
 allowed at the end nodes of the PVS networks. However, note that we do
 not account for any coupling between the fluid flow entering/exiting
 the PVS networks and flow in the CSF spaces/parenchyma.
@@ -1317,36 +1314,29 @@ the baseline value at the adjacent network node.
     \toprule
     No. & Model description & $\bm u_{\rm CSF}$ & $\hat{u}|_{\Lambda_a}$ & $\hat{u}|_{\Lambda_v}$ & $R$ & $\xi_{\rm PVS}$ & $R_2$ \\
     \midrule
-    0 & baseline & $\bm u_{\rm CSF}$ & $\hat{u}_a^p + \hat{u}_a^c$ & $\hat{u}_v^p$                & $R_c + R_r$ & $\xi_{\rm EF}$ & $2 R_1$   \\ 
-    1 & no CSF production & \blue{$\bm 0$} & \blue{$\hat{u}_a^c$} & \blue{0}                    & $R_c + R_r$ & $\xi_{\rm EF}$ & $2 R_1$   \\ 
-    2 & reduced CSF pulsatility & $\bm u_{\rm CSF}$ & $\hat{u}_a^p + \hat{u}_a^c$ & $\hat{u}_v^p$  & \blue{$ R_c^{\rm red} + R_r^{\rm red}$} & $\xi_{\rm EF}$ & $2 R_1$  \\ 
-    3 & increased CSF pulsatility & $\bm u_{\rm CSF}$ & $\hat{u}_a^p + \hat{u}_a^c$ & $\hat{u}_v^p$  & \blue{$ R_c^{\rm inc} + R_r^{\rm inc}$} & $\xi_{\rm EF}$ & $2 R_1$  \\ 
-    4 & higher PVS flow & $\bm u_{\rm CSF}$ & \blue{$\hat{u}_a^p + \hat{u}_a^c + \hat{u}_a^v$} & $\hat{u}_v^p$  & $R_c + R_r$ & $\xi_{\rm EF}$ & $2 R_1$  \\ 
-    5 & higher PVS exchange & $\bm u_{\rm CSF}$ & \blue{$\hat{u}_a^p + \hat{u}_a^c + \hat{u}_a^v$} & $\hat{u}_v^p$ & $R_c + R_r$ & \blue{100 $\xi_{\rm EF}$} & $2 R_1$   \\ 
-    6 & dilated PVS in the SAS & $\bm u_{\rm CSF}$ & \blue{$\tilde{u}_a^p + \tilde{u}_a^c + \tilde{u}_a^v$} & \blue{$\tilde{u}_v^p$} & $R_c + R_r$ & $\xi_{\rm EF}$ & \blue{$3 R_1$}\\ 
+    0 & baseline & $\bm u_{\rm CSF}$ & $\hat{u}_a^c$ & $0$                & $R_c + R_r$ & $\xi_{\rm EF}$ & $2 R_1$   \\ 
+    1 & no CSF production & \blue{$\bm 0$} & $\hat{u}_a^c$ & $0$                   & $R_c + R_r$ & $\xi_{\rm EF}$ & $2 R_1$   \\ 
+    2 & reduced CSF pulsatility & $\bm u_{\rm CSF}$ & $\hat{u}_a^c$ & $0$  & \blue{$ R_c^{\rm red} + R_r^{\rm red}$} & $\xi_{\rm EF}$ & $2 R_1$  \\ 
+    3 & increased CSF pulsatility & $\bm u_{\rm CSF}$ & $\hat{u}_a^c$ & $0$  & \blue{$ R_c^{\rm inc} + R_r^{\rm inc}$} & $\xi_{\rm EF}$ & $2 R_1$  \\ 
+    4 & higher PVS flow & $\bm u_{\rm CSF}$ & \blue{$\hat{u}_a^c + \hat{u}_a^v$} & $0$  & $R_c + R_r$ & $\xi_{\rm EF}$ & $2 R_1$  \\ 
+    5 & higher PVS exchange & $\bm u_{\rm CSF}$ & \blue{$\hat{u}_a^c + \hat{u}_a^v$} & $0$ & $R_c + R_r$ & \blue{100 $\xi_{\rm EF}$} & $2 R_1$   \\ 
+    6 & dilated PVS in the SAS & $\bm u_{\rm CSF}$ & \blue{$\tilde{u}_a^c + \tilde{u}_a^v$} & $0$ & $R_c + R_r$ & $\xi_{\rm EF}$ & \blue{$3 R_1$}\\ 
     \bottomrule
     \end{tabular}
     \end{center}
   \caption{Overview of model variations, with color highlighting
     changes from the baseline model. $\bm u_{\rm CSF}$ is the CSF
-    velocity field induced by CSF production in $\Omega_{\rm CSF}$,
-    and $\hat{u}_a^p$ and $\hat{u}_v^p$ are the axial velocities
-    induced in the periarterial and perivenous networks, respectively,
-    by the corresponding CSF pressure $p_{\rm CSF}$. Moreover,
-    $\hat{u}_a^c$ and $\hat{u}_a^v$ are the periarterial velocities
+    velocity field induced by CSF production in $\Omega_{\rm CSF}$.
+    Moreover, $\hat{u}_a^c$ and $\hat{u}_a^v$ are the periarterial velocities
     induced by arterial pulse wave wall motion and slow vasomotion,
-    respectively. In the model variation with no CSF production, $\bm
-    u_{\rm CSF} = 0$, $p_{\rm CSF} = 0$, and thus $\hat{u}_a^p =
-    \hat{u}_v^p = 0$. $R_c + R_r$ is the combined cardiac and
+    respectively. $R_c + R_r$ is the combined cardiac and
     respiratory dispersion factor in the CSF spaces, with model
     variations $R_{r/c}^{\rm red}$ and $R_{r/c}^{\rm inc}$ corresponding to
     reduced pulsatility and increased pulsatility, respectively.  Each
     PVS cross-section is modelled as a concentric annulus with inner
     radius $R_1$ and outer radius $R_2 > R_1$. Finally,
-    $\tilde{u}_a^p$, $\tilde{u}_v^p$, $\tilde{u}_a^c$ and
-    $\tilde{u}_a^v$ are as $\hat{u}_a^p$, $\hat{u}_v^p$, $\hat{u}_a^c$
-    and $\hat{u}_a^v$, respectively, but with a dilated PVS ($R_2 = 3
-    R_1$).}
+    $\tilde{u}_a^c$ and $\tilde{u}_a^v$ are as $\hat{u}_a^c$
+    and $\hat{u}_a^v$, respectively, but with a dilated PVS ($R_2 = 3R_1$).}
 \label{tab:scenarios}
 \end{table}
 
