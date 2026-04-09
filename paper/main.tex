@@ -25,7 +25,7 @@
 
 \captionsetup[subfigure]{justification=justified,singlelinecheck=false}
 
-\title{\textcolor{black}{In-silico molecular transport via perivascular networks in the human intracranial space}}
+\title{\textcolor{black}{In-silico solute transport via perivascular networks in the human intracranial space}}
 \author[1]{Marius Causemann}
 \author[1]{Miroslav Kuchta}
 \author[2]{Rami Masri}
@@ -70,7 +70,7 @@ of protein aggregates together with alterations in transport
 characteristics~\cite{rasmussen2018glymphatic, harrison2020impaired,
   eide2023plasma, liu2024glymphatic}. Moreover, sleep and conversely
 sleep-deprivation play a definite yet enigmatic role in modulating
-molecular transport~\cite{xie2013sleep, eide2021sleep,
+solute transport~\cite{xie2013sleep, eide2021sleep,
   eide2022altered, miao2024brain, hauglund2025norepinephrine}. In the
 last decade, established theories have been challenged by new findings
 on molecular movement and exchange~\cite{iliff2012paravascular,
@@ -123,7 +123,7 @@ waves~\cite{greitz1993pulsatile, wagshul2011pulsating,
 lymphatics, cranial nerves, or other efflux
 pathways~\cite{proulx2021cerebrospinal}. However, how these
 physiological factors and physical mechanisms integrate to enhance or
-impair human intracranial molecular transport over larger spatial
+impair human intracranial solute transport over larger spatial
 scales and longer time scales remain unknown. A related key question
 is to what extent surface PVSs are separated from the SAS by
 structural barriers~\cite{zhang1990interrelationships,
@@ -153,7 +153,7 @@ production in the CSF spaces and peristaltic pumping in the PVSs, as
 well as solute exchange and efflux across semi-permeable membranes. We
 demonstrate the applicability of this computational framework via a
 series of model scenarios motivated by current questions relating to
-molecular movement within the human brain environment. In particular,
+solute movement within the human brain environment. In particular,
 we simulate how the balance between CSF production and intracranial
 pulsatility can shape large-scale features of tracer distribution, how
 perivascular fluid flow induced by cardiac pulsations or low-frequency
@@ -804,7 +804,7 @@ surface arteries, with higher coverage in ventral SAS regions. In our
 simulations, the PVSs act as rapid transport pathways even with only a
 partial barrier to diffusion between the PVS and surrounding
 CSF. Here, we emphasize that we report on the isolated effect of
-variations in diffusive permeability on molecular transport, separated
+variations in diffusive permeability on solute transport, separated
 from any effects on fluid flow in the PVS. Clearly, one would expect
 the properties of such a barrier to also affect PVS
 flow~\cite{romano2020peristaltic}.
@@ -892,7 +892,7 @@ Furthermore, we have considered a basic transport model within the
 parenchyma, modelling extracellular diffusion alone and no bulk
 interstitial fluid flow. Previously, by inferring transport parameters
 within the human brain from contrast-enhanced MRI data, we have found
-that molecular transport within the parenchyma is well-represented by
+that solute transport within the parenchyma is well-represented by
 $\approx 3\times$ enhanced diffusion augmented by local efflux
 e.g.~across the blood-brain barrier, or by diffusion-convection with a
 complex pattern of spatially-varying interstitial fluid flow on the
@@ -941,7 +941,7 @@ imaging techniques~\cite{dong2025quantifying, hirschler2025region,
   vikner2025imaging} offers striking opportunities -- both for model
 validation or for directly informing the model parameters. Looking
 ahead, this framework establishes a foundation for in-silico studies
-of molecular movement within the human brain environment.
+of solute movement within the human brain environment.
 
 \section*{Methods}
 
@@ -949,7 +949,7 @@ This section gives a condensed summary of the in-silico modelling
 framework. For a complete description of the mathematical models and
 simulation scenarios, we refer to the Supplementary information S1.
 
-\subsection*{Intracranial compartments: ventricular system, SAS, and brain parenchyma}
+\subsection*{Intracranial spaces: ventricular system, SAS, and parenchyma}
 
 From T1-weighted MR images of a 26-year-old, healthy male volunteer~\cite{hodneland2019new},
 we first automatically segment the brain parenchyma and CSF spaces,
@@ -1030,7 +1030,7 @@ $u_{\rm CSF} = 0$, $p_{\rm CSF} = 0$.
 %% details. We repeat this procedure to compute a corresponding velocity
 %% field $\hat{u}^p_v$ in the perivenous network $\Lambda_v$.
 
-\subsection*{Dispersion in the CSF spaces induced by pulsatile CSF flow associated with cardiac and respiratory cycles}
+\subsection*{Dispersion in the CSF spaces induced by pulsatile CSF flow}
 
 The pulsatile flow of CSF in the SAS and ventricular system
 substantially enhances molecular diffusion through
@@ -1038,7 +1038,7 @@ dispersion~\cite{taylor1953dispersion, watson1983diffusion,
   asgari2016glymphatic, sharp2019dispersion, ray2021quantitative,
   troyetsky2021dispersion}. To account for such dispersive effects,
 while bridging from the pulsatile flow time scale of seconds to a
-molecular transport time scale of hours, we estimate
+solute transport time scale of hours, we estimate
 spatially-varying, cardiac- and respiratory dispersion factors ($R_c$
 and $R_r$) in $\Omega_{\rm CSF}$ (\Cref{fig:results1}). Combining the
 cardiac and respiratory effects, we set $R = R_c + R_r$ in
@@ -1101,7 +1101,7 @@ allowed at the end nodes of the PVS networks. However, note that we do
 not account for any coupling between the fluid flow entering/exiting
 the PVS networks and flow in the CSF spaces/parenchyma.
 
-\subsection*{Molecular transport equations}
+\subsection*{solute transport equations}
 
 We represent the evolution and distribution of a solute in the CSF
 spaces $\Omega_{\rm CSF}$, brain parenchyma $\Omega_{\rm PAR}$, and
@@ -1195,19 +1195,19 @@ there. The initial concentrations in $\Omega$ and networks $\Lambda_a,
 %% in the three-dimensional domain $\Omega$ and networks $\Lambda_a,
 %% \Lambda_v$ are all set to zero.
 
-\subsection*{Molecular efflux from the intracranial space and perivascular network ends}
+\subsection*{Solute efflux from the intracranial space and perivascular network ends}
 
-We model molecular efflux, into the meningeal lymphatics or other
+We model solute efflux, into the meningeal lymphatics or other
 pathways, across the upper, outer (arachnoid) boundary
 (\Cref{fig:results1}A, \Cref{fig:csf}C), proportional to the
 concentration in the SAS with a rate constant $\beta_{\rm exit}$. We
 set a no-flux condition at the end nodes of the perivascular networks,
-not allowing for direct molecular efflux there.
+not allowing for direct solute efflux there.
 
 \subsection*{Intracranial influx after intrathecal injection}
-To represent molecular influx into the intracranial compartments
+To represent solute influx into the intracranial compartments
 following intrathecal injection, without modelling the spinal
-compartment explicitly, we prescribe a time-dependent molecular influx
+compartment explicitly, we prescribe a time-dependent influx 
 over the interface towards the spinal CSF compartment with the condition
 \begin{equation*}
   (D \nabla c - \bm u_{\rm CSF} c ) \cdot \bm{n} = g_{\mathrm{influx}},  \quad \mathrm{on}  \quad \Gamma_{\mathrm{SSAS}}.
@@ -1257,9 +1257,9 @@ the baseline value at the adjacent network node.
       Diffusive permeability coefficient, endfoot sheath & $\xi_{\rm EF}$ & $3.8\cdot 10^{-7}$  & m/s & \cite{koch2023estimates} \\
       Diffusive permeability coefficient, PVS--CSF & $\xi_{\rm PVS}$ & $3.8\cdot 10^{-7}$  & m/s & \cite{koch2023estimates} \\
       Diffusive permeability coefficient, pia & $\beta_{\rm pia}$ & $2.6 \cdot 10^{-8}$ & m/s & \cite{riseth2025twocompartment} \\
-      Molecular efflux rate & $\beta_{\rm exit}$ & $8.0 \cdot 10^{-7}$ & m/s & $\ast$ \\
+      Solute efflux rate & $\beta_{\rm exit}$ & $8.0 \cdot 10^{-7}$ & m/s & $\ast$ \\
       Total amount of injected tracer & $m_{\rm tot}$ & $0.5$ & mmol & \cite{eide2024functional} \\
-      Molecular influx, time-to-peak & $T_{\rm max}$ & $1$ & h & $\ast$ \\
+      Solute influx, time-to-peak & $T_{\rm max}$ & $1$ & h & $\ast$ \\
       CSF production rate & $u_{\mathrm{in}}$ & $0.4$  & l / day & \cite{nilsson1992circadian} \\
       CSF viscosity & $\mu$ & $0.7$ & mPa$ \cdot $s & \cite{bloomfield1998effects} \\ 
       CSF outflow resistance & $R_{\rm CSF, 0}$ & $10^{4}$  & Pa$\cdot$s/m & $\ast$ \\ 
