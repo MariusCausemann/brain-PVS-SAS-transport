@@ -1,30 +1,6 @@
-#set page(width: 21cm, height: auto, margin: 1cm)
-#set text(font: "Nimbus Sans", size: 8pt)
+#import "utils.typ": setup-figure, panel-label, panel-title, inline-header, cropped-image, y-label
+#show: setup-figure
 
-// ==========================================
-// HELPER FUNCTIONS
-// ==========================================
-#let panel-label(content) = align(top + left)[#text(weight: "bold", size: 12pt)[#content]]
-#let panel-title(content) = align(center)[#text(weight: "bold", size: 7pt)[#content]]
-
-#let y-label(content, nudge: 0cm) = align(center + horizon)[
-  #move(dy: nudge)[
-    #rotate(-90deg, reflow: true)[#text(size: 6.5pt)[#content]]
-  ]
-]
-
-#let cropped-image(file, box-height, zoom, move-x, move-y, width: 100%) = {
-  box(
-    width: width, 
-    height: box-height, 
-    clip: true,
-    place(
-      dx: move-x, 
-      dy: move-y, 
-      image(file, width: zoom)
-    )
-  )
-}
 
 // ==========================================
 // MAIN FIGURE LAYOUT
@@ -46,7 +22,7 @@
         #panel-label("A")
         #v(5pt)
         #panel-title("PVS dilation")
-        #image("paper/figures/dilated_pvs.png", width: 110%)
+        #image("../paper/figures/dilated_pvs.png", width: 110%)
       ],
       
       // Column 2: Panel B (Stacked Bar Charts)
@@ -57,11 +33,11 @@
           columns: 1, row-gutter: 3pt,
           [
             #panel-title("max PVS velocity")
-            #image("plots/comparisons/pvs_flow_peristaltic+cardiac_pvs_oscillation_pvs_flow_peristaltic+cardiac_pvs_oscillation_enlarged_pvs_flow_peristaltic+vasomotion-strong_pvs_flow_peristaltic+vasomotion-strong-enlarged_pvs_flow_prod+sas_flow-arteries_pvs_flow_prod+sas_flow-arteries-3/pvsumax_comp.png", width: 100%)
+            #image("../plots/comparisons/pvs_flow_peristaltic+cardiac_pvs_oscillation_pvs_flow_peristaltic+cardiac_pvs_oscillation_enlarged_pvs_flow_peristaltic+vasomotion-strong_pvs_flow_peristaltic+vasomotion-strong-enlarged_pvs_flow_prod+sas_flow-arteries_pvs_flow_prod+sas_flow-arteries-3/pvsumax_comp.png", width: 100%)
           ],
           [
             #panel-title("mean PVS velocity")
-            #image("plots/comparisons/pvs_flow_peristaltic+cardiac_pvs_oscillation_pvs_flow_peristaltic+cardiac_pvs_oscillation_enlarged_pvs_flow_peristaltic+vasomotion-strong_pvs_flow_peristaltic+vasomotion-strong-enlarged_pvs_flow_prod+sas_flow-arteries_pvs_flow_prod+sas_flow-arteries-3/pvsumean_comp.png", width: 100%)
+            #image("../plots/comparisons/pvs_flow_peristaltic+cardiac_pvs_oscillation_pvs_flow_peristaltic+cardiac_pvs_oscillation_enlarged_pvs_flow_peristaltic+vasomotion-strong_pvs_flow_peristaltic+vasomotion-strong-enlarged_pvs_flow_prod+sas_flow-arteries_pvs_flow_prod+sas_flow-arteries-3/pvsumean_comp.png", width: 100%)
           ]
         )
       ],
@@ -74,13 +50,13 @@
           #panel-label("C")
           #v(-5pt)
           #panel-title("vasomotion induced PVS velocity (control)")
-          #image("plots/pvs_flow_peristaltic/vasomotion-strong/vel3D.png", width: 130%)
+          #image("../plots/pvs_flow_peristaltic/vasomotion-strong/vel3D.png", width: 130%)
         ],
         [
           #panel-label("D")
           #v(-5pt)
           #panel-title("vasomotion induced PVS velocity (dilated)")
-          #image("plots/pvs_flow_peristaltic/vasomotion-strong-enlarged/vel3D.png", width: 130%)
+          #image("../plots/pvs_flow_peristaltic/vasomotion-strong-enlarged/vel3D.png", width: 130%)
         ]
       ),
     ),
@@ -100,9 +76,9 @@
           columns: (auto, 1fr), gutter: 5pt, align: horizon,
           
           y-label("high PVS flow", nudge: 0.49cm),
-          cropped-image("plots/modelA-strongVM/modelA-strongVM_1+2+3+4_MCA-R_0.2+5.0+20.0+20.0_details.png", 2.3cm, 100%, 0cm, 0.55cm),
+          cropped-image("../plots/modelA-strongVM/modelA-strongVM_1+2+3+4_MCA-R_0.2+5.0+20.0+20.0_details.png", 2.3cm, 100%, 0cm, 0.55cm),
           y-label("high PVS flow -\ndilated", nudge: -0.22cm),
-          cropped-image("plots/LargePVS/LargePVS_1+2+3+4_MCA-R_0.2+5.0+20.0+20.0_details.png", 2.3cm, 100%, 0cm, -0.22cm)
+          cropped-image("../plots/LargePVS/LargePVS_1+2+3+4_MCA-R_0.2+5.0+20.0+20.0_details.png", 2.3cm, 100%, 0cm, -0.22cm)
         )
       ],
       
@@ -112,7 +88,7 @@
         #v(-20pt)
         #panel-title("first-time arrival")
         #v(-10pt)
-        #image("plots/comparisons/modelA_LargePVSA_modelA-strongVM_LargePVS/modelA_LargePVSA_modelA-strongVM_LargePVS_fta.png", width: 100%)
+        #image("../plots/comparisons/modelA_LargePVSA_modelA-strongVM_LargePVS/modelA_LargePVSA_modelA-strongVM_LargePVS_fta.png", width: 100%)
       ]
     ),
 
@@ -129,7 +105,7 @@
       [
         #panel-label("G")
         #v(-35pt)
-        #cropped-image("plots/comparisons/modelA_LargePVSA_modelA-strongVM_LargePVS/modelA_LargePVSA_modelA-strongVM_LargePVS_tot_bar.png", 5.1cm, 100%, 0cm, -0.1cm, width: 100%)
+        #cropped-image("../plots/comparisons/modelA_LargePVSA_modelA-strongVM_LargePVS/modelA_LargePVSA_modelA-strongVM_LargePVS_tot_bar.png", 5.1cm, 100%, 0cm, -0.1cm, width: 100%)
       ],
       
       // Column 2: Panel H (Line Charts Grid)
@@ -138,7 +114,7 @@
         #v(-15pt)
         #panel-title("mean tracer concentration")
         #v(-8pt)
-        #cropped-image("plots/comparisons/modelA_LargePVSA_modelA-strongVM_LargePVS/modelA_LargePVSA_modelA-strongVM_LargePVS_conc.png", 5.1cm, 100%, 0cm, 0.1cm, width: 110%)
+        #cropped-image("../plots/comparisons/modelA_LargePVSA_modelA-strongVM_LargePVS/modelA_LargePVSA_modelA-strongVM_LargePVS_conc.png", 5.1cm, 100%, 0cm, 0.1cm, width: 110%)
       ]
     )
   )

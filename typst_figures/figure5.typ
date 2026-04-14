@@ -1,30 +1,7 @@
-#set page(width: 21cm, height: auto, margin: 1cm)
-#set text(font: "Nimbus Sans", size: 8pt)
+#import "utils.typ": setup-figure, panel-label, panel-title, inline-header, cropped-image, y-label
+#show: setup-figure
 
-// ==========================================
-// HELPER FUNCTIONS
-// ==========================================
-#let panel-label(content) = align(top + left)[#text(weight: "bold", size: 12pt)[#content]]
-#let panel-title(content) = align(center)[#text(weight: "bold", size: 8pt)[#content]]
 
-#let y-label(content, nudge: 0cm) = align(center + horizon)[
-  #move(dy: nudge)[
-    #rotate(-90deg, reflow: true)[#text(size: 6.5pt)[#content]]
-  ]
-]
-
-#let cropped-image(file, box-height, zoom, move-x, move-y) = {
-  box(
-    width: 100%, 
-    height: box-height, 
-    clip: true,
-    place(
-      dx: move-x, 
-      dy: move-y, 
-      image(file, width: zoom)
-    )
-  )
-}
 
 #let annotated-baseline(file) = {
   box(width: 100%, {
@@ -69,11 +46,11 @@
         align: horizon, 
         // Label nudged by 0.15cm to match the image's move-y
         y-label("baseline", nudge: 0.15cm),
-        cropped-image("plots/modelA/modelA_conc_at_label_annotated.png", 3cm, 100%, 0cm, 0.15cm),
+        cropped-image("../plots/modelA/modelA_conc_at_label_annotated.png", 3cm, 100%, 0cm, 0.15cm),
         
         // Label nudged by -0.55cm to match the image's move-y
         y-label("high PVS flow", nudge: -0.55cm),
-        cropped-image("plots/modelA-strongVM/modelA-strongVM_conc_at_label.png", 3cm, 100%, 0cm, -0.55cm)
+        cropped-image("../plots/modelA-strongVM/modelA-strongVM_conc_at_label.png", 3cm, 100%, 0cm, -0.55cm)
       )
       #v(-12pt)
     ],
@@ -89,8 +66,8 @@
       // ROW 1, COLUMN 1: Panel B
       [
         #panel-label("B")
-        #v(-12pt)
-        #image("plots/comparisons/modelA_modelA-strongVM_modelA-PVS-disp/modelA_modelA-strongVM_modelA-PVS-disp_fta.png", width: 100%)
+        #v(-15pt)
+        #image("../plots/comparisons/modelA_modelA-strongVM_modelA-PVS-disp/modelA_modelA-strongVM_modelA-PVS-disp_fta.png", width: 100%)
       ],
 
       // ROW 1, COLUMN 2: Panel C
@@ -101,10 +78,10 @@
         #grid(
           columns: (auto, 1fr), gutter: 5pt, align: horizon,
           y-label("baseline", nudge: 0.49cm),
-          annotated-baseline("plots/modelA/modelA_1+2+3+4_MCA-R_0.2+5.0+20.0+20.0_details.png"),
+          annotated-baseline("../plots/modelA/modelA_1+2+3+4_MCA-R_0.2+5.0+20.0+20.0_details.png"),
           
           y-label("high PVS flow", nudge: -0.22cm),
-          cropped-image("plots/modelA-strongVM/modelA-strongVM_1+2+3+4_MCA-R_0.2+5.0+20.0+20.0_details.png", 2.3cm, 100%, 0cm, -0.22cm)
+          cropped-image("../plots/modelA-strongVM/modelA-strongVM_1+2+3+4_MCA-R_0.2+5.0+20.0+20.0_details.png", 2.3cm, 100%, 0cm, -0.22cm)
         )
       ],
 
@@ -112,17 +89,19 @@
       [
         #panel-label("E")
         #v(-20pt) #panel-title("total PVS tracer content")
-        #v(-10pt)
+        #v(-5pt)
         #grid(
           columns: (1fr, 1fr),
-          gutter: 5pt,
+          gutter: 0pt,
           [
             #panel-title("baseline")
-            #image("plots/modelA/modelA_ridgeline_pvs_total_smoothed.png", width: 100%)
+            #v(-5pt)
+            #image("../plots/modelA/modelA_ridgeline_pvs_total_smoothed.png", width: 100%)
           ],
           [
             #panel-title("high PVS flow")
-            #image("plots/modelA-strongVM/modelA-strongVM_ridgeline_pvs_total_smoothed.png", width: 100%)
+            #v(-5pt)
+            #image("../plots/modelA-strongVM/modelA-strongVM_ridgeline_pvs_total_smoothed.png", width: 100%)
           ]
         )
       ],
@@ -135,10 +114,10 @@
         #grid(
           columns: (auto, 1fr), gutter: 5pt, align: horizon,
           y-label("baseline", nudge: 0.49cm),      
-          cropped-image("plots/modelA/modelA_2+4+6+8_MCA2-R_0.2+8.0+8.0+5.0_details.png", 2.3cm, 100%, 0cm, 0.49cm),
+          cropped-image("../plots/modelA/modelA_2+4+6+8_MCA2-R_0.2+8.0+8.0+5.0_details.png", 2.3cm, 100%, 0cm, 0.49cm),
           
           y-label("high PVS flow", nudge: -0.22cm), 
-          cropped-image("plots/modelA-strongVM/modelA-strongVM_2+4+6+8_MCA2-R_0.2+8.0+8.0+5.0_details.png", 2.3cm, 100%, 0cm, -0.22cm)
+          cropped-image("../plots/modelA-strongVM/modelA-strongVM_2+4+6+8_MCA2-R_0.2+8.0+8.0+5.0_details.png", 2.3cm, 100%, 0cm, -0.22cm)
         )
       ]
     ),
@@ -152,23 +131,23 @@
       [
         #panel-label("F")
         #v(-20pt) #panel-title("baseline") #v(-2pt)
-        #cropped-image("plots/modelA/modelA_overview_4-6.png", 9cm, 150%, 0cm, 0cm)
+        #cropped-image("../plots/modelA/modelA_overview_4-6.png", 9cm, 150%, 0cm, 0cm)
       ],
       [
         #panel-label("G")
         #v(-20pt) #panel-title("high PVS flow") #v(-2pt)
-        #cropped-image("plots/modelA-strongVM//modelA-strongVM_overview_4-6.png", 9cm, 150%, 0cm, 0cm)
+        #cropped-image("../plots/modelA-strongVM//modelA-strongVM_overview_4-6.png", 9cm, 150%, 0cm, 0cm)
       ],
       [
         #panel-label("H")
         #v(-20pt) #panel-title("high PVS dispersion") #v(-2pt)
-        #cropped-image("plots/modelA-PVS-disp/modelA-PVS-disp_overview_4-6.png", 9cm, 150%, 0cm, 0cm)
+        #cropped-image("../plots/modelA-PVS-disp/modelA-PVS-disp_overview_4-6.png", 9cm, 150%, 0cm, 0cm)
       ],
       [
         // Clever hack for the legend!
         #panel-label("")
         #v(-20pt) #panel-title("") #v(-2pt)
-        #cropped-image("plots/modelA-PVS-disp/modelA-PVS-disp_overview_4-6.png", 9cm, 300%, -5.5cm, 0cm)
+        #cropped-image("../plots/modelA-PVS-disp/modelA-PVS-disp_overview_4-6.png", 9cm, 300%, -5.5cm, 0cm)
       ]
     )
   )
