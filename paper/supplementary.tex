@@ -25,7 +25,6 @@
 \renewcommand\thefigure{S\arabic{figure}}    
 \renewcommand\thesection{S\arabic{section}}    
 \renewcommand\thetable{S\arabic{table}}    
-\newcommand{\fixme}[1]{\textcolor{red}{#1}}
 
 \captionsetup[subfigure]{justification=justified,singlelinecheck=false}
 
@@ -53,7 +52,7 @@
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\foralls}{\forall \,}
 
-\section{Supplementary Methods}
+\section{Supplementary methods}
 
 These sections provide more detailed descriptions of the mathematical
 models and numerical approximations considered. 
@@ -709,7 +708,6 @@ for each $y \in \mathcal{B}$:
   = 0.
   \label{eq:flux_conservation}
 \end{equation}
-Here the normal $n^i$ is as defined in ~\eqref{eq:def:sign}.
 
 Finally, to augment~\eqref{eq:1d_pde} at the network end nodes $y_k \in \mathcal{N}$, we represent the unresolved, continuous extension of the perivascular networks by coupling these tips to a set of 0D compartments, similar to the approach in \cite{fritz20221d}. For each end node $y_k \in \mathcal{N}$, let $c^0_k(t)$ denote the solute concentration in a 0D compartment of effective volume $V_k$. This compartment exchanges mass with the 3D domain over a local spherical neighborhood $B_k$ (with volume $|B_k|$) centered at $y_k$. 
 
@@ -727,7 +725,7 @@ To conserve mass, the total flux (advective and diffusive) exiting the 1D domain
 \end{equation}
 We note that if advection is purely outward ($q_k > 0$, so $q_k^- = 0$), the boundary condition simplifies to $-\hat{D}A\partial_{n}\hat{c} = \alpha_k(\hat{c} - c^0_k)$, indicating that the diffusive flux at the boundary is driven purely by the concentration difference between the two compartments. Conversely, if $q_k < 0$ (flow enters 1D from 0D), the boundary condition balances the total diffusive flux with both the advective influx from the 0D compartment and the 1D-0D diffusive exchange. 
 
-Finally, the diffusive exchange between the 0D compartments and the 3D domain acts via a localized volumetric source term $S_{\text{0D} \to \text{3D}}$ in~\eqref{eq:3d_pde}, defined using the indicator function $\chi_{B_k}(x)$ for each ball $B_k$:
+Finally, the diffusive exchange between the 0D compartments and the 3D domain acts via a localized volumetric source term $S_{\text{0D} \to \text{3D}}$ in~\eqref{eq:3d_pde}, defined using the indicator function $\chi_{B_k}$ for each ball $B_k$:
 \begin{equation}
   S_{\text{0D} \to \text{3D}}(x, t) = \sum_{y_k \in \mathcal{N}} \frac{\beta_k}{|B_k|} (c^0_k - \bar{c}_{B_k}) \chi_{B_k}(x) .
   \label{eq:3d_source}
@@ -994,11 +992,7 @@ over time after the initial influx phase
     \label{fig:mass_conservation}
 \end{figure}
 
-\section{Supplementary Figures}
-
-\fixme{TBA}.
-
-\section{Supplementary Discussion}
+\section{Supplementary discussion}
 
 \subsection{Extended comparison with literature}
 \label{sec:app:model_validation}
