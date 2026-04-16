@@ -1,6 +1,6 @@
 
 paper/*.pdf
-paper/diff_supplementary_r1.tex
+paper/*diff*.tex
 
 .DS_*
 *.aux
