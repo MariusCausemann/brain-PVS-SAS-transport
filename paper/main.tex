@@ -1115,10 +1115,10 @@ $c^0_k(t)$ for the 0D compartments at the arterial leaf nodes,
 satisfying the following equations:
 \begin{subequations}
 \begin{alignat}{2}
-  \partial_t c - \nabla \cdot D (1 + R) \nabla c  + \nabla \cdot (\bm u_{\rm CSF} c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma & = S_{\text{0D} \to \text{3D}} && \quad \quad \mathrm{in} \quad \Omega_{\rm CSF},
+  \partial_t c - \nabla \cdot D (1 + R) \nabla c  + \nabla \cdot (\bm u_{\rm CSF} c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma & = S_{\text{0D} \leftrightarrow \text{3D}} && \quad \quad \mathrm{in} \quad \Omega_{\rm CSF},
   \label{eq:multi_transport_3d_CSF}
   \\ 
-  \partial_t (\phi c) - \nabla \cdot D^{\ast} \nabla (\phi c)  + \nabla \cdot (\bm u_{\rm PAR} c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma & = S_{\text{0D} \to \text{3D}} && \quad \quad \mathrm{in} \quad \Omega_{\rm{PAR}},
+  \partial_t (\phi c) - \nabla \cdot D^{\ast} \nabla (\phi c)  + \nabla \cdot (\bm u_{\rm PAR} c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma & = S_{\text{0D} \leftrightarrow \text{3D}} && \quad \quad \mathrm{in} \quad \Omega_{\rm{PAR}},
   \label{eq:multi_transport_3d_PAR}
   \\ 
   \partial_t (A  \hat c) - \partial_s(\hat D A \partial_s ( \hat c)) +\partial_s(A \hat u \hat c )  +  \xi P (\hat c - \overline{c})  &= 0 && \quad \quad \mathrm{in} \quad  \Lambda_a, \Lambda_v .
@@ -1137,7 +1137,7 @@ the interfaces $\Gamma_a, \Gamma_v$ between the periarterial and
 perivenous networks and their surroundings, the overlined
 $\overline{c}$ denotes the average of $c$ over cross-sections of
 $\Gamma_a, \Gamma_v$, $\delta_{\Gamma}$ is a Dirac term
-concentrated on $\Gamma_a, \Gamma_v$, and $S_{\text{0D} \to \text{3D}}$ is a localized mass transfer term coupling the 3D domains to unresolved downstream perivascular continuations. 
+concentrated on $\Gamma_a, \Gamma_v$, and $S_{\text{0D} \leftrightarrow \text{3D}}$ is a localized mass transfer term coupling the 3D domains to unresolved downstream perivascular continuations. 
 In~\eqref{eq:multi_transport_0d}, 
 these continuations are modeled as 0D compartments at the arterial leaf nodes 
 $\mathcal{N}_{\rm leaf}$, where $V_k$ is the effective downstream volume, $n$ is the outward-pointing unit normal vector at the network ends, $(A \hat{u} \cdot n)^{\pm}_k$ denotes the outward/inward advective 
