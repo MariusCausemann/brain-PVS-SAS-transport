@@ -42,6 +42,7 @@ def compare_concentrations(modelname:str):
                      color=fill.get_facecolor(),
                      xytext=(2, 0), textcoords='offset points',
                      xycoords="data",)
+        print(f"m_final {l}: {q[-1]}")
         prev = ypos
         tot = new_tot
 
@@ -63,7 +64,8 @@ def compare_concentrations(modelname:str):
         new_tot = tot + np.array(q)*mol2mmol
         plt.plot(times / (60*60), c, "-", label=l, lw=5)
         tot = new_tot
-        print(f"{l}: {max(c)}")
+        tmax = times[np.argmax(c)]
+        print(f"c_max: {l}: {max(c)} at {tmax / 60} min")
     
     plt.xlabel("time (h)")
     #ax2.set_ylabel('mean tracer concentration (mmol/l)')

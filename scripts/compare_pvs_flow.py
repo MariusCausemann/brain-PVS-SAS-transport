@@ -27,18 +27,16 @@ def compare_pvs_flow(flow_model:List[str]):
     df["type"] = "none"
     df["type"][df.modelstr.str.contains("vasomotion") ] = "vasomotion"
     df["type"][df.modelstr.str.contains("cardiac") ] = "cardiac"
-    df["type"][df.modelstr.str.contains("sas") ] = "pressure-driven"
 
     df["vm"] = df.modelstr.str.contains("vasomotion") 
     df["cardiac"] = df.modelstr.str.contains("cardiac") 
-    df["pressure"] = df.modelstr.str.contains("sas") 
 
     set_plotting_defaults()
     sns.set_palette(["#2ec4b6", "#124559"])
     for var, ylabel in zip(["pvsumax", "pvsumean"],
-                           ["max PVS velocity (μm/s)", "mean PVS velocity (μm/s)"]):
-        plt.figure(figsize=(4.0,2.3))
-        ax = sns.barplot(df, y=var, x="type", hue="enlarged", order=["pressure-driven", "cardiac", "vasomotion"])
+                           ["max velocity (μm/s)", "mean velocity (μm/s)"]):
+        plt.figure(figsize=(3.3,2.0))
+        ax = sns.barplot(df, y=var, x="type", hue="enlarged", order=["cardiac", "vasomotion"])
         for p in ax.patches:
             h, w, x = p.get_height(), p.get_width(), p.get_x()
             if h>0:
