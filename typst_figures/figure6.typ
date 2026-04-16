@@ -1,20 +1,21 @@
-#import "utils.typ": setup-figure, panel-label, panel-title, inline-header, cropped-image, y-label
+#import "utils.typ": setup-figure, panel-label, panel-title, inline-header, cropped-image, y-label, crop-image, x-label
 #show: setup-figure
 
 
 #let detail-block(title, img-low, img-high) = {
   grid(
     columns: 1, row-gutter: 1pt,
-    panel-title(title),
-    v(-20pt),
+    panel-title(title, alignment: left, dx: -6pt),
+    v(-5pt),
     grid(
       columns: (auto, 1fr), gutter: 2pt, align: horizon,
-      y-label("low permeability", nudge: 0.49cm),
-      cropped-image(img-low, 2.3cm, 100%, 0cm, 0.49cm),
+      y-label("low permeability", nudge: 0.1cm),
+      crop-image(img-low, 0pt, 0pt, 18pt, 10pt),
       
-      y-label("high permeability", nudge: -0.22cm),
-      cropped-image(img-high, 2.3cm, 100%, 0cm, -0.22cm)
-    )
+      y-label("high permeability", nudge: -0.1cm),
+      crop-image(img-high, 8pt, 0pt, 8pt, 10pt),
+    ),
+    x-label("concentration (mmol/l)")
   )
 }
 
@@ -57,15 +58,15 @@
           [
             #panel-label("B")
             #v(-50pt)
-            #cropped-image("../plots/mesh../plots/arteries.png", 9cm, 100%, 0cm, 1.3cm, width: 132%)
+            #cropped-image("../plots/meshplots/arteries.png", 9cm, 100%, 0cm, 1.3cm, width: 132%)
           ]
         ),
         
         [
-          #panel-label("D", nudge-dx: -12pt)
+          #panel-label("D", nudge-dx: -22pt)
           #v(-15pt) 
           #grid(
-            columns: 1, row-gutter: 0pt,
+            columns: 1, row-gutter: 1pt,
             detail-block("ACA-A3",
               "../plots/modelA-strongVM/modelA-strongVM_2+4+6+8_ACA-A3_0.2+2.0+12.0+10.0_details.png",
               "../plots/modelB2-100/modelB2-100_2+4+6+8_ACA-A3_0.2+2.0+12.0+10.0_details.png"
@@ -79,11 +80,11 @@
               "../plots/modelB2-100/modelB2-100_1+2+3+4_MCA-R_0.2+5.0+20.0+20.0_details.png"
             )
           )
-          #v(-30pt),
+          #v(-25pt),
         ],
         // --- ROW 2 ---
         [
-          #panel-label("C", nudge-dy: -12pt)
+          #panel-label("C", nudge-dy: -10pt)
           #v(-15pt)
           #detail-block("BA",
             "../plots/modelA-strongVM/modelA-strongVM_1+2+3+4_BA_3.0+40.0+40.0+10.0_details.png",
@@ -101,11 +102,11 @@
         ]
       )
       
-      #callout(29.5%, 53%, 4cm, -6cm,   off-x: 6pt, off-y: -6pt) 
-      #callout(27%, 57%, 4.5cm, -5cm, off-x: 6pt, off-y: 0pt) 
-      #callout(21%, 63%, 5.7cm, -2cm,   off-x: 6pt, off-y: 6pt) 
-      #callout(33.4%, 63%, 3.3cm, 2.1cm,   off-x: 6pt, off-y: 6pt) 
-      #callout(25%, 70%, -4.3cm, 1cm,  off-x: -6pt, off-y: 6pt)
+      #callout(29.5%, 51%, 4cm, -6cm,   off-x: 6pt, off-y: -6pt) 
+      #callout(27%, 54%, 4.3cm, -5cm, off-x: 6pt, off-y: 0pt) 
+      #callout(21%, 60%, 5.3cm, -1.6cm,   off-x: 6pt, off-y: 6pt) 
+      #callout(33.4%, 60%, 3.1cm, 2.8cm,   off-x: 6pt, off-y: 6pt) 
+      #callout(25%, 66.5%, -4.5cm, 1.7cm,  off-x: -6pt, off-y: 6pt)
     ]),
 
     // ------------------------------------------
@@ -113,12 +114,12 @@
     // ------------------------------------------
     [
       #panel-label("E")
-      #v(-20pt)
+      #v(-16pt)
       #image("../plots/comparisons/modelA_modelA-strongVM_modelB2-10_modelB2-100/modelA_modelA-strongVM_modelB2-10_modelB2-100_conc.png", width: 100%)
     ],
     [
       #panel-label("F")
-      #v(-20pt)
+      #v(-16pt)
       #image("../plots/comparisons/modelA-strongVM_modelB2-10_modelB2-100/modelA-strongVM_modelB2-10_modelB2-100.png", width: 100%)
     ]
   )

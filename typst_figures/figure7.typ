@@ -33,11 +33,11 @@
           columns: 1, row-gutter: 3pt,
           [
             #panel-title("max PVS velocity")
-            #image("../plots/comparisons/pvs_flow_peristaltic+cardiac_pvs_oscillation_pvs_flow_peristaltic+cardiac_pvs_oscillation_enlarged_pvs_flow_peristaltic+vasomotion-strong_pvs_flow_peristaltic+vasomotion-strong-enlarged_pvs_flow_prod+sas_flow-arteries_pvs_flow_prod+sas_flow-arteries-3/pvsumax_comp.png", width: 100%)
+            #image("../plots/comparisons/pvs_flow_peristaltic+cardiac_pvs_oscillation_pvs_flow_peristaltic+cardiac_pvs_oscillation_enlarged_pvs_flow_peristaltic+vasomotion-strong_pvs_flow_peristaltic+vasomotion-strong-enlarged/pvsumax_comp.png", width: 100%)
           ],
           [
             #panel-title("mean PVS velocity")
-            #image("../plots/comparisons/pvs_flow_peristaltic+cardiac_pvs_oscillation_pvs_flow_peristaltic+cardiac_pvs_oscillation_enlarged_pvs_flow_peristaltic+vasomotion-strong_pvs_flow_peristaltic+vasomotion-strong-enlarged_pvs_flow_prod+sas_flow-arteries_pvs_flow_prod+sas_flow-arteries-3/pvsumean_comp.png", width: 100%)
+            #image("../plots/comparisons/pvs_flow_peristaltic+cardiac_pvs_oscillation_pvs_flow_peristaltic+cardiac_pvs_oscillation_enlarged_pvs_flow_peristaltic+vasomotion-strong_pvs_flow_peristaltic+vasomotion-strong-enlarged/pvsumean_comp.png", width: 100%)
           ]
         )
       ],

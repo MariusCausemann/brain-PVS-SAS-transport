@@ -39,7 +39,7 @@
       [
         #panel-label("C")
         #v(-20pt) #panel-title("cardiac-driven flow")
-        #image("../plots/pvs_flow_peristaltic/cardiac_pvs_oscillation/vel3D.png", width: 140%)
+        #image("../plots/pvs_flow_peristaltic/cardiac_pvs_oscillation/vel3D_black.png", width: 145%)
       ],
 
       // Column 2: Panels D & F (Stacked Histograms)
@@ -49,13 +49,13 @@
         [
           #panel-label("D")
           #v(-20pt) #panel-title("cardiac flow velocities")
-          #v(-10pt)
+          #v(-15pt)
           #image("../plots/pvs_flow_peristaltic/cardiac_pvs_oscillation/cardiac_pvs_oscillation_velocity_histo_cell.png", width: 120%)
         ],
         [
           #panel-label("F")
-          #v(-25pt) #panel-title("vasomotion flow velocities")
-          #v(-10pt)
+          #v(-20pt) #panel-title("vasomotion flow velocities")
+          #v(-15pt)
           #image("../plots/pvs_flow_peristaltic/vasomotion-strong/vasomotion-strong_velocity_histo_cell.png", width: 120%)
         ]
       ),
@@ -64,7 +64,7 @@
       [
         #panel-label("E")
         #v(-20pt) #panel-title("vasomotion-driven flow")
-        #image("../plots/pvs_flow_peristaltic/vasomotion-strong/vel3D.png", width: 140%)
+        #image("../plots/pvs_flow_peristaltic/vasomotion-strong/vel3D_black.png", width: 145%)
       ]
     )
   )

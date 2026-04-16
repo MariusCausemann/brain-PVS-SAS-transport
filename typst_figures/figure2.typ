@@ -1,5 +1,7 @@
-#import "utils.typ": setup-figure, panel-label, panel-title
+#import "utils.typ": setup-figure, panel-label, panel-title, bg-grid
 #show: setup-figure
+
+#bg-grid()
 
 // Main figure container (Part 2)
 #figure(
@@ -52,13 +54,13 @@
     // ==========================================
     grid(
       columns: (2.9fr, 1.2fr), 
-      gutter: 1pt, // Added a small gutter so E doesn't touch F/G
+      gutter: 5pt, // Added a small gutter so E doesn't touch F/G
       
       // Panel E
       [
         #panel-label("C") 
-        #v(-13pt)
-        #image("../plots/modelA/modelA_overview_1-6-12-24.png", width: 100%)
+        #v(-7pt)
+        #image("../plots/modelA/modelA_overview_1-6-12-24.png", width: 101%)
       ],
       
       // Panels F & G stacked vertically
@@ -67,20 +69,20 @@
         row-gutter: 0pt,
         [
           #panel-label("D")
-          #v(-20pt)
+          #v(-12pt)
           #panel-title("Mean tracer concentration")
-          #v(-8pt)
-          #image("../plots/modelA/modelA_mean_conc.png", width: 100%)
+          #v(-15pt)
+          #image("../plots/modelA/modelA_mean_conc.png", width: 110%)
         ],
         [
           #panel-label("E")
           #v(-20pt)
           #panel-title("Total tracer content")
-          #v(-8pt)
-          #image("../plots/modelA/modelA_total_conc.png", width: 100%)
+          #v(-15pt)
+          #image("../plots/modelA/modelA_total_conc.png", width: 110%)
         ]
       )
     ),
-    v(-20pt)
+    v(-40pt)
   )
 )
