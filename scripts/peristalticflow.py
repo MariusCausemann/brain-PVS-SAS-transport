@@ -529,10 +529,18 @@ def compute_pvs_flow(meshfile, output, args):
                     inflows[T_i] = Q.vector()[i]
                 elif T_i in outlets:
                     outflows[T_i] = Q.vector()[i]
+            
+            outflow_vals = np.array(list(outflows.values()))
+            Q_roots += inflows[inlet] 
 
-            Q_roots += inflows[inlet]        
-            print("\t<Q'>_in (mL/day) = %6.3g" % (inflows[inlet]*m3s_to_mlday))
-            print("\t<Q'>_out (mL/day) = %6.3g" % (sum(outflows.values())*m3s_to_mlday))
+            Q_in_root = inflows[inlet]
+            Q_in_leaves = outflow_vals[outflow_vals <=0].sum()
+            Q_out_leaves = outflow_vals[outflow_vals >0].sum()
+
+            print("\t<Q'>_in_root (mL/day) = %6.3g" % (Q_in_root*m3s_to_mlday))
+            print("\t<Q'>_in_leaves (mL/day) = %6.3g" % (Q_in_leaves*m3s_to_mlday))
+            print("\t<Q'>_out_leaves (mL/day) = %6.3g" % (Q_out_leaves*m3s_to_mlday))
+            print("\t<Q'>_tot (mL/day) = %6.3g" % (Q_out_leaves*m3s_to_mlday))
             print("\t #outlets = ", len(outlets))
             print("")
             
@@ -581,8 +589,8 @@ def compute_pvs_flow(meshfile, output, args):
 
     # Quantify the difference between Q_in + Q_out and Q*ds:
     print("Q_roots (mL/day) = ", Q_roots*m3s_to_mlday)
-    print("Q*ds (mL/day)= ", df.assemble(Q*df.ds)*m3s_to_mlday)
-    print("abs(Q)*ds*m3s_to_mlday = ", df.assemble(df.sqrt(df.dot(q_directed, q_directed))*df.ds)*m3s_to_mlday)
+    print("abs(Q)*ds (mL/day)= ", df.assemble(abs(Q)*df.ds)*m3s_to_mlday)
+    print("abs(q_directed)*ds*m3s_to_mlday = ", df.assemble(df.sqrt(df.dot(q_directed, q_directed))*df.ds)*m3s_to_mlday)
     n = df.FacetNormal(mesh)
     print("max(Q,0)*ds*m3s_to_mlday = ", df.assemble(ufl.max_value(df.dot(q_directed, n),0.0)*df.ds)*m3s_to_mlday)
     print("min(Q,0)*ds*m3s_to_mlday = ", df.assemble(ufl.min_value(df.dot(q_directed, n),0.0)*df.ds)*m3s_to_mlday)
