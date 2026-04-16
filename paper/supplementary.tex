@@ -725,10 +725,10 @@ where $q_k = (A\hat{u})(y_k) n(y_k)$ is the volumetric fluid flow rate leaving t
 
 To conserve mass, the total flux (advective and diffusive) exiting the 1D domain at $y_k$ must equal the total flux entering the 0D compartment from the 1D network. This yields the following Robin-type boundary condition on the 1D network:
 \begin{equation}
-  -\hat{D}A \partial_{n} \hat{c} = (q_k^- - \alpha_k)( c^0_k - \hat{c} ) \quad \mathrm{on} \quad y_k \in \mathcal{N}_{\rm leaf}.
+  -\hat{D}A \partial_s \hat{c} = (q_k^- - \alpha_k)( c^0_k - \hat{c} ) \quad \mathrm{on} \quad y_k \in \mathcal{N}_{\rm leaf}.
   \label{eq:1d_bcs}
 \end{equation}
-We note that if advection is purely outward ($q_k > 0$, so $q_k^- = 0$), the boundary condition simplifies to $-\hat{D}A\partial_{n}\hat{c} = \alpha_k(\hat{c} - c^0_k)$, indicating that the diffusive flux at the boundary is driven purely by the concentration difference between the two compartments. Conversely, if $q_k < 0$ (flow enters 1D from 0D), the boundary condition balances the total diffusive flux with both the advective influx from the 0D compartment and the 1D-0D diffusive exchange. 
+We note that if advection is purely outward ($q_k > 0$, so $q_k^- = 0$), the boundary condition simplifies to $-\hat{D}A\partial_s\hat{c} = \alpha_k(\hat{c} - c^0_k)$, indicating that the diffusive flux at the boundary is driven purely by the concentration difference between the two compartments. Conversely, if $q_k < 0$ (flow enters 1D from 0D), the boundary condition balances the total diffusive flux with both the advective influx from the 0D compartment and the 1D-0D diffusive exchange. 
 
 Finally, the diffusive exchange between the 0D compartments and the 3D domain acts via a localized volumetric source term $S_{\text{0D} \leftrightarrow \text{3D}}$ in~\eqref{eq:3d_pde}, defined using the indicator function $\chi_{B_k}$ for each ball $B_k$:
 \begin{equation}
@@ -759,7 +759,7 @@ The morphological parameters $\lambda$ and $N$ are chosen based on established q
 
 For the remaining network end nodes, comprising the arterial root nodes and all perivenous end nodes, we impose a homogeneous no-flux boundary condition. Ensuring that the sum of the outward diffusive and advective fluxes is zero yields:
 \begin{equation}
-  \hat{D}A \partial_{s} \hat{c} - (A \hat{u} n(y_k)) \hat{c} = 0 \quad \mathrm{for} \quad y_k \in \mathcal{N} \setminus \mathcal{N}_{\rm leaf}.
+  \hat{D}A \partial_s \hat{c} - (A \hat{u} n(y_k)) \hat{c} = 0 \quad \mathrm{for} \quad y_k \in \mathcal{N} \setminus \mathcal{N}_{\rm leaf}.
   \label{eq:1d_noflux}
 \end{equation}
 
