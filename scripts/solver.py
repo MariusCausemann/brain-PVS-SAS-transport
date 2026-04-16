@@ -156,6 +156,22 @@ def as_Pk_function(mesh_f, k=0):
 
     return f
 
+def inject_array_to_function(array_vals, tip_ids, V):
+    """
+    Safely maps an array of tip values into a FEniCS Function space.
+    V: The FunctionSpace (e.g., Pa for the artery mesh)
+    """
+    f = Function(V)
+    f_arr = f.vector().get_local()
+    v2d = vertex_to_dof_map(V)
+    
+    # Map the discrete array values exactly to the topological tip DoFs
+    for i, t_id in enumerate(tip_ids):
+        dof_idx = v2d[t_id]
+        f_arr[dof_idx] = array_vals[i]
+        
+    f.vector().set_local(f_arr)
+    return f
 
 
 def ksp_mat(tensor):

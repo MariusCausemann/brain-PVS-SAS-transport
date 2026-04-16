@@ -11,7 +11,10 @@ from plotting_utils import read_config
 from test_map_on_global_coords_shift import map_dg_on_global, map_kdtree
 from IPython import embed
 import yaml
-import meshio
+from tqdm import tqdm
+import pyvista
+
+print = PETSc.Sys.Print
 
 def write(sols, pvdfiles, t, hdffile=None):
     for s,f in zip(sols, pvdfiles):
@@ -19,6 +22,7 @@ def write(sols, pvdfiles, t, hdffile=None):
     if hdffile is not None:
         for s in sols:
             hdffile.write(s, s.name(), t)
+
 
 CSFID = 1
 PARID = 2
@@ -36,8 +40,18 @@ CSF_NO_FLOW_CSF_ID = 7
 
 def get_subdomain_dofs(V, subdomains, subd_id):
     dm = V.dofmap()
-    subd_dofs = np.unique(np.hstack(
-        [dm.cell_dofs(c.index()) for c in SubsetIterator(subdomains, subd_id)]))
+    cell_indices = np.where(subdomains.array() == subd_id)[0]
+    dofs_list = []
+    for c_idx in tqdm(cell_indices, desc="extracting subdomain dofs"):
+        dofs_list.extend(dm.cell_dofs(c_idx).tolist())
+        
+    subd_dofs = np.array(dofs_list)
+    
+    # sanity check
+    if len(subd_dofs) > 0:
+        assert subd_dofs.min() >= 0, f"Negative DOF found: {subd_dofs.min()}"
+        assert subd_dofs.max() < V.dim(), f"DOF out of bounds: {subd_dofs.max()} >= {V.dim()}"
+        
     return subd_dofs
 
 def read_pvs_velocity(vel_file, netw):
@@ -105,6 +119,7 @@ def run_simulation(configfile: str):
     label.array()[:] = vol_subdomains.array()[:]
     assert np.allclose(np.unique(vol_subdomains.array()), [CSFID, PARID, LVID, V34ID, CSFNOFLOWID])
     vol_subdomains.array()[np.isin(vol_subdomains.array(), [LVID, V34ID, CSFNOFLOWID])] = CSFID
+    
     File(results_dir + "subdomains.pvd") << vol_subdomains
 
     artery_shape = xii.Circle(radius=artery_radii, degree=40, quad_scheme="midpoint")
@@ -203,18 +218,6 @@ def run_simulation(configfile: str):
     DG0 = FunctionSpace(mesh, "DG", 0)
 
 
-    csf_dofs_dg = get_subdomain_dofs(DG0, vol_subdomains, CSFID)
-    #from IPython import embed; embed()
-    # compute peclet number
-    L = 0.05 # characteristic length (along direction of primary transport)
-    """
-    Pe = project(L*sqrt(inner(velocity_csf, velocity_csf)) / Ds, DG0,
-                 solver_type="cg",preconditioner_type="jacobi")
-    pemax = Pe.vector().get_local()[csf_dofs_dg].max()
-    pemin = Pe.vector().get_local()[csf_dofs_dg].min()
-    peavg = assemble(Pe*dx_s(CSFID)) / assemble(Constant(1)*dx_s(CSFID))
-    print(f"min Pe: {pemin}, max Pe: {pemax}, avg Pe: {peavg}")
-    """
     fa = Constant(0.0) 
     fv = Constant(0.0)
 
@@ -223,11 +226,13 @@ def run_simulation(configfile: str):
     Qv = FunctionSpace(vein, 'CG', 1)
     tip_ids = np.where(artery_roots.array()==1)[0]
 
-    import pyvista
     tips = pyvista.PointSet(artery.coordinates()[tip_ids]).cast_to_unstructured_grid()
-    assert len(tips.cells) > 0
-    Pa = VectorFunctionSpace(artery, 'R', 0, len(tip_ids))
+    tip_dofs = vertex_to_dof_map(Qa)[tip_ids]
+    par_dofs = get_subdomain_dofs(V, vol_subdomains, PARID)
+    csf_dofs = get_subdomain_dofs(V, vol_subdomains, CSFID)
 
+    assert len(tips.cells) > 0
+    Pa = Qa #VectorFunctionSpace(artery, 'R', 0, len(tip_ids))
 
     W = [V, Qa, Qv, Pa]
 
@@ -243,10 +248,12 @@ def run_simulation(configfile: str):
     pa_i = interpolate(pa_o, Qa) 
     pv_i = interpolate(pv_o, Qv)
     pa0_i = Function(Pa)
-    tips["c_tips_0"] = pa0_i.vector()[:]
+
+    tips["c_tips_0"] = pa0_i.vector()[tip_dofs]
     # Things for restriction
     dx_a = Measure('dx', domain=artery)
-    ds_a = Measure('ds', domain=artery)
+    ds_a = Measure("ds", artery, subdomain_data=artery_roots)
+    ds_v = Measure("ds", vein, subdomain_data=vein_roots)
     ua, va = (xii.Average(x, artery, artery_shape, normalize=True,
      resolve_interfaces=priority) for x in (u, v))
                                                
@@ -324,8 +331,6 @@ def run_simulation(configfile: str):
             + supg_stabilization(pv, area_vein*qv, velocity_v) 
     
 
-    #from IPython import embed; embed()
-
     L     = xii.block_form(W, 1)
 
    # downstream reservoir terms:
@@ -334,54 +339,80 @@ def run_simulation(configfile: str):
     artery_tips.array()[tip_ids] = np.arange(len(tip_ids)) + 1
     ds_a_tip = Measure("ds", artery, subdomain_data=artery_tips)
     
-    qp = ufl.max_value(area_artery * inner(velocity_a, na), 0)
-    qm = ufl.min_value(area_artery * inner(velocity_a, na), 0)
+    q_scale = Constant(config.get("q_scale", 1.0))
+    qp = q_scale*ufl.max_value(area_artery * inner(velocity_a, na), 0)
+    qm = q_scale*ufl.min_value(area_artery * inner(velocity_a, na), 0)
 
     Br = 10e-3 # 10 mm radius
     lmb = Constant(16) #length to radius ratio
     N_branches = 15 # number of bifurcations to capillary level
     alpha_k = sas_diffusion * area_artery / (lmb*artery_radii/pvs_ratio_artery)
+    if "alpha" in config.keys():
+        alpha_k = Constant(config["alpha"])
 
     def downstream_pvs_vol(A, R1):
         return A*lmb*R1*(Constant(N_branches) + 1)
     
     def downstream_pvs_surface(R1, R2):
-        return 2*np.pi*lmb*R1*R2*sum(2**(j/3) for j in range(N_branches))
+        return 2*np.pi*lmb*R1*R2*Constant(sum(2**(j/3) for j in range(N_branches + 1)))
+    
 
     artery_ball = xii.Ball(radius=Br, degree=10)
     ball_cells = MeshFunction("size_t", artery, 1, 0)
     ball_cells.array()[:] = (artery_tips.array()[artery.cells()] > 0).any(axis=1)
     u_ball, v_ball = (xii.Average(x, artery, artery_ball, normalize=True,
                                    restrict_cell_f=ball_cells) for x in (u, v))
+    
+    u1_ball = xii.Average(interpolate(Constant(1), V), artery, artery_ball, normalize=True, 
+                          restrict_cell_f=ball_cells)
+
     tip_vols = []
     tip_surf = []
+    Vi = downstream_pvs_vol(area_artery, artery_radii/pvs_ratio_artery)
+    Si = downstream_pvs_surface(artery_radii/pvs_ratio_artery, artery_radii)
+    beta_k = Si * xi_a
+    if "beta" in config.keys():
+        beta_k = Constant(config["beta"])
+
+
+    ball_vol_array = np.ones(len(tip_ids))
     for i, ti in enumerate(tip_ids):
         ds_tip = ds_a_tip(i + 1)
-        Vi = downstream_pvs_vol(area_artery, artery_radii/pvs_ratio_artery)
-        Si = downstream_pvs_surface(artery_radii/pvs_ratio_artery, artery_radii)
+
+        # account for some of the balls being partly out of the 3D domain
+        ball_vol_array[i] = xii.ii_assemble(u1_ball*ds_tip)
+
         tip_vols.append(assemble(Vi*ds_tip))
         tip_surf.append(assemble(Si*ds_tip))
-        beta_k = Si * xi_a
-        # V*dc/dt - qm*c0 + alpha*c0 + beta*c0
-        a[3][3] += (Vi / dt - qm + alpha_k + beta_k) * pa0[i] * qa0[i] * ds_tip
-        
-        # Advective and diffusive fluxes entering 0D from 1D
-        a[3][1] -= (qp + alpha_k) * pa * qa0[i] * ds_tip
-        
-        # Diffusive flux entering 0D from 3D (evaluated at the tip via u_ball)
-        a[3][0] -= beta_k * u_ball * qa0[i] * ds_tip
-        
-        # RHS term (previous time step mass)
-        L[3] += (Vi / dt) * pa0_i[i] * qa0[i] * ds_tip
 
-        # Total flux leaving 1D tip = qp * pa + qm * pa0 + alpha*(pa - pa0)
-        a[1][1] += (qp + alpha_k) * pa * qa * ds_tip
-        a[1][3] += (qm - alpha_k) * pa0[i] * qa * ds_tip
+    ball_vol_frac = inject_array_to_function(ball_vol_array, tip_ids, Pa)
+    ds_tip = ds_a(1)
+    assert np.isclose(assemble(ball_vol_frac*ds_tip), ball_vol_frac.vector().sum())
 
-        # S_0D->3D = beta * (pa0 - u_ball) 
-        # becomes: + beta * u_ball * v_ball - beta * pa0 * v_ball
-        a[0][0] += beta_k * u_ball * v_ball * ds_tip
-        a[0][3] -= beta_k * pa0[i] * v_ball * ds_tip
+    # V*dc/dt - qm*c0 + alpha*c0 + beta*c0
+    a[3][3] += (Vi / dt - qm + alpha_k + beta_k*ball_vol_frac) * pa0 * qa0 * ds_tip
+    
+    # Advective and diffusive fluxes entering 0D from 1D
+    a[3][1] -= (qp + alpha_k) * pa * qa0 * ds_tip
+    
+    # Diffusive flux entering 0D from 3D
+    a[3][0] -= beta_k* ball_vol_frac * u_ball * qa0 * ds_tip
+    
+    # RHS term
+    L[3] += (Vi / dt) * pa0_i * qa0 * ds_tip
+
+    # Total flux leaving 1D tip = qp * pa + qm * pa0 + alpha*(pa - pa0)
+    a[1][1] += (qp + alpha_k) * pa * qa * ds_tip
+    a[1][3] += (qm - alpha_k) * pa0 * qa * ds_tip
+
+    # S_0D->3D = beta * (pa0 - u_ball) 
+    # becomes: + beta * u_ball * v_ball - beta * pa0 * v_ball
+    a[0][0] += beta_k * u_ball * v_ball * ds_tip
+    a[0][3] -= beta_k * pa0 * v_ball * ds_tip
+
+    dP_points = Measure("dP", domain=artery)
+    a[3][3] += Constant(1) * pa0 * qa0 * dP_points
+    a[3][3] -= Constant(1) * pa0 * qa0 * ds_tip
 
     L[0]  = phi*(1/dt)*inner(u_i,v)*dx
     L[1]  = (1/dt)*area_artery*inner(pa_i, qa)*dx + area_artery*inner(fa,qa)*dx
@@ -390,8 +421,7 @@ def run_simulation(configfile: str):
 
     W_bcs = [[], [], [], []]
     expressions = []
-    ds_a = Measure("ds", artery, subdomain_data=artery_roots)
-    ds_v = Measure("ds", vein, subdomain_data=vein_roots)
+
     ds_i = [ds, ds_a, ds_v]
     dbcflag = False
     for i, dom in enumerate(["sas", "arteries", "venes"]):
@@ -411,18 +441,19 @@ def run_simulation(configfile: str):
             v = TestFunction(W[i])
             L[i] += expr*v*ds_i[i](SPINAL_OUTLET_ID)
 
+    print("assembling mat...")    
     AA, bb = map(xii.ii_assemble, (a, L))
+
     if dbcflag:
         AA, _, bc_apply_b = xii.apply_bc(AA, bb, bcs=W_bcs, return_apply_b=True)
 
-   
+    print("generating petsc mat...")
     A_ = ksp_mat(xii.ii_convert(AA))
-
     opts = PETSc.Options() 
     opts.setValue('ksp_type', 'preonly')    
     opts.setValue('pc_type', 'lu')
     opts.setValue("pc_factor_mat_solver_type", "mumps")
-    opts.setValue("mat_mumps_icntl_4", "3")
+    opts.setValue("mat_mumps_icntl_4", "1")
     opts.setValue("mat_mumps_icntl_35", 1)
     opts.setValue("mat_mumps_cntl_7",  1e-8)  # BLR eps
 
@@ -463,15 +494,13 @@ def run_simulation(configfile: str):
     wh = xii.ii_Function(W)
     x_ = A_.createVecLeft()
     i = 0
-    par_dofs = get_subdomain_dofs(V, vol_subdomains, PARID)
-    csf_dofs = get_subdomain_dofs(V, vol_subdomains, CSFID)
 
     for dom in ["par", "csf", "ven", "art"]:
         metrics[f"{dom}_min"] = [] 
         metrics[f"{dom}_max"] = [] 
         metrics[f"{dom}_mean"] = [] 
 
-    tips["c_tips0"] = pa0_i.vector()[:]
+    tips["c_tips0"] = pa0_i.vector()[tip_dofs]
     tips["vol"] = tip_vols
 
     while t < T: 
@@ -488,7 +517,6 @@ def run_simulation(configfile: str):
         
         x2 = x_.norm(2)
 
-        print("time", t, '|b|', b_.norm(2), '|x|', x2)
 
         # NOTE: solve(b_, ksp_vec(wh.vector())) segfault most likely because
         # of type incompatibility seq is expected and we have nest
@@ -498,7 +526,12 @@ def run_simulation(configfile: str):
         pv_i.assign(wh[2])
         pa0_i.assign(wh[3])
 
-        tips[f"c_tips_{int(t)}"] = pa0_i.vector()[:]
+        total_mass = assemble(phi*u_i*dx) + assemble(pa_i*area_artery*dx_a) + assemble(pv_i*area_vein*dx_v) 
+        pvs_cont_mass = sum([pa0_i.vector()[tip_dofs][i] * tip_vols[i] for i in range(len(tip_ids))])
+        total_mass += pvs_cont_mass
+        print(f"time:{t:<8} |b| {b_.norm(2):.5f}, |x| {x2:.5f}, total tracer {total_mass * 1e3:<8}, pvs cont tracer {pvs_cont_mass * 1e3:<8}")
+
+        tips[f"c_tips_{int(t)}"] = pa0_i.vector()[tip_dofs]
         wh[0].rename("c", "c")
         wh[1].rename("c", "c")
         wh[2].rename("c", "c")
@@ -507,8 +540,8 @@ def run_simulation(configfile: str):
                                 [u_i, u_i, pa_i, pv_i],
                                 [par_dofs, csf_dofs, None, None],
                                 [dx_s(PARID), dx_s(CSFID), dx_a, dx_v]):
-            #metrics[f"{dom}_min"].append(v.vector().get_local()[dofs].min())
-            #metrics[f"{dom}_max"].append(v.vector().get_local()[dofs].max())
+            metrics[f"{dom}_min"].append(v.vector().get_local()[dofs].min())
+            metrics[f"{dom}_max"].append(v.vector().get_local()[dofs].max())
             mean = assemble(v*dxd) / assemble(1*dxd)
             metrics[f"{dom}_mean"].append(mean)
 
