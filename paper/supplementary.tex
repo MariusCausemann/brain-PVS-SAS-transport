@@ -709,13 +709,19 @@ for each $y \in \mathcal{B}$:
   \label{eq:flux_conservation}
 \end{equation}
 
+Here the function $n^i$ takes the values in $\{-1, 1\}$ and defines an orientation of vertices of edge $\Lambda^i$. Specifically, for an edge $\Lambda^i$ oriented from $y_{\rm in}$ to $y_{\rm out}$, we set
+\begin{equation}
+  n^i(y_{\rm in}) = -1, \quad n^i(y_{\rm out}) = 1.
+\end{equation}
+With this convention, at any network end node $y_k \in \mathcal{N}$ connected to an edge $\Lambda^i$, the normal pointing outward from the network is simply $n(y_k) = n^i(y_k)$.
+
 Finally, to augment~\eqref{eq:1d_pde} at the network ends, we represent the unresolved, continuous extension of the arterial perivascular networks by coupling the arterial leaf nodes to a set of 0D compartments, similar to the approach in \cite{fritz20221d}. We denote this subset of arterial leaf nodes as $\mathcal{N}_{\rm leaf} \subset \mathcal{N}$. Root nodes and perivenous end nodes are excluded from this 0D coupling; at these nodes, a standard no-flux boundary condition is applied. For each arterial leaf node $y_k \in \mathcal{N}_{\rm leaf}$, let $c^0_k(t)$ denote the solute concentration in a 0D compartment of effective volume $V_k$. This compartment exchanges mass with the 3D domain over a local spherical neighborhood $B_k$ (with volume $|B_k|$) centered at $y_k$. The rate of change of mass in the 0D compartment is governed by advective and diffusive fluxes from the 1D network, alongside diffusive exchange with the 3D tissue:
 
 \begin{equation}
   V_k \frac{d c^0_k}{dt} = q_k^+ \hat{c}(y_k) + q_k^- c^0_k + \alpha_k (\hat{c}(y_k) - c^0_k) + \beta_k \omega_k ( \bar{c}_{B_k} - c^0_k ) \quad \forall y_k \in \mathcal{N}_{\rm leaf},
   \label{eq:0d_ode}
 \end{equation}
-where $q_k = (A\hat{u})(y_k) \cdot n(y_k)$ is the volumetric fluid flow rate leaving the 1D network at $y_k$ (with $n(y_k)$ denoting the outward normal), split into outflow $q_k^+ = \max(q_k, 0)$ and inflow $q_k^- = \min(q_k, 0)$ components to implement upwinding, $\alpha_k$ is the 1D-0D diffusive conductance and $\beta_k$ is the nominal 0D-3D diffusive exchange rate. To account for boundary proximity where the neighborhood $B_k$ may partially extend outside the 3D domain, we scale this exchange by $\omega_k = |B_k \cap \Omega| / |B_k|$, which represents the volume fraction of the ball intersecting the computational mesh. Accordingly, $\bar{c}_{B_k}(t) = \frac{1}{|B_k \cap \Omega|} \int_{B_k \cap \Omega} c(x, t) \, dx$ is the average 3D concentration evaluated within this intersection.
+where $q_k = (A\hat{u})(y_k) n(y_k)$ is the volumetric fluid flow rate leaving the 1D network at $y_k$, split into outflow $q_k^+ = \max(q_k, 0)$ and inflow $q_k^- = \min(q_k, 0)$ components to implement upwinding, $\alpha_k$ is the 1D-0D diffusive conductance and $\beta_k$ is the nominal 0D-3D diffusive exchange rate. To account for boundary proximity where the neighborhood $B_k$ may partially extend outside the 3D domain, we scale this exchange by $\omega_k = |B_k \cap \Omega| / |B_k|$, which represents the volume fraction of the ball intersecting the computational mesh. Accordingly, $\bar{c}_{B_k}(t) = \frac{1}{|B_k \cap \Omega|} \int_{B_k \cap \Omega} c(x, t) \, dx$ is the average 3D concentration evaluated within this intersection.
 
 To conserve mass, the total flux (advective and diffusive) exiting the 1D domain at $y_k$ must equal the total flux entering the 0D compartment from the 1D network. This yields the following Robin-type boundary condition on the 1D network:
 \begin{equation}
@@ -753,7 +759,7 @@ The morphological parameters $\lambda$ and $N$ are chosen based on established q
 
 For the remaining network end nodes, comprising the arterial root nodes and all perivenous end nodes, we impose a homogeneous no-flux boundary condition. Ensuring that the sum of the outward diffusive and advective fluxes is zero yields:
 \begin{equation}
-  \hat{D}A \partial_{n} \hat{c} - (A \hat{u} \cdot n) \hat{c} = 0 \quad \mathrm{for} \quad y_k \in \mathcal{N} \setminus \mathcal{N}_{\rm leaf}.
+  \hat{D}A \partial_{s} \hat{c} - (A \hat{u} n(y_k)) \hat{c} = 0 \quad \mathrm{for} \quad y_k \in \mathcal{N} \setminus \mathcal{N}_{\rm leaf}.
   \label{eq:1d_noflux}
 \end{equation}
 
