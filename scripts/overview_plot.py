@@ -120,7 +120,7 @@ def generate_overview_plot(model:str,
 
         tstr = "-".join([f"{t/3600:.0f}" for t in times])
         plt.savefig(f"plots/{model}/{model}_overview_{tstr}{'_dark' if style=='dark_background' else ''}.png",
-                        dpi=300, bbox_inches="tight",)
+                        dpi=300, bbox_inches="tight", transparent=True)
     
 if __name__ == "__main__":
     typer.run(generate_overview_plot)

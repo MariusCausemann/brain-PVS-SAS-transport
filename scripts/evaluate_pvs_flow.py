@@ -18,6 +18,10 @@ from cmap import Colormap
 from vtk_adapter import create_vtk_structures
 from extract_vessels import get_tubes
 import ufl_legacy as ufl
+from matplotlib import font_manager
+
+font_path = font_manager.findfont("Nimbus Sans", fallback_to_default=False)
+
 
 m2mm = 1e3
 m2mum = 1e6
@@ -27,7 +31,7 @@ def plot_pvs_velocity(mesh, uh_mag, artery_radii, filename, col="white"):
     CG1 = FunctionSpace(mesh, "CG", 1)
     bar_args=dict(title="velocity (μm/s)", vertical=False,
                     height=0.07, width=0.6, position_x=0.2, color=col,
-                    position_y=0.0, title_font_size=32, font_family="arial",
+                    position_y=0.0, title_font_size=36, font_family="arial",
                     label_font_size=32, fmt="%.0f")
     topology, cell_types, x = create_vtk_structures(CG1)
     grid = pv.UnstructuredGrid(topology, cell_types, x)
@@ -39,11 +43,13 @@ def plot_pvs_velocity(mesh, uh_mag, artery_radii, filename, col="white"):
     pl = pv.Plotter(off_screen=True, window_size=(1200, 800))
     pl.add_mesh(tubes,scalars="u", cmap="curl", clim=(-umax, umax),
                 scalar_bar_args=bar_args)
+    pl.scalar_bar.GetLabelTextProperty().SetFontFile(font_path)
+    pl.scalar_bar.GetTitleTextProperty().SetFontFile(font_path)
     pl.camera_position = 'xz'
     #pl.camera.roll += 5
     pl.camera.azimuth += 165
     pl.camera.elevation += 10
-    pl.camera.zoom(1.85)
+    pl.camera.zoom(1.8)
     pl.camera.focal_point = np.array(pl.camera.focal_point) + np.array([0,0,-0.008])
     img = pl.screenshot(filename, transparent_background=True)
 
@@ -116,7 +122,7 @@ def compute_pvs_flow(pvs_flow_file):
         umed = np.median(abs(uvals))
         range = np.round(minmax([uvals], percentile=99.9), 1)
         nbins = 50
-        fig, ax = plt.subplots(figsize=(5,2.8))
+        fig, ax = plt.subplots(figsize=(4.2,2.5))
         counts, bins, containers = plt.hist(uvals, density=False, bins=nbins, histtype="bar",
                 range=range, edgecolor='black', linewidth=0.4, 
                         weights=lengths / lengths.sum())
@@ -132,7 +138,7 @@ def compute_pvs_flow(pvs_flow_file):
         plt.ylabel("frequency")
         plt.tight_layout()
         plt.xlim(range)
-        plt.legend(frameon=False)
+        plt.legend(frameon=False, handlelength=1.2)
         ax.yaxis.set_major_formatter(PercentFormatter(1))
         plt.savefig(f"{plot_dir}/{model}_velocity_histo_{variant}.png", dpi=300,
                     transparent=True)

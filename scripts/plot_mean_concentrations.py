@@ -10,9 +10,9 @@ mol2mmol = 1e3
 
 def compare_concentrations(modelname:str):
     config = read_config(f"configfiles/{modelname}.yml")
-    os.makedirs("plots/{modelname}", exist_ok=True)
+    os.makedirs(f"plots/{modelname}", exist_ok=True)
     dt , T= config["dt"], config["T"]
-    times = np.arange(0, T + dt, 2*dt*config["output_frequency"])
+    times = np.arange(0, T + dt, dt*config["output_frequency"])
 
     data = read_config(f"results/{modelname}/mean_concentrations.yml")
 
@@ -28,7 +28,7 @@ def compare_concentrations(modelname:str):
     #sns.set_palette(["#0a9396","#94d2bd", "#e9d8a6", "#ee9b00"])
     sns.set_palette(["#0a9396","#81b8a5", "#ee6700", "#f3e30d","#eea700",])
 
-    fig, ax = plt.subplots(figsize=(5,4))
+    fig, ax = plt.subplots(figsize=(4.5,3.5))
     tot = np.zeros_like(times)
     prev = -100
     for q, l in zip(tot_values, labels):
@@ -50,28 +50,29 @@ def compare_concentrations(modelname:str):
     plt.xlabel("time (h)")
     #ax2.set_ylabel('mean tracer concentration (mmol/l)')
     ax.set_ylabel("total tracer content (mmol)")
-    ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.2), ncol=5, 
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.2), ncol=3, 
               columnspacing=0.5, frameon=False)
     plt.tight_layout()
     filename = f"plots/{modelname}/{modelname}_total_conc.png"
-    plt.savefig(filename, dpi=300)
+    plt.savefig(filename, dpi=300, transparent=True)
 
-    fig, ax = plt.subplots(figsize=(5,4))
+    fig, ax = plt.subplots(figsize=(4.5,3.5))
     tot = np.zeros_like(times)
 
     for c, l in zip(concentrations, labels):
         new_tot = tot + np.array(q)*mol2mmol
         plt.plot(times / (60*60), c, "-", label=l, lw=5)
         tot = new_tot
+        print(f"{l}: {max(c)}")
     
     plt.xlabel("time (h)")
     #ax2.set_ylabel('mean tracer concentration (mmol/l)')
     ax.set_ylabel("mean tracer concentration (mmol/l)")
-    ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.2), ncol=5, 
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.2), ncol=3, 
               columnspacing=0.5, frameon=False)
     plt.tight_layout()
     filename = f"plots/{modelname}/{modelname}_mean_conc.png"
-    plt.savefig(filename, dpi=300)
+    plt.savefig(filename, dpi=300, transparent=True)
 
 
 

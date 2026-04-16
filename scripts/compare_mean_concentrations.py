@@ -15,7 +15,7 @@ def compare_concentrations(models:List[str]):
     os.makedirs(f"plots/comparisons/{v}", exist_ok=True)
 
     dt , T= config["dt"], config["T"]
-    times = np.arange(0, T + dt, 3*dt*config["output_frequency"])
+    times = np.arange(0, T + dt, dt*config["output_frequency"])
     labels = ["CSF", "parenchyma", "PVS artery", "PVS vein"]
     results = dict()
     for m in models:

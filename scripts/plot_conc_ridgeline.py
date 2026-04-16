@@ -21,11 +21,11 @@ def plot_conc_ridgeline(model:str):
     config = read_config(f"configfiles/{model}.yml")
     artlabels = [l for l,p in pointlabels]
     dt , T= config["dt"], config["T"]
-    times = np.arange(0, T + dt, 3*dt*config["output_frequency"])
+    times = np.arange(0, T + dt, 2*dt*config["output_frequency"])
     set_plotting_defaults()
     labeldist = {n:results[f"{n}_root_dist"] for n in artlabels}
     xrange = (0, 0.2)
-    timespoints = np.array([1,2, 3,4,5, 6, 9, 12])*3600
+    timespoints = np.array([2, 4, 6, 8, 10, 12])*3600
     timeidx = np.where(np.isin(times, timespoints))[0]
     binedges = np.linspace(*xrange, 50)
     #from IPython import embed;embed()
@@ -55,14 +55,14 @@ def plot_conc_ridgeline(model:str):
                                         for t,d in zip(timespoints, data)}, index=xdata)
                 ridge_data = ridge_data[ridge_data.columns[::-1]]
                 fig, ax = joypy.joyplot(ridge_data, colormap=Colormap("Blues_r"), kind="values",
-                                        x_range=(0, len(xdata)), alpha=0.8, figsize=(5.5,4.5), overlap=1.5,
+                                        x_range=(0, len(xdata)), alpha=0.8, figsize=(4.2,3.4), overlap=1.5,
                                         #title="Total PVS tracer content", 
                                         )
                 ax[-1].set_xlabel("distance (m)")
                 ax[-1].set_xticks(np.linspace(0, len(xdata), 5, endpoint=False),
                                   np.linspace(*xdata[[0, -1]], 5, endpoint=False).round(2))
 
-                secxa, secxb = ax[-1].secondary_xaxis(0.9), ax[-1].secondary_xaxis(0.9)
+                secxa, secxb = ax[-1].secondary_xaxis(1), ax[-1].secondary_xaxis(1)
                 toplabels, bottomlabels = artlabels[0::2], artlabels[1::2]
                 for ln in ["ICA-L", "ACA-A1-L"]: toplabels.remove(ln)
                 for ln in ["ACA-A1-R"]: bottomlabels.remove(ln)
@@ -72,7 +72,7 @@ def plot_conc_ridgeline(model:str):
                                 bottomlabels, rotation=45)
                 secxb.tick_params(top=False, labeltop=False, bottom=True, labelbottom=True)
                 fig.savefig(f"plots/{model}/{model}_ridgeline_{datatype}_{plottype}_{s}.png",
-                            bbox_inches='tight', dpi=400)
+                            bbox_inches='tight', dpi=300)
 
 
 if __name__ == "__main__":

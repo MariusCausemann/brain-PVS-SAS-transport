@@ -35,7 +35,7 @@ def plot_conc_percentiles(models:List[str]):
     os.makedirs(f"plots/comparisons/{v}/", exist_ok=True)
     config = read_config(f"configfiles/{models[0]}.yml")
     dt , T= config["dt"], config["T"]
-    times = np.arange(0, T + dt, 3*dt*config["output_frequency"])
+    times = np.arange(0, T + dt, dt*config["output_frequency"])
     results = dict()
     for m in models:
         print(f"reading model {m}...")

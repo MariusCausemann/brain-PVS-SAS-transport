@@ -78,7 +78,7 @@ def generate_plot(
     fontsize = 16
 
 
-    fig = plt.figure(figsize=(len(times)*5, len(artlabels)*3), frameon=True)
+    fig = plt.figure(figsize=(len(times)*4, len(artlabels)*2.6), frameon=True)
     grid = ImageGrid(fig, 111, nrows_ncols=(len(artlabels), len(times)),
                      axes_pad=(0.02, 0.02) if cmax else (0.02, 0.22),
                      cbar_location="bottom", cbar_pad=0.03,
@@ -122,7 +122,7 @@ def generate_plot(
                                   cax=cax, format="{x:.1f}", pad=0.03, orientation='horizontal')
                 cb.ax.tick_params(labelsize=int(fontsize*0.8))
                 if j==len(artlabels) -1:
-                    cb.set_label("concentration (mmol/l)", fontsize=fontsize)
+                    cb.set_label("concentration (mmol/l)", fontsize=int(fontsize*0.9))
 
     for i,t in enumerate(times):
         ax = grid.axes_row[0][i]

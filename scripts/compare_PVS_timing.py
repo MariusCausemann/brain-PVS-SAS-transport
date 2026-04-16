@@ -48,7 +48,7 @@ def plot_timings(models:List[str]):
                "LargePVS":"#f7b801", "LargePVSA":"darkred"}
     annotate_model = "LargePVSA" if "LargePVSA" in models else "modelA"
     for t, (pvsdf, outerdf) in zip(["fta", "peaktime"] , [(ftas, outerftas), (pts, otps)]):
-        fig, axes = plt.subplots(ncols=len(art_groups) + 1, figsize=(9,4),
+        fig, axes = plt.subplots(ncols=len(art_groups) + 1, figsize=(7,3.2),
                                   width_ratios=[0]+[3]*len(art_groups), sharey=True)
         ax = axes[0]
         if t=="fta":ax.set_ylabel("first-time arrival (h)"); ax.set_ylim((0.0, 6))
@@ -86,7 +86,7 @@ def plot_timings(models:List[str]):
                 columnspacing=0.3, frameon=False)
         plt.tight_layout(w_pad=-0.5)
         plt.savefig(f"plots/comparisons/{v}/{v}_{t}.png", bbox_inches='tight',
-                    dpi=400)
+                    dpi=300, transparent=True)
 
 if __name__ == "__main__":
     typer.run(plot_timings)

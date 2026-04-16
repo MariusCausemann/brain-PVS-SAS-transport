@@ -12,7 +12,8 @@ def plot_conc_at_label(model:str):
     config = read_config(f"configfiles/{model}.yml")
 
     dt , T= config["dt"], config["T"]
-    times = np.arange(0, T + dt, 2*dt*config["output_frequency"])
+    times = np.arange(0, T + dt, dt*config["output_frequency"])
+    print(times / 60)
     set_plotting_defaults()
 
     artlabelsets = [["BA",],#["ICA-L", "ICA-R"], 
@@ -40,7 +41,7 @@ def plot_conc_at_label(model:str):
     nrows = 1
     ncols = int(np.ceil(len(artlabelsets) / nrows))
     for annotate in [True, False]:
-        fig, axes = plt.subplots(nrows, ncols, figsize=(int(ncols*2.8),nrows*2.8), constrained_layout=True)
+        fig, axes = plt.subplots(nrows, ncols, figsize=(int(ncols*2.5),nrows*2.5), constrained_layout=True)
         for ax, al_set in zip(axes.flatten(), artlabelsets):
             peaks, lags, ftas = [],[],[]
             for n in al_set:
@@ -99,11 +100,11 @@ def plot_conc_at_label(model:str):
                     labels=[ "PVS", "outside PVS"],
                             #f"PVS proximity (R + {int(proximity_dist*1e3)} mm)"],
                     loc='lower center', #facecolor="white", edgecolor="black",
-                    frameon=False, ncols=2, bbox_to_anchor=(0.5, 0.98))
+                    frameon=False, ncols=2, bbox_to_anchor=(0.5, 0.98), fontsize="large")
         #for lh in leg.legend_handles: lh.set_color('black')
 
         plt.savefig(f"plots/{model}/{model}_conc_at_label{'_annotated' if annotate else ''}.png",
-                    bbox_inches='tight', dpi=300)
+                    bbox_inches='tight', dpi=300, transparent=True)
 
 
 if __name__ == "__main__":
