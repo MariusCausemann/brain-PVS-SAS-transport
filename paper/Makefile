@@ -16,19 +16,21 @@ final:
 
 diff: diff_main diff_supp
 
+DIFF_MAIN_FILE=causemann2026insilico-r2-diff
+DIFF_SUPP_FILE=causemann2026insilico-r2-supplementary-diff
 diff_main: 
-	latexdiff --no-del --graphics-markup=none main_r1.tex main.tex > diff_main_r1.tex
-	pdflatex -interaction=nonstopmode diff_main_r1.tex
-	bibtex diff_main_r1
-	pdflatex -interaction=nonstopmode diff_main_r1.tex
-	pdflatex -interaction=nonstopmode diff_main_r1.tex
+	latexdiff --no-del --graphics-markup=none main_r1.tex main.tex > $(DIFF_MAIN_FILE).tex
+	pdflatex -interaction=nonstopmode $(DIFF_MAIN_FILE).tex
+	bibtex $(DIFF_MAIN_FILE)
+	pdflatex -interaction=nonstopmode $(DIFF_MAIN_FILE).tex
+	pdflatex -interaction=nonstopmode $(DIFF_MAIN_FILE).tex
 
 diff_supp:
-	latexdiff --no-del --graphics-markup=none supplementary_r1.tex supplementary.tex > diff_supplementary_r1.tex
-	pdflatex -interaction=nonstopmode diff_supplementary_r1.tex
-	bibtex diff_supplementary_r1
-	pdflatex -interaction=nonstopmode diff_supplementary_r1.tex
-	pdflatex -interaction=nonstopmode diff_supplementary_r1.tex
+	latexdiff --no-del --graphics-markup=none supplementary_r1.tex supplementary.tex > $(DIFF_SUPP_FILE).tex
+	pdflatex -interaction=nonstopmode $(DIFF_SUPP_FILE).tex
+	bibtex $(DIFF_SUPP_FILE)
+	pdflatex -interaction=nonstopmode $(DIFF_SUPP_FILE).tex
+	pdflatex -interaction=nonstopmode $(DIFF_SUPP_FILE).tex
 
 clean:
-	rm *~ *.aux *.out *.toc *.blg *.bbl *.log *.tdo *.dvi
+	rm *~ *.aux *.out *.toc *.blg *.bbl *.log *.tdo *.dvi 
