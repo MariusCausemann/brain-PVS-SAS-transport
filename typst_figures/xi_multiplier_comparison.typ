@@ -35,7 +35,7 @@
       gutter: 0pt,
       [
         #panel-label("B")
-        #v(-15pt) 
+        #v(-25pt) 
         #panel-title("First-time arrival", fontsize: titlefontsize)
         #v(-8pt)
         #align(center)[
@@ -49,7 +49,7 @@
     // ---------------------------------------------------------
     [
       #panel-label("C")
-      #v(-15pt) 
+      #v(-25pt) 
       #panel-title("Arterial leaf node concentrations", fontsize: titlefontsize)
       #v(-5pt)
       #grid(
