@@ -899,6 +899,17 @@ complex pattern of spatially-varying interstitial fluid flow on the
 order of 1-10 \textmu m/min~\cite{vinje2023human}. We will incorporate
 such transport mechanisms within the parenchyma in future work. 
 
+Similarly, while our model incorporates the perivenous network for anatomical completeness, we intentionally kept its physics simplified. Unlike the arterial network, we do not model any active fluid flow mechanisms, and perivenous transport is thus purely driven by diffusion.
+This lack of active venous flow modeling, combined with our simplified model of the parenchyma, is the main reason  we restrict our simulation to the first 24 hours. 
+While our current framework captures the early influx and distribution phases, accurately 
+simulating later stage brain clearance (e.g., 48 to 72 hours post-injection) 
+would require more detailed parenchymal and venous clearance mechanisms. 
+Furthermore, direct validation of the in-silico perivenous signal against 
+clinical measures is currently difficult; as recently noted by Eide and 
+Ringstad~\cite{eide2024functional}, veins at the human brain surface are 
+generally harder to depict on MRI than arteries, and perivenous tracer 
+was identified in very few instances in their clinical cohort.
+
 Due to the limited extent of our vascular networks, we lack
 representation of the cortical and subcortical white matter
 vasculature. Concretely, we account for no vessels below the original
@@ -1085,7 +1096,9 @@ yielding $\hat{u}_a^c$ (\Cref{fig:pvs}D), and very low-frequency
 \emph{vasomotion} with $f = 0.1$Hz, $\lambda = 0.02$m, and
 $\varepsilon = 10\%$ yielding $\hat{u}_a^v$ (\Cref{fig:pvs}E). No flow
 induced by peristalsis is considered for the perivenous network, and
-we thus set $\hat{u}_v = 0$ in $\Lambda_v$ in all simulations.  For
+we thus set $\hat{u}_v = 0$ in $\Lambda_v$ in all simulations. Consequently, 
+solute transport within the perivenous spaces is driven solely by diffusion 
+and passive exchange with the surrounding tissue. For
 the periarterial network, we account for cardiac peristalsis in the
 baseline model, and set $\hat{u}$ as $\hat{u}_a = \hat{u}_a^c$ in
 $\Lambda_a$.  We remark that none of these models account for fluid
