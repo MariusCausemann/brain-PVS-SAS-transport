@@ -39,19 +39,34 @@ def plot_timings(models:List[str]):
         }
     
     namedict = {"modelA": "baseline", "modelA-strongVM":"high PVS flow",
-                "modelA-PVS-disp": "high PVS dispersion",
+                "modelA-PVS-disp": "high PVS dispersion", "modelA-strongVM-root100":"xi x 100",
                 "LargePVS":"high PVS flow (dilated)", "LargePVSA":"baseline (dilated)"}
     markerdict = {"modelA": "d", "modelA-strongVM":"s",
                 "modelA-PVS-disp": "o", "LargePVS":"o", "LargePVSA":"*"}
     print(models)
-    coldict = {"modelA-strongVM":"#6610f2","modelA":"#0b774d", "modelA-PVS-disp":"#f7b801",
+    coldict = {"modelA-strongVM":"#6610f2","modelA":"#0b774d", 
+               "modelA-PVS-disp":"#f7b801", 
                "LargePVS":"#f7b801", "LargePVSA":"darkred"}
-    annotate_model = "LargePVSA" if "LargePVSA" in models else "modelA"
+    
+    if "modelA-strongVM-root100" in models:
+        coldict.update({"modelA-strongVM-root100":"#e84b85", "modelA-strongVM":"#6610f2"})
+        namedict.update({"modelA-strongVM-root100": "without 0D", "modelA-strongVM":"with 0D"})
+
+    if "modelA-strongVM-root1000" in models:
+        coldict.update({f"modelA-strongVM-root{X}":c for X,c in zip([1,10,100,1000], sns.color_palette("rocket", n_colors=4))})
+        namedict.update({f"modelA-strongVM-root{X}":f"{X}" for X in [1,10,100,1000]})
+
+    ymax = 6
+    if "LargePVSA" in models:
+        annotate_model = "LargePVSA" 
+    elif "modelA" in models:
+        annotate_model = "modelA"
+    else: annotate_model = models[0]; ymax = 4
     for t, (pvsdf, outerdf) in zip(["fta", "peaktime"] , [(ftas, outerftas), (pts, otps)]):
         fig, axes = plt.subplots(ncols=len(art_groups) + 1, figsize=(7,3.2),
                                   width_ratios=[0]+[3]*len(art_groups), sharey=True)
         ax = axes[0]
-        if t=="fta":ax.set_ylabel("first-time arrival (h)"); ax.set_ylim((0.0, 6))
+        if t=="fta":ax.set_ylabel("first-time arrival (h)"); ax.set_ylim((0.0, ymax))
         elif t=="peaktime":ax.set_ylabel("time-of-peak (h)"); ax.set_ylim((2, 9.1))
         ax.get_xaxis().set_ticks([])
         ax.spines['bottom'].set_visible(False)
@@ -61,10 +76,10 @@ def plot_timings(models:List[str]):
                 print(m)
                 group = pvsdf.loc[ag]
                 outergroup = outerdf.loc[ag]
-                ax.plot(group["dist"], group[m] / 3600, color=coldict[m],
-                         marker=markerdict[m],
+                ax.plot(group["dist"], group[m] / 3600, color=coldict.get(m, "blue"),
+                         marker=markerdict.get(m, "."),
                          markersize=8, ls="dashed",
-                        label=f"{namedict[m]}" if i==0 else None)
+                        label=f"{namedict.get(m, m)}" if i==0 else None)
                 #ax.plot(group["dist"], outergroup[m] / 3600, color=c, marker="x", markersize=5, ls="dotted",
                 #        label=f"{namedict[m]} - outer PVS" if i==0 else None)
                 #ax.fill_between(group["dist"], group[m] / 3600, outergroup[m] / 3600, 
@@ -79,9 +94,11 @@ def plot_timings(models:List[str]):
                 ax.set_xlim((0, 0.1))
                 ax.get_xaxis().set_ticks([0,0.05, 0.1], ["0","0.05", "0.1"])
                 for ln in ag:
-                    ax.annotate(ln, (pvsdf["dist"].loc[ln], pvsdf[annotate_model].loc[ln] / 3600),
+                    try:
+                        ax.annotate(ln, (pvsdf["dist"].loc[ln], pvsdf[annotate_model].loc[ln] / 3600),
                                 horizontalalignment="right", textcoords='offset points',
                                   xytext=(-3,8), fontsize=9)
+                    except KeyError: pass
         plt.figlegend(loc='upper center', bbox_to_anchor=(0.5, 1.05), ncol=len(models)*2,
                 columnspacing=0.3, frameon=False)
         plt.tight_layout(w_pad=-0.5)
