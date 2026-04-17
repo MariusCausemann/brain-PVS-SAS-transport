@@ -60,7 +60,7 @@ rule all:
         expand("plots/{modelname}/{modelname}_overview_1-3-6-9-12-24.png", modelname=models),
         expand("plots/{modelname}/{modelname}_overview_4-6.png", modelname=models),
         expand("plots/{modelname}/{modelname}_overview_9-12-24.png", modelname=models),
-        #expand("plots/{modelname}/{modelname}.mp4", modelname=models),
+        expand("plots/{modelname}/{modelname}.mp4", modelname=models),
         expand("plots/{modelname}/{modelname}_300.html", modelname=models),
         expand("plots/{modelname}/timeview3D/timeview3D_volume_{s}.png", modelname=models, s=np.array((1,6,12,24))*3600),
         expand("plots/{modelname}/{modelname}_ridgeline_pvs_total_smoothed.png", modelname=models),
