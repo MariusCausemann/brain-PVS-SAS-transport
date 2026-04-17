@@ -1,6 +1,7 @@
 
 paper/*.pdf
 paper/*diff*.tex
+data/T1.vtk
 
 .DS_*
 *.aux
