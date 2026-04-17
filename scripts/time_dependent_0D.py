@@ -155,7 +155,7 @@ def run_simulation(configfile: str):
         netw = marker.mesh()
         netw_xi_root =  Function(FunctionSpace(netw, "CG", 1))
         idx = map_kdtree(netw.coordinates(), FunctionSpace(netw, "CG", 1).tabulate_dof_coordinates())
-        netw_xi_root.vector()[:] = np.where(roots.array()[:] > 0, root_xi_factor, 1)[idx]
+        netw_xi_root.vector()[:] = np.where(roots.array()[:] == 1, root_xi_factor, 1)[idx]
         xi = pcws_constant(marker, xi_dict)
         xi.vector()[:] *= interpolate(netw_xi_root, xi.function_space()).vector()[:]
         return xi
