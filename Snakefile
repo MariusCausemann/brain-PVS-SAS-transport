@@ -10,27 +10,26 @@ def read_config(configfile):
 num_mumps_threads = 16
 mesh_refine_models = ["modelALowRes", "modelA", "modelAHighRes"]
 time_refine_models = ["modelA","modelAsmalldt", "modelAlargedt"]
-model_variations = ["modelA" , "modelA-LowD","modelA-HighD", "modelAMassConservation",
-                    "modelA-strongVM-root1","modelA-strongVM-root10","modelA-strongVM-root1000",
-                    #"modelA-strongVM-tip",
-                    "modelA-strongVM-0D",
-                    "modelA-strongVM-0D-MC",
-                    "modelA-OnlyDispersion",
+model_variations = ["modelA" , "modelA-LowD","modelA-HighD", "modelA-OnlyDispersion", 
+                    "modelAMassConservation",
+                    "modelA-strongVM-root1","modelA-strongVM-root10","modelA-strongVM-root100","modelA-strongVM-root1000",
+            
                     "modelA-strongVM","modelA-PVS-disp",
-                    "modelB1-10", "modelB1-100", "modelB1-1000",
                     "modelB2-10", "modelB2-100", "modelB2-1000",
                     #"modelC", "modelA-NoResp", "modelA-NoDisp", "modelA-LowD",
-                    "LargePVS", "LargePVSA"]
+                    "LargePVS", "LargePVSA"
+                    ]
 
 model_comparisons = [
-                    #"modelA_modelB1-10","modelA_modelB1-100", "modelA_modelB1-1000",
-                    #"modelA_modelB2-1", "modelA_modelB2-10", "modelA_modelB2-100",
+                    "modelA-strongVM_modelB2-10", "modelA_modelB2-100",
+                    "modelA-strongVM_modelA-strongVM-root1",
+                    "modelA-strongVM_modelA-strongVM-root10",
+                    "modelA-strongVM_modelA-strongVM-root100",
                     # "modelA_modelB2-1000", "modelA_modelC",
                     # "modelA_modelA-NoResp",
                     "modelA_modelA-strongVM",
-                    "modelA_modelA-PVS-disp",
-                    "modelA-strongVM-root1_modelA-strongVM-root1000",
-                    "modelA-strongVM_modelA-strongVM-tip",
+                    #"modelA_modelA-PVS-disp",
+                    #"modelA-strongVM-root1_modelA-strongVM-root1000",
                     ]
 
 models =  model_variations #+time_refine_models+ mesh_refine_models
@@ -60,8 +59,10 @@ rule all:
         expand("plots/{modelname}/{modelname}_overview_1-6-12-24.png", modelname=models),
         expand("plots/{modelname}/{modelname}_overview_1-3-6-9-12-24.png", modelname=models),
         expand("plots/{modelname}/{modelname}_overview_4-6.png", modelname=models),
-        expand("plots/{modelname}/{modelname}.mp4", modelname=models),
+        expand("plots/{modelname}/{modelname}_overview_9-12-24.png", modelname=models),
+        #expand("plots/{modelname}/{modelname}.mp4", modelname=models),
         expand("plots/{modelname}/{modelname}_300.html", modelname=models),
+        expand("plots/{modelname}/timeview3D/timeview3D_volume_{s}.png", modelname=models, s=np.array((1,6,12,24))*3600),
         expand("plots/{modelname}/{modelname}_ridgeline_pvs_total_smoothed.png", modelname=models),
         expand("plots/{modelname}/{modelname}_conc_at_label_annotated.png", modelname=models),
         expand("results/csf_flow/cardiac_sas_flow_{proc}/R.png",proc=["0.25", "0.5", "0.75"]),
@@ -69,7 +70,6 @@ rule all:
         "plots/pvs_flow_prod/sas_flow-arteries/",
         "plots/pvs_flow_peristaltic/vasomotion/",
         "plots/pvs_flow_peristaltic/cardiac_pvs_oscillation/",
-        #expand("plots/{modelname}/{modelname}_{tp}_{t}.png", modelname=models, t=times, tp=types)
         expand("plots/{m}/{m}_{tstr}_{artstr_cmstr}_details.png", 
             m=["modelA", "modelB1-10", "modelB1-100"] +
              ["modelA-strongVM", "modelB2-10", "modelB2-100"] + ["LargePVS", "LargePVSA"],
@@ -417,6 +417,19 @@ rule makeConcAtLabelPlot:
         "plots/{m}/{m}_conc_at_label_annotated.png"
     shell:
         "python scripts/plot_conc_at_label.py {wildcards.m}"
+
+rule make3DTimeViewPlot:
+    conda:"environment.yml"
+    input:
+        sas="results/{m}/{m}_sas.xdmf",
+        art="results/{m}/{m}_artery.xdmf",
+        metrics_yaml="results/{m}/mean_concentrations.yml",
+    output:
+        [f"plots/{{m}}/timeview3D/timeview3D_volume_{s*3600}.png" for s in (1,6,12,24)]
+    shell:
+        "python scripts/make_3D_timeview.py {wildcards.m}"
+
+
 
 
 
