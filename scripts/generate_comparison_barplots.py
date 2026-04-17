@@ -115,7 +115,7 @@ def compare_models(models: List[str]):
         ax.text(s=alphabet[i], x=-1.0, y=ax.get_ylim()[1]*1.3,fontweight="bold")
         coli += w
     
-    plt.figlegend(df.columns, loc = 'outside upper center', ncol=3, 
+    plt.figlegend(df.columns, loc = 'outside upper center', ncol=len(models), 
                 bbox_to_anchor=(0.5, 0.97), frameon=False)
     plt.savefig(f"plots/comparisons/{v}/{v}.pdf")
 
@@ -135,7 +135,7 @@ def compare_models(models: List[str]):
             plt.plot(times, dmin, label=f"min {m}", ls=ls, color="teal")
         plt.xlabel("time (h)")
         plt.ylabel("tracer concentration (mmol/l)")
-        plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol=2,
+        plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol=len(models),
                 columnspacing=0.7, frameon=False)
         plt.savefig(f"plots/comparisons/{v}/{dom}_minmax.png")
 
