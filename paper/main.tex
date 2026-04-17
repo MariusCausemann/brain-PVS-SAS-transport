@@ -174,7 +174,7 @@ for future in-silico studies of brain solute transport.
     \centering
     \includegraphics[width=1\textwidth]{figures/figure1.png}
      \caption{
-     \textbf{An integrative computational framework for intracranial solute transport.} A) Illustration of physical mechanisms; B-D) Subject-specific computational geometry representation of the human CSF spaces, including the ventricular system and SAS, and the brain parenchyma; E-F) and periarterial and perivenous networks.}
+     \textbf{An integrative computational framework for intracranial solute transport informed by multi-modal magnetic resonance imaging (MRI).} A) Illustration of physical mechanisms; B--D) Subject-specific computational geometry representation of the human CSF spaces, including the ventricular system and SAS, and the brain parenchyma; and E--F) (peri)arterial and (peri)venous networks.}
      \label{fig:results1}
 \end{figure}
 
@@ -262,7 +262,7 @@ parenchyma increases more slowly over the first 24 hours, with a final
 value of $0.25$ mmol/l. Overall, about 42\% of the total amount of
 tracer remains in the cranium 24 hours post-injection in this
 simulation, with the largest share in the CSF (49\%), followed by the
-parenchyma (31\%), the unresolved continuation of the arterial PVS (8\%, captured via the 0D downstream compartments), the venous PVS (7\%) and the arterial PVS (5\%)
+parenchyma (31\%), the unresolved continuation of the arterial PVS (8\%, captured via 0D downstream compartments), the venous PVS (7\%) and the arterial PVS (5\%)
 (\Cref{fig:intrathecal}E).
 
 \begin{figure}
@@ -323,7 +323,7 @@ reduced and increased pulsatility scenarios by halving and doubling
 the inflow rates associated with both cardiac and respiratory
 pulsations, which changed the dispersion factors by 0.25$\times$ and
 4$\times$, respectively. Note that this behaviour directly reflects
-the nature of our CSF model model: Stokes flow is linear in its inflow
+the nature of our CSF model: Stokes flow is linear in its inflow
 boundary conditions, and the diffusion enhancement factor is quadratic
 in the predicted pressure gradient.
 
@@ -365,7 +365,7 @@ longitudinal fissure, also spreading into the cerebellum
 \label{fig:csf}
 \end{figure}
 
-\subsection*{Modelling net flow in human surface perivascular networks}
+\subsection*{Modelling net flow in human surface periarterial networks}
 \label{sec:pvs_flow_results}
 
 The PVSs are recognized across species as critical pathways for solute
@@ -424,7 +424,7 @@ demonstrate using separate; i.e., not coupled, flow models in the CSF and PVS.
 \begin{figure}
     \centering
     \includegraphics[width=0.95\textwidth]{figures/figure4.png}
-    \caption{\textbf{Quantitative modelling of pulsation-induced net flow in human surface perivascular networks}
+    \caption{\textbf{Modelling of pulsation-induced net flow in human surface periarterial networks}
     A) Surface arterial network colored by arterial radius with vessel locations labeled;
     %B) Net PVS flow induced by CSF production alone (see also~\Cref{fig:csf}D).
     B) Illustration of the concept of peristaltic pumping;
@@ -899,6 +899,17 @@ complex pattern of spatially-varying interstitial fluid flow on the
 order of 1-10 \textmu m/min~\cite{vinje2023human}. We will incorporate
 such transport mechanisms within the parenchyma in future work. 
 
+Similarly, while our model incorporates the perivenous network for anatomical completeness, we intentionally kept its physics simplified. Unlike the arterial network, we do not model any active fluid flow mechanisms, and perivenous transport is thus purely driven by diffusion.
+This lack of active venous flow modeling, combined with our simplified model of the parenchyma, is the main reason  we restrict our simulation to the first 24 hours. 
+While our current framework captures the early influx and distribution phases, accurately 
+simulating later stage brain clearance (e.g., 48 to 72 hours post-injection) 
+would require more detailed parenchymal and venous clearance mechanisms. 
+Furthermore, direct validation of the in-silico perivenous signal against 
+clinical measures is currently difficult; as recently noted by Eide and 
+Ringstad~\cite{eide2024functional}, veins at the human brain surface are 
+generally harder to depict on MRI than arteries, and perivenous tracer 
+was identified in very few instances in their clinical cohort.
+
 Due to the limited extent of our vascular networks, we lack
 representation of the cortical and subcortical white matter
 vasculature. Concretely, we account for no vessels below the original
@@ -1085,7 +1096,9 @@ yielding $\hat{u}_a^c$ (\Cref{fig:pvs}D), and very low-frequency
 \emph{vasomotion} with $f = 0.1$Hz, $\lambda = 0.02$m, and
 $\varepsilon = 10\%$ yielding $\hat{u}_a^v$ (\Cref{fig:pvs}E). No flow
 induced by peristalsis is considered for the perivenous network, and
-we thus set $\hat{u}_v = 0$ in $\Lambda_v$ in all simulations.  For
+we thus set $\hat{u}_v = 0$ in $\Lambda_v$ in all simulations. Consequently, 
+solute transport within the perivenous spaces is driven solely by diffusion 
+and passive exchange with the surrounding tissue. For
 the periarterial network, we account for cardiac peristalsis in the
 baseline model, and set $\hat{u}$ as $\hat{u}_a = \hat{u}_a^c$ in
 $\Lambda_a$.  We remark that none of these models account for fluid
