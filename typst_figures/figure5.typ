@@ -57,9 +57,9 @@
         
         // Label nudged by -0.55cm to match the image's move-y
         y-label("high PVS flow", nudge: -0.55cm),
-        cropped-image("../plots/modelA-strongVM/modelA-strongVM_conc_at_label.png", 3cm, 100%, 0cm, -0.55cm)
+        cropped-image("../plots/modelA-strongVM/modelA-strongVM_conc_at_label.png", 3.2cm, 100%, 0cm, -0.75cm)
       )
-      #v(-12pt)
+      #v(-10pt)
     ],
 
     // ------------------------------------------
@@ -97,19 +97,19 @@
       // ROW 2, COLUMN 1: Panel E
       [
         #panel-label("E")
-        #v(-18pt) #panel-title("Total PVS tracer content")
-        #v(-8pt)
+        #v(-18pt) #panel-title("Total PVS tracer ")
+        #v(-10pt)
         #grid(
           columns: (1fr, 1fr),
           gutter: 0pt,
           [
             #panel-title("baseline")
-            #v(-10pt)
+            #v(-8pt)
             #image("../plots/modelA/modelA_ridgeline_pvs_total_smoothed.png", width: 100%)
           ],
           [
             #panel-title("high PVS flow")
-            #v(-10pt)
+            #v(-8pt)
             #image("../plots/modelA-strongVM/modelA-strongVM_ridgeline_pvs_total_smoothed.png", width: 100%)
           ]
         )
@@ -141,17 +141,17 @@
       gutter: 0pt, 
       [
         #panel-label("F")
-        #v(-15pt) #panel-title("baseline") #v(-10pt)
+        #v(-15pt) #panel-title("Baseline") #v(-10pt)
         #cropped-image("../plots/modelA/modelA_overview_4-6.png", 9cm, 150%, 0cm, 0cm)
       ],
       [
         #panel-label("G")
-        #v(-15pt) #panel-title("high PVS flow") #v(-10pt)
+        #v(-15pt) #panel-title("High PVS flow") #v(-10pt)
         #cropped-image("../plots/modelA-strongVM//modelA-strongVM_overview_4-6.png", 9cm, 150%, 0cm, 0cm)
       ],
       [
         #panel-label("H")
-        #v(-15pt) #panel-title("high PVS dispersion") #v(-10pt)
+        #v(-15pt) #panel-title("High PVS dispersion") #v(-10pt)
         #cropped-image("../plots/modelA-PVS-disp/modelA-PVS-disp_overview_4-6.png", 9cm, 150%, 0cm, 0cm)
       ],
       [
@@ -160,6 +160,7 @@
         #v(-15pt) #panel-title("") #v(-10pt)
         #cropped-image("../plots/modelA-PVS-disp/modelA-PVS-disp_overview_4-6.png", 9cm, 300%, -5.5cm, 0cm)
       ]
-    )
+    ),
+    v(-20pt)
   )
 )

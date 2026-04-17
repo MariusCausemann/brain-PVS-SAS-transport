@@ -29,13 +29,13 @@
           columns: 2, row-gutter: 5pt,
           [
             #v(-2pt)
-            #panel-title("max PVS velocity")
+            #panel-title("Max PVS velocity")
             #v(-2pt)
             #image("../plots/comparisons/pvs_flow_peristaltic+cardiac_pvs_oscillation_pvs_flow_peristaltic+cardiac_pvs_oscillation_enlarged_pvs_flow_peristaltic+vasomotion-strong_pvs_flow_peristaltic+vasomotion-strong-enlarged/pvsumax_comp.png", width: 105%)
           ],
           [
             #v(-2pt)
-            #panel-title("mean PVS velocity")
+            #panel-title("Mean PVS velocity")
             #v(-2pt)
             #image("../plots/comparisons/pvs_flow_peristaltic+cardiac_pvs_oscillation_pvs_flow_peristaltic+cardiac_pvs_oscillation_enlarged_pvs_flow_peristaltic+vasomotion-strong_pvs_flow_peristaltic+vasomotion-strong-enlarged/pvsumean_comp.png", width: 105%)
           ]
@@ -51,13 +51,13 @@
         [
           #panel-label("C", nudge-dx: -5pt)
           #v(-16pt)
-          #panel-title("vasomotion induced PVS velocity (control)")
+          #panel-title("Vasomotion induced PVS velocity (control)")
           #image("../plots/pvs_flow_peristaltic/vasomotion-strong/vel3D_black.png", width: 135%)
         ],
         [
           #panel-label("D", nudge-dx: -5pt)
           #v(-16pt)
-          #panel-title("vasomotion induced PVS velocity (dilated)")
+          #panel-title("Vasomotion induced PVS velocity (dilated)")
           #image("../plots/pvs_flow_peristaltic/vasomotion-strong-enlarged/vel3D_black.png", width: 135%)
         ]
       ),
@@ -73,7 +73,9 @@
       // Column 1: Panel E (Stacked Details)
       [
         #panel-label("E")
-        #v(-20pt),
+        #v(-10pt)
+        #panel-title("Tracer concentration at right MCA")
+        #v(-0pt)
         #grid(
           columns: (auto, 1fr), gutter: 2pt, align: horizon,
           
@@ -90,7 +92,7 @@
       [
         #panel-label("F")
         #v(-20pt)
-        #panel-title("first-time arrival")
+        #panel-title("First-time arrival")
         #v(-10pt)
         #image("../plots/comparisons/modelA_LargePVSA_modelA-strongVM_LargePVS/modelA_LargePVSA_modelA-strongVM_LargePVS_fta.png", width: 100%)
       ]
@@ -108,7 +110,9 @@
       // Column 1: Panel G (Bar Chart)
       [
         #panel-label("G")
-        #v(-35pt)
+        #v(-25pt)
+        #panel-title("Total tracer concentration")
+        #v(-5pt)
         #cropped-image("../plots/comparisons/modelA_LargePVSA_modelA-strongVM_LargePVS/modelA_LargePVSA_modelA-strongVM_LargePVS_tot_bar.png", 5.1cm, 100%, 0cm, -0.1cm, width: 100%)
       ],
       
@@ -116,11 +120,11 @@
       [
         #panel-label("H")
         #v(-15pt)
-        #panel-title("mean tracer concentration")
+        #panel-title("Mean tracer concentration")
         #v(-8pt)
         #cropped-image("../plots/comparisons/modelA_LargePVSA_modelA-strongVM_LargePVS/modelA_LargePVSA_modelA-strongVM_LargePVS_conc.png", 5.1cm, 100%, 0cm, 0.1cm, width: 110%)
       ],
-    v(-10pt)
-    )
+    ),
+    v(-30pt)
   )
 )

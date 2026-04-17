@@ -24,14 +24,14 @@
         [
           #panel-label("A")
           #v(-15pt) 
-          #panel-title("production-driven CSF flow")
+          #panel-title("Production-driven CSF flow")
           #v(-25pt) 
           #image("../results/csf_flow/sas_flow/csf_v.png", width: 120%)
         ],
         [
           #panel-label("B")
           #v(-15pt) 
-          #panel-title("production-driven CSF velocities")
+          #panel-title("Production-driven CSF velocities")
           #v(-5pt)
           #image("../results/csf_flow/sas_flow/prod_velocity_histo.png", width: 100%)
         ]
@@ -43,14 +43,14 @@
         [
           #panel-label("C")
           #v(-15pt) 
-          #panel-title("cardiac dispersion enhancement")
+          #panel-title("Cardiac dispersion enhancement")
           #v(-25pt) 
           #image("../results/csf_flow/cardiac_sas_flow/R.png", width: 120%)
         ],
         [
           #panel-label("D")
           #v(-15pt) 
-          #panel-title("cardiac dispersion enhancement")
+          #panel-title("Cardiac dispersion enhancement")
           #v(-5pt) 
           #image("../results/csf_flow/cardiac_sas_flow/R_histo.png", width: 100%)
         ]
@@ -62,14 +62,14 @@
         [
           #panel-label("E")
           #v(-15pt) 
-          #panel-title("respiratory dispersion enhancement")
+          #panel-title("Respiratory dispersion enhancement")
           #v(-25pt) 
           #image("../results/csf_flow/respiratory_sas_flow/R.png", width: 120%)
         ],
         [
           #panel-label("F")
           #v(-15pt) 
-          #panel-title("respiratory dispersion enhancement")
+          #panel-title("Respiratory dispersion enhancement")
           #v(-5pt) 
           #image("../results/csf_flow/respiratory_sas_flow/R_histo.png", width: 100%)
         ]
@@ -86,22 +86,22 @@
         columns: (1fr, 1fr, 1fr, 1fr, 1fr),
         gutter: 5pt,
         [
-          #inline-header("G", "baseline (12 h)")
+          #inline-header("G", "Baseline (12 h)")
           #v(-10pt)
           #cropped-image("../plots/modelA/modelA_overview_1-6-12-24.png", 11.2cm, 500%, move_x, -0.3cm)
         ],
         [
-          #inline-header("H", "no advection")
+          #inline-header("H", "No advection")
           #v(-10pt)
           #cropped-image("../plots/modelA-OnlyDispersion/modelA-OnlyDispersion_overview_1-6-12-24.png", 11.2cm, 500%, move_x, -0.3cm)
         ],
         [
-          #inline-header("I", "low pulsatility")
+          #inline-header("I", "Low pulsatility")
           #v(-10pt)
           #cropped-image("../plots/modelA-LowD/modelA-LowD_overview_1-6-12-24.png", 11.2cm, 500%, move_x, -0.3cm)
         ],
         [
-          #inline-header("J", "high pulsatility")
+          #inline-header("J", "High pulsatility")
           #v(-10pt)
           #cropped-image("../plots/modelA-HighD/modelA-HighD_overview_1-6-12-24.png", 11.2cm, 500%, move_x, -0.3cm)
         ],
@@ -111,6 +111,7 @@
           #cropped-image("../plots/modelA-OnlyDispersion/modelA-OnlyDispersion_overview_1-6-12-24.png", 11.2cm, 500%, -14.5cm, -0.3cm)
         ]
       )
-    )
+    ),
+    v(-25pt)
   )
 )

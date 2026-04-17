@@ -121,6 +121,7 @@
       #panel-label("F")
       #v(-16pt)
       #image("../plots/comparisons/modelA-strongVM_modelB2-10_modelB2-100/modelA-strongVM_modelB2-10_modelB2-100.png", width: 100%)
-    ]
+    ],
+    v(-20pt)
   )
 )

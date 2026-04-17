@@ -38,7 +38,7 @@
       // Column 1: Panel C (Cardiac 3D)
       [
         #panel-label("C")
-        #v(-20pt) #panel-title("cardiac-driven flow")
+        #v(-20pt) #panel-title("Cardiac-driven flow")
         #image("../plots/pvs_flow_peristaltic/cardiac_pvs_oscillation/vel3D_black.png", width: 145%)
       ],
 
@@ -48,13 +48,13 @@
         row-gutter: 0pt,
         [
           #panel-label("D")
-          #v(-20pt) #panel-title("cardiac flow velocities")
+          #v(-20pt) #panel-title("Cardiac flow velocities")
           #v(-15pt)
           #image("../plots/pvs_flow_peristaltic/cardiac_pvs_oscillation/cardiac_pvs_oscillation_velocity_histo_cell.png", width: 120%)
         ],
         [
           #panel-label("F")
-          #v(-20pt) #panel-title("vasomotion flow velocities")
+          #v(-20pt) #panel-title("Vasomotion flow velocities")
           #v(-15pt)
           #image("../plots/pvs_flow_peristaltic/vasomotion-strong/vasomotion-strong_velocity_histo_cell.png", width: 120%)
         ]
@@ -63,7 +63,7 @@
       // Column 3: Panel E (Vasomotion 3D)
       [
         #panel-label("E")
-        #v(-20pt) #panel-title("vasomotion-driven flow")
+        #v(-20pt) #panel-title("Vasomotion-driven flow")
         #image("../plots/pvs_flow_peristaltic/vasomotion-strong/vel3D_black.png", width: 145%)
       ]
     )
