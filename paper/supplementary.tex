@@ -709,20 +709,26 @@ for each $y \in \mathcal{B}$:
   \label{eq:flux_conservation}
 \end{equation}
 
+Here the function $n^i$ takes the values in $\{-1, 1\}$ and defines an orientation of vertices of edge $\Lambda^i$. Specifically, for an edge $\Lambda^i$ oriented from $y_{\rm in}$ to $y_{\rm out}$, we set
+\begin{equation}
+  n^i(y_{\rm in}) = -1, \quad n^i(y_{\rm out}) = 1.
+\end{equation}
+With this convention, at any network end node $y_k \in \mathcal{N}$ connected to an edge $\Lambda^i$, the normal pointing outward from the network is simply $n(y_k) = n^i(y_k)$.
+
 Finally, to augment~\eqref{eq:1d_pde} at the network ends, we represent the unresolved, continuous extension of the arterial perivascular networks by coupling the arterial leaf nodes to a set of 0D compartments, similar to the approach in \cite{fritz20221d}. We denote this subset of arterial leaf nodes as $\mathcal{N}_{\rm leaf} \subset \mathcal{N}$. Root nodes and perivenous end nodes are excluded from this 0D coupling; at these nodes, a standard no-flux boundary condition is applied. For each arterial leaf node $y_k \in \mathcal{N}_{\rm leaf}$, let $c^0_k(t)$ denote the solute concentration in a 0D compartment of effective volume $V_k$. This compartment exchanges mass with the 3D domain over a local spherical neighborhood $B_k$ (with volume $|B_k|$) centered at $y_k$. The rate of change of mass in the 0D compartment is governed by advective and diffusive fluxes from the 1D network, alongside diffusive exchange with the 3D tissue:
 
 \begin{equation}
   V_k \frac{d c^0_k}{dt} = q_k^+ \hat{c}(y_k) + q_k^- c^0_k + \alpha_k (\hat{c}(y_k) - c^0_k) + \beta_k \omega_k ( \bar{c}_{B_k} - c^0_k ) \quad \forall y_k \in \mathcal{N}_{\rm leaf},
   \label{eq:0d_ode}
 \end{equation}
-where $q_k = (A\hat{u})(y_k) \cdot n(y_k)$ is the volumetric fluid flow rate leaving the 1D network at $y_k$ (with $n(y_k)$ denoting the outward normal), split into outflow $q_k^+ = \max(q_k, 0)$ and inflow $q_k^- = \min(q_k, 0)$ components to implement upwinding, $\alpha_k$ is the 1D-0D diffusive conductance and $\beta_k$ is the nominal 0D-3D diffusive exchange rate. To account for boundary proximity where the neighborhood $B_k$ may partially extend outside the 3D domain, we scale this exchange by $\omega_k = |B_k \cap \Omega| / |B_k|$, which represents the volume fraction of the ball intersecting the computational mesh. Accordingly, $\bar{c}_{B_k}(t) = \frac{1}{|B_k \cap \Omega|} \int_{B_k \cap \Omega} c(x, t) \, dx$ is the average 3D concentration evaluated within this intersection.
+where $q_k = (A\hat{u})(y_k) n(y_k)$ is the volumetric fluid flow rate leaving the 1D network at $y_k$, split into outflow $q_k^+ = \max(q_k, 0)$ and inflow $q_k^- = \min(q_k, 0)$ components to implement upwinding, $\alpha_k$ is the 1D-0D diffusive conductance and $\beta_k$ is the nominal 0D-3D diffusive exchange rate. To account for boundary proximity where the neighborhood $B_k$ may partially extend outside the 3D domain, we scale this exchange by $\omega_k = |B_k \cap \Omega| / |B_k|$, which represents the volume fraction of the ball intersecting the computational mesh. Accordingly, $\bar{c}_{B_k}(t) = \frac{1}{|B_k \cap \Omega|} \int_{B_k \cap \Omega} c(x, t) \, dx$ is the average 3D concentration evaluated within this intersection.
 
 To conserve mass, the total flux (advective and diffusive) exiting the 1D domain at $y_k$ must equal the total flux entering the 0D compartment from the 1D network. This yields the following Robin-type boundary condition on the 1D network:
 \begin{equation}
-  -\hat{D}A \partial_{n} \hat{c} = (q_k^- - \alpha_k)( c^0_k - \hat{c} ) \quad \mathrm{on} \quad y_k \in \mathcal{N}_{\rm leaf}.
+  -\hat{D}A \partial_s \hat{c} = (q_k^- - \alpha_k)( c^0_k - \hat{c} ) \quad \mathrm{on} \quad y_k \in \mathcal{N}_{\rm leaf}.
   \label{eq:1d_bcs}
 \end{equation}
-We note that if advection is purely outward ($q_k > 0$, so $q_k^- = 0$), the boundary condition simplifies to $-\hat{D}A\partial_{n}\hat{c} = \alpha_k(\hat{c} - c^0_k)$, indicating that the diffusive flux at the boundary is driven purely by the concentration difference between the two compartments. Conversely, if $q_k < 0$ (flow enters 1D from 0D), the boundary condition balances the total diffusive flux with both the advective influx from the 0D compartment and the 1D-0D diffusive exchange. 
+We note that if advection is purely outward ($q_k > 0$, so $q_k^- = 0$), the boundary condition simplifies to $-\hat{D}A\partial_s\hat{c} = \alpha_k(\hat{c} - c^0_k)$, indicating that the diffusive flux at the boundary is driven purely by the concentration difference between the two compartments. Conversely, if $q_k < 0$ (flow enters 1D from 0D), the boundary condition balances the total diffusive flux with both the advective influx from the 0D compartment and the 1D-0D diffusive exchange. 
 
 Finally, the diffusive exchange between the 0D compartments and the 3D domain acts via a localized volumetric source term $S_{\text{0D} \leftrightarrow \text{3D}}$ in~\eqref{eq:3d_pde}, defined using the indicator function $\chi_{B_k}$ for each ball $B_k$:
 \begin{equation}
@@ -753,7 +759,7 @@ The morphological parameters $\lambda$ and $N$ are chosen based on established q
 
 For the remaining network end nodes, comprising the arterial root nodes and all perivenous end nodes, we impose a homogeneous no-flux boundary condition. Ensuring that the sum of the outward diffusive and advective fluxes is zero yields:
 \begin{equation}
-  \hat{D}A \partial_{n} \hat{c} - (A \hat{u} \cdot n) \hat{c} = 0 \quad \mathrm{for} \quad y_k \in \mathcal{N} \setminus \mathcal{N}_{\rm leaf}.
+  \hat{D}A \partial_s \hat{c} - (A \hat{u} n(y_k)) \hat{c} = 0 \quad \mathrm{for} \quad y_k \in \mathcal{N} \setminus \mathcal{N}_{\rm leaf}.
   \label{eq:1d_noflux}
 \end{equation}
 
@@ -995,6 +1001,43 @@ over time after the initial influx phase
     \includegraphics[width=0.5\linewidth]{figures/modelAMassConservation_total_conc.png}
     \caption{Total tracer content in the CSF, parenchyma, and arterial and venous PVS for a variant of the baseline model without tracer outflow. The total amount of tracer is constant after the initial influx phase demonstrating that the numerical scheme conserves mass globally.}
     \label{fig:mass_conservation}
+\end{figure}
+
+\section{Supplementary results}
+
+\subsection{Effect of 0D-compartments at arterial leaf nodes}
+
+To evaluate whether a simpler boundary condition is sufficient to capture perivascular transport dynamics, we tested an alternative approach lacking 0D downstream compartments. Instead, we applied a strict no-flux boundary condition at the arterial tips and artificially increased the lateral diffusive permeability at the leaf network nodes (linearly increasing from the second-to-last to the last node). We evaluated this approach using the vasomotion model, as this high advective flow regime is most likely to produce artificial tracer build up at the leaf nodes. Testing permeability multipliers of 1, 10, 100, and 1000, we found that macroscopic transport metrics are robust: the total tracer content across compartments (Figure~\ref{fig:xi_multiplier_comparison}A) and the time of first tracer arrival (FTA) along the main branches (Figure~\ref{fig:xi_multiplier_comparison}B) show almost no sensitivity to the multiplier value. However, this simpler model produces severe local artifacts. The combination of strong advective flow and a no-flux boundary results in an artificial tracer build-up at the end nodes. With standard permeability (a multiplier of 1), tip concentrations reach non-physical values of up to $1200\,$mmol/l (Figure~\ref{fig:xi_multiplier_comparison}C). While artificially increasing the permeability mitigates this bottleneck, even a 1000-fold increase yields unrealistic local concentration spikes of up to $120\,$mmol/l. Thus, while the simpler boundary treatment is robust for globally averaged quantities and upstream transport dynamics, it suffers from substantial local artifacts at the arterial tips.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.99\linewidth]{xi_multiplier_comparison.png}
+    \caption{
+    A) Total tracer content in the CSF, parenchyma, and arterial and venous PVS for variations of the high PVS flow model with a permeability multipliers of 1, 10, 100, and 1000 at the PVS network leaf nodes;
+    B) First-time arrival of tracer along branches of the arterial tree for the model variants with permeability multiplier;
+    C) Tracer concentrations at the individual arterial leaf nodes for the model variants with permeability multiplier.
+    }
+    \label{fig:xi_multiplier_comparison}
+\end{figure}
+
+
+To address this, we compared the 100-fold permeability multiplier model against our 0D compartment model. In terms of total compartmental tracer content, the overall macroscopic dynamics remain similar between the two approaches (Figure~\ref{fig:0D_xi_multiplier_comparison}A and B). However, in the model with 0D compartments, $14\%$ of the total tracer remains within the 0D compartments after 24 hours, accompanied by to a corresponding reduction in total parenchymal tracer ($31\%$ compared to $47\%$ in the model lacking 0D compartments). Crucially, the 0D compartments successfully resolve the leaf node tracer accumulation: tracer concentrations at the leaf nodes and within the 0D compartments remain physiologically reasonable (below $40\,$mmol/l and $22\,$mmol/l, respectively), in contrast to the spikes of up to $150\,$mmol/l observed in the model without 0D compartments (Figure~\ref{fig:0D_xi_multiplier_comparison}C--E). Furthermore, upstream FTAs remain unaffected by the transition to the 0D model (Figure~\ref{fig:0D_xi_multiplier_comparison}F).
+
+Finally, the overall spatial tracer distribution patterns remain largely consistent between the two models (Figure~\ref{fig:0D_xi_multiplier_comparison}G and H). Interestingly, despite a lower total tracer mass in the parenchyma, the 0D model predicts slightly deeper tracer penetration into the tissue (visible, for instance, in the axial views of the left hemisphere at 9, 12, and 24 hours). This phenomenon occurs because the tracer entering the 0D compartments is rapidly exchanged into all tissue within the localized integration ball $B_k$, fascillitating a deeper tracer penetration.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.95\linewidth]{0D_xi_multiplier_comparison.png}
+    \caption{
+    Total tracer content in the CSF, parenchyma, and arterial and venous PVS for the high PVS flow model with 0D compartments (A);
+    and the same model without 0D compartments, but a 100x permeability multiplier at PVS leaf nodes (B);
+    C) Tracer concentrations at the individual 0D compartments for the model with 0D compartments;
+    D) Tracer concentrations at the individual arterial leaf nodes for the model with 0D compartments;
+    E) Tracer concentrations at the individual arterial leaf nodes for the model without 0D compartments, but 100x permeability multiplier.
+    F) First-time arrival of tracer along branches of the arterial tree for the both models;
+    G+H) sagittal, coronal and axial view of in-silico tracer concentrations overlayed on T1-weighted MR image after 9, 12, and 24\,h (low concentrations transparent, pial surface in pink, arachnoid membrane in cyan, and arteries in dark red) for the model with 0D compartments (G) and without (H).
+    }
+    \label{fig:0D_xi_multiplier_comparison}
 \end{figure}
 
 \section{Supplementary discussion}
