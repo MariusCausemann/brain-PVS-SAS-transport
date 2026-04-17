@@ -1003,6 +1003,43 @@ over time after the initial influx phase
     \label{fig:mass_conservation}
 \end{figure}
 
+\section{Supplementary results}
+
+\subsection{Effect of 0D-compartments at arterial leaf nodes}
+
+To evaluate whether a simpler boundary condition is sufficient to capture perivascular transport dynamics, we tested an alternative approach lacking 0D downstream compartments. Instead, we applied a strict no-flux boundary condition at the arterial tips and artificially increased the lateral diffusive permeability at the leaf network nodes (linearly increasing from the second-to-last to the last node). We evaluated this approach using the vasomotion model, as this high advective flow regime is most likely to produce artificial tracer build up at the leaf nodes. Testing permeability multipliers of 1, 10, 100, and 1000, we found that macroscopic transport metrics are robust: the total tracer content across compartments (Figure~\ref{fig:xi_multiplier_comparison}A) and the time of first tracer arrival (FTA) along the main branches (Figure~\ref{fig:xi_multiplier_comparison}B) show almost no sensitivity to the multiplier value. However, this simpler model produces severe local artifacts. The combination of strong advective flow and a no-flux boundary results in an artificial tracer build-up at the end nodes. With standard permeability (a multiplier of 1), tip concentrations reach non-physical values of up to $1200\,$mmol/l (Figure~\ref{fig:xi_multiplier_comparison}C). While artificially increasing the permeability mitigates this bottleneck, even a 1000-fold increase yields unrealistic local concentration spikes of up to $120\,$mmol/l. Thus, while the simpler boundary treatment is robust for globally averaged quantities and upstream transport dynamics, it suffers from substantial local artifacts at the arterial tips.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.99\linewidth]{xi_multiplier_comparison.png}
+    \caption{
+    A) Total tracer content in the CSF, parenchyma, and arterial and venous PVS for variations of the high PVS flow model with a permeability multipliers of 1, 10, 100, and 1000 at the PVS network leaf nodes;
+    B) First-time arrival of tracer along branches of the arterial tree for the model variants with permeability multiplier;
+    C) Tracer concentrations at the individual arterial leaf nodes for the model variants with permeability multiplier.
+    }
+    \label{fig:xi_multiplier_comparison}
+\end{figure}
+
+
+To address this, we compared the 100-fold permeability multiplier model against our 0D compartment model. In terms of total compartmental tracer content, the overall macroscopic dynamics remain similar between the two approaches (Figure~\ref{fig:0D_xi_multiplier_comparison}A and B). However, in the model with 0D compartments, $14\%$ of the total tracer remains within the 0D compartments after 24 hours, accompanied by to a corresponding reduction in total parenchymal tracer ($31\%$ compared to $47\%$ in the model lacking 0D compartments). Crucially, the 0D compartments successfully resolve the leaf node tracer accumulation: tracer concentrations at the leaf nodes and within the 0D compartments remain physiologically reasonable (below $40\,$mmol/l and $22\,$mmol/l, respectively), in contrast to the spikes of up to $150\,$mmol/l observed in the model without 0D compartments (Figure~\ref{fig:0D_xi_multiplier_comparison}C--E). Furthermore, upstream FTAs remain unaffected by the transition to the 0D model (Figure~\ref{fig:0D_xi_multiplier_comparison}F).
+
+Finally, the overall spatial tracer distribution patterns remain largely consistent between the two models (Figure~\ref{fig:0D_xi_multiplier_comparison}G and H). Interestingly, despite a lower total tracer mass in the parenchyma, the 0D model predicts slightly deeper tracer penetration into the tissue (visible, for instance, in the axial views of the left hemisphere at 9, 12, and 24 hours). This phenomenon occurs because the tracer entering the 0D compartments is rapidly exchanged into all tissue within the localized integration ball $B_k$, fascillitating a deeper tracer penetration.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.95\linewidth]{0D_xi_multiplier_comparison.png}
+    \caption{
+    Total tracer content in the CSF, parenchyma, and arterial and venous PVS for the high PVS flow model with 0D compartments (A);
+    and the same model without 0D compartments, but a 100x permeability multiplier at PVS leaf nodes (B);
+    C) Tracer concentrations at the individual 0D compartments for the model with 0D compartments;
+    D) Tracer concentrations at the individual arterial leaf nodes for the model with 0D compartments;
+    E) Tracer concentrations at the individual arterial leaf nodes for the model without 0D compartments, but 100x permeability multiplier.
+    F) First-time arrival of tracer along branches of the arterial tree for the both models;
+    G+H) sagittal, coronal and axial view of in-silico tracer concentrations overlayed on T1-weighted MR image after 9, 12, and 24\,h (low concentrations transparent, pial surface in pink, arachnoid membrane in cyan, and arteries in dark red) for the model with 0D compartments (G) and without (H).
+    }
+    \label{fig:0D_xi_multiplier_comparison}
+\end{figure}
+
 \section{Supplementary discussion}
 
 \subsection{Extended comparison with literature}
