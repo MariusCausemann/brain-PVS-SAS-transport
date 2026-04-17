@@ -81,7 +81,7 @@ cohorts~\cite{ringstad2018brain, eide2021direction, eide2021impaired,
   eide2022altered}. These observations provide distinct opportunities
 (and challenges) for personalized medicine e.g.~for tailored
 intrathecal delivery of chemotherapies\cite{lohela2022glymphatic} such
-as methodextrate in acute lymphoblastic leukemia
+as methotrexate in acute lymphoblastic leukemia
 patients\cite{kadan2009comparison}, and for early diagnostics of
 impaired brain clearance\cite{eide2021clinical, van2024human}. In
 spite of their importance, our understanding of these mechanisms is
@@ -274,7 +274,7 @@ parenchyma (31\%), the unresolved continuation of the arterial PVS (8\%, capture
      %B) 3D rendering of the computational geometry: the parenchyma, CSF (clipped, blue), arterial network (red), and venous network (blue); 
      A) Illustration of the computational representation of an intrathecal tracer injection;  
      B) in-silico predictions of tracer concentration after 1, 6, 12, and 24 hours (opacity increasing linearly from 0 to 2 mmol/l); 
-     C) sagittal, coronal and axial view of in-silico tracer concentrations overlayed on T1-weighted MR image after 1, 6, 12 and 24\,h (low concentrations transparent, pial surface in pink, arachnoid membrane in cyan, and arteries in dark red); 
+     C) sagittal, coronal and axial view of in-silico tracer concentrations overlaid on T1-weighted MR image after 1, 6, 12 and 24\,h (low concentrations transparent, pial surface in pink, arachnoid membrane in cyan, and arteries in dark red); 
      D) average tracer concentration in each compartment over the first 24 hours; 
      E) total amount of tracer in each compartment over the first 24 hours.}
      \label{fig:intrathecal}
@@ -511,7 +511,7 @@ compared to the baseline (\Cref{fig:high_low_pvs}F, H).
     B) first-time arrival for the main trunks of the periarterial network over the distance from the closest network root node (BA, ICA-R or ICA-L for the baseline, the high PVS flow and the high PVS dispersion models);
     C, D) 2D slices showing zoom-in on the region surrounding the MCA-R and MCA2-R for the baseline (upper) and high PVS flow (lower) models. Innermost circle indicates the artery (blue), the surrounding annulus is the PVS (color represents concentration value), the surroundings are parenchyma and/or CSF spaces, separated by the pia (blue: towards the parenchyma, pink: towards the CSF));  
     E) Total amount of tracer in the periarterial spaces as a function of the distance to the nearest network root over time for the baseline (left) and the high PVS flow (right) models;
-    F--H) sagittal (upper) and coronal (lower) views of the simulated tracer concentrations overlayed on the T1-weighted MR image after 4 and 6h for the baseline (K), high PVS flow (L) and high PVS dispersion (M) models (concentration opacity linearly increasing with concentration value, pial surface outlined in pink, arachnoid membrane in cyan, and arteries in dark red). An interactive visualization of the baseline and the high PVS flow model can be found \href{https://baseline-pvs-flow.surge.sh/}{here}, and \href{https://high-pvs-flow.surge.sh/}{here}.}
+    F--H) sagittal (upper) and coronal (lower) views of the simulated tracer concentrations overlaid on the T1-weighted MR image after 4 and 6h for the baseline (K), high PVS flow (L) and high PVS dispersion (M) models (concentration opacity linearly increasing with concentration value, pial surface outlined in pink, arachnoid membrane in cyan, and arteries in dark red). An interactive visualization of the baseline and the high PVS flow model can be found \href{https://baseline-pvs-flow.surge.sh/}{here}, and \href{https://high-pvs-flow.surge.sh/}{here}.}
 \end{figure}  
 
 \subsection*{The diffusive permeability of the PVS-CSF interfaces}
@@ -1250,7 +1250,7 @@ scenarios.
 %volume fraction $\phi = \phi_{\rm PAR}$ within the parenchyma and
 %$\phi = 1$ elsewhere.
 %
-The effective diffusion coefficient is set equal to that of Gadubutrol
+The effective diffusion coefficient is set equal to that of Gadobutrol
 in water in the PVS networks $\hat{D} = D \equiv D^{\rm Gad}$; is 
 weighted by the dispersion factor $R$ in the CSF spaces: $(1 + R) D$;
 and modulated by the porosity and tortuosity ($\lambda = 1.78$) in the
@@ -1266,8 +1266,8 @@ neither (see also Supplementary Methods).
       \midrule
       %Extracellular space volume fraction & $\phi_{\rm PAR}$ & 0.2 & -- & \cite{nicholson1981ion} \\
       Extracellular space volume fraction & $\phi_{\rm ECS}$ & 0.2 & -- & \cite{nicholson1981ion} \\
-      Free diffusion coefficient, Gadubutrol & $D^{\rm Gad}$ & $3.8 \cdot 10^{-4}$& $\text{mm}^2/\text{s}$ & \cite{valnes2020apparent}\\
-      Parenchymal diffusion coefficient, Gadubutrol & $D^{\rm Gad}_{\rm PAR}$ & $1.2 \cdot 10^{-4}$ & $\text{mm}^2/\text{s}$  & \cite{hornkjol2022csf} \\
+      Free diffusion coefficient, Gadobutrol & $D^{\rm Gad}$ & $3.8 \cdot 10^{-4}$& $\text{mm}^2/\text{s}$ & \cite{valnes2020apparent}\\
+      Parenchymal diffusion coefficient, Gadobutrol & $D^{\rm Gad}_{\rm PAR}$ & $1.2 \cdot 10^{-4}$ & $\text{mm}^2/\text{s}$  & \cite{hornkjol2022csf} \\
       %Permeability coefficient, endfoot sheath & $\xi_{\rm EF}$ & $3.8\cdot 10^{-7}$  & m/s & \cite{koch2023estimates} \\
       Diffusive permeability coefficient, endfoot sheath & $\xi_{\rm EF}$ & $3.8\cdot 10^{-7}$  & m/s & \cite{koch2023estimates} \\
       Diffusive permeability coefficient, PVS--CSF & $\xi_{\rm PVS}$ & $3.8\cdot 10^{-7}$  & m/s & \cite{koch2023estimates} \\
@@ -1284,7 +1284,7 @@ neither (see also Supplementary Methods).
   \end{center}
   \caption{Model parameters. $\dagger$/$\ast$ denotes
     computed/estimated within this work. The diffusion coefficient
-    $D^{\rm Gad}$ represent the diffusion coefficient of Gadubutrol in
+    $D^{\rm Gad}$ represent the diffusion coefficient of Gadobutrol in
     CSF (water), and $D^{\rm Gad}_{\rm PAR}$ its effective diffusion
     coefficient in human cortical tissue, both at body
     temperature~\cite{sykova2008diffusion, valnes2020apparent,
