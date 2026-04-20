@@ -28,7 +28,7 @@
 
 \captionsetup[subfigure]{justification=justified,singlelinecheck=false}
 
-\title{\textcolor{black}{Supplementary information for In-silico molecular transport via perivascular networks in the human intracranial space}}
+\title{\textcolor{black}{Supplementary information for In-silico solute transport via perivascular networks in the human intracranial space}}
 \author[1]{Marius Causemann}
 \author[1]{Miroslav Kuchta}
 \author[2]{Rami Masri}
@@ -40,7 +40,7 @@
 
 \begin{abstract}
   Supplementary methods and discussion accompanying the main text of
-  \emph{\textcolor{blue}{In-silico molecular transport via perivascular networks in the human intracranial space}}.
+  \emph{\textcolor{black}{In-silico solute transport via perivascular networks in the human intracranial space}}.
 \end{abstract}
 
 \begin{document}
@@ -860,7 +860,7 @@ where $\mathrm{P}^1(\Lambda^i)$ is the space of linear polynomials on each $\Lam
  where $h_{\Lambda^i}$ is the mesh--size of $\Lambda^i$.
 Note that the condition \eqref{eq:flux_conservation} is enforced weakly in the above formulation.
 
- \textit{Summary.} The discretization for \eqref{eq:3d_pde} and \eqref{eq:1d_pde} complemented with boundary conditions (\eqref{eq:3d_bcs} and \eqref{eq:1d_bcs}), interface and bifurcation  conditions (\eqref{eq:3d_interface}, \eqref{eq:1d_flow:bifurcations}, and \eqref{eq:conc_continuity}), and intial conditions $c_h^0 =0 $ and $\hat c_h^0 = 0 $ is the following. For $n = 1,2, \ldots $, find  $c_h^n \in V_h$ and $\hat c^n_h \in \hat V_h$ such that the coupled equations \eqref{eq:3d_dg_disc} and \eqref{eq:1d_dg_disc} hold for all $v \in V_h$ and for all $\hat v \in \hat V_h$. 
+ \textit{Summary.} The discretization for \eqref{eq:3d_pde} and \eqref{eq:1d_pde} complemented with boundary conditions (\eqref{eq:3d_bcs} and \eqref{eq:1d_bcs}), interface and bifurcation  conditions (\eqref{eq:3d_interface}, and \eqref{eq:conc_continuity}), and intial conditions $c_h^0 =0 $ and $\hat c_h^0 = 0 $ is the following. For $n = 1,2, \ldots $, find  $c_h^n \in V_h$ and $\hat c^n_h \in \hat V_h$ such that the coupled equations \eqref{eq:3d_dg_disc} and \eqref{eq:1d_dg_disc} hold for all $v \in V_h$ and for all $\hat v \in \hat V_h$. 
 
 
 
@@ -1023,7 +1023,7 @@ To evaluate whether a simpler boundary condition is sufficient to capture periva
 
 To address this, we compared the 100-fold permeability multiplier model against our 0D compartment model. In terms of total compartmental tracer content, the overall macroscopic dynamics remain similar between the two approaches (Figure~\ref{fig:0D_xi_multiplier_comparison}A and B). However, in the model with 0D compartments, $14\%$ of the total tracer remains within the 0D compartments after 24 hours, accompanied by to a corresponding reduction in total parenchymal tracer ($31\%$ compared to $47\%$ in the model lacking 0D compartments). Crucially, the 0D compartments successfully resolve the leaf node tracer accumulation: tracer concentrations at the leaf nodes and within the 0D compartments remain physiologically reasonable (below $40\,$mmol/l and $22\,$mmol/l, respectively), in contrast to the spikes of up to $150\,$mmol/l observed in the model without 0D compartments (Figure~\ref{fig:0D_xi_multiplier_comparison}C--E). Furthermore, upstream FTAs remain unaffected by the choice of 0D model (Figure~\ref{fig:0D_xi_multiplier_comparison}F).
 
-Finally, the overall spatial tracer distribution patterns remain largely consistent between the two models (Figure~\ref{fig:0D_xi_multiplier_comparison}G and H). Interestingly, despite a lower total tracer mass in the parenchyma, the 0D model predicts slightly deeper tracer penetration into the tissue (visible, for instance, in the axial views of the left hemisphere at 9, 12, and 24 hours). This phenomenon occurs because the tracer entering the 0D compartments is rapidly exchanged into all tissue within the localized integration ball $B_k$, fascillitating a deeper tracer penetration.
+Finally, the overall spatial tracer distribution patterns remain largely consistent between the two models (Figure~\ref{fig:0D_xi_multiplier_comparison}G and H). Interestingly, despite a lower total tracer mass in the parenchyma, the 0D model predicts slightly deeper tracer penetration into the tissue (visible, for instance, in the axial views of the left hemisphere at 9, 12, and 24 hours). This phenomenon occurs because the tracer entering the 0D compartments is rapidly exchanged into all tissue within the localized integration ball $B_k$, facilitating a deeper tracer penetration.
 
 \begin{figure}
     \centering
@@ -1125,8 +1125,8 @@ Investigating the link between cardiac pulsatility and the resulting diffusion e
     \centering
     \includegraphics[width=1.0\linewidth]{suppl_flow_figures.png}
     \caption{
-      A) Peak CSF flow induced by cardiac pulsatlity; 
-      B) Peak CSF flow induced by respiratory pulsatlity; 
+      A) Peak CSF flow induced by cardiac pulsatility; 
+      B) Peak CSF flow induced by respiratory pulsatility; 
       C) Histograms of the cardiac-induced CSF velocities in the SAS and third and fourth ventricle (V3 \& V4) in terms of the relative frequency of the mean flow speed in each computational cell weighted by its volume;
       D) Histograms as in C), but for respiratory-induced flow.
       }
