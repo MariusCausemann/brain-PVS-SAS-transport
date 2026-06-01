@@ -3,6 +3,7 @@ channels:
   - conda-forge/label/fenics-dev
   - conda-forge
 dependencies:
+  - python=3.11
   - fenics-dolfin=2019.2.0.dev
   - sympy<1.14.0
   - numpy

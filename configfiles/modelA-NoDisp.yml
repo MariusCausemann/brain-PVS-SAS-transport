@@ -21,7 +21,7 @@ molecular_outflow_resistance : 8.0e-7
 arterial_velocity_file : ["results/pvs_flow_peristaltic/cardiac_pvs_oscillation/pvs_flow.hdf"]
 csf_velocity_file : "results/csf_flow/sas_flow/flow.hdf"
 boundary_conditions:
-  # influx of a total of 0.5mmol tracer with a linearly decreasing function over the first two hours
+  # influx of a total of 0.5mmol tracer with a hat function over the first two hours
   sas : 
     type : Neumann
     expr : "m_tot/(t_max*t_max*A) *max(0.0, t_max - abs(t - t_max))"

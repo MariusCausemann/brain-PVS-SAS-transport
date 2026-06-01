@@ -20,7 +20,7 @@ from extract_vessels import get_tubes
 import ufl_legacy as ufl
 from matplotlib import font_manager
 
-font_path = font_manager.findfont("Nimbus Sans", fallback_to_default=False)
+font_path = font_manager.findfont("Nimbus Sans", fallback_to_default=True)
 
 
 m2mm = 1e3

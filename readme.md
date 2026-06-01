@@ -1,59 +1,119 @@
 ![Actions Status](https://github.com/mariuscausemann/brain-PVS-SAS-transport/actions/workflows/test_conda.yml/badge.svg)
 
-#### Installation and dependencies
+# brain-PVS-SAS-transport
 
-The workflow is managed with the workflow management system [Snakemake](https://snakemake.readthedocs.io/en/stable/). To install snakemake using conda, run:
+This repository contains the computational framework for the paper:
+**"In-silico solute transport via perivascular networks in the human intracranial space"** (Causemann et al., 2026).
 
-`conda install -c conda-forge -c bioconda snakemake==8.14.0`
+This software provides a mixed-dimensional mathematical modelling framework to predict the spatiotemporal spreading of a solute across the subarachnoid space (SAS), ventricular system, and brain parenchyma, including surface perivascular spaces (PVSs). The simulation pipeline is fully automated using [Snakemake](https://snakemake.readthedocs.io/) and uses the [FEniCS](https://fenicsproject.org/) finite element framework for numerical approximations.
 
-Next, you can test the workflow with a small scale example with:
+## 1. System Requirements
 
-`snakemake --conda-frontend conda --use-conda --cores 2 -p plots/test/test_total_conc.png --config meshing=False`
+### Hardware Requirements
 
-This will automatically install all required dependencies (from environment.yml), and run all required jobs on two cores. Since the meshing tool fTetWild requires compilation and can be hard to install, we disable the meshing part of the pipeline here and run the example on a pregenerated mesh. Expected run time for setting up the environment and running all steps is ~ 30min.
-To test the whole pipline (including meshing), run:
+* **Minimal Demo:** A standard desktop computer with at least 2 CPU cores and 8 GB of RAM.
 
-`snakemake --conda-frontend conda --use-conda --cores 2 -p plots/test/test_total_conc.png --force-all`
+* **Full Reproduction:** A High-Performance Computing (HPC) environment is **required** to run the full three-dimensional Stokes flow and solute transport models.
 
-To reproduce all results on N cores, run:
+  * *Stokes flow simulation:* ~16 MPI processes (64 threads) and ~300 GB RAM.
 
-`snakemake --conda-frontend conda --use-conda --cores N`
+  * *Transport simulation:* ~16 threads and ~50 GB RAM.
 
-Note that this requires significant computational resources (around ~ 500GB RAM, 64 cores minimum). Snakemake supports job submission systems like `slurm`. Adjust our profile in `ex3/config.yaml` to your needs, install the generic executor plugin with
+### Software Dependencies & Operating Systems
 
-`conda install -c conda-forge -c bioconda snakemake-executor-plugin-cluster-generic`
+* **Operating Systems:** Linux (tested on Ubuntu-latest via GitHub Actions). It should also run on macOS or Windows via WSL.
 
-and start with:
+* **Core Dependencies:**
 
-`snakemake --profile ex3`
+  * Conda / Miniconda / Mamba
 
-#### Brain and vasculature imaging data 
+  * Snakemake `==8.14.0` (with plugins `snakemake-storage-plugin-http` and `snakemake-executor-plugin-cluster-generic`)
 
-Image data were downloaded from Hodneland et al, PLOS Comp. Bio, 2023 (https://doi.org/10.1371/journal.pcbi.1007073) and placed under data/. These data include: 
+* **Environment Dependencies:** All simulation-specific dependencies (e.g., Python 3.12, FEniCS, NumPy, YAML) are automatically resolved and installed via Conda environments defined in the repository (e.g., `environment.yml`, `mesh_environment.yml`) when running the Snakemake workflow.
 
-* Arteries: data/pcbi.1007073.s007.nii.gz
-* Veins: data/pcbi.1007073.s008.nii.gz
+## 2. Installation Guide
 
-In addition, we received additional T1 images from Erlend Hodneland, see data/T1_synthseg.nii.gz.
+### Instructions
 
-To have a quick look at the data, do e.g. the following (in Python) to plot a slice of the T1 data (NB: untested since data update).
+1. **Clone the repository:**
+
+   ```
+   git clone [https://github.com/MariusCausemann/brain-PVS-SAS-transport.git](https://github.com/MariusCausemann/brain-PVS-SAS-transport.git)
+   cd brain-PVS-SAS-transport
+   
+   ```
+
+2. **Install Snakemake via Conda/Mamba:**
+   If you do not have Conda installed, please install [Miniconda](https://docs.conda.io/en/latest/miniconda.html) first. Then, create an environment for Snakemake:
+
+   ```
+   conda create -n snakemake_env -c conda-forge -c bioconda python=3.12 git snakemake==8.14.0 snakemake-storage-plugin-http snakemake-executor-plugin-cluster-generic
+   conda activate snakemake_env
+   
+   ```
+
+### Typical Install Time
+
+* Snakemake installation: ~2-5 minutes.
+
+* Sub-environment creation (handled automatically by Snakemake upon first execution): ~5-10 minutes depending on internet speed.
+
+## 3. Demo
+
+To verify that the pipeline is functioning correctly, you can run a minimal demo. This demo executes a small subset of the pipeline to produce a basic tracer concentration plot, skipping the computationally expensive 3D meshing steps.
+
+### Instructions to run on data
+
+Ensure your `snakemake_env` is activated, then run:
+
 ```
-import nibabel
-import matplotlib.pyplot as plt
-data = nibabel.load("data/T1_synthseg.nii.gz")
-data.shape
-plt.imshow(data.get_fdata()[:, 100, :])
-plt.show()
+snakemake --conda-frontend conda --use-conda --cores 2 -p plots/test/test_total_conc.png --config meshing=False
+
 ```
 
-#### Generating meshes from the image data ####
+### Expected Output
 
-The standard mesh resolution is available in the Git repository under
-mesh/standard.
+The workflow will download/configure necessary dependencies via conda, run the basic numerical scripts, and generate an output plot located at:
+`plots/test/test_total_conc.png`
+Note that this is intended to test the setup, and will not produce physically meaningful simulation results.
 
+### Expected Run Time
 
-For networks/, there is the original, a smoothened and a tube representation of the arterial and venous network separately in .vtk format. The ones we use further are arteries_smooth.vtk and veins_smooth.vtk. 
+On a standard desktop computer, the minimal demo takes approximately **15-30 minutes** (including the time required for Conda to build the inner `environment.yml` for the first time). Subsequent runs will be faster.
 
-For surfaces/, there is the white matter (pial) surface (wm.ply), the white-gray matter interface (gm.ply) and parenchyma.ply, all in .ply format. 
+## 4. Instructions for Use
 
-For volmesh/, there is the generated volumetric mesh of the parenchyma, including both white and gray matter (mesh.xdmf+h5).
+### How to run the software on your data
+
+The entire pipeline—from MRI segmentation extraction to mesh generation, Stokes flow calculation, mixed-dimensional transport simulation, and final plotting—is defined in the `Snakefile`.
+
+You can configure the model runs by modifying the YAML files located in the `configfiles/` directory.
+
+### Reproduction Instructions
+
+To reproduce the quantitative results and figures presented in the manuscript, you must run the full workflow.
+*Note: This will trigger the full FEniCS simulations on the high-resolution intracranial meshes and requires an HPC environment.*
+
+1. **Dry-run (Optional):** See what rules will be executed without running them:
+
+   ```
+   snakemake -n
+   
+   ```
+
+2. **Full Execution:** Run the entire pipeline utilizing your cluster/HPC resources (adjust the `--cores` flag based on your available hardware):
+
+   ```
+   snakemake --use-conda --cores 64
+   
+   ```
+
+**Key Pipeline Steps included in the Workflow:**
+
+* `segmentT1` / `generateSurfaces` / `generateMesh`: Extracts surfaces from T1-weighted MR images and generates the 3D computational mesh (fTetWild).
+
+* `computeSASFlow` / `computeProdPVSFlow`: Computes steady and peristaltic flow fields in the Subarachnoid Space and Perivascular Spaces.
+
+* `runSimuation`: Executes the mixed-dimensional 3D-1D time-dependent solute transport models.
+
+* `generatePlot` / `compareModels` / `makeVideo`: Generates the resulting concentration visualizations, bar plots, and animations across 1h to 24h timelines.
