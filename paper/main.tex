@@ -150,21 +150,23 @@ to days. In terms of transport dynamics, we account for heterogeneous
 diffusion, dispersive mixing induced by cardiac and respiratory
 pulsatility in the CSF spaces, convective fluid flow driven by CSF
 production in the CSF spaces and peristaltic pumping in the PVSs, as
-well as solute exchange and efflux across semi-permeable membranes. We
-demonstrate the applicability of this computational framework via a
-series of model scenarios motivated by current questions relating to
-solute movement within the human brain environment. In particular,
-we simulate how the balance between CSF production and intracranial
-pulsatility can shape large-scale features of tracer distribution, how
-perivascular fluid flow induced by cardiac pulsations or low-frequency
-vasomotion can impact tracer arrival times within the surrounding CSF
-spaces and parenchyma, and how changes in structural properties, such
-as the diffusive permeability of the PVS interface or enlarged PVSs,
-can impact perivascular transport and intracranial tracer spread. This
-openly available technology platform\cite{ZENODO} allows for
-evaluating the integrated effect of different intracranial transport
-mechanisms in subject-specific geometries, and provides a foundation
-for future in-silico studies of brain solute transport.
+well as solute exchange and efflux across semi-permeable membranes. A
+fully coupled model of CSF and PVS flow is however not within the
+scope of the current work. We demonstrate the applicability of this
+computational framework via a series of model scenarios motivated by
+current questions relating to solute movement within the human brain
+environment. In particular, we simulate how the balance between CSF
+production and intracranial pulsatility can shape large-scale features
+of tracer distribution, how perivascular fluid flow induced by cardiac
+pulsations or low-frequency vasomotion can impact tracer arrival times
+within the surrounding CSF spaces and parenchyma, and how changes in
+structural properties, such as the diffusive permeability of the PVS
+interface or enlarged PVSs, can impact perivascular transport and
+intracranial tracer spread. This openly available technology
+platform\cite{ZENODO} allows for evaluating the integrated effect of
+different intracranial transport mechanisms in subject-specific
+geometries, and provides a foundation for future in-silico studies of
+brain solute transport.
 
 \section*{Results}
 
@@ -675,7 +677,9 @@ first principles and asymptotic analysis, predict net flow of such
 magnitudes and both antegrade and retrograde flow within the
 periarterial network. In our simulations, the PVSs thus function as
 highways facilitating rapid transport, even in the absence of tight
-structural barriers.
+structural barriers. Note however that our PVS flow models are not
+coupled to flow in the SAS or within the brain parenchyma, a
+limitation of this work that is further discussed below.
 
 %Finally, dilated PVS in the SAS will cause a substantial reduction in cardiac- and vasomotion-driven flow velocities, which in turn impedes perivascular transport.
 
@@ -938,11 +942,14 @@ and integrating insights from experimental and clinical studies and
 theoretical analysis to a virtual human setting. The complete
 simulation pipeline is openly available, including interactive
 visualization of simulation results for all model
-variations~\cite{ZENODO}. Future studies will focus on direct model
-validation including comparisons between in-silico predictions and
-contrast-enhanced MRI for a number of subjects across several patient
-cohorts. Moreover, the rapid development of new CSF flow and mobility
-imaging techniques~\cite{dong2025quantifying, hirschler2025region,
+variations~\cite{ZENODO}. \fixme{One sentence here in response to
+  the reviewer's question about which mathematical and complexities
+  one would need to address to consider a fully coupled flow model.}
+Future studies will focus on direct model validation including
+comparisons between in-silico predictions and contrast-enhanced MRI
+for a number of subjects across several patient cohorts. Moreover, the
+rapid development of new CSF flow and mobility imaging
+techniques~\cite{dong2025quantifying, hirschler2025region,
   vikner2025imaging} offers striking opportunities -- both for model
 validation or for directly informing the model parameters. Looking
 ahead, this framework establishes a foundation for in-silico studies
