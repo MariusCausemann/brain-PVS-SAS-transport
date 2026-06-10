@@ -18,17 +18,17 @@ final:
 
 diff: diff_main diff_supp
 
-DIFF_MAIN_FILE=causemann2026insilico-r2-diff
-DIFF_SUPP_FILE=causemann2026insilico-r2-supplementary-diff
+DIFF_MAIN_FILE=causemann2026insilico-r3-diff
+DIFF_SUPP_FILE=causemann2026insilico-r3-supplementary-diff
 diff_main: 
-	latexdiff --no-del --graphics-markup=none main_r1.tex main.tex > $(DIFF_MAIN_FILE).tex
+	latexdiff --no-del --graphics-markup=none main_r2.tex main.tex > $(DIFF_MAIN_FILE).tex
 	pdflatex $(DIFF_MAIN_FILE).tex
 	bibtex $(DIFF_MAIN_FILE)
 	pdflatex $(DIFF_MAIN_FILE).tex
 	pdflatex $(DIFF_MAIN_FILE).tex
 
 diff_supp:
-	latexdiff --no-del --graphics-markup=none supplementary_r1.tex supplementary.tex > $(DIFF_SUPP_FILE).tex
+	latexdiff --no-del --graphics-markup=none supplementary_r2.tex supplementary.tex > $(DIFF_SUPP_FILE).tex
 	pdflatex $(DIFF_SUPP_FILE).tex
 	bibtex $(DIFF_SUPP_FILE)
 	pdflatex $(DIFF_SUPP_FILE).tex
