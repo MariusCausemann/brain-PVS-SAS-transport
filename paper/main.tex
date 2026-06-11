@@ -196,10 +196,12 @@ magnetic resonance imaging (MRI) data~\cite{hodneland2019new,
 representation of the human intracranial compartments consisting of
 the CSF spaces and brain parenchyma as three-dimensional (3D) domains
 and with the PVSs surrounding major surface arteries and veins as
-networks of topologically one-dimensional (1D) curves embedded
-therein, which terminate in zero-dimensional (0D) compartments
-representing the unresolved downstream perivascular pathways
-(\Cref{fig:results1}B--F). Relative to this geometry, we define two
+networks of topologically one-dimensional (1D) curves embedded therein
+(\Cref{fig:results1}B--F). We also associate the leaf nodes of the PVS
+networks with zero-dimensional (0D) compartments representing the
+unresolved downstream perivascular pathways (see Methods).
+
+Relative to this geometry, we define two
 solute concentration fields, both varying in space and time, one in
 the 3D domains, one in the PVS networks, and we assume that the solute
 can cross between the 3D and 1D domains via semi-permeable
@@ -214,7 +216,9 @@ pulsatile CSF flow~\cite{sweetman2011cerebrospinal,
   vinje2019respiratory, ray2021quantitative}. In the surface
 periarterial spaces, in addition to diffusion, we account for
 convection via net fluid flow induced by peristaltic
-pumping~\cite{mestre2018flow, gjerde2023directional}. Specifically, we
+pumping~\cite{mestre2018flow, gjerde2023directional}. At the PVS leaf nodes, we assume that the solute can distribute evenly into (or exit from) a local region of the surrounding 3D domain, at a rate governed by the difference between the average concentration in said region and at the leaf node and a diffusive conductance, together with the convective contribution from the periarterial net flow.
+
+Specifically, we
 introduce the geometrically-reduced representation of the PVSs to
 bridge spatial scales, and model pulsatility via dispersion in the CSF
 and time-averaged flow in the PVS to bridge temporal
