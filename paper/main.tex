@@ -151,7 +151,7 @@ diffusion, dispersive mixing induced by cardiac and respiratory
 pulsatility in the CSF spaces, convective fluid flow driven by CSF
 production in the CSF spaces and peristaltic pumping in the PVSs, as
 well as solute exchange and efflux across semi-permeable membranes. A
-fully coupled model of CSF and PVS flow is however not within the
+fully coupled model of CSF, ISF, and PVS flow is however not within the
 scope of the current work. We demonstrate the applicability of this
 computational framework via a series of model scenarios motivated by
 current questions relating to solute movement within the human brain
@@ -196,8 +196,10 @@ magnetic resonance imaging (MRI) data~\cite{hodneland2019new,
 representation of the human intracranial compartments consisting of
 the CSF spaces and brain parenchyma as three-dimensional (3D) domains
 and with the PVSs surrounding major surface arteries and veins as
-networks of topologically one-dimensional (1D) curves embedded therein, which terminate in zero-dimensional (0D) compartments representing the unresolved downstream perivascular pathways (\Cref{fig:results1}B--F). 
-Relative to this geometry, we define two
+networks of topologically one-dimensional (1D) curves embedded
+therein, which terminate in zero-dimensional (0D) compartments
+representing the unresolved downstream perivascular pathways
+(\Cref{fig:results1}B--F). Relative to this geometry, we define two
 solute concentration fields, both varying in space and time, one in
 the 3D domains, one in the PVS networks, and we assume that the solute
 can cross between the 3D and 1D domains via semi-permeable
@@ -220,10 +222,14 @@ scales. Mathematically, the solute transport model is represented by a
 mixed-dimensional system of coupled time-dependent partial
 differential equations\cite{masri2024modelling}, which we solve
 numerically with high accuracy using a mass-conserving finite element
-scheme. The complete computational framework is implemented in the
-FEniCS finite element software \cite{alnaes2015fenics,
-  kuchta2020assembly}, and all associated software is all openly
-available~\cite{ZENODO}.
+scheme. We remark that while we present a coupled framework for solute
+transport in the CSF spaces, brain parenchyma, and surface PVS networks, a
+comprehensive model of CSF and ISF flow is not within the scope of
+this work. In particular, we here demonstrate using separate; i.e.,
+not coupled, flow models in the CSF spaces and PVS. The complete
+computational framework is implemented in the FEniCS finite element
+software \cite{alnaes2015fenics, kuchta2020assembly}, and all
+associated software is all openly available~\cite{ZENODO}.
 
 \subsection*{In-silico tracer distribution after intrathecal injection}
 
@@ -420,11 +426,7 @@ predicts that strong ultraslow vasomotions, if traveling antegrade at
 displacement~\cite{broggini2024long}, will induce both retrograde and
 antegrade net perivascular flow with an average velocity of 12.87
 \textmu m/s and maximum velocity 60.05 \textmu m/s, and a total flow
-of 213.7 mL/day (\Cref{fig:pvs}E, F). We remark that while we
-present a coupled framework for solute transport in the CSF spaces,
-brain and surface PVS networks, a comprehensive model of CSF and ISF
-flow is not within the scope of this work. In particular, we here
-demonstrate using separate; i.e., not coupled, flow models in the CSF and PVS.
+of 213.7 mL/day (\Cref{fig:pvs}E, F). 
 \begin{figure}
     \centering
     \includegraphics[width=0.95\textwidth]{figures/figure4.png}
