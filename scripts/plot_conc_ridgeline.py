@@ -28,7 +28,7 @@ def plot_conc_ridgeline(model:str):
     timespoints = np.array([2, 4, 6, 8, 10, 12])*3600
     timeidx = np.where(np.isin(times, timespoints))[0]
     binedges = np.linspace(*xrange, 50)
-    #from IPython import embed;embed()
+    
     pvsconc = [results["c_pvs"][ti] for ti in timeidx]
     outerconc = [results["c_averages"][ti] for ti in timeidx]
     jumpconc = [results["c_pvs"][ti] - results["c_averages"][ti] for ti in timeidx]
@@ -54,10 +54,10 @@ def plot_conc_ridgeline(model:str):
                 ridge_data = pd.DataFrame({f"{int(t/3600)} h": pchipsmooth(d) if s=="smoothed" else d 
                                         for t,d in zip(timespoints, data)}, index=xdata)
                 ridge_data = ridge_data[ridge_data.columns[::-1]]
+                
                 fig, ax = joypy.joyplot(ridge_data, colormap=Colormap("Blues_r"), kind="values",
-                                        x_range=(0, len(xdata)), alpha=0.8, figsize=(4.2,3.4), overlap=1.5,
-                                        #title="Total PVS tracer content", 
-                                        )
+                                        x_range=(0, len(xdata)), alpha=0.8, figsize=(4.2,3.4), overlap=1.5)
+                
                 ax[-1].set_xlabel("distance (m)")
                 ax[-1].set_xticks(np.linspace(0, len(xdata), 5, endpoint=False),
                                   np.linspace(*xdata[[0, -1]], 5, endpoint=False).round(2))
@@ -71,13 +71,27 @@ def plot_conc_ridgeline(model:str):
                 secxb.set_xticks([labeldist[ln]*len(xdata) / xdata[-1] for ln in bottomlabels],
                                 bottomlabels, rotation=45)
                 secxb.tick_params(top=False, labeltop=False, bottom=True, labelbottom=True)
-                fig.savefig(f"plots/{model}/{model}_ridgeline_{datatype}_{plottype}_{s}.png",
-                            bbox_inches='tight', dpi=300)
+                
+                # Define baseline image file path
+                img_filename = f"plots/{model}/{model}_ridgeline_{datatype}_{plottype}_{s}.svg"
+                fig.savefig(img_filename, bbox_inches='tight', dpi=300)
+
+                # 1. Create a copy to keep mutations safe from messing up any tracking states
+                df_source = ridge_data.copy()
+                
+                # 2. Re-reverse the columns so they read chronologically in the CSV (2h -> 12h)
+                df_source = df_source[df_source.columns[::-1]]
+                
+                # 3. Label the spatial index explicitly and drop it into a normal data column
+                df_source.index.name = "Distance (m)"
+                df_source = df_source.reset_index()
+                
+                # 4. Save out out to disk side-by-side with the PNG graphic
+                csv_filename = img_filename.replace(".svg", "_source_data.csv")
+                df_source.to_csv(csv_filename, index=False)
+                print(f"--> Exported ridgeline source data to: {csv_filename}")
+                # ==============================================================================
 
 
 if __name__ == "__main__":
     typer.run(plot_conc_ridgeline)
-
-
-
-

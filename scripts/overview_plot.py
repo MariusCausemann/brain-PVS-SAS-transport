@@ -113,13 +113,15 @@ def generate_overview_plot(model:str,
             mplcmap = Colormap(fd["cmap"]).to_matplotlib()
             norm = mpl.colors.Normalize(*fd["clim"])
             #mplcmap.set_over("ivory")
-            cax = inset_axes(ax, width="10%",height="300%", loc="lower left",
-            bbox_to_anchor=(loc, 0., 1, 1), bbox_transform=ax.transAxes, borderpad=0)
-            plt.colorbar(mpl.cm.ScalarMappable(norm=norm,cmap=mplcmap),
+            #cax = inset_axes(ax, width="10%",height="300%", loc="lower left",
+            #    bbox_to_anchor=(loc, 0., 1, 1), bbox_transform=ax.transAxes, borderpad=0)
+            cax = ax.inset_axes([loc, 0.0, 0.10, 3.0])
+            cbar = plt.colorbar(mpl.cm.ScalarMappable(norm=norm,cmap=mplcmap),
                         label=name + cbar_title, extend='max', cax=cax)
+        cbar.solids.set_edgecolor("face")
 
         tstr = "-".join([f"{t/3600:.0f}" for t in times])
-        plt.savefig(f"plots/{model}/{model}_overview_{tstr}{'_dark' if style=='dark_background' else ''}.png",
+        plt.savefig(f"plots/{model}/{model}_overview_{tstr}{'_dark' if style=='dark_background' else ''}.svg",
                         dpi=300, bbox_inches="tight", transparent=True)
     
 if __name__ == "__main__":

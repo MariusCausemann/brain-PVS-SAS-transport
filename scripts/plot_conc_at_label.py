@@ -3,6 +3,7 @@ from plotting_utils import set_plotting_defaults, read_config
 import typer
 import os
 import numpy as np
+import pandas as pd
 
 def plot_conc_at_label(model:str):
 
@@ -13,6 +14,7 @@ def plot_conc_at_label(model:str):
 
     dt , T= config["dt"], config["T"]
     times = np.arange(0, T + dt, dt*config["output_frequency"])
+    time_hours = times / 3600  # Common X-axis vector
     print(times / 60)
     set_plotting_defaults()
 
@@ -24,7 +26,6 @@ def plot_conc_at_label(model:str):
                     #["PER-L", "PER-R"]
                     ]
 
-    #from IPython import embed; embed()
     artlabels = sum(artlabelsets, [])
 
     coldict = {"modelA-strongVM":"#6610f2","modelA":"#0b774d", "LargePVS":"green"}
@@ -40,15 +41,39 @@ def plot_conc_at_label(model:str):
     avg_conc_around_point = results["avg_conc_around_point"]
     nrows = 1
     ncols = int(np.ceil(len(artlabelsets) / nrows))
+    
     for annotate in [True, False]:
         fig, axes = plt.subplots(nrows, ncols, figsize=(int(ncols*2.5),nrows*2.5), constrained_layout=True)
+        
+        # Initialize Source Data dictionary with the common X-axis timeline
+        source_data = {"Time (h)": time_hours}
+
         for ax, al_set in zip(axes.flatten(), artlabelsets):
             peaks, lags, ftas = [],[],[]
             for n in al_set:
-                h1 = ax.plot(times / 3600, conc_at_point[n], color=col, ls="dashed")
-                h2 = ax.plot(times / 3600, avg_conc_around_point[n], color=col, ls="dotted")
-                ax.fill_between(times / 3600, conc_at_point[n], avg_conc_around_point[n],
+                h1 = ax.plot(time_hours, conc_at_point[n], color=col, ls="dashed")
+                h2 = ax.plot(time_hours, avg_conc_around_point[n], color=col, ls="dotted")
+                ax.fill_between(time_hours, conc_at_point[n], avg_conc_around_point[n],
                                 alpha=0.2, color=col)
+                
+                # Capture the line array curves for each label subpanel
+                source_data[f"{n}_PVS_concentration_mmol_l"] = conc_at_point[n]
+                source_data[f"{n}_outside_PVS_concentration_mmol_l"] = avg_conc_around_point[n]
+                
+                # Track the specific scalar metadata stats (padded with NaNs to align lengths)
+                peak_col = np.full_like(time_hours, np.nan, dtype=float)
+                peak_col[0] = pvspeaktimedict[n] / 3600
+                source_data[f"{n}_peak_time_h"] = peak_col
+                
+                lag_col = np.full_like(time_hours, np.nan, dtype=float)
+                lag_col[0] = lagdict[n] / 3600
+                source_data[f"{n}_lag_time_h"] = lag_col
+                
+                fta_col = np.full_like(time_hours, np.nan, dtype=float)
+                if pvsftadict[n] is not None:
+                    fta_col[0] = pvsftadict[n] / 3600
+                source_data[f"{n}_FTA_time_h"] = fta_col
+
                 peaks.append(pvspeaktimedict[n]); lags.append(lagdict[n]), ftas.append(pvsftadict[n])
 
             if annotate:
@@ -77,7 +102,6 @@ def plot_conc_at_label(model:str):
                                 textcoords='offset pixels', xytext=(-20, -10))
 
             format_secs = lambda s: "{:1.0f}:{:02.0f}".format(*divmod(abs(s)/60, 60))
-            #format_secs = lambda s: f"{s/60} min"
             nl = chr(10)
             text = (f"peak: {('/' + nl).join(format_secs(p) for p in peaks)}h" + nl +
                     f"Δt: {('/' + nl).join(('' if l>-60 else '-') + format_secs(l) for l in lags)}h" + nl +
@@ -96,20 +120,21 @@ def plot_conc_at_label(model:str):
             ax.set_title(" ".join(al_set), loc='center', y=1)
             ax.set_xlabel("time (h)")
             if al_set== artlabelsets[0]: ax.set_ylabel("concentration (mmol/l)")
-        leg = plt.figlegend(handles =[h1[0], h2[0]],# h3[0]],
+            
+        leg = plt.figlegend(handles =[h1[0], h2[0]],
                     labels=[ "PVS", "outside PVS"],
-                            #f"PVS proximity (R + {int(proximity_dist*1e3)} mm)"],
-                    loc='lower center', #facecolor="white", edgecolor="black",
+                    loc='lower center', 
                     frameon=False, ncols=2, bbox_to_anchor=(0.5, 0.98), fontsize="large")
-        #for lh in leg.legend_handles: lh.set_color('black')
 
-        plt.savefig(f"plots/{model}/{model}_conc_at_label{'_annotated' if annotate else ''}.png",
-                    bbox_inches='tight', dpi=300, transparent=True)
+        # Save Image
+        img_filename = f"plots/{model}/{model}_conc_at_label{'_annotated' if annotate else ''}.svg"
+        plt.savefig(img_filename, bbox_inches='tight', dpi=300, transparent=True)
+        
+        # Save Source Data
+        csv_filename = img_filename.replace(".svg", "_source_data.csv")
+        pd.DataFrame(source_data).to_csv(csv_filename, index=False)
+        print(f"--> Exported time-series source data to: {csv_filename}")
 
 
 if __name__ == "__main__":
     typer.run(plot_conc_at_label)
-
-
-
-

@@ -19,6 +19,7 @@ from vtk_adapter import create_vtk_structures
 from extract_vessels import get_tubes
 import ufl_legacy as ufl
 from matplotlib import font_manager
+import pandas as pd
 
 font_path = font_manager.findfont("Nimbus Sans", fallback_to_default=True)
 
@@ -126,11 +127,16 @@ def compute_pvs_flow(pvs_flow_file):
         counts, bins, containers = plt.hist(uvals, density=False, bins=nbins, histtype="bar",
                 range=range, edgecolor='black', linewidth=0.4, 
                         weights=lengths / lengths.sum())
+
+        # 1. Calculate bin centers for the X-axis tracking
+        bin_centers = 0.5 * (bins[:-1] + bins[1:])
+
         pos_share = max([0, range[1] / (range[1] - range[0])])
         print(pos_share)
         for bar, ca in zip(containers, list(Colormap("balance_blue").iter_colors(int((1 - pos_share) * nbins))) + 
-                                       list(Colormap("curl_pink_r").iter_colors(int(pos_share * nbins)))):
+                                    list(Colormap("curl_pink_r").iter_colors(int(pos_share * nbins)))):
             bar.set_facecolor(ca)
+
         plt.axvline(uavg, color="black", linestyle=":", label=f"avg: {uavg:.2f} µm/s")
         #plt.axvline(umed, color="black", linestyle="-.", label=f"median: {umed:.2f} µm/s")
         plt.axvline(umax, color="black", linestyle="--", label=f"max: {umax:.2f} µm/s")
@@ -140,8 +146,31 @@ def compute_pvs_flow(pvs_flow_file):
         plt.xlim(range)
         plt.legend(frameon=False, handlelength=1.2)
         ax.yaxis.set_major_formatter(PercentFormatter(1))
-        plt.savefig(f"{plot_dir}/{model}_velocity_histo_{variant}.png", dpi=300,
-                    transparent=True)
+
+        # Define the image path cleanly so we can reuse it for the CSV
+        img_filename = f"{plot_dir}/{model}_velocity_histo_{variant}.svg"
+        plt.savefig(img_filename, dpi=300, transparent=True)
+
+        # ==============================================================================
+        # 2. GENERATE AND SAVE SOURCE DATA
+        # ==============================================================================
+        # Pad the single scalar values (mean & max lines) with NaNs to match column lengths
+        avg_column = np.full(nbins, np.nan)
+        avg_column[0] = uavg
+
+        max_column = np.full(nbins, np.nan)
+        max_column[0] = umax
+
+        source_data = {
+            "bin_center_um_s": bin_centers,
+            "relative_frequency": counts,
+            "average_velocity_um_s": avg_column,
+            "max_velocity_um_s": max_column
+        }
+
+        csv_filename = img_filename.replace(".svg", "_source_data.csv")
+        pd.DataFrame(source_data).to_csv(csv_filename, index=False)
+        print(f"--> Exported histogram source data to: {csv_filename}")
 
     points = np.array([c for n,c in pointlabels])
     cellidx = map_kdtree(FunctionSpace(mesh, "DG", 0).tabulate_dof_coordinates(),

@@ -5,6 +5,7 @@ from plotting_utils import set_plotting_defaults, read_config, minmax
 import numpy as np
 import seaborn as sns
 import os
+import pandas as pd  # <-- ADDED FOR SOURCE DATA EXPORT
 
 mol2mmol = 1e3
 
@@ -13,6 +14,7 @@ def compare_concentrations(modelname:str):
     os.makedirs(f"plots/{modelname}", exist_ok=True)
     dt , T= config["dt"], config["T"]
     times = np.arange(0, T + dt, dt*config["output_frequency"])
+    time_hours = times / (60 * 60)  # Common X-axis data
 
     data = read_config(f"results/{modelname}/mean_concentrations.yml")
 
@@ -24,20 +26,28 @@ def compare_concentrations(modelname:str):
     labels = ["CSF", "PAR", "PVS art.", "PVS vein", "PVS cont."]
 
     set_plotting_defaults()
-    #sns.set_palette("BrBG", n_colors=4)
-    #sns.set_palette(["#0a9396","#94d2bd", "#e9d8a6", "#ee9b00"])
     sns.set_palette(["#0a9396","#81b8a5", "#ee6700", "#f3e30d","#eea700",])
 
+    # ==========================================
+    # FIGURE 1: Total Tracer Content
+    # ==========================================
     fig, ax = plt.subplots(figsize=(4.5,3.5))
     tot = np.zeros_like(times)
     prev = -100
+    
+    # Initialize dictionary to collect data for this figure
+    source_data_total = {"Time (h)": time_hours}
+
     for q, l in zip(tot_values, labels):
         new_tot = tot + np.array(q)*mol2mmol
         fill = ax.fill_between(times/ (60*60), new_tot, tot, 
                                alpha=1, label=l)
+        
+        # Track the individual component data being stacked
+        source_data_total[f"{l} total tracer content (mmol)"] = np.array(q) * mol2mmol
+
         ypos =  max(tot[-1], prev+0.04)
         final_tot = sum(t[-1] for t in tot_values)*mol2mmol
-        #plt.scatter(times[-1]/(60*60), ypos, marker="o", color=fill.get_facecolor())
         plt.annotate(f"{100*mol2mmol*q[-1]/final_tot:.0f}%",(times[-1]/(60*60), ypos),
                      color=fill.get_facecolor(),
                      xytext=(2, 0), textcoords='offset points',
@@ -49,34 +59,54 @@ def compare_concentrations(modelname:str):
     print(tot[-5:].min())    
     print(tot[-5:].max())    
     plt.xlabel("time (h)")
-    #ax2.set_ylabel('mean tracer concentration (mmol/l)')
     ax.set_ylabel("total tracer content (mmol)")
     ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.2), ncol=3, 
               columnspacing=0.5, frameon=False)
     plt.tight_layout()
-    filename = f"plots/{modelname}/{modelname}_total_conc.png"
+    
+    # Save Image
+    filename = f"plots/{modelname}/{modelname}_total_conc.svg"
     plt.savefig(filename, dpi=300, transparent=True)
+    
+    # Save Source Data
+    df_total = pd.DataFrame(source_data_total)
+    df_total.to_csv(filename.replace(".svg", "_source_data.csv"), index=False)
+    print(f"--> Exported source data to: {filename.replace('.svg', '_source_data.csv')}")
 
+    # ==========================================
+    # FIGURE 2: Mean Tracer Concentration
+    # ==========================================
     fig, ax = plt.subplots(figsize=(4.5,3.5))
     tot = np.zeros_like(times)
+    
+    # Initialize dictionary to collect data for this figure
+    source_data_mean = {"Time (h)": time_hours}
 
     for c, l in zip(concentrations, labels):
         new_tot = tot + np.array(q)*mol2mmol
         plt.plot(times / (60*60), c, "-", label=l, lw=5)
+        
+        # Track the line trajectory data
+        source_data_mean[f"{l} mean concentration (mmol/l)"] = c
+        
         tot = new_tot
         tmax = times[np.argmax(c)]
         print(f"c_max: {l}: {max(c)} at {tmax / 60} min")
     
     plt.xlabel("time (h)")
-    #ax2.set_ylabel('mean tracer concentration (mmol/l)')
     ax.set_ylabel("mean tracer concentration (mmol/l)")
     ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.2), ncol=3, 
               columnspacing=0.5, frameon=False)
     plt.tight_layout()
-    filename = f"plots/{modelname}/{modelname}_mean_conc.png"
+    
+    # Save Image
+    filename = f"plots/{modelname}/{modelname}_mean_conc.svg"
     plt.savefig(filename, dpi=300, transparent=True)
-
-
+    
+    # Save Source Data
+    df_mean = pd.DataFrame(source_data_mean)
+    df_mean.to_csv(filename.replace(".svg", "_source_data.csv"), index=False)
+    print(f"--> Exported source data to: {filename.replace('.svg', '_source_data.csv')}")
 
 
 if __name__ == "__main__":

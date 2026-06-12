@@ -18,6 +18,8 @@ from vtk.util.numpy_support import numpy_to_vtk
 import seaborn as sns
 from pathlib import Path
 from mark_and_refine_mesh import SPINAL_OUTLET_ID
+import pandas as pd
+import os
 
 m2mum = 1e6
 
@@ -32,29 +34,59 @@ def velocity_histo(sm, u, filename, vscale, vunit):
     domains = [[CSFID], [V34ID],]
     names = ["SAS", "V3 & V4"]
     indices = [np.isin(sm.vector()[:], dom) for dom in domains]  
-    #from IPython import embed; embed()
+    
     fig, axes = plt.subplots(ncols=len(domains), figsize=(7,3))
     nbins = 20
     colors = sns.color_palette("crest", n_colors=len(domains))
-    for ax, name, idx, col in zip(axes,names , indices, colors):
+    
+    # Initialize dictionary to collect histogram data across subplots
+    source_data = {}
+
+    for ax, name, idx, col in zip(axes, names , indices, colors):
         uvals = umag.vector()[idx] * vscale
         xlims = (0, np.percentile(uvals, 92))
-        ax.hist(uvals, bins=nbins, weights=cellvol[idx] / cellvol[idx].sum(),
-                 range=xlims,
-                  color=col, alpha=0.7, label=name)
+        
+        # 1. Capture hist outputs: counts = bar heights, bin_edges = bar boundaries
+        counts, bin_edges, patches = ax.hist(
+            uvals, bins=nbins, weights=cellvol[idx] / cellvol[idx].sum(),
+            range=xlims, color=col, alpha=0.7, label=name
+        )
+        
+        # 2. Calculate bin centers so X and Y have identical lengths (nbins)
+        bin_centers = 0.5 * (bin_edges[:-1] + bin_edges[1:])
+        
         mean = np.average(uvals, weights=cellvol[idx])
         ax.axvline(mean, 
-                   color="black",ymax=0.6, label=f"{mean:.1f} {vunit} \n (mean)")
-        #ax.axvline(np.max(uvals), ls="dotted",
-        #           color="black",ymax=0.6, label=f"{max*1e-3:.1f} mm/s")
+                   color="black", ymax=0.6, label=f"{mean:.1f} {vunit} \n (mean)")
+        
         ax.set_xlabel(f"velocity ({vunit})")
         ax.set_ylabel("frequency")
-        #plt.tight_layout()
         ax.set_xlim(xlims)
         ax.legend(frameon=False, loc="lower left", alignment="right",
                   borderaxespad=0, handlelength=1.3, bbox_to_anchor=[0.1, 0.7])
         ax.yaxis.set_major_formatter(PercentFormatter(1, decimals=0))
+        
+        # 3. Store data into dictionary columns
+        safe_name = name.replace(" & ", "_") # Clean column header string
+        source_data[f"{safe_name}_bin_center_{vunit}"] = bin_centers
+        source_data[f"{safe_name}_relative_frequency"] = counts
+        
+        # For the mean scalar value, pad the rest of the column with NaNs 
+        # so the array lengths match perfectly for the pandas DataFrame
+        mean_column = np.full(nbins, np.nan)
+        mean_column[0] = mean
+        source_data[f"{safe_name}_mean_velocity_{vunit}"] = mean_column
+
+    # Save original plot graphic
     plt.savefig(filename, bbox_inches='tight')
+    
+    # 4. Generate and save the accompanying Source Data CSV 
+    base_path, _ = os.path.splitext(filename)
+    csv_filename = f"{base_path}_source_data.csv"
+    
+    df = pd.DataFrame(source_data)
+    df.to_csv(csv_filename, index=False)
+    print(f"--> Exported histogram source data to: {csv_filename}")
 
 def from_k3d(colorlist):
     cm = np.array(colorlist).reshape(-1, 4)[:, 1:]
@@ -113,18 +145,18 @@ def plot_csf_flow(dirname: str):
         print(f"alpha_cardiac = {alpha_cardiac} ")
         grid["p"] *= (1 + alpha_cardiac**2 / 8)
         config = cardiac_config
-        velocity_histo(sm, v, f"{dirname}/cardiac_velocity_histo.png", vscale=1e3,
+        velocity_histo(sm, v, f"{dirname}/cardiac_velocity_histo.svg", vscale=1e3,
                        vunit="mm/s")
     elif "respiratory" in dirname:
         print("adjusting pressure with (1 + alpha_respiratory**2 / 8) ")
         print(f"alpha_respiratory = {alpha_respiratory} ")
         grid["p"] *= (1 + alpha_respiratory**2 / 8)
         config = respiration_config
-        velocity_histo(sm, v, f"{dirname}/resp_velocity_histo.png", vscale=1e3,
+        velocity_histo(sm, v, f"{dirname}/resp_velocity_histo.svg", vscale=1e3,
                        vunit="mm/s")
     else:
         config = prod_config
-        velocity_histo(sm, v, f"{dirname}/prod_velocity_histo.png", vscale=1e6,
+        velocity_histo(sm, v, f"{dirname}/prod_velocity_histo.svg", vscale=1e6,
                        vunit="μm/s")
 
     grid["v"] *= config["vscale"]

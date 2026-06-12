@@ -10,6 +10,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib.ticker import PercentFormatter
 import seaborn as sns
+import os 
+import pandas as pd
 
 def R_histo(sm, R, filename):
     set_plotting_defaults()
@@ -22,28 +24,57 @@ def R_histo(sm, R, filename):
     fig, axes = plt.subplots(ncols=len(domains), figsize=(7,3))
     nbins = 20
     colors = sns.color_palette("crest", n_colors=len(domains))
+    
+    # Initialize dictionary to collect histogram data across subplots
+    source_data = {}
+
     for ax, name, idx, col in zip(axes, names, indices, colors):
         Rvals = R.vector()[idx]
         xlims = (0, np.percentile(Rvals, 80))
-        bins = np.logspace(start=np.log10(1e-1), stop=np.log10(200), num=nbins)
-        n, bins,_ = ax.hist(Rvals, bins=bins, weights=cellvol[idx] / cellvol[idx].sum(),
-                color=col, alpha=0.7, label=name)
+        bins_definition = np.logspace(start=np.log10(1e-1), stop=np.log10(200), num=nbins)
+        
+        # 1. Capture hist outputs (renamed variables to avoid clashing)
+        counts, bin_edges, _ = ax.hist(
+            Rvals, bins=bins_definition, weights=cellvol[idx] / cellvol[idx].sum(),
+            color=col, alpha=0.7, label=name
+        )
+        
+        # 2. Calculate bin centers for the X-axis mapping
+        bin_centers = 0.5 * (bin_edges[:-1] + bin_edges[1:])
+        
         ax.set_xscale("log")
         mean = np.average(Rvals, weights=cellvol[idx])
         ax.axvline(mean, 
-                   color="black",ymax=0.6, label=f"{mean:.1f} \n (mean)")
-        #ax.axvline(np.max(Rvals), ls="dotted",
-        #           color="black",ymax=0.6, label=f"{max(Rvals):.1f}")
+                   color="black", ymax=0.6, label=f"{mean:.1f} \n (mean)")
+        
         ax.set_xlabel(f"R")
         ax.set_ylabel("frequency")
         ax.set_xticks([0.1, 1, 10, 100])
-        #plt.tight_layout()
-        #ax.set_xlim(xlims)
-        ax.set_ylim((0, max(n)*1.5))
+        ax.set_ylim((0, max(counts)*1.5))
         ax.legend(frameon=False, loc="lower left", alignment="right",
                   borderaxespad=0, handlelength=1.3, bbox_to_anchor=[0.2, 0.7])
         ax.yaxis.set_major_formatter(PercentFormatter(1, decimals=0))
+        
+        # 3. Store the data for this specific subplot panel
+        safe_name = name.replace(" & ", "_")
+        source_data[f"{safe_name}_bin_center"] = bin_centers
+        source_data[f"{safe_name}_relative_frequency"] = counts
+        
+        # Pad the single scalar mean value with NaNs to match column lengths
+        mean_column = np.full(len(counts), np.nan)
+        mean_column[0] = mean
+        source_data[f"{safe_name}_mean_R"] = mean_column
+
+    # Save original plot graphic
     plt.savefig(filename, bbox_inches='tight')
+    
+    # 4. Generate and save the accompanying Source Data CSV
+    base_path, _ = os.path.splitext(filename)
+    csv_filename = f"{base_path}_source_data.csv"
+    
+    df = pd.DataFrame(source_data)
+    df.to_csv(csv_filename, index=False)
+    print(f"--> Exported histogram source data to: {csv_filename}")
 
 
 def plot_R(R, filename, background_mesh_file):
@@ -160,7 +191,7 @@ def get_dispersion_enhancement(csf_pressure_file:str, outfile:str):
         R.vector()[:] -= R.vector().min()
     print(f"R max: {R.vector().max()}")
 
-    R_histo(sm, interpolate(R, DG0), Path(outfile).parent / "R_histo.png")
+    R_histo(sm, interpolate(R, DG0), Path(outfile).parent / "R_histo.svg")
 
     with XDMFFile(outfile) as file:
         file.write(mesh)

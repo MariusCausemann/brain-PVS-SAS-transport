@@ -62,6 +62,7 @@ def plot_timings(models:List[str]):
     elif "modelA" in models:
         annotate_model = "modelA"
     else: annotate_model = models[0]; ymax = 4
+    
     for t, (pvsdf, outerdf) in zip(["fta", "peaktime"] , [(ftas, outerftas), (pts, otps)]):
         fig, axes = plt.subplots(ncols=len(art_groups) + 1, figsize=(7,3.2),
                                   width_ratios=[0]+[3]*len(art_groups), sharey=True)
@@ -70,8 +71,19 @@ def plot_timings(models:List[str]):
         elif t=="peaktime":ax.set_ylabel("time-of-peak (h)"); ax.set_ylim((2, 9.1))
         ax.get_xaxis().set_ticks([])
         ax.spines['bottom'].set_visible(False)
-        #ax.set_xlim((-0.05, 0.1))
+        
+        # Initialize dictionary to collect structural timing data for this layout metrics loop
+        source_data = {}
+
         for i, (ax, (agn, ag))  in enumerate(zip(axes[1:], art_groups.items())):
+            
+            # Clean up group label names for safe CSV formatting headers
+            safe_agn = agn.replace("-", "_")
+            
+            # Record the structural identifiers and spatial metrics for this arterial subpanel
+            source_data[f"{safe_agn}_artery_label"] = pd.Series(ag)
+            source_data[f"{safe_agn}_distance_m"] = pd.Series(pvsdf.loc[ag, "dist"].values)
+
             for m in models:
                 print(m)
                 group = pvsdf.loc[ag]
@@ -80,17 +92,14 @@ def plot_timings(models:List[str]):
                          marker=markerdict.get(m, "."),
                          markersize=8, ls="dashed",
                         label=f"{namedict.get(m, m)}" if i==0 else None)
-                #ax.plot(group["dist"], outergroup[m] / 3600, color=c, marker="x", markersize=5, ls="dotted",
-                #        label=f"{namedict[m]} - outer PVS" if i==0 else None)
-                #ax.fill_between(group["dist"], group[m] / 3600, outergroup[m] / 3600, 
-                #                color=c, alpha=0.3)                     
+                                    
+                # Record the specific simulated timing values across model comparisons
+                source_data[f"{safe_agn}_{m}_{t}_hours"] = pd.Series((group[m] / 3600).values)
+
                 ax.set_title(agn, y=1.04)
-                #ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.17), ncol=2, 
-                #        columnspacing=0.3, frameon=False)
                 ax.set_xlabel("distance (m)")
                 ax.spines['left'].set_visible(False)
                 ax.tick_params(left=False)
-                #ax.get_yaxis().set_ticks([])
                 ax.set_xlim((0, 0.1))
                 ax.get_xaxis().set_ticks([0,0.05, 0.1], ["0","0.05", "0.1"])
                 for ln in ag:
@@ -99,15 +108,19 @@ def plot_timings(models:List[str]):
                                 horizontalalignment="right", textcoords='offset points',
                                   xytext=(-3,8), fontsize=9)
                     except KeyError: pass
+                    
         plt.figlegend(loc='upper center', bbox_to_anchor=(0.5, 1.05), ncol=len(models)*2,
                 columnspacing=0.3, frameon=False)
         plt.tight_layout(w_pad=-0.5)
-        plt.savefig(f"plots/comparisons/{v}/{v}_{t}.png", bbox_inches='tight',
-                    dpi=300, transparent=True)
+        
+        # Save Original Figure
+        img_filename = f"plots/comparisons/{v}/{v}_{t}.svg"
+        plt.savefig(img_filename, bbox_inches='tight', dpi=300, transparent=True)
+        
+        # Save Generated Source Data
+        csv_filename = img_filename.replace(".svg", "_source_data.csv")
+        pd.DataFrame(source_data).to_csv(csv_filename, index=False)
+        print(f"--> Exported comparison source data to: {csv_filename}")
 
 if __name__ == "__main__":
     typer.run(plot_timings)
-
-
-
-
