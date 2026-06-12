@@ -732,7 +732,7 @@ We note that if advection is purely outward ($q_k > 0$, so $q_k^- = 0$), the bou
 
 Finally, the diffusive exchange between the 0D compartments and the 3D domain acts via a localized volumetric source term $S_{\text{0D} \leftrightarrow \text{3D}}$ in~\eqref{eq:3d_pde}, defined using the indicator function $\chi_{B_k}$ for each ball $B_k$:
 \begin{equation}
-  S_{\text{0D} \leftrightarrow \text{3D}}(x, t) = \sum_{y_k \in \mathcal{N}_{\rm leaf}} \frac{\omega_k \beta_k}{|B_k|} (c^0_k - \bar{c}_{B_k}) \chi_{B_k}(x).
+  S_{\text{0D} \leftrightarrow \text{3D}}(x, t) = \sum_{y_k \in \mathcal{N}_{\rm leaf}} \frac{\omega_k \beta_k}{|B_k \cap \Omega|} (c^0_k - \bar{c}_{B_k}) \chi_{B_k}(x).
   \label{eq:3d_source}
 \end{equation}
 
