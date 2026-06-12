@@ -826,17 +826,24 @@ references therein. For $c, v \in V_h^k$, define
   \sum_{F \in \mathcal{F}_i} \int_F \frac{|\bm u \cdot \bm n_F|}{2} [c] [v] .
 \end{equation}
 Our discrete formulation for \eqref{eq:3d_pde} with the interface conditions~\eqref{eq:3d_interface} and boundary conditions~\eqref{eq:3d_bcs} and given initial conditions $c_h^0$ then reads: for $n = 1, 2, \dots$, with $t^n - t^{n-1} = \tau$, find $c_h^n \in V_h$ such that for all $v \in V_h$:
-\begin{equation} \label{eq:3d_dg_disc}
-  \int_{\Omega} \frac{1}{\tau} (\phi c_h^n - \phi c_h^{n-1}) v
-  + a_h(c_h^n, v) + a_h^{\mathrm{up}}(c_h^n,v)
+\begin{align} \label{eq:3d_dg_disc}
+\begin{split}
+    \int_{\Omega} \frac{1}{\tau} (\phi c_h^n - \phi c_h^{n-1}) v
+  &+ a_h(c_h^n, v) + a_h^{\mathrm{up}}(c_h^n,v)
   + \int_{\Gamma_{\rm pia} \cup \Gamma_{\rm LV}} \beta_{\rm pia}[c_h^n][v] 
-  + \int_{\Gamma_{\rm AM-U}} \beta_{\rm exit} c_h^n v 
-  + \int_{\Lambda} \xi  P \left (\overline{c_h^n} - \hat c_h^n \right) \overline{v} 
-  = 
+  + \int_{\Gamma_{\rm AM-U}} \beta_{\rm exit} c_h^n v \\
+  &+ \int_{\Lambda} \xi  P \left (\overline{c_h^n} - \hat c_h^n \right) \overline{v} 
+  - \sum_{y_k \in \mathcal{N}_{\rm leaf}} \frac{\omega_k \beta_k}{|B_k|} \left(c_{k}^{0,n} - \bar{c}_{B_k}^n\right) \int_{B_k \cap \Omega} v
+  =
   %\int_{\Omega} f^n v +
   \int_{\Gamma_{\rm SSAS}} g_{\rm influx} v
   %, \quad \forall v \in V_h^k
   .
+\end{split}
+\end{align}
+where $\bar{c}_{B_k}^n$ is the discrete spatial average of the 3D concentration within the local neighborhood intersection, defined as:
+\begin{equation}
+\bar{c}_{B_k}^n = \frac{1}{|B_k \cap \Omega|} \int_{B_k \cap \Omega} c_h^n .
 \end{equation}
 
 To discretize~\eqref{eq:1d_pde} with the bifurcation
@@ -848,20 +855,31 @@ linear polynomials defined over $\Lambda$:
   \hat V_h
   = \{ v \in C^0(\Lambda), \; v \vert_{\Lambda^i} \in \mathrm{P}^1(\Lambda^i) \}, 
 \end{equation}
-where $\mathrm{P}^1(\Lambda^i)$ is the space of linear polynomials on each $\Lambda^i$. The discrete formulation then reads: for $n = 1,2,\ldots, $ find $\hat c_h^n \in \hat V_h$ such that for all $\hat v \in \hat V_h^k$: 
+where $\mathrm{P}^1(\Lambda^i)$ is the space of linear polynomials on each $\Lambda^i$. The discrete formulation then reads: for $n = 1,2,\ldots, $ find $\hat c_h^n \in \hat V_h$ such that for all $\hat v \in \hat V_h$:
+
+
 \begin{align}\label{eq:1d_dg_disc}
-\int_{\Lambda}  \frac{1}{\tau}(A  \hat c_h^n - A \hat c_h^{n-1}) \hat v  + \int_{\Lambda} \hat D A \partial_s \hat c_h^n  \partial_s \hat v^n - \int_{\Lambda} A \hat u \hat c_h^n \partial_s \hat v   +  \int_{\Lambda} \xi P (\hat c_h^n - \overline{c_h^n}) \hat v +a_h^{\mathrm{stab}}(\hat u; \hat c, \hat v) = 0.  
+\begin{split}
+  \int_{\Lambda}  \frac{1}{\tau}(A  \hat c_h^n - A \hat c_h^{n-1}) \hat v  &+ \int_{\Lambda} \hat D A \partial_s \hat c_h^n  \partial_s \hat v - \int_{\Lambda} A \hat u \hat c_h^n \partial_s \hat v   +  \int_{\Lambda} \xi P (\hat c_h^n - \overline{c_h^n}) \hat v \\
+&+ \sum_{y_k \in \mathcal{N}_{\rm leaf}} \left( q_k^+ \hat{c}_h^n(y_k) + q_k^- c_{k}^{0,n} + \alpha_k (\hat{c}_h^n(y_k) - c_{k}^{0,n}) \right) \hat{v}(y_k) + a_h^{\mathrm{stab}}(\hat u; \hat c_h^n, \hat v) = 0.  
+\end{split}
 \end{align}
- In the above, if $\hat u$ is non--zero on $\Lambda^i$, then the artificial diffusion $a_h^{\mathrm{stab}}$ stabilization term is nonzero  and is given below, for more details see for  \cite[Section 12.6]{quarteroni2009numerical}. 
+
+ In the above, if $\hat u$ is non--zero on $\Lambda^i$, then the artificial diffusion $a_h^{\mathrm{stab}}$ stabilization term is nonzero  and is given below, for more details see \cite[Section 12.6]{quarteroni2009numerical}. 
  \begin{align}
     a_h^{\mathrm{stab}}(\hat u; \hat c, \hat v) =  \frac{1}{\|\hat u\|_{L^2(\Lambda^i)}} 
- h_{\Lambda^i} \int_{\Lambda^i} A (\hat u \partial_s \hat c_h  ) (\hat u \partial_s \hat v),  
+ h_{\Lambda^i} \int_{\Lambda^i} A (\hat u \partial_s \hat c  ) (\hat u \partial_s \hat v),  
  \end{align}
  where $h_{\Lambda^i}$ is the mesh--size of $\Lambda^i$.
 Note that the condition \eqref{eq:flux_conservation} is enforced weakly in the above formulation.
 
- \textit{Summary.} The discretization for \eqref{eq:3d_pde} and \eqref{eq:1d_pde} complemented with boundary conditions (\eqref{eq:3d_bcs} and \eqref{eq:1d_bcs}), interface and bifurcation  conditions (\eqref{eq:3d_interface}, and \eqref{eq:conc_continuity}), and intial conditions $c_h^0 =0 $ and $\hat c_h^0 = 0 $ is the following. For $n = 1,2, \ldots $, find  $c_h^n \in V_h$ and $\hat c^n_h \in \hat V_h$ such that the coupled equations \eqref{eq:3d_dg_disc} and \eqref{eq:1d_dg_disc} hold for all $v \in V_h$ and for all $\hat v \in \hat V_h$. 
+For the 0D compartments at the arterial leaf nodes $y_k \in \mathcal{N}_{\rm leaf}$, the discrete weak equations are advanced in time using an implicit Euler scheme: for $n = 1, 2, \dots$, find $c_{k}^{0,n} \in \mathbb{R}$ such that
+\begin{equation} \label{eq:0d_disc}
+\left( V_k \frac{c_{k}^{0,n} - c_{k}^{0,n-1}}{\tau} \right) v_k^0 = \left( q_k^+ \hat{c}_h^n(y_k) + q_k^- c_{k}^{0,n} + \alpha_k (\hat{c}_h^n(y_k) - c_{k}^{0,n}) + \beta_k \omega_k ( \bar{c}_{B_k}^n - c_{k}^{0,n} ) \right) v_k^0,
+\end{equation}
+holds for all $v_k^0 \in \mathbb{R}$ associated with each individual leaf node $y_k \in \mathcal{N}_{\rm leaf}$.
 
+\textit{Summary.} The discretization for \eqref{eq:3d_pde}, \eqref{eq:1d_pde}, and \eqref{eq:0d_ode} complemented with boundary conditions (\eqref{eq:3d_bcs} and \eqref{eq:1d_bcs}), interface and bifurcation conditions (\eqref{eq:3d_interface}, and \eqref{eq:conc_continuity}), and initial conditions $c_h^0 = 0$, $\hat c_h^0 = 0$, and $c_{k}^{0,0} = 0$ is the following. For $n = 1,2, \ldots $, find $c_h^n \in V_h$, $\hat c^n_h \in \hat V_h$, and $c_{k}^{0,n} \in \mathbb{R}$ for each $y_k \in \mathcal{N}_{\rm leaf}$ such that the coupled discrete equations \eqref{eq:3d_dg_disc}, \eqref{eq:1d_dg_disc}, and \eqref{eq:0d_disc} hold for all $v \in V_h$, for all $\hat v \in \hat V_h$, and for all $v_k^0 \in \mathbb{R}$ associated with each $y_k \in \mathcal{N}_{\rm leaf}$.
 
 
 %% \mar{To examine cardiac-driven dispersion, we compute a steady CSF flow field at peak systolic blood inflow. We mimic the resulting reduction of CSF space volume by imposing an inflow of $6\,$ml/s \cite{baledent2014imaging, causemann2022human} and $0.31\,$ml/s \cite{vinje2019respiratory} across the upper arachnoid mater ($\Gamma_{\rm AM-U}$) and the lateral ventricle ($\Gamma_{\rm LV}$) surface, respectively. We allow free outflow into the spinal SAS ($\Gamma_{\rm SSAS}$). In addition, we upscale the obtained pressure field to account for the lack of pulsatile inertial effects in our model.}
