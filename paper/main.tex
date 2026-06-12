@@ -21,7 +21,7 @@
 \usetikzlibrary{quotes}
 \usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,positioning,fit,petri}
 
-\graphicspath{{figures/}}
+\graphicspath{{pdf_figures/}}
 
 \captionsetup[subfigure]{justification=justified,singlelinecheck=false}
 
@@ -284,16 +284,17 @@ parenchyma (31\%), the unresolved continuation of the arterial PVS (8\%, capture
 
 \begin{figure}
     \centering
-    \includegraphics[width=1.05\textwidth]{figures/figure2.png}
+    \includegraphics[width=1.05\textwidth]{pdf_figures/figure2.pdf}
      \caption{
      \textbf{In-silico predictions of tracer distribution after intrathecal injection.}
      %A) Illustration of the model geometry including the CSF-filled spaces (ventricles and SAS) $\Omega_{\rm CSF}$, the parenchyma $\Omega_{\rm PAR}$ and the PVS surrounding arteries $\Lambda_{\rm artery}$ and veins $\Lambda_{\rm vein}$, as well as their interfaces and boundaries; 
      %B) 3D rendering of the computational geometry: the parenchyma, CSF (clipped, blue), arterial network (red), and venous network (blue); 
-     A) Illustration of the computational representation of an intrathecal tracer injection;  
+     A) Illustration of the computational representation of an intrathecal tracer injection (Created in BioRender. Causemann, M. (2026) https://BioRender.com/f54s390);  
      B) in-silico predictions of tracer concentration after 1, 6, 12, and 24 hours (opacity increasing linearly from 0 to 2 mmol/l); 
      C) sagittal, coronal and axial view of in-silico tracer concentrations overlaid on T1-weighted MR image after 1, 6, 12 and 24\,h (low concentrations transparent, pial surface in pink, arachnoid membrane in cyan, and arteries in dark red); 
      D) average tracer concentration in each compartment (PVS art., arterial PVS; PVS cont., unresolved continuation of the arterial PVS (0D compartments); PAR, parenchyma) over the first 24 hours; 
      E) total amount of tracer in each compartment over the first 24 hours.
+     Source data for panels D) and E) are provided as a Source Data file.
      }
      \label{fig:intrathecal}
 \end{figure}
@@ -364,7 +365,7 @@ longitudinal fissure, also spreading into the cerebellum
 (\Cref{fig:csf}J).
 
 \begin{figure}%[h!]
-\centering \includegraphics[width=0.99\textwidth]{figures/figure3.png}
+\centering \includegraphics[width=0.99\textwidth]{pdf_figures/figure3.png}
 \caption{\textbf{Modelling convection and dispersion in the CSF spaces
     and how model variations alter computational predictions of tracer
     distribution patterns.} A) CSF flow induced
@@ -379,7 +380,9 @@ longitudinal fissure, also spreading into the cerebellum
   R_c + R_r) D^{\rm Gad}$.  G)--J): Sagittal, coronal and axial planes
   of tracer concentration after 12h for different model variations:
   baseline (G), no CSF production (H), low dispersion (I), and high
-  dispersion (J).}
+  dispersion (J).
+  Source data for panels B), D) and F) are provided as a Source Data file.
+  }
 \label{fig:csf}
 \end{figure}
 
@@ -435,18 +438,21 @@ displacement~\cite{broggini2024long}, will induce both retrograde and
 antegrade net perivascular flow with an average velocity of 12.87
 \textmu m/s and maximum velocity 60.05 \textmu m/s, and a total flow
 of 213.7 mL/day (\Cref{fig:pvs}E, F). 
+
 \begin{figure}
     \centering
-    \includegraphics[width=0.95\textwidth]{figures/figure4.png}
+    \includegraphics[width=0.95\textwidth]{pdf_figures/figure4.png}
     \caption{\textbf{Modelling of pulsation-induced net flow in human surface periarterial networks}
     A) Surface arterial network colored by arterial radius with vessel locations labeled;
     %B) Net PVS flow induced by CSF production alone (see also~\Cref{fig:csf}D).
-    B) Illustration of the concept of peristaltic pumping;
+    B) Illustration of the concept of peristaltic pumping (Created in BioRender. Causemann, M. (2026) https://BioRender.com/
+p80b169);
     C) Estimated net periarterial flow induced by pulse wave peristaltic pumping alone.
     D) Histogram of estimated cardiac-driven net PVS flow induced by pulse wave peristaltic pumping;
     Histograms show the relative frequencies of local periarterial velocities. Positive values indicate antegrade perivascular flow, while negative values indicate retrograde PVS flow;
     E) Estimated net periarterial flow induced by vasomotion/slow wave peristaltic pumping alone;
     F) Histogram of estimated net periarterial flow induced by vasomotion peristaltic pumping.
+    Source data for panels D) and F) are provided as a Source Data file.
     }
     \label{fig:pvs}
 \end{figure}
@@ -513,7 +519,7 @@ compared to the baseline (\Cref{fig:high_low_pvs}F, H).
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.99\textwidth]{figures/figure5.png}
+    \includegraphics[width=0.99\textwidth]{pdf_figures/figure5.pdf}
     \caption{\textbf{How variations in net periarterial flow affect tracer distribution pattern predictions.}
     A) Comparison of mean tracer concentration in the PVS and over the outer PVS surface at key locations of the arterial tree, for the baseline (lower) and high PVS flow (upper) models, with labels: ``peak'': time-to-peak (h), ``$\Delta t$'': time difference between peaks (h), and ``FTA'': first-time tracer arrival (h).
     }
@@ -525,7 +531,9 @@ compared to the baseline (\Cref{fig:high_low_pvs}F, H).
     B) first-time arrival for the main trunks of the periarterial network over the distance from the closest network root node (BA, ICA-R or ICA-L for the baseline, the high PVS flow and the high PVS dispersion models);
     C, D) 2D slices showing zoom-in on the region surrounding the MCA-R and MCA2-R for the baseline (upper) and high PVS flow (lower) models. Innermost circle indicates the artery (blue), the surrounding annulus is the PVS (color represents concentration value), the surroundings are parenchyma and/or CSF spaces, separated by the pia (blue: towards the parenchyma, pink: towards the CSF));  
     E) Total amount of tracer in the periarterial spaces as a function of the distance to the nearest network root over time for the baseline (left) and the high PVS flow (right) models;
-    F--H) sagittal (upper) and coronal (lower) views of the simulated tracer concentrations overlaid on the T1-weighted MR image after 4 and 6h for the baseline (K), high PVS flow (L) and high PVS dispersion (M) models (concentration opacity linearly increasing with concentration value, pial surface outlined in pink, arachnoid membrane in cyan, and arteries in dark red). An interactive visualization of the baseline and the high PVS flow model can be found \href{https://baseline-pvs-flow.surge.sh/}{here}, and \href{https://high-pvs-flow.surge.sh/}{here}.}
+    F--H) sagittal (upper) and coronal (lower) views of the simulated tracer concentrations overlaid on the T1-weighted MR image after 4 and 6h for the baseline (K), high PVS flow (L) and high PVS dispersion (M) models (concentration opacity linearly increasing with concentration value, pial surface outlined in pink, arachnoid membrane in cyan, and arteries in dark red). An interactive visualization of the baseline and the high PVS flow model can be found \href{https://baseline-pvs-flow.surge.sh/}{here}, and \href{https://high-pvs-flow.surge.sh/}{here}.
+    Source data for panels A), B) and E) are provided as a Source Data file.
+}
 \end{figure}  
 
 \subsection*{The diffusive permeability of the PVS-CSF interfaces}
@@ -590,9 +598,10 @@ concentration peaks in these domains.
 %restricting barrier.
 \begin{figure}
     \centering
-    \includegraphics[width=0.95\textwidth]{figures/figure6.png}
+    \includegraphics[width=0.95\textwidth]{pdf_figures/figure6.png}
     \caption{\textbf{Exploring structure: varying the diffusive permeability of the PVS-CSF interfaces and its impact on tracer distribution predictions.}
-    A) In our model, the PVS-CSF membrane permeability regulates the exchange of solutes between the PVS and surrounding CSF spaces; 
+    A) In our model, the PVS-CSF membrane permeability regulates the exchange of solutes between the PVS and surrounding CSF spaces (Created in BioRender. Causemann, M. (2026) https://BioRender.com/
+e22i894); 
     B) The arterial network with highlighted regions of interest; 
     }
     \label{fig:compartmentalization}
@@ -604,7 +613,9 @@ C) 2D slices showing zoom-in to the region surrounding the basal artery after 1,
 D) As in (C) for regions surrounding (from upper to lower) the ACA-A3, ACA-A2, MCA-R and MCA-L segments;
 E) Comparison of mean tracer concentration in the PVS (dashed) and over the
 outer PVS surface (dotted) for the BA, MCA-R, MCA-L, ACA-2, and ACA3 segments over time for the high (purple) and low permeability (yellow) models;
-F) Effect of varying the PVS-CSF permeability on first-time-of-arrival (FTA), time difference ($\Delta t$) between concentration peaks in the PVS and surrounding tissue, time of PVS peak concentration, PVS peak concentration and difference in peak concentration between PVS and surrounding tissue.}
+F) Effect of varying the PVS-CSF permeability on first-time-of-arrival (FTA), time difference ($\Delta t$) between concentration peaks in the PVS and surrounding tissue, time of PVS peak concentration, PVS peak concentration and difference in peak concentration between PVS and surrounding tissue.
+Source data for panels E) and F) are provided as a Source Data file.
+}
 \end{figure}
   
 \subsection*{The width of the PVS} 
@@ -649,15 +660,17 @@ initially lower, but later exceeds the baseline model
 (\Cref{fig:enlargement}G,H).
 \begin{figure}
     \centering
-    \includegraphics[width=1 \textwidth]{figures/figure7.png}
+    \includegraphics[width=1 \textwidth]{pdf_figures/figure7.pdf}
 \caption{\textbf{Exploring structure: varying the width of the PVS and its impact on tracer distribution predictions.}
-A) Modelling dilated PVS in the SAS by extending the outer PVS boundaries;
+A) Modelling dilated PVS in the SAS by extending the outer PVS boundaries Created in BioRender. Causemann, M. (2026) https://BioRender.com/
+e22i894;
 B) mean and max PVS flow velocities with normal/control and dilated PVS;
 C--D) 3D rendering of vasomotion-induced PVS flow in the normal (C) and dilated (D) periarterial networks; 
 E) 2D slices showing zoom-in to the region surrounding the MCA-R after 1, 2, 3, and 4\,h with normal (lower) and dilated (upper) PVS. Innermost circle indicates the artery (blue), the surrounding annulus is the PVS (color represents concentration value), the surroundings are parenchyma and/or CSF spaces, separated by the pia (blue: towards the parenchyma, pink: towards the CSF).The cutting plane is normal to the blood vessel; 
 F) First-time arrival for different branches of the arterial tree for the baseline model (with pressure-driven and cardiac-induced net PVS flow) and the high PVS flow model (also including vasomotion-induced net PVS flow) for normal and dilated PVS;
 G) total tracer content in the CSF, parenchyma and arterial and venous PVS at 1,3,6,12 and 24\,h for the four models from F;
 H) mean concentration in the CSF, parenchyma and arterial and venous PVS over time for the four models from F.
+Source data for panels F), G) and H) are provided as a Source Data file.
 }
     \label{fig:enlargement}
 \end{figure}
@@ -952,7 +965,7 @@ theoretical analysis to a virtual human setting. The complete
 simulation pipeline is openly available, including interactive
 visualization of simulation results for all model
 variations~\cite{ZENODO}. 
-Advancing this open platform to a fully coupled flow framework requires a stable discretization of a 3D-1D Stokes-Darcy flow model that integrates vascular pulsations into a stationary net flow field, alongside resolving open biophysical questions regarding PVS-tissue and PVS-SAS fluid exchange, and the boundary treatment of the artificially truncated network ends.
+Advancing this open platform to a fully coupled flow framework requires a stable discretization of a 3D-1D Stokes-Darcy flow model that integrates vascular pulsations into a net flow field, alongside resolving open biophysical questions regarding PVS-tissue and PVS-SAS fluid exchange, and the boundary treatment of the artificially truncated network ends.
 Future studies will focus on direct model validation including
 comparisons between in-silico predictions and contrast-enhanced MRI
 for a number of subjects across several patient cohorts. Moreover, the
@@ -1417,7 +1430,7 @@ input and discussions.
 
 \section*{Funding Statement}
 
-M.C., R.M., and M.E.R.~acknowledge support from the Research Council of Norway via grant \#324239 (EMIx). M.E.R.~acknowledges support from Stiftelsen Kristian Gerhard Jebsen via the K.~G.~Jebsen Centre for Brain Fluid Research and from the Research Council of Norway via grant \#360005 (DigiCells). M.K.~acknowledges support from the RCN grant \#303362. Simulations were performed on the Experimental Infrastructure for Exploration of Exascale Computing (eX3), which is financially supported by the RCN under contract 270053. The figures 1A, 2A, 4D, 6A and 7A were created in Biorender.
+M.C., R.M., and M.E.R.~acknowledge support from the Research Council of Norway via grant \#324239 (EMIx). M.E.R.~acknowledges support from Stiftelsen Kristian Gerhard Jebsen via the K.~G.~Jebsen Centre for Brain Fluid Research and from the Research Council of Norway via grant \#360005 (DigiCells). M.K.~acknowledges support from the RCN grant \#303362. Simulations were performed on the Experimental Infrastructure for Exploration of Exascale Computing (eX3), which is financially supported by the RCN under contract 270053. 
 
 \section*{Author contributions statement}
 
