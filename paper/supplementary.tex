@@ -833,7 +833,7 @@ Our discrete formulation for \eqref{eq:3d_pde} with the interface conditions~\eq
   + \int_{\Gamma_{\rm pia} \cup \Gamma_{\rm LV}} \beta_{\rm pia}[c_h^n][v] 
   + \int_{\Gamma_{\rm AM-U}} \beta_{\rm exit} c_h^n v \\
   &+ \int_{\Lambda} \xi  P \left (\overline{c_h^n} - \hat c_h^n \right) \overline{v} 
-  - \sum_{y_k \in \mathcal{N}_{\rm leaf}} \frac{\omega_k \beta_k}{|B_k|} \left(c_{k}^{0,n} - \bar{c}_{B_k}^n\right) \int_{B_k \cap \Omega} v
+  - \sum_{y_k \in \mathcal{N}_{\rm leaf}} \frac{\omega_k \beta_k}{|B_k \cap \Omega|} \left(c_{k}^{0,n} - \bar{c}_{B_k}^n\right) \int_{B_k \cap \Omega} v
   =
   %\int_{\Omega} f^n v +
   \int_{\Gamma_{\rm SSAS}} g_{\rm influx} v
