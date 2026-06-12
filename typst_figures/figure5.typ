@@ -53,11 +53,11 @@
         row-gutter: 5pt,
         align: horizon, 
         y-label("baseline", nudge: 0.2cm),
-        cropped-image("../plots/modelA/modelA_conc_at_label_annotated.png", 3cm, 100%, 0cm, 0.15cm),
+        cropped-image("../plots/modelA/modelA_conc_at_label_annotated.svg", 3cm, 100%, 0cm, 0.15cm),
         
         // Label nudged by -0.55cm to match the image's move-y
         y-label("high PVS flow", nudge: -0.55cm),
-        cropped-image("../plots/modelA-strongVM/modelA-strongVM_conc_at_label.png", 3.2cm, 100%, 0cm, -0.75cm)
+        cropped-image("../plots/modelA-strongVM/modelA-strongVM_conc_at_label.svg", 3.2cm, 100%, 0cm, -0.75cm)
       )
       #v(-10pt)
     ],
@@ -75,7 +75,7 @@
         #panel-label("B")
         #v(-15pt) #panel-title("Tracer first-time arrival") 
         #v(-5pt)
-        #image("../plots/comparisons/modelA_modelA-strongVM_modelA-PVS-disp/modelA_modelA-strongVM_modelA-PVS-disp_fta.png", width: 100%)
+        #image("../plots/comparisons/modelA_modelA-strongVM_modelA-PVS-disp/modelA_modelA-strongVM_modelA-PVS-disp_fta.svg", width: 100%)
       ],
       // ROW 1, COLUMN 2: Panel C
       [
@@ -105,12 +105,12 @@
           [
             #panel-title("baseline")
             #v(-8pt)
-            #image("../plots/modelA/modelA_ridgeline_pvs_total_smoothed.png", width: 100%)
+            #image("../plots/modelA/modelA_ridgeline_pvs_total_smoothed.svg", width: 100%)
           ],
           [
             #panel-title("high PVS flow")
             #v(-8pt)
-            #image("../plots/modelA-strongVM/modelA-strongVM_ridgeline_pvs_total_smoothed.png", width: 100%)
+            #image("../plots/modelA-strongVM/modelA-strongVM_ridgeline_pvs_total_smoothed.svg", width: 100%)
           ]
         )
       ],
@@ -155,10 +155,9 @@
         #cropped-image("../plots/modelA-PVS-disp/modelA-PVS-disp_overview_4-6.png", 9cm, 150%, 0cm, 0cm)
       ],
       [
-        // Clever hack for the legend!
         #panel-label("")
         #v(-15pt) #panel-title("") #v(-10pt)
-        #cropped-image("../plots/modelA-PVS-disp/modelA-PVS-disp_overview_4-6.png", 9cm, 300%, -5.5cm, 0cm)
+        #cropped-image("../plots/modelA/modelA_overview_1-6.svg", 9cm, 300%, -5.5cm, 0cm)
       ]
     ),
     v(-20pt)

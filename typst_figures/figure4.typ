@@ -25,7 +25,7 @@
         #panel-label("B")
         #v(5pt) 
         #align(center)[
-          #image("../paper/figures/peristaltic_flow_vertical.png", width: 70%)
+          #image("../paper/figures/peristaltic_flow_vertical.pdf", width: 70%)
         ]
       ]
     ),
@@ -50,13 +50,13 @@
           #panel-label("D")
           #v(-20pt) #panel-title("Cardiac flow velocities")
           #v(-15pt)
-          #image("../plots/pvs_flow_peristaltic/cardiac_pvs_oscillation/cardiac_pvs_oscillation_velocity_histo_cell.png", width: 120%)
+          #image("../plots/pvs_flow_peristaltic/cardiac_pvs_oscillation/cardiac_pvs_oscillation_velocity_histo_cell.svg", width: 120%)
         ],
         [
           #panel-label("F")
           #v(-20pt) #panel-title("Vasomotion flow velocities")
           #v(-15pt)
-          #image("../plots/pvs_flow_peristaltic/vasomotion-strong/vasomotion-strong_velocity_histo_cell.png", width: 120%)
+          #image("../plots/pvs_flow_peristaltic/vasomotion-strong/vasomotion-strong_velocity_histo_cell.svg", width: 120%)
         ]
       ),
 

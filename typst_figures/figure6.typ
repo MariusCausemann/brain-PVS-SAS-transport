@@ -53,7 +53,7 @@
           [
             #panel-label("A")
             #v(-5pt)
-            #image("../paper/figures/pvs_permeability.png", width: 90%)
+            #image("../paper/figures/pvs_permeability.pdf", width: 90%)
           ],
           [
             #panel-label("B")
@@ -115,12 +115,12 @@
     [
       #panel-label("E")
       #v(-16pt)
-      #image("../plots/comparisons/modelA_modelA-strongVM_modelB2-10_modelB2-100/modelA_modelA-strongVM_modelB2-10_modelB2-100_conc.png", width: 100%)
+      #image("../plots/comparisons/modelA_modelA-strongVM_modelB2-10_modelB2-100/modelA_modelA-strongVM_modelB2-10_modelB2-100_conc.svg", width: 100%)
     ],
     [
       #panel-label("F")
       #v(-16pt)
-      #image("../plots/comparisons/modelA-strongVM_modelB2-10_modelB2-100/modelA-strongVM_modelB2-10_modelB2-100.png", width: 100%)
+      #image("../plots/comparisons/modelA-strongVM_modelB2-10_modelB2-100/modelA-strongVM_modelB2-10_modelB2-100.svg", width: 100%)
     ],
     v(-20pt)
   )

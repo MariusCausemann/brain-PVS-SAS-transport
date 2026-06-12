@@ -18,7 +18,7 @@
       [
         #panel-label("A") 
         #v(-15pt)
-        #image("../paper/figures/injection.png", width: 105%)
+        #image("../paper/figures/injection.pdf", width: 105%)
         #v(-20pt)
       ],
       [
@@ -60,7 +60,7 @@
       [
         #panel-label("C") 
         #v(-7pt)
-        #image("../plots/modelA/modelA_overview_1-6-12-24.png", width: 101%)
+        #image("../plots/modelA/modelA_overview_1-6-12-24.svg", width: 101%)
       ],
       
       // Panels F & G stacked vertically
@@ -72,14 +72,14 @@
           #v(-12pt)
           #panel-title("Mean tracer concentration")
           #v(-15pt)
-          #image("../plots/modelA/modelA_mean_conc.png", width: 110%)
+          #image("../plots/modelA/modelA_mean_conc.svg", width: 110%)
         ],
         [
           #panel-label("E")
           #v(-20pt)
           #panel-title("Total tracer content")
           #v(-15pt)
-          #image("../plots/modelA/modelA_total_conc.png", width: 110%)
+          #image("../plots/modelA/modelA_total_conc.svg", width: 110%)
         ]
       )
     ),

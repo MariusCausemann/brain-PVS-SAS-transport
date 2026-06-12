@@ -22,7 +22,7 @@
         #panel-label("A")
         #v(-20pt)
         #panel-title("PVS dilation")  #v(-6pt)
-        #image("../paper/figures/dilated_pvs.png", width: 65%)
+        #image("../paper/figures/dilated_pvs.pdf", width: 65%)
         #panel-label("B", nudge-dy: -10pt)
         #v(-20pt)
         #grid(
@@ -94,7 +94,7 @@
         #v(-20pt)
         #panel-title("First-time arrival")
         #v(-10pt)
-        #image("../plots/comparisons/modelA_LargePVSA_modelA-strongVM_LargePVS/modelA_LargePVSA_modelA-strongVM_LargePVS_fta.png", width: 100%)
+        #image("../plots/comparisons/modelA_LargePVSA_modelA-strongVM_LargePVS/modelA_LargePVSA_modelA-strongVM_LargePVS_fta.svg", width: 100%)
       ]
     ),
 
@@ -111,9 +111,9 @@
       [
         #panel-label("G")
         #v(-25pt)
-        #panel-title("Total tracer concentration")
+        #panel-title("Total tracer content")
         #v(-5pt)
-        #cropped-image("../plots/comparisons/modelA_LargePVSA_modelA-strongVM_LargePVS/modelA_LargePVSA_modelA-strongVM_LargePVS_tot_bar.png", 5.1cm, 100%, 0cm, -0.1cm, width: 100%)
+        #cropped-image("../plots/comparisons/modelA_LargePVSA_modelA-strongVM_LargePVS/modelA_LargePVSA_modelA-strongVM_LargePVS_tot_bar.svg", 5.1cm, 100%, 0cm, -0.1cm, width: 100%)
       ],
       
       // Column 2: Panel H (Line Charts Grid)
@@ -122,7 +122,7 @@
         #v(-15pt)
         #panel-title("Mean tracer concentration")
         #v(-8pt)
-        #cropped-image("../plots/comparisons/modelA_LargePVSA_modelA-strongVM_LargePVS/modelA_LargePVSA_modelA-strongVM_LargePVS_conc.png", 5.1cm, 100%, 0cm, 0.1cm, width: 110%)
+        #cropped-image("../plots/comparisons/modelA_LargePVSA_modelA-strongVM_LargePVS/modelA_LargePVSA_modelA-strongVM_LargePVS_conc.svg", 5.1cm, 100%, 0cm, 0.1cm, width: 110%)
       ],
     ),
     v(-30pt)

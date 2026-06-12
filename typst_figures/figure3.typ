@@ -33,7 +33,7 @@
           #v(-15pt) 
           #panel-title("Production-driven CSF velocities")
           #v(-5pt)
-          #image("../results/csf_flow/sas_flow/prod_velocity_histo.png", width: 100%)
+          #image("../results/csf_flow/sas_flow/prod_velocity_histo.svg", width: 100%)
         ]
       ),
 
@@ -52,7 +52,7 @@
           #v(-15pt) 
           #panel-title("Cardiac dispersion enhancement")
           #v(-5pt) 
-          #image("../results/csf_flow/cardiac_sas_flow/R_histo.png", width: 100%)
+          #image("../results/csf_flow/cardiac_sas_flow/R_histo.svg", width: 100%)
         ]
       ),
 
@@ -71,7 +71,7 @@
           #v(-15pt) 
           #panel-title("Respiratory dispersion enhancement")
           #v(-5pt) 
-          #image("../results/csf_flow/respiratory_sas_flow/R_histo.png", width: 100%)
+          #image("../results/csf_flow/respiratory_sas_flow/R_histo.svg", width: 100%)
         ]
       )
     ),
@@ -108,7 +108,7 @@
         [
           #inline-header("", "")
           #v(-10pt)
-          #cropped-image("../plots/modelA-OnlyDispersion/modelA-OnlyDispersion_overview_1-6-12-24.png", 11.2cm, 500%, -14.5cm, -0.3cm)
+          #cropped-image("../plots/modelA/modelA_overview_1-6-12-24.svg", 11.2cm, 500%, -14.5cm, -0.3cm)
         ]
       )
     ),
