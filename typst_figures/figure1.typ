@@ -17,7 +17,7 @@
         #panel-label("A")
         #v(-20pt) 
         #panel-title("Physical mechanisms of intracranial solute transport", fontsize: titlefontsize)
-        #image("../paper/figures/transport_mechanisms.png", width: 98%)
+        #image("../paper/figures/transport_mechanisms.pdf", width: 98%)
       ],
       
       // Right Column: Panels B & C stacked
