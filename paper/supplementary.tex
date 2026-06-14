@@ -978,7 +978,9 @@ over time after the initial influx phase
      \includegraphics[width= 1 \linewidth]{figures/ven_minmax.png}
          \caption{Minimum and maximum tracer concentration in PVSs around veins under mesh refinement}
     \end{subfigure}
-    \caption{Minimum and maximum tracer concentrations over the first 24\,h after injection on the CSF and parenchyma (a), and the arterial and venous PVS (b) computed on the low resolution (LowRes), standard and high resolution (HighRes) meshes with a timestep of 2 min for the baseline model (Model A).}
+    \caption{Minimum and maximum tracer concentrations over the first 24\,h after injection on the CSF and parenchyma (a), and the arterial and venous PVS (b) computed on the low resolution (LowRes), standard and high resolution (HighRes) meshes with a timestep of 2 min for the baseline model (Model A).
+    Source data for all panels are provided as Source data files.
+    }
     \label{fig:mesh_convergence_concentrations}
 \end{figure}
 \begin{figure}
@@ -995,8 +997,10 @@ over time after the initial influx phase
         \caption*{Convergence of key quantities of interest with time refinement}
         %\label{fig:time_convergence}
     \end{subfigure}
-    \caption{For both left and right panels: A: Minimal ($\rm h_{min}$) and maximal ($\rm h_{max}$) mesh cell sizes (computed as cell circumradius $\times 2$); B: number of mesh vertices and tetrahedral cells in each mesh; C: mean cardiac dispersion enhancement factor $R$; D: maximum cardiac dispersion enhancement factor $R$; E: maximum pressure in steady CSF production flow; F: maximum pressure in cardiac-driven CSF flow; G: maximum CSF velocity in steady CSF production flow; H: maximum CSF velocity in cardiac-driven CSF flow; I--L: mean tracer concentration in the CSF, parenchyma, arterial PVS and venous PVS after 3, 6, 12 and 24 hours.}
-        \label{fig:mesh_time_convergence}
+    \caption{For both left and right panels: A: Minimal ($\rm h_{min}$) and maximal ($\rm h_{max}$) mesh cell sizes (computed as cell circumradius $\times 2$); B: number of mesh vertices and tetrahedral cells in each mesh; C: mean cardiac dispersion enhancement factor $R$; D: maximum cardiac dispersion enhancement factor $R$; E: maximum pressure in steady CSF production flow; F: maximum pressure in cardiac-driven CSF flow; G: maximum CSF velocity in steady CSF production flow; H: maximum CSF velocity in cardiac-driven CSF flow; I--L: mean tracer concentration in the CSF, parenchyma, arterial PVS and venous PVS after 3, 6, 12 and 24 hours.
+  Source data for all panels are provided as Source data files.
+  }
+  \label{fig:mesh_time_convergence}
 \end{figure}
 
 \begin{figure}
@@ -1011,13 +1015,17 @@ over time after the initial influx phase
      \includegraphics[width= 1\linewidth]{figures/time_refinement_art_ven_mean.png}
          \caption{Mean tracer concentration in PVSs around (veins and) arteries under time step refinement}
     \end{subfigure}
-    \caption{Mean tracer concentrations after up to 24\,h in the CSF and parenchyma (a), and the arterial and venous PVS (b) computed on the standard resolution mesh for timesteps of 1, 2, and 4 minutes (dt of 60, 120, or 240 seconds)}
+    \caption{Mean tracer concentrations after up to 24\,h in the CSF and parenchyma (a), and the arterial and venous PVS (b) computed on the standard resolution mesh for timesteps of 1, 2, and 4 minutes (dt of 60, 120, or 240 seconds).
+    Source data for all panels are provided as Source data files.
+    }
     \label{fig:time_convergence_concentrations}
 \end{figure}
 \begin{figure}
     \centering
     \includegraphics[width=0.5\linewidth]{figures/modelAMassConservation_total_conc.png}
-    \caption{Total tracer content in the CSF, parenchyma, and arterial and venous PVS for a variant of the baseline model without tracer outflow. The total amount of tracer is constant after the initial influx phase demonstrating that the numerical scheme conserves mass globally.}
+    \caption{Total tracer content in the CSF, parenchyma, and arterial and venous PVS for a variant of the baseline model without tracer outflow. The total amount of tracer is constant after the initial influx phase demonstrating that the numerical scheme conserves mass globally.
+    Source data is provided as a Source data file.
+    }
     \label{fig:mass_conservation}
 \end{figure}
 
@@ -1029,11 +1037,12 @@ To evaluate whether the 0D downstream compartments are necessary to capture peri
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.99\linewidth]{xi_multiplier_comparison.png}
+    \includegraphics[width=0.99\linewidth]{xi_multiplier_comparison.pdf}
     \caption{
     A) Total tracer content in the CSF, parenchyma, and arterial and venous PVS for variations of the high PVS flow model with a permeability multipliers of 1, 10, 100, and 1000 at the PVS network leaf nodes;
     B) First-time arrival of tracer along branches of the arterial tree for the model variants with permeability multiplier;
     C) Tracer concentrations at the individual arterial leaf nodes for the model variants with permeability multiplier.
+    Source data for all panels are provided as Source data files.
     }
     \label{fig:xi_multiplier_comparison}
 \end{figure}
@@ -1053,6 +1062,7 @@ Finally, the overall spatial tracer distribution patterns remain largely consist
     D) Tracer concentrations at the individual arterial leaf nodes for the model with 0D compartments;
     E) Tracer concentrations at the individual arterial leaf nodes for the model without 0D compartments, but 100x permeability multiplier.
     F) First-time arrival of tracer along branches of the arterial tree for the both models;
+    Source data for all panels are provided as Source data files.
     }
     \label{fig:0D_xi_multiplier_comparisonA}
 \end{figure}
@@ -1144,7 +1154,9 @@ Investigating the link between cardiac pulsatility and the resulting diffusion e
 \begin{figure}
     \centering
     \includegraphics[width=1.0\linewidth]{figures/cardiac_R_comparison.png}
-    \caption{Comparison of cardiac-driven diffusion enhancement factors for different levels of cardiac pulsatility. From left to right: The diffusion enhancement factor $R_c$ for $25\,\%$, $50\,\%$, $75\,\%$ and $100\,\%$ of the inflow boundary conditions of $6\,$ml/s and $0.31\,$ml/s across the SAS outer surface and the lateral ventricle surface, respectively.}
+    \caption{Comparison of cardiac-driven diffusion enhancement factors for different levels of cardiac pulsatility. From left to right: The diffusion enhancement factor $R_c$ for $25\,\%$, $50\,\%$, $75\,\%$ and $100\,\%$ of the inflow boundary conditions of $6\,$ml/s and $0.31\,$ml/s across the SAS outer surface and the lateral ventricle surface, respectively.
+    Source data for all histograms are provided as Source data files.
+    }
     \label{fig:R_comparison}
 \end{figure}
 
