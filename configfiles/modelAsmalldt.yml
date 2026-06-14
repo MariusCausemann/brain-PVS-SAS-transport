@@ -1,8 +1,8 @@
-description : "model A (dt=60s)"
+description : "model A + respiration"
 dt : 60
 T : 86400 # 1 day in seconds
 mesh : "mesh/standard/standard.xdmf"
-output_frequency : 5
+output_frequency : 2
 ecs_share : 0.2
 sas_diffusion : 3.8e-10 # Valnes 2020, https://www.nature.com/articles/s41598-020-66042-5
 arterial_pvs_diffusion : 3.8e-10
@@ -18,8 +18,8 @@ pvs_ratio_artery : 2
 pvs_ratio_venes: 2
 initial_concentration : 0.0
 molecular_outflow_resistance : 8.0e-7
-arterial_velocity_file : [  "results/pvs_flow_peristaltic/cardiac_pvs_oscillation/pvs_flow.hdf"]
-venous_velocity_file : [ ]
+arterial_velocity_file : ["results/pvs_flow_peristaltic/cardiac_pvs_oscillation/pvs_flow.hdf"]
+venous_velocity_file : [] 
 csf_velocity_file : "results/csf_flow/sas_flow/flow.hdf"
 csf_dispersion_file : ["results/csf_flow/cardiac_sas_flow/R.xdmf",
                        "results/csf_flow/respiratory_sas_flow/R.xdmf"]
