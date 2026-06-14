@@ -25,9 +25,9 @@
     spacing: 1pt,
     panel-label("C"),
     panel-title("Cardiac flow velocities"),
-    image("../results/csf_flow/respiratory_sas_flow_0.5/resp_velocity_histo.png", width: 100%),
+    image("../results/csf_flow/cardiac_sas_flow/cardiac_velocity_histo.svg", width: 100%),
     panel-label("D"),
     panel-title("Respiratory flow velocities"),
-    image("../results/csf_flow/cardiac_sas_flow_0.5/cardiac_velocity_histo.png", width: 100%)
+    image("../results/csf_flow/respiratory_sas_flow/resp_velocity_histo.svg", width: 100%)
   )
 )
