@@ -29,7 +29,7 @@ This software provides a mixed-dimensional mathematical modelling framework to p
 
   * Snakemake `==8.14.0` (with plugins `snakemake-storage-plugin-http` and `snakemake-executor-plugin-cluster-generic`)
 
-* **Environment Dependencies:** All simulation-specific dependencies (e.g., Python 3.12, FEniCS, NumPy, YAML) are automatically resolved and installed via Conda environments defined in the repository (e.g., `environment.yml`, `mesh_environment.yml`) when running the Snakemake workflow.
+* **Environment Dependencies:** All simulation-specific dependencies (e.g., Python 3.12, FEniCS, NumPy, YAML) are automatically resolved and installed via Conda environments defined in the repository (e.g., `environment.yml`, `mesh_environment.yml`) when running the Snakemake workflow. A list of the exact versions used can be found in `frozen_env.yml`.
 
 ## 2. Installation Guide
 
