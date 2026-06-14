@@ -61,23 +61,23 @@ fontsize: 10pt
 
 ## 3. Source Data
 
-*Statistical source data for main text figures only. Acceptable formats: plain text (CSV, TXT) or Excel.*
+* source data for main text figures only. Acceptable formats: plain text (CSV, TXT) or Excel.*
 
 | Parent Figure | Filename | Data description |
 |---------------|----------|-----------------|
-| Source Data Fig. 2 | figure2DE.csv | Statistical source data for panels D–E: compartment-averaged tracer concentration and total tracer amount per compartment over 24 h |
-| Source Data Fig. 3 | figure3B.csv | Statistical source data for panel B: histogram of production-induced CSF flow velocities in the subarachnoid space and ventricles |
-| Source Data Fig. 3 | figure3D.csv | Statistical source data for panel D: histogram of cardiac-induced dispersion factor $R_c$ |
-| Source Data Fig. 3 | figure3F.csv | Statistical source data for panel F: histogram of respiration-induced dispersion factor $R_r$ |
-| Source Data Fig. 4 | figure4D.csv | Statistical source data for panel D: histogram of cardiac-driven (pulse wave) net periarterial flow velocities |
-| Source Data Fig. 4 | figure4F.csv | Statistical source data for panel F: histogram of vasomotion-driven (slow wave) net periarterial flow velocities |
-| Source Data Fig. 5 | figure5A_baseline.csv | Statistical source data for panel A: mean tracer concentration in PVS and over outer PVS surface at key arterial locations — baseline model |
-| Source Data Fig. 5 | figure5A_high_pvs_flow.csv | Statistical source data for panel A: mean tracer concentration in PVS and over outer PVS surface at key arterial locations — high PVS flow model |
-| Source Data Fig. 5 | figure5B.csv | Statistical source data for panel B: first-time tracer arrival vs. distance from nearest network root node |
-| Source Data Fig. 5 | figure5E_baseline.csv | Statistical source data for panel E: total tracer in periarterial spaces vs. distance to nearest root over time — baseline model |
-| Source Data Fig. 5 | figure5E_high_pvs_flow.csv | Statistical source data for panel E: total tracer in periarterial spaces vs. distance to nearest root over time — high PVS flow model |
-| Source Data Fig. 6 | figure6E.csv | Statistical source data for panel E: mean PVS and outer PVS surface concentration over time for high and low permeability models |
-| Source Data Fig. 6 | figure6F.csv | Statistical source data for panel F: effect of varying PVS-CSF permeability on first-time arrival, peak timing, and concentration metrics |
-| Source Data Fig. 7 | figure7F.csv | Statistical source data for panel F: first-time tracer arrival across arterial tree branches for normal and dilated PVS models |
-| Source Data Fig. 7 | figure7G.csv | Statistical source data for panel G: total tracer content in CSF, parenchyma, arterial and venous PVS at key time points |
-| Source Data Fig. 7 | figure7H.csv | Statistical source data for panel H: mean tracer concentration in compartments over time for four model variants |
+| Source Data Fig. 2 | figure2DE.csv |   source data for panels D–E: compartment-averaged tracer concentration and total tracer amount per compartment over 24 h |
+| Source Data Fig. 3 | figure3B.csv |   source data for panel B: histogram of production-induced CSF flow velocities in the subarachnoid space and ventricles |
+| Source Data Fig. 3 | figure3D.csv |   source data for panel D: histogram of cardiac-induced dispersion factor $R_c$ |
+| Source Data Fig. 3 | figure3F.csv |   source data for panel F: histogram of respiration-induced dispersion factor $R_r$ |
+| Source Data Fig. 4 | figure4D.csv |   source data for panel D: histogram of cardiac-driven (pulse wave) net periarterial flow velocities |
+| Source Data Fig. 4 | figure4F.csv |   source data for panel F: histogram of vasomotion-driven (slow wave) net periarterial flow velocities |
+| Source Data Fig. 5 | figure5A_baseline.csv |   source data for panel A: mean tracer concentration in PVS and over outer PVS surface at key arterial locations — baseline model |
+| Source Data Fig. 5 | figure5A_high_pvs_flow.csv |   source data for panel A: mean tracer concentration in PVS and over outer PVS surface at key arterial locations — high PVS flow model |
+| Source Data Fig. 5 | figure5B.csv |   source data for panel B: first-time tracer arrival vs. distance from nearest network root node |
+| Source Data Fig. 5 | figure5E_baseline.csv |   source data for panel E: total tracer in periarterial spaces vs. distance to nearest root over time — baseline model |
+| Source Data Fig. 5 | figure5E_high_pvs_flow.csv |   source data for panel E: total tracer in periarterial spaces vs. distance to nearest root over time — high PVS flow model |
+| Source Data Fig. 6 | figure6E.csv |   source data for panel E: mean PVS and outer PVS surface concentration over time for high and low permeability models |
+| Source Data Fig. 6 | figure6F.csv |   source data for panel F: effect of varying PVS-CSF permeability on first-time arrival, peak timing, and concentration metrics |
+| Source Data Fig. 7 | figure7F.csv |   source data for panel F: first-time tracer arrival across arterial tree branches for normal and dilated PVS models |
+| Source Data Fig. 7 | figure7G.csv |   source data for panel G: total tracer content in CSF, parenchyma, arterial and venous PVS at key time points |
+| Source Data Fig. 7 | figure7H.csv |   source data for panel H: mean tracer concentration in compartments over time for four model variants |
