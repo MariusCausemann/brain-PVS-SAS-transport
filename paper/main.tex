@@ -1,7 +1,6 @@
 \documentclass[fleqn,10pt]{wlscirep}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{bm}
 \usepackage{caption}
 \usepackage{subcaption}
 % \captionsetup[subfigure]{justification=justified,singlelinecheck=false}
@@ -303,7 +302,7 @@ parenchyma (31\%), the unresolved continuation of the arterial PVS (8\%, capture
 
 The convective flow field and dispersion factors in the CSF spaces
 enter as coefficients in our computational framework for transport
-(${\bm u}_{\rm CSF}$ and $R$ in~\eqref{eq:multi_transport}). To inform
+($\mathbf{u}_{\rm CSF}$ and $R$ in~\eqref{eq:multi_transport}). To inform
 these, we have defined auxiliary computational flow models in the CSF
 spaces (see Methods, \Cref{fig:results1}B--C, Supplementary Fig.~S10). 
 To model the convective flow field, we impose a constant
@@ -520,7 +519,7 @@ compared to the baseline (\Cref{fig:high_low_pvs}F, H).
     \centering
     \includegraphics[width=0.99\textwidth]{pdf_figures/figure5.pdf}
     \caption{\textbf{How variations in net periarterial flow affect tracer distribution pattern predictions.}
-    A) Comparison of mean tracer concentration in the PVS and over the outer PVS surface at key locations of the arterial tree, for the baseline (lower) and high PVS flow (upper) models, with labels: ``peak'': time-to-peak (h), ``$\Delta t$'': time difference between peaks (h), and ``FTA'': first-time tracer arrival (h).
+    A) Comparison of mean tracer concentration in the PVS and over the outer PVS surface at key locations of the arterial tree, for the baseline (lower) and high PVS flow (upper) models, with labels: peak (time-to-peak, h), $\Delta t$ (time difference between peaks, h), and FTA (first-time tracer arrival, h).
     }
     \label{fig:high_low_pvs}
 \end{figure}
@@ -1026,14 +1025,13 @@ $24\,829$ edges connected at $23\,881$ inner nodes and with $949$ end nodes, and
 We model CSF as an incompressible Newtonian fluid at low Reynolds and
 Womersley numbers via the Stokes equations with viscosity $\mu$ (see
 \Cref{tab:parameters} for parameter values). To account for steady
-flow induced by CSF production, we compute the CSF velocity field $\bm
-u_{\rm CSF}$ and associated pressure field $p_{\rm CSF}$ in the SAS
+flow induced by CSF production, we compute the CSF velocity field $\mathbf{u}_{\rm CSF}$ and associated pressure field $p_{\rm CSF}$ in the SAS
 and ventricular system $\Omega_{\rm CSF}$ that result from a steady
 CSF production at a rate of $u_{\rm in} = 400$ mL/day across the
 lateral ventricle walls (\Cref{fig:results1}). We allow for CSF efflux
 across the upper, outer (arachnoid) boundary with efflux resistance
 $R_{\rm CSF, 0}$. In model variations with no CSF production, we set
-$u_{\rm CSF} = 0$, $p_{\rm CSF} = 0$.
+$\mathbf{u}_{\rm CSF} = \mathbf{0}$, $p_{\rm CSF} = 0$.
 
 %then set $\bm u = \bm u_{\rm CSF}$ in $\Omega_{\rm CSF}$
 %in~\eqref{eq:multi_transport}
@@ -1117,10 +1115,10 @@ flow velocity is defined for each segment $\Lambda_i$ as $\langle Q'_i
 cross-section area of the PVS segment and $\langle Q_i' \rangle$ is
 the estimated mean flow rate (see Supplementary Methods, S1.4
 Estimating net perivascular flow induced by peristaltic waves, for
-more details). Two wall motion patterns are considered: \emph{cardiac}
+more details). Two wall motion patterns are considered: cardiac
 pulsations with $f = 1.0$Hz, $\lambda = 2$ m and $\varepsilon = 1\%$
 yielding $\hat{u}_a^c$ (\Cref{fig:pvs}D), and very low-frequency
-\emph{vasomotion} with $f = 0.1$Hz, $\lambda = 0.02$m, and
+vasomotion with $f = 0.1$Hz, $\lambda = 0.02$m, and
 $\varepsilon = 10\%$ yielding $\hat{u}_a^v$ (\Cref{fig:pvs}E). No flow
 induced by peristalsis is considered for the perivenous network, and
 we thus set $\hat{u}_v = 0$ in $\Lambda_v$ in all simulations. Consequently, 
@@ -1154,10 +1152,10 @@ $c^0_k(t)$ for the 0D compartments at the arterial leaf nodes,
 satisfying the following equations:
 \begin{subequations}
 \begin{alignat}{2}
-  \partial_t c - \nabla \cdot D (1 + R) \nabla c  + \nabla \cdot (\bm u_{\rm CSF} c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma & = S_{\text{0D} \leftrightarrow \text{3D}} && \quad \quad \mathrm{in} \quad \Omega_{\rm CSF},
+  \partial_t c - \nabla \cdot D (1 + R) \nabla c  + \nabla \cdot (\mathbf{u}_{\rm CSF} c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma & = S_{\text{0D} \leftrightarrow \text{3D}} && \quad \quad \mathrm{in} \quad \Omega_{\rm CSF},
   \label{eq:multi_transport_3d_CSF}
-  \\ 
-  \partial_t (\phi c) - \nabla \cdot D^{\ast} \nabla (\phi c)  + \nabla \cdot (\bm u_{\rm PAR} c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma & = S_{\text{0D} \leftrightarrow \text{3D}} && \quad \quad \mathrm{in} \quad \Omega_{\rm{PAR}},
+  \\
+  \partial_t (\phi c) - \nabla \cdot D^{\ast} \nabla (\phi c)  + \nabla \cdot (\mathbf{u}_{\rm PAR} c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma & = S_{\text{0D} \leftrightarrow \text{3D}} && \quad \quad \mathrm{in} \quad \Omega_{\rm{PAR}},
   \label{eq:multi_transport_3d_PAR}
   \\ 
   \partial_t (A  \hat c) - \partial_s(\hat D A \partial_s ( \hat c)) +\partial_s(A \hat u \hat c )  +  \xi P (\hat c - \overline{c})  &= 0 && \quad \quad \mathrm{in} \quad  \Lambda_a, \Lambda_v .
@@ -1170,7 +1168,7 @@ satisfying the following equations:
 \end{subequations}%
 In~\eqref{eq:multi_transport_3d_CSF}, $D$ is the (free) diffusion
 coefficient of the solute, $R$ is the dispersion coefficient in the
-CSF spaces, $\bm u_{\rm CSF}$ is the steady CSF velocity, $\xi$ is a
+CSF spaces, $\mathbf{u}_{\rm CSF}$ is the steady CSF velocity, $\xi$ is a
 diffusive permeability allowing for solute transfer/exchange across
 the interfaces $\Gamma_a, \Gamma_v$ between the periarterial and
 perivenous networks and their surroundings, the overlined
@@ -1185,9 +1183,8 @@ fluid flux, $\alpha_k$ and $\beta_k$ are the
 the locally averaged 3D concentration.
 Additionally, in \eqref{eq:multi_transport_3d_PAR}, $\phi = \phi_{\rm ECS}$ is the
 brain extracellular volume fraction, $D^{\ast}$ is the effective
-diffusion coefficient in the parenchyma, and $\bm u_{\rm PAR}$ is an
-interstitial fluid velocity. In this study, we set $\bm u_{\rm PAR} =
-0$. In~\eqref{eq:multi_transport_1d}, $A = \pi (R_2^2 - R_1^2)$ is the
+diffusion coefficient in the parenchyma, and $\mathbf{u}_{\rm PAR}$ is an
+interstitial fluid velocity. In this study, we set $\mathbf{u}_{\rm PAR} = \mathbf{0}$. In~\eqref{eq:multi_transport_1d}, $A = \pi (R_2^2 - R_1^2)$ is the
 area and $P = 2 \pi R_2$ is the perimeter of the PVS cross-sections,
 $\hat{D}$ is the effective diffusion coefficient in the PVSs, and
 $\hat{u}$ is the fluid velocity (in the axial direction) in the PVS
@@ -1256,7 +1253,7 @@ following intrathecal injection, without modelling the spinal
 compartment explicitly, we prescribe a time-dependent influx 
 over the interface towards the spinal CSF compartment with the condition
 \begin{equation*}
-  (D \nabla c - \bm u_{\rm CSF} c ) \cdot \bm{n} = g_{\mathrm{influx}},  \quad \mathrm{on}  \quad \Gamma_{\mathrm{SSAS}}.
+  (D \nabla c - \mathbf{u}_{\rm CSF} c ) \cdot \mathbf{n} = g_{\mathrm{influx}},  \quad \mathrm{on}  \quad \Gamma_{\mathrm{SSAS}}.
 \end{equation*}
 Here we set
 \begin{equation}
@@ -1323,20 +1320,20 @@ neither (see also Supplementary Methods).
   \begin{center}
   \begin{tabular}{ll|lll|lll}
     \toprule
-    No. & Model description & $\bm u_{\rm CSF}$ & $\hat{u}|_{\Lambda_a}$ & $\hat{u}|_{\Lambda_v}$ & $R$ & $\xi_{\rm PVS}$ & $R_2$ \\
+    No. & Model description & $\mathbf{u}_{\rm CSF}$ & $\hat{u}|_{\Lambda_a}$ & $\hat{u}|_{\Lambda_v}$ & $R$ & $\xi_{\rm PVS}$ & $R_2$ \\
     \midrule
-    0 & baseline & $\bm u_{\rm CSF}$ & $\hat{u}_a^c$ & $0$                & $R_c + R_r$ & $\xi_{\rm EF}$ & $2 R_1$   \\ 
-    1 & no CSF production & \blue{$\bm 0$} & $\hat{u}_a^c$ & $0$                   & $R_c + R_r$ & $\xi_{\rm EF}$ & $2 R_1$   \\ 
-    2 & reduced CSF pulsatility & $\bm u_{\rm CSF}$ & $\hat{u}_a^c$ & $0$  & \blue{$ R_c^{\rm red} + R_r^{\rm red}$} & $\xi_{\rm EF}$ & $2 R_1$  \\ 
-    3 & increased CSF pulsatility & $\bm u_{\rm CSF}$ & $\hat{u}_a^c$ & $0$  & \blue{$ R_c^{\rm inc} + R_r^{\rm inc}$} & $\xi_{\rm EF}$ & $2 R_1$  \\ 
-    4 & higher PVS flow & $\bm u_{\rm CSF}$ & \blue{$\hat{u}_a^c + \hat{u}_a^v$} & $0$  & $R_c + R_r$ & $\xi_{\rm EF}$ & $2 R_1$  \\ 
-    5 & higher PVS exchange & $\bm u_{\rm CSF}$ & \blue{$\hat{u}_a^c + \hat{u}_a^v$} & $0$ & $R_c + R_r$ & \blue{100 $\xi_{\rm EF}$} & $2 R_1$   \\ 
-    6 & dilated PVS in the SAS & $\bm u_{\rm CSF}$ & \blue{$\tilde{u}_a^c + \tilde{u}_a^v$} & $0$ & $R_c + R_r$ & $\xi_{\rm EF}$ & \blue{$3 R_1$}\\ 
+    0 & baseline & $\mathbf{u}_{\rm CSF}$ & $\hat{u}_a^c$ & $0$                & $R_c + R_r$ & $\xi_{\rm EF}$ & $2 R_1$   \\
+    1 & no CSF production & \blue{$\mathbf{0}$} & $\hat{u}_a^c$ & $0$                   & $R_c + R_r$ & $\xi_{\rm EF}$ & $2 R_1$   \\
+    2 & reduced CSF pulsatility & $\mathbf{u}_{\rm CSF}$ & $\hat{u}_a^c$ & $0$  & \blue{$ R_c^{\rm red} + R_r^{\rm red}$} & $\xi_{\rm EF}$ & $2 R_1$  \\
+    3 & increased CSF pulsatility & $\mathbf{u}_{\rm CSF}$ & $\hat{u}_a^c$ & $0$  & \blue{$ R_c^{\rm inc} + R_r^{\rm inc}$} & $\xi_{\rm EF}$ & $2 R_1$  \\
+    4 & higher PVS flow & $\mathbf{u}_{\rm CSF}$ & \blue{$\hat{u}_a^c + \hat{u}_a^v$} & $0$  & $R_c + R_r$ & $\xi_{\rm EF}$ & $2 R_1$  \\
+    5 & higher PVS exchange & $\mathbf{u}_{\rm CSF}$ & \blue{$\hat{u}_a^c + \hat{u}_a^v$} & $0$ & $R_c + R_r$ & \blue{100 $\xi_{\rm EF}$} & $2 R_1$   \\
+    6 & dilated PVS in the SAS & $\mathbf{u}_{\rm CSF}$ & \blue{$\tilde{u}_a^c + \tilde{u}_a^v$} & $0$ & $R_c + R_r$ & $\xi_{\rm EF}$ & \blue{$3 R_1$}\\ 
     \bottomrule
     \end{tabular}
     \end{center}
   \caption{Overview of model variations, with color highlighting
-    changes from the baseline model. $\bm u_{\rm CSF}$ is the CSF
+    changes from the baseline model. $\mathbf{u}_{\rm CSF}$ is the CSF
     velocity field induced by CSF production in $\Omega_{\rm CSF}$.
     Moreover, $\hat{u}_a^c$ and $\hat{u}_a^v$ are the periarterial velocities
     induced by arterial pulse wave wall motion and slow vasomotion,
