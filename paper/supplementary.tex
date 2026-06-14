@@ -40,7 +40,7 @@
 
 \begin{abstract}
   Supplementary methods and discussion accompanying the main text of
-  \emph{\textcolor{black}{In-silico solute transport via perivascular networks in the human intracranial space}}.
+  \textcolor{black}{In-silico solute transport via perivascular networks in the human intracranial space}.
 \end{abstract}
 
 \begin{document}
@@ -96,8 +96,7 @@ perivenous spaces by $\Gamma_a$ and $\Gamma_v$, respectively. We omit
 the subscript $a$ or $v$ when referring to any such network, vessel
 segment or perivascular outer surface. We assume that $\Lambda$ is
 parametrized by the coordinate $s$, and with a minor abuse of
-notation, simply write $s \in \Lambda$ to represent the point ${\bm
-  \lambda}(s)$ on $\Lambda$ corresponding to $s$. Finally, we view
+notation, simply write $s \in \Lambda$ to represent the point ${\boldsymbol{\uplambda}}(s)$ on $\Lambda$ corresponding to $s$. Finally, we view
 each perivascular network both as a geometric domain and as a directed
 graph with the centerlines $\{ \Lambda^i \}$ as oriented edges and the
 connections as nodes $\mathcal{V}$. The notation used for the
@@ -143,7 +142,7 @@ $\mathcal N\subset  \mathcal V$ & End nodes \\
 \midrule
 $\phi$ & Fluid volume fraction (porosity) \\
 $D$ & Effective diffusion coefficient ($D_{\mathrm{PAR}} = D^*$ or $D_{\mathrm{CSF}} = D(1+R)$ \\
-$\bm u$ & Convective velocity (${\bm u}_{\mathrm{PAR}} = 0$ or ${\bm u}_{\mathrm{CSF}}$ computed from steady state flow) \\
+$\mathbf{u}$ & Convective velocity (${\mathbf{u}}_{\mathrm{PAR}} = 0$ or ${\mathbf{u}}_{\mathrm{CSF}}$ computed from steady state flow) \\
 $c$ & Solute concentration in 3D domains \\
 $\overline{c}$ & Lateral average of $c$ on the PVS boundary \\
 $\xi$ & Permeability coefficient between the periarterial and perivenous networks
@@ -229,13 +228,13 @@ $\mathcal{F}_i = \mathcal{F}_{i, \rm PAR} \cup \mathcal{F}_{i, \rm
 The time-independent, incompressible Stokes equations model the flow
 of an incompressible Newtonian fluid at low Reynolds numbers, and read
 as follows: over the domain $\Omega_{\rm CSF} \subset \R^3$, find the
-velocity vector field $\bm u : \Omega_{\rm CSF} \rightarrow \R^3$ and
+velocity vector field $\mathbf{u} : \Omega_{\rm CSF} \rightarrow \R^3$ and
 the pressure field $p : \Omega_{\rm CSF} \rightarrow \R$ such that
 \begin{subequations}
   \begin{alignat}{2}
-    - \mu \Delta \bm u  + \nabla p &=  0 \quad && \text{ in } \Omega_{\rm CSF},
+    - \mu \Delta \mathbf{u}  + \nabla p &=  0 \quad && \text{ in } \Omega_{\rm CSF},
     \label{eq:momentum_equation} \\ 
-    \nabla \cdot \bm u &= 0 \quad && \text{ in } \Omega_{\rm CSF}
+    \nabla \cdot \mathbf{u} &= 0 \quad && \text{ in } \Omega_{\rm CSF}
     \label{eq:divergence_equation} .
   \end{alignat}
   \label{eq:stokes}%
@@ -244,37 +243,36 @@ In addition, we impose the following boundary conditions to model flow
 induced by CSF production in the choroid plexus with $\Gamma_{\rm AM-U}$ as the main efflux site:
 \begin{subequations}
   \begin{alignat}{2}
-    ( \mu \nabla \bm u \cdot \bm{n} - p \bm n) \cdot \bm n  &= -R_{\rm CSF, 0} ( \bm u \cdot \bm n ), 
-    \quad \bm u \cdot \bm t = 0
+    ( \mu \nabla \mathbf{u} \cdot \mathbf{n} - p \mathbf{n}) \cdot \mathbf{n}  &= -R_{\rm CSF, 0} ( \mathbf{u} \cdot \mathbf{n} ), 
+    \quad \mathbf{u} \cdot \mathbf{t} = 0
     && \text{ on } \Gamma_{\mathrm{AM-U}}, \\
-    \bm u &= 0 
+    \mathbf{u} &= 0 
     && \text{ on } \Gamma_{\mathrm{AM-L}}\cup\Gamma_{\rm{pia}}\cup\Gamma_{\rm{SSAS}}, \\
-    %\bm u &= 0 && \text{ on } \Gamma_{\rm{pia}}, \\
-    %\bm u &= 0 && \text{ on } \Gamma_{\rm{SSAS}}, \\
-    \bm u \cdot \bm n & = \frac{1}{ |\Gamma_{\rm LV}|}  u_{\rm in}, 
-    \quad \quad \bm u \cdot \bm t = 0 \quad 
+    %\mathbf{u} &= 0 && \text{ on } \Gamma_{\rm{pia}}, \\
+    %\mathbf{u} &= 0 && \text{ on } \Gamma_{\rm{SSAS}}, \\
+    \mathbf{u} \cdot \mathbf{n} & = \frac{1}{ |\Gamma_{\rm LV}|}  u_{\rm in}, 
+    \quad \quad \mathbf{u} \cdot \mathbf{t} = 0 \quad 
     && \text{ on } \Gamma_{\rm{LV}} ,  
   \end{alignat}
   \label{eq:stokes_bcs}%
 \end{subequations}%
-where $\bm n$ and $\bm t$ denote the unit outward normal and tangent vectors to the boundary respectively,  $\mu$ is the (dynamic) CSF viscosity, $R_{\rm CSF, 0} > 0$ is a resistance parameter for CSF efflux, and $u_{\rm in}$ is a given fluid influx, here across the lateral ventricle wall $\Gamma_{\rm LV}$. We consider alternative variations of these boundary conditions in connection with estimating dispersion effects induced by CSF pulsatility, see~\Cref{sec:app:dispersion}.
+where $\mathbf{n}$ and $\mathbf{t}$ denote the unit outward normal and tangent vectors to the boundary respectively,  $\mu$ is the (dynamic) CSF viscosity, $R_{\rm CSF, 0} > 0$ is a resistance parameter for CSF efflux, and $u_{\rm in}$ is a given fluid influx, here across the lateral ventricle wall $\Gamma_{\rm LV}$. We consider alternative variations of these boundary conditions in connection with estimating dispersion effects induced by CSF pulsatility, see~\Cref{sec:app:dispersion}.
 
 \subsubsection{Finite element solution of the incompressible Stokes equations}
-We consider an H(div)-based finite element approximation of the incompressible Stokes equations~\eqref{eq:stokes} defined over $\Omega_{\rm CSF}$ with the boundary conditions~\eqref{eq:stokes_bcs}. Following\cite{hong2016robust}, we approximate the velocity field $\bm u$ and the pressure field $p$ with the following finite element spaces:
+We consider an H(div)-based finite element approximation of the incompressible Stokes equations~\eqref{eq:stokes} defined over $\Omega_{\rm CSF}$ with the boundary conditions~\eqref{eq:stokes_bcs}. Following\cite{hong2016robust}, we approximate the velocity field $\mathbf{u}$ and the pressure field $p$ with the following finite element spaces:
 \begin{align*}
-  \bm V_{h,g} &= \{ \bm v  \in H(\mathrm{div}, \Omega_{\mathrm{CSF}}): \;
-  \bm v \vert_{E} \in \mathrm{BDM}^2(E), \; E \in \mathcal{T}_{\rm CSF}; \;
-  \bm v \cdot \bm n = 0
-  \text{ on } \Gamma_{\rm{pia}} \cup \Gamma_{\rm AM-L} \cup \Gamma_{\rm{SSAS}}, \;\; \bm v \cdot \bm n =  g %\frac{1}{|\Gamma_{\mathrm{LV}}|} u_{\mathrm{in}} 
+  \mathbf{V}_{h,g} &= \{ \mathbf{v}  \in H(\mathrm{div}, \Omega_{\mathrm{CSF}}): \;
+  \mathbf{v} \vert_{E} \in \mathrm{BDM}^2(E), \; E \in \mathcal{T}_{\rm CSF}; \;
+  \mathbf{v} \cdot \mathbf{n} = 0
+  \text{ on } \Gamma_{\rm{pia}} \cup \Gamma_{\rm AM-L} \cup \Gamma_{\rm{SSAS}}, \;\; \mathbf{v} \cdot \mathbf{n} =  g %\frac{1}{|\Gamma_{\mathrm{LV}}|} u_{\mathrm{in}} 
   \text{ on } \Gamma_{\mathrm{LV}} \}  \\ 
   Q_h  &= \{q \in L^2(\Omega_{\rm CSF}): \; q \vert_E \in \mathrm{P}^1(E),
   \; E \in \mathcal{T}_{\rm CSF} \}. 
 \end{align*}
-Here, $H(\mathrm{div}, \Omega_{\rm{CSF}})$ is the space of $L^2(\Omega_{\rm{CSF}})$ vector fields with $L^2(\Omega_{\rm{CSF}})$ divergence, $\mathrm{BDM}^2$ is the Brezzi-Douglas--Marini element~\cite{brezzi1987mixed} of degree 2, $g$ is a given constant, and $\bm n$ is the unit outward normal vector to each facet. Given any vector $\bm v$, the normal and tangential components on each facet are denoted and given by 
-$$ \bm v_n = (\bm v \cdot \bm n) \bm n, \quad \bm v_t = \bm v - \bm v_n. 
+Here, $H(\mathrm{div}, \Omega_{\rm{CSF}})$ is the space of $L^2(\Omega_{\rm{CSF}})$ vector fields with $L^2(\Omega_{\rm{CSF}})$ divergence, $\mathrm{BDM}^2$ is the Brezzi-Douglas--Marini element~\cite{brezzi1987mixed} of degree 2, $g$ is a given constant, and $\mathbf{n}$ is the unit outward normal vector to each facet. Given any vector $\mathbf{v}$, the normal and tangential components on each facet are denoted and given by 
+$$ \mathbf{v}_n = (\mathbf{v} \cdot \mathbf{n}) \mathbf{n}, \quad \mathbf{v}_t = \mathbf{v} - \mathbf{v}_n. 
 $$ 
-Since $\bm V_{h,g} \subset H(\mathrm{div}, \Omega_{\rm CSF})$, then $[\bm
-  v_n] = 0 $ on $\mathcal{F}_{i, \rm CSF}$, the interior facets to $\Omega_{\mathrm{CSF}}$. Continuity in the
+Since $\mathbf{V}_{h,g} \subset H(\mathrm{div}, \Omega_{\rm CSF})$, then $[\mathbf{v}_n] = 0 $ on $\mathcal{F}_{i, \rm CSF}$, the interior facets to $\Omega_{\mathrm{CSF}}$. Continuity in the
 tangential component is enforced weakly via interior penalization. For
 convenience, we collect all facets exterior to the CSF space  $\Gamma_{\rm AM-U}$ in the set
 $$\mathcal{F}_{e} = \mathcal{F}_{\rm pia} \cup \mathcal{F}_{\rm LV}
@@ -287,22 +285,22 @@ $\Gamma_{\rm AM-L}$ and $\Gamma_{\rm AM-U}$ by $\mathcal{F}_{\rm AM-L}$ and $\ma
  on the boundary towards the spinal SAS $\Gamma_{\rm SSAS}$ by
 $\mathcal{F}_{\rm SSAS}$, and on the surface of the lateral ventricles by $\mathcal{F}_{\rm LV}$. Now, define the form 
 \begin{multline}
-  \mathcal{A}_h(\bm u, \bm v)
-  = \sum_{E \in \mathcal{T}_{\rm CSF}} \int_{E} \mu \nabla \bm u : \nabla \bm v
+  \mathcal{A}_h(\mathbf{u}, \mathbf{v})
+  = \sum_{E \in \mathcal{T}_{\rm CSF}} \int_{E} \mu \nabla \mathbf{u} : \nabla \mathbf{v}
  + \sum_{F \in \mathcal{F}_{i, \rm CSF} \cup \mathcal{F}_{e}} \left (
-  -\int_{F} \mu \{\nabla \bm u\}  \bm n_F \cdot [\bm v_t] 
+  -\int_{F} \mu \{\nabla \mathbf{u}\}  \mathbf{n}_F \cdot [\mathbf{v}_t] 
   - %\sum_{F \in \mathcal{F}_{h,c} \cup \mathcal{F}_{\Gamma}}
-  \int_{F} \mu \{\nabla \bm v\}  \bm n_F \cdot [\bm u_t]
+  \int_{F} \mu \{\nabla \mathbf{v}\}  \mathbf{n}_F \cdot [\mathbf{u}_t]
   + %\sum_{F \in \mathcal{F}_{h,c} \cup \mathcal{F}_{\Gamma}}
-\int_{F}   \frac{\sigma \mu}{h_F} [\bm u_t ] \cdot [\bm v_t] \right ),   
+\int_{F}   \frac{\sigma \mu}{h_F} [\mathbf{u}_t ] \cdot [\mathbf{v}_t] \right ),   
 \end{multline}
-where on exterior facets the average and jump operators take the one-sided values. We set the penalty parameter for the tangential continuity to be $\sigma = 20$. The finite element discretization of the incompressible Stokes equations is then to find $(\bm u_h, p_h) \in \bm V_{h,g} \times Q_h$ with $g  = \frac{1}{|\Gamma_{\mathrm{LV}}|} u_{\mathrm{in}}$  such that 
+where on exterior facets the average and jump operators take the one-sided values. We set the penalty parameter for the tangential continuity to be $\sigma = 20$. The finite element discretization of the incompressible Stokes equations is then to find $(\mathbf{u}_h, p_h) \in \mathbf{V}_{h,g} \times Q_h$ with $g  = \frac{1}{|\Gamma_{\mathrm{LV}}|} u_{\mathrm{in}}$  such that 
 \begin{subequations}
 \begin{align}
-  \mathcal{A}_h(\bm u_h, \bm v_h)
-  + \sum_{F \in \mathcal{F}_{\rm AM-U}} \int_{F} R_{\rm CSF, 0} (\bm u_h \cdot \bm n) (\bm v_h \cdot \bm n)
-  - \int_{\Omega_{\rm CSF}} \nabla \cdot \bm v_h \, p_h  &= 0 \qquad \foralls \bm v_h \in \bm V_{h,0} \\ 
-\int_{\Omega_{\rm CSF}} \nabla \cdot \bm u_h \, q_h  &= 0 \qquad \foralls q_h \in Q_h.
+  \mathcal{A}_h(\mathbf{u}_h, \mathbf{v}_h)
+  + \sum_{F \in \mathcal{F}_{\rm AM-U}} \int_{F} R_{\rm CSF, 0} (\mathbf{u}_h \cdot \mathbf{n}) (\mathbf{v}_h \cdot \mathbf{n})
+  - \int_{\Omega_{\rm CSF}} \nabla \cdot \mathbf{v}_h \, p_h  &= 0 \qquad \foralls \mathbf{v}_h \in \mathbf{V}_{h,0} \\ 
+\int_{\Omega_{\rm CSF}} \nabla \cdot \mathbf{u}_h \, q_h  &= 0 \qquad \foralls q_h \in Q_h.
 \end{align}
 \end{subequations}
 
@@ -430,10 +428,10 @@ R_c + R_r) D^{\rm Gad}$.
   conditions mimicking a dilation of the brain parenchyma with the
   spinal SAS as the only route for CSF efflux:
   \begin{equation}\label{eq:pulsatility:bcs}
-    \bm u = 0 \text{ on } \Gamma_{\rm Pia}; \quad 
-    \mu \nabla \bm u \cdot \bm n - p \bm n = 0 \text{ on } \Gamma_{\rm SSAS}; \quad 
-    \bm u = \frac{u^{\rm in}_{\rm LV} \cdot \bm n}{|\Gamma_{\rm LV}|} \text{ on } \Gamma_{\rm LV}; \quad
-    \bm u = \frac{u^{\rm in}_{\rm AM} \cdot \bm n}{|\Gamma_{\rm skull}|} \text{ on } \Gamma_{\rm AM}.
+    \mathbf{u} = 0 \text{ on } \Gamma_{\rm Pia}; \quad 
+    \mu \nabla \mathbf{u} \cdot \mathbf{n} - p \mathbf{n} = 0 \text{ on } \Gamma_{\rm SSAS}; \quad 
+    \mathbf{u} = \frac{u^{\rm in}_{\rm LV} \cdot \mathbf{n}}{|\Gamma_{\rm LV}|} \text{ on } \Gamma_{\rm LV}; \quad
+    \mathbf{u} = \frac{u^{\rm in}_{\rm AM} \cdot \mathbf{n}}{|\Gamma_{\rm skull}|} \text{ on } \Gamma_{\rm AM}.
 \end{equation}
   In the cardiac cycle case, we set $u^{\rm in}_{\rm AM} = 6\,$ml/s \cite{causemann2022human,baledent2014imaging} and $u^{\rm in}_{\rm LV}=0.31\,$ml/s \cite{vinje2019respiratory} to solve for $p^0_c$. In the respiratory cycle case, we set $u^{\rm{in}}_{\rm{AM}} = 1\,$ml/s \cite{gutierrez2022effect} and $u^{\rm in}_{\rm{LV}}=0.121\,$ml/s \cite{liu2024using} to solve for $p^0_r$.
 \item
@@ -481,7 +479,7 @@ R_c + R_r) D^{\rm Gad}$.
     - 10^{-4} \Delta R_i + R_i
     = S_i \quad \text{ on } \Omega_{\rm CSF}
     \qquad \text{ and } \quad
-    \nabla R_i \cdot \bm n = 0, \quad \text{ on } \partial \Omega_{\rm CSF} .
+    \nabla R_i \cdot \mathbf{n} = 0, \quad \text{ on } \partial \Omega_{\rm CSF} .
 \end{equation}
 \end{enumerate}
 Considering the uncertainty associated with the validity of
@@ -492,7 +490,7 @@ should be viewed as heuristic rather than absolute.
 \subsection{Estimating net perivascular flow induced by peristaltic waves}
 \label{sec:app:peristalsis}
 
-We use the theoretical framework previously introduced by Gjerde et al.~\cite{gjerde2023directional} to compute an analytic estimate of the time-averaged (or \emph{net}) flow rates $\langle Q'_i \rangle$ (mm$^3$/s) induced by peristaltic pumping in a perivascular network $\Lambda = \cup_i \Lambda^i$. The motion of the (inner) vascular wall is assumed to be described by a periodic traveling (peristaltic) wave of relative amplitude $\varepsilon$, wave length $\lambda$ (mm) and frequency $f$, acting normal to the wall and traveling in the antegrade direction (with the blood flow). By definition, the wave number is $k = 2 \pi/\lambda$ and the angular frequency is $\omega = 2 \pi f$. Each PVS segment $\Lambda^i$ has length $L_i$ with wave-relative length $\ell_i = k L_i$, baseline inner radius $R_1^i$, fixed outer radius $R_2^i$, and outer-to-inner ratio $\beta_i = R_2^i/R_1^i$. These geometric parameters and the assumption of annular cylindrical PVS segments yield hydraulic resistances and additional characteristic parameters, see \cite{gjerde2023directional} for the complete definitions and schematics. Since the analytical estimate is derived under the assumption that $k L_i \approx \mathcal{O} (1)$~\cite{gjerde2023directional} and has been verified against numerical simulations for $k L_i$ of the order $10^{-1}-10^2$~\cite[Table I]{gjerde2023directional}, we consider it applicable for the wave lengths and vascular network data considered here in which $k L_i$ range from 0.15 to 30 for the strong vasomotion and 0.0015 to 0.30 for the cardiac waves (\Cref{tab:pvs:parameters}).
+We use the theoretical framework previously introduced by Gjerde et al.~\cite{gjerde2023directional} to compute an analytic estimate of the time-averaged (or net) flow rates $\langle Q'_i \rangle$ (mm$^3$/s) induced by peristaltic pumping in a perivascular network $\Lambda = \cup_i \Lambda^i$. The motion of the (inner) vascular wall is assumed to be described by a periodic traveling (peristaltic) wave of relative amplitude $\varepsilon$, wave length $\lambda$ (mm) and frequency $f$, acting normal to the wall and traveling in the antegrade direction (with the blood flow). By definition, the wave number is $k = 2 \pi/\lambda$ and the angular frequency is $\omega = 2 \pi f$. Each PVS segment $\Lambda^i$ has length $L_i$ with wave-relative length $\ell_i = k L_i$, baseline inner radius $R_1^i$, fixed outer radius $R_2^i$, and outer-to-inner ratio $\beta_i = R_2^i/R_1^i$. These geometric parameters and the assumption of annular cylindrical PVS segments yield hydraulic resistances and additional characteristic parameters, see \cite{gjerde2023directional} for the complete definitions and schematics. Since the analytical estimate is derived under the assumption that $k L_i \approx \mathcal{O} (1)$~\cite{gjerde2023directional} and has been verified against numerical simulations for $k L_i$ of the order $10^{-1}-10^2$~\cite[Table I]{gjerde2023directional}, we consider it applicable for the wave lengths and vascular network data considered here in which $k L_i$ range from 0.15 to 30 for the strong vasomotion and 0.0015 to 0.30 for the cardiac waves (\Cref{tab:pvs:parameters}).
 \begin{table}
 \centering
   \small
@@ -572,13 +570,13 @@ defined in $\Omega_{\rm PAR}$ and $\Omega_{\rm CSF}$ separately. In
 each of these domains, $c$ satisfies
 %\mer{MER: Rami asks if it should be a $\phi$ in the advective term here. We can include it, or drop it, but in the latter case, perhaps we should clarify that u is an average/superficial/Darcy velocity.}
 \begin{equation}
-  \partial_t (\phi c) - \nabla \cdot (D \nabla (\phi c) ) + \nabla \cdot (\bm u c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma
+  \partial_t (\phi c) - \nabla \cdot (D \nabla (\phi c) ) + \nabla \cdot (\mathbf{u} c ) + \xi (\overline{c} - \hat c ) \delta_\Gamma
   %= f
    = S_{\text{0D} \leftrightarrow \text{3D}}
   \quad \quad \mathrm{in} \quad \Omega_{\rm CSF}, \Omega_{\rm{PAR}}.
   \label{eq:3d_pde}
 \end{equation}
-In~\eqref{eq:3d_pde}, $S_{\text{0D} \leftrightarrow \text{3D}}$ is a localized mass transfer term coupling the 3D domains to unresolved perivascular continuations, $\phi$ is the fluid volume fraction (also known as the porosity) defined in the parenchyma ($\phi \ll 1$ in $\Omega_{\rm PAR}$) and in the CSF spaces ($\phi = 1$ in $\Omega_{\rm CSF}$). In the parenchyma, $\phi$ represents the extracellular space volume fraction, and thus $c$ here generally represents the intrinsic (in contrast to the superficial) concentration~\cite{sykova2008diffusion}. Moreover, $D$ is the effective diffusion coefficient of the relevant solute in the respective media which takes different values over the CSF spaces and the parenchyma, depending on tortuosity~\cite{sykova2008diffusion} and dispersive effects; and $\bm u$ is a superficial convective velocity field representing the flow of CSF in $\Omega_{\rm CSF}$ and the (Darcy) flow of ISF in $\Omega_{\rm PAR}$.
+In~\eqref{eq:3d_pde}, $S_{\text{0D} \leftrightarrow \text{3D}}$ is a localized mass transfer term coupling the 3D domains to unresolved perivascular continuations, $\phi$ is the fluid volume fraction (also known as the porosity) defined in the parenchyma ($\phi \ll 1$ in $\Omega_{\rm PAR}$) and in the CSF spaces ($\phi = 1$ in $\Omega_{\rm CSF}$). In the parenchyma, $\phi$ represents the extracellular space volume fraction, and thus $c$ here generally represents the intrinsic (in contrast to the superficial) concentration~\cite{sykova2008diffusion}. Moreover, $D$ is the effective diffusion coefficient of the relevant solute in the respective media which takes different values over the CSF spaces and the parenchyma, depending on tortuosity~\cite{sykova2008diffusion} and dispersive effects; and $\mathbf{u}$ is a superficial convective velocity field representing the flow of CSF in $\Omega_{\rm CSF}$ and the (Darcy) flow of ISF in $\Omega_{\rm PAR}$.
 
  $\xi$ models a transfer or exchange parameter between the 3D domain ($\Omega_{\rm PAR}$ or $\Omega_{\rm CSF}$) and the perivascular networks $\Lambda_a, \Lambda_v$. To summarize,
 \begin{equation*}
@@ -589,9 +587,9 @@ In~\eqref{eq:3d_pde}, $S_{\text{0D} \leftrightarrow \text{3D}}$ is a localized m
 D = \begin{cases}
   D_{\rm{CSF}} & \mathrm{in} \;  \Omega_{\rm{CSF}} \\ 
   D_{\rm{PAR}} & \mathrm{in} \; \Omega_{\rm{PAR}} \end{cases}, \; 
-  \quad \bm u  = \begin{cases}
-  \bm{u}_{\rm{CSF}} & \mathrm{in} \; \Omega_{\rm{CSF}} \\ 
-  \bm{u}_{\rm{PAR}} & \mathrm{in} \; \Omega_{\rm{PAR}} 
+  \quad \mathbf{u}  = \begin{cases}
+  \mathbf{u}_{\rm{CSF}} & \mathrm{in} \; \Omega_{\rm{CSF}} \\ 
+  \mathbf{u}_{\rm{PAR}} & \mathrm{in} \; \Omega_{\rm{PAR}} 
 \end{cases}, \; 
 \xi = \begin{cases}
   \xi_{\rm{CSF}} & \mathrm{if} |\Omega^i \cap \Omega_{\rm{CSF}}| \neq 0 \\
@@ -636,20 +634,20 @@ interface, writing $c|_{\Omega_{\rm PAR}} = c_{\rm PAR}$ and
 $c|_{\Omega_{\rm CSF}} = c_{\rm CSF}$:
 %% \begin{subequations}
 %% \begin{alignat}{2}
-%% (-D \nabla (\phi c_{\rm{PAR}}) + \bm u_{\rm{PAR}} c_{\rm{PAR} }) \cdot \bm{n} &= - (- D (\phi \nabla c_{\rm{CSF}}) + \bm u_{\rm{CSF}} c_{\rm{CSF}} ) \cdot \bm{n} &&  \quad  \mathrm{on} \quad \Gamma_{\rm pia} \cup \Gamma_{\mathrm{LV}} ,  \\  
-%% (-D \nabla ( c_{\rm{PAR}}) + \bm u_{\rm{PAR}} c_{\rm{PAR} }) \cdot \bm{n} & = \beta_{\rm{pia}} (c_{\rm PAR} - c_{\mathrm{CSF}}) &&  \quad  \mathrm{on} \quad \Gamma_{\rm pia} \cup \Gamma_{\mathrm{LV}} ,  
+%% (-D \nabla (\phi c_{\rm{PAR}}) + \mathbf{u}_{\rm{PAR}} c_{\rm{PAR} }) \cdot \mathbf{n} &= - (- D (\phi \nabla c_{\rm{CSF}}) + \mathbf{u}_{\rm{CSF}} c_{\rm{CSF}} ) \cdot \mathbf{n} &&  \quad  \mathrm{on} \quad \Gamma_{\rm pia} \cup \Gamma_{\mathrm{LV}} ,  \\  
+%% (-D \nabla ( c_{\rm{PAR}}) + \mathbf{u}_{\rm{PAR}} c_{\rm{PAR} }) \cdot \mathbf{n} & = \beta_{\rm{pia}} (c_{\rm PAR} - c_{\mathrm{CSF}}) &&  \quad  \mathrm{on} \quad \Gamma_{\rm pia} \cup \Gamma_{\mathrm{LV}} ,  
 %% \end{alignat} 
 %% \end{subequations}
 \begin{subequations}
   \begin{alignat}{2}
-  (-D \nabla (\phi c) + \bm u c)|_{\Omega_{\rm PAR}} \cdot \bm{n}
-  &= - (-D \nabla (\phi c) + \bm u c)|_{\Omega_{\rm CSF}} \cdot \bm{n}
+  (-D \nabla (\phi c) + \mathbf{u} c)|_{\Omega_{\rm PAR}} \cdot \mathbf{n}
+  &= - (-D \nabla (\phi c) + \mathbf{u} c)|_{\Omega_{\rm CSF}} \cdot \mathbf{n}
   &&  \quad  \mathrm{on} \quad \Gamma_{\rm pia} \cup \Gamma_{\mathrm{LV}} ,  \\  
-  (- D \nabla (\phi  c) + \bm u c)|_{\Omega_{\rm PAR}} \cdot \bm{n} & = \beta_{\rm{pia}} (c_{\rm PAR} - c_{\mathrm{CSF}}) &&  \quad  \mathrm{on} \quad \Gamma_{\rm pia} \cup \Gamma_{\mathrm{LV}} ,  
+  (- D \nabla (\phi  c) + \mathbf{u} c)|_{\Omega_{\rm PAR}} \cdot \mathbf{n} & = \beta_{\rm{pia}} (c_{\rm PAR} - c_{\mathrm{CSF}}) &&  \quad  \mathrm{on} \quad \Gamma_{\rm pia} \cup \Gamma_{\mathrm{LV}} ,  
 \end{alignat} 
   \label{eq:3d_interface}%
 \end{subequations}%
-where $\bm{n} = \bm{n}_{\rm PAR}$ is the normal vector field defined
+where $\mathbf{n} = \mathbf{n}_{\rm PAR}$ is the normal vector field defined
 over the interface, outward-pointing when viewed from $\Omega_{\rm
   PAR}$, and $\beta_{\mathrm{pia}} \geqslant 0$ is a permeability
 constant.
@@ -657,14 +655,14 @@ constant.
 We supplement~\eqref{eq:3d_pde} and~\eqref{eq:3d_interface} with the following boundary conditions representing a given molecular influx at $\Gamma_{\rm SSAS}$, molecular efflux at a constant update rate $\beta_{\rm exit}$ at $\Gamma_{\rm AM-U}$, and no influx or efflux elsewhere from the CSF spaces.
 \begin{subequations}
 \begin{alignat}{2}
-(D \nabla (\phi c) - \bm u c ) \cdot \bm{n} &= g_{\mathrm{influx}} &&  \quad  \mathrm{on} \quad \Gamma_{\rm SSAS},  \\ 
-% (-D \nabla (\phi c) + \bm u c ) \cdot \bm{n}_{\Gamma_{\rm SAS}} &= 0 &&  \quad  \mathrm{on} \quad \Gamma_{\rm SAS}^{\mathrm{out}}  \\ 
-(-D \nabla (\phi c) + \bm u c ) \cdot \bm{n} & = \beta_{\rm exit} c  &&  \quad  \mathrm{on} \quad \Gamma_{\rm AM-U},  \\ 
-(-D \nabla (\phi c) + \bm u c ) \cdot \bm{n} & = 0  &&  \quad  \mathrm{on} \quad \Gamma_{\rm AM-L} \cup \Gamma_{\rm SC}  .
+(D \nabla (\phi c) - \mathbf{u} c ) \cdot \mathbf{n} &= g_{\mathrm{influx}} &&  \quad  \mathrm{on} \quad \Gamma_{\rm SSAS},  \\ 
+% (-D \nabla (\phi c) + \mathbf{u} c ) \cdot \mathbf{n}_{\Gamma_{\rm SAS}} &= 0 &&  \quad  \mathrm{on} \quad \Gamma_{\rm SAS}^{\mathrm{out}}  \\ 
+(-D \nabla (\phi c) + \mathbf{u} c ) \cdot \mathbf{n} & = \beta_{\rm exit} c  &&  \quad  \mathrm{on} \quad \Gamma_{\rm AM-U},  \\ 
+(-D \nabla (\phi c) + \mathbf{u} c ) \cdot \mathbf{n} & = 0  &&  \quad  \mathrm{on} \quad \Gamma_{\rm AM-L} \cup \Gamma_{\rm SC}  .
 \end{alignat} 
 \label{eq:3d_bcs}
 \end{subequations}
-where again $\bm n$ denotes the outward-pointing boundary normal.
+where again $\mathbf{n}$ denotes the outward-pointing boundary normal.
 
 The concentration $\hat{c} = \hat{c}(s, t)$ in the periarterial and
 perivenous networks ($s \in \Lambda_a, s \in \Lambda_v$), entering
@@ -794,14 +792,14 @@ Define for $c, v \in V_h^k$:
   a_h (c, v)
   =
   \sum_{E \in \mathcal{T}} \int_{E} D\phi \nabla c \cdot \nabla v
-  - \sum_{F \in \mathcal{F}_i} \int_{F} \left( \{D \phi \nabla c \}_w \cdot \bm n_F [v]
-  + \{D \phi \nabla v \}_w \cdot \bm n_F [c] \right) 
+  - \sum_{F \in \mathcal{F}_i} \int_{F} \left( \{D \phi \nabla c \}_w \cdot \mathbf{n}_F [v]
+  + \{D \phi \nabla v \}_w \cdot \mathbf{n}_F [c] \right) 
    + \sum_{F \in \mathcal{F}_i} \eta \frac{\gamma_{D,F}}{h_F} \int_{F} [c][v] 
   .
   \label{eq:dg_sip}
 \end{equation}
 Here, for each facet $F \in \mathcal{F}^i$ shared
-between cells $E^1$ and $E^2$, we associate a  facet normal vector $\bm n_F$
+between cells $E^1$ and $E^2$, we associate a  facet normal vector $\mathbf{n}_F$
 pointing from $E^1$ to $E^2$. The facet diameter is denoted by $h_F$,
 the jump $[\cdot]$ is given by $[v] = v|_{E^1} - v|_{E^2}$, and the
 unweighted average $\{ \cdot \}$ and weighed average $\{ \cdot \}_w$
@@ -821,9 +819,9 @@ upwinding, see \cite[Section 2.3.1]{di2011mathematical} and the
 references therein. For $c, v \in V_h^k$, define
 \begin{equation}
   a_h^{\mathrm{up}}(c, v)
-  = - \sum_{E \in \mathcal{T}} \int_E c\bm{u} \cdot \nabla v
-  + \sum_{F \in \mathcal{F}_i } \int_F \{ \bm u  c\} \cdot \bm{n}_F [v] +
-  \sum_{F \in \mathcal{F}_i} \int_F \frac{|\bm u \cdot \bm n_F|}{2} [c] [v] .
+  = - \sum_{E \in \mathcal{T}} \int_E c\mathbf{u} \cdot \nabla v
+  + \sum_{F \in \mathcal{F}_i } \int_F \{ \mathbf{u}  c\} \cdot \mathbf{n}_F [v] +
+  \sum_{F \in \mathcal{F}_i} \int_F \frac{|\mathbf{u} \cdot \mathbf{n}_F|}{2} [c] [v] .
 \end{equation}
 Our discrete formulation for \eqref{eq:3d_pde} with the interface conditions~\eqref{eq:3d_interface} and boundary conditions~\eqref{eq:3d_bcs} and given initial conditions $c_h^0$ then reads: for $n = 1, 2, \dots$, with $t^n - t^{n-1} = \tau$, find $c_h^n \in V_h$ such that for all $v \in V_h$:
 \begin{align} \label{eq:3d_dg_disc}
@@ -879,7 +877,7 @@ For the 0D compartments at the arterial leaf nodes $y_k \in \mathcal{N}_{\rm lea
 \end{equation}
 holds for all $v_k^0 \in \mathbb{R}$ associated with each individual leaf node $y_k \in \mathcal{N}_{\rm leaf}$.
 
-\textit{Summary.} The discretization for \eqref{eq:3d_pde}, \eqref{eq:1d_pde}, and \eqref{eq:0d_ode} complemented with boundary conditions (\eqref{eq:3d_bcs} and \eqref{eq:1d_bcs}), interface and bifurcation conditions (\eqref{eq:3d_interface}, and \eqref{eq:conc_continuity}), and initial conditions $c_h^0 = 0$, $\hat c_h^0 = 0$, and $c_{k}^{0,0} = 0$ is the following. For $n = 1,2, \ldots $, find $c_h^n \in V_h$, $\hat c^n_h \in \hat V_h$, and $c_{k}^{0,n} \in \mathbb{R}$ for each $y_k \in \mathcal{N}_{\rm leaf}$ such that the coupled discrete equations \eqref{eq:3d_dg_disc}, \eqref{eq:1d_dg_disc}, and \eqref{eq:0d_disc} hold for all $v \in V_h$, for all $\hat v \in \hat V_h$, and for all $v_k^0 \in \mathbb{R}$ associated with each $y_k \in \mathcal{N}_{\rm leaf}$.
+Summary. The discretization for \eqref{eq:3d_pde}, \eqref{eq:1d_pde}, and \eqref{eq:0d_ode} complemented with boundary conditions (\eqref{eq:3d_bcs} and \eqref{eq:1d_bcs}), interface and bifurcation conditions (\eqref{eq:3d_interface}, and \eqref{eq:conc_continuity}), and initial conditions $c_h^0 = 0$, $\hat c_h^0 = 0$, and $c_{k}^{0,0} = 0$ is the following. For $n = 1,2, \ldots $, find $c_h^n \in V_h$, $\hat c^n_h \in \hat V_h$, and $c_{k}^{0,n} \in \mathbb{R}$ for each $y_k \in \mathcal{N}_{\rm leaf}$ such that the coupled discrete equations \eqref{eq:3d_dg_disc}, \eqref{eq:1d_dg_disc}, and \eqref{eq:0d_disc} hold for all $v \in V_h$, for all $\hat v \in \hat V_h$, and for all $v_k^0 \in \mathbb{R}$ associated with each $y_k \in \mathcal{N}_{\rm leaf}$.
 
 
 %% \mar{To examine cardiac-driven dispersion, we compute a steady CSF flow field at peak systolic blood inflow. We mimic the resulting reduction of CSF space volume by imposing an inflow of $6\,$ml/s \cite{baledent2014imaging, causemann2022human} and $0.31\,$ml/s \cite{vinje2019respiratory} across the upper arachnoid mater ($\Gamma_{\rm AM-U}$) and the lateral ventricle ($\Gamma_{\rm LV}$) surface, respectively. We allow free outflow into the spinal SAS ($\Gamma_{\rm SSAS}$). In addition, we upscale the obtained pressure field to account for the lack of pulsatile inertial effects in our model.}
@@ -892,10 +890,10 @@ holds for all $v_k^0 \in \mathbb{R}$ associated with each individual leaf node $
 %% Similar to the case of CSF flow driven by production introduced in \Cref{sec:csf_flow}, we employ a Stokes flow model to predict CSF velocities corresponding to the peak cardiac and respiratory blood inflow rates. In particular, we enforce a uniformly distributed inflow of $u^{\rm in}_{\rm AM}$ and $u^{\rm in}_{\rm LV}$ across the arachnoid mater ($\Gamma_{\rm AM}$) and lateral ventricular surfaces ($\Gamma_{\rm LV}$) respectively, mimicking the effect of reduced CSF volume due to blood inflow. We set $u^{\rm in}_{\rm AM} = 6\,$ml/s \cite{causemann2022human,baledent2014imaging} and $u^{\rm in}_{\rm LV}=0.31\,$ml/s \cite{vinje2019respiratory} in the cardiac case, and $u^{\rm{in}}_{\rm{AM}} = 1\,$ml/s \cite{gutierrez2022effect} and $u^{\rm in}_{\rm{LV}}=0.121\,$ml/s \cite{liu2024using} in the respiratory case, respectively.
 %% We prescribe a no-slip boundary condition on the pial surface $\Gamma_{\rm Pia}$ and zero-traction on the spinal boundary $\Gamma_{\rm SSAS}$, making the spinal compartment the only outflow route of CSF. Thus, we compute the pulsatile flow fields by augmenting the Stokes flow model (\eqref{eq:momentum_equation} and \ref{eq:divergence_equation}) with the following boundary conditions:
 %% \begin{equation}\label{eq:cardiac_flow_bcs}
-%%     \bm u = 0 \text{ on } \Gamma_{\rm Pia}; \quad 
-%%     \mu \nabla \bm u \cdot \bm n - p \bm n = 0 \text{ on } \Gamma_{\rm SSAS}; \quad 
-%%     \bm u = \frac{u^{\rm in}_{\rm LV} \cdot \bm n}{|\Gamma_{\rm LV}|} \text{ on } \Gamma_{\rm LV}; \quad
-%%     \bm u = \frac{u^{\rm in}_{\rm AM} \cdot \bm n}{|\Gamma_{\rm skull}|} \text{ on } \Gamma_{\rm AM}.
+%%     \mathbf{u} = 0 \text{ on } \Gamma_{\rm Pia}; \quad 
+%%     \mu \nabla \mathbf{u} \cdot \mathbf{n} - p \mathbf{n} = 0 \text{ on } \Gamma_{\rm SSAS}; \quad 
+%%     \mathbf{u} = \frac{u^{\rm in}_{\rm LV} \cdot \mathbf{n}}{|\Gamma_{\rm LV}|} \text{ on } \Gamma_{\rm LV}; \quad
+%%     \mathbf{u} = \frac{u^{\rm in}_{\rm AM} \cdot \mathbf{n}}{|\Gamma_{\rm skull}|} \text{ on } \Gamma_{\rm AM}.
 %% \end{equation}
 
 %% The obtained pressure fields $p_{\rm cardiac}$ and $p_{\rm resp}$ only account for viscous forces, albeit cardiac and respiratory induced CSF flow is known to be unsteady and substantially impacted by transient inertial forces. Assuming an oscillatory flow with either the heartbeat frequency $\omega_{\rm cardiac} = 2 \pi$ or respiratory frequency $\omega_{\rm resp} = 0.5 \pi$, a mean gap width of the CSF-filled spaces of $2h=3$\,mm and CSF density $\rho=10^3\,\text{kg/m}^3$, the squared Womersley number $\alpha_i^2 = \frac{h^2 \omega_{i} \rho}{\mu}$ becomes $\alpha_{\rm cardiac}^2 = 20.2$ and $\alpha_{\rm resp}^2=5.05$, which is unsteady. Based on theoretical considerations on the ratio of oscillatory flow to steady flow impedances in a tube, we account for inertial forces in the pulsatile flow by upscaling the computed viscous pressure field by a factor of $1 + \alpha^2 / 8$ (see \cite{van1998cardiovascular}, chapter. 4.3). Thus, the upscaled pressure fields become $p^{\rm up}_{i}= (1 + \alpha_{i}^2 / 8)p_i \text{ for } i = \{\mathrm{cardiac}, \mathrm{resp}\}$.
@@ -904,7 +902,7 @@ holds for all $v_k^0 \in \mathbb{R}$ associated with each individual leaf node $
 %% $$R_{i} \approx dP_{i}^2 / \alpha_{i}^3, \quad  \text{where} \quad  dP=\frac{|\nabla p^{\rm up}_{i}|}{\omega_{i} \mu / h} \quad \text{for} \quad i = \{\mathrm{cardiac}, \mathrm{resp}\}.$$
 %% Finally, we account for the non-local nature of the dispersion mechanism and smooth the resulting field by solving a Helmholtz problem with $dP+i^2/\alpha_i^3$ as the right-hand side
 %% \begin{equation}
-%% - 10^{-4} \Delta R_i + R_i = dP_i^2/\alpha_i^3 \quad \text{ on } \Omega_{\rm CSF} \qquad \text{ and } \quad \nabla R_i \cdot \bm n = 0, \quad \text{ on } \partial \Omega_{\rm CSF}
+%% - 10^{-4} \Delta R_i + R_i = dP_i^2/\alpha_i^3 \quad \text{ on } \Omega_{\rm CSF} \qquad \text{ and } \quad \nabla R_i \cdot \mathbf{n} = 0, \quad \text{ on } \partial \Omega_{\rm CSF}
 %% \end{equation}
 %% to obtain the locally averaged, spatially varying diffusion enhancement factor $R_i$. The diffusion enhancement factor $R$ in $D^{\mathrm{eff}} = D^{\mathrm{Gad}}( 1 +R)$ is then estimated by $R \approx R_{\rm{cardiac}} + R_{\rm{resp}}$. 
 
@@ -918,7 +916,7 @@ holds for all $v_k^0 \in \mathbb{R}$ associated with each individual leaf node $
 % Finally, we smooth the resulting field by solving a Helmholtz problem with $dP^2/alpha^3$ as the right-hand side
 
 % \begin{equation}
-% - 10^{-4} \Delta R + R = dP^2/\alpha^3 \quad \text{ on } \Omega_{\rm CSF} \qquad \text{ and } \quad \nabla R \cdot \bm n = 0 \quad \text{ on } \partial \Omega_{\rm CSF}
+% - 10^{-4} \Delta R + R = dP^2/\alpha^3 \quad \text{ on } \Omega_{\rm CSF} \qquad \text{ and } \quad \nabla R \cdot \mathbf{n} = 0 \quad \text{ on } \partial \Omega_{\rm CSF}
 % \end{equation}
 
 % to obtain the locally averaged, spatially varying diffusion enhancement factor $R$.
