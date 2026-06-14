@@ -20,10 +20,10 @@
       #grid(
         columns: (1fr, 1fr, 1fr, 1fr),
         gutter: 0pt,
-        [#image("../plots/modelA-strongVM-root1/modelA-strongVM-root1_total_conc.png", width: 105%) #v(-5pt) #align(center)[#text(size: subtitlefontsize)[1x multiplier]]],
-        [#image("../plots/modelA-strongVM-root10/modelA-strongVM-root10_total_conc.png", width: 105%) #v(-5pt) #align(center)[#text(size: subtitlefontsize)[10x multiplier]]],
-        [#image("../plots/modelA-strongVM-root100/modelA-strongVM-root100_total_conc.png", width: 105%) #v(-5pt) #align(center)[#text(size: subtitlefontsize)[100x multiplier]]],
-        [#image("../plots/modelA-strongVM-root1000/modelA-strongVM-root1000_total_conc.png", width: 105%) #v(-5pt) #align(center)[#text(size: subtitlefontsize)[1000x multiplier]]]
+        [#image("../plots/modelA-strongVM-root1/modelA-strongVM-root1_total_conc.svg", width: 105%) #v(-5pt) #align(center)[#text(size: subtitlefontsize)[1x multiplier]]],
+        [#image("../plots/modelA-strongVM-root10/modelA-strongVM-root10_total_conc.svg", width: 105%) #v(-5pt) #align(center)[#text(size: subtitlefontsize)[10x multiplier]]],
+        [#image("../plots/modelA-strongVM-root100/modelA-strongVM-root100_total_conc.svg", width: 105%) #v(-5pt) #align(center)[#text(size: subtitlefontsize)[100x multiplier]]],
+        [#image("../plots/modelA-strongVM-root1000/modelA-strongVM-root1000_total_conc.svg", width: 105%) #v(-5pt) #align(center)[#text(size: subtitlefontsize)[1000x multiplier]]]
       )
     ],
 
@@ -39,7 +39,7 @@
         #panel-title("First-time arrival", fontsize: titlefontsize)
         #v(-8pt)
         #align(center)[
-        #image("../plots/comparisons/modelA-strongVM-root1_modelA-strongVM-root10_modelA-strongVM-root100_modelA-strongVM-root1000/modelA-strongVM-root1_modelA-strongVM-root10_modelA-strongVM-root100_modelA-strongVM-root1000_fta.png", width: 80%)
+        #image("../plots/comparisons/modelA-strongVM-root1_modelA-strongVM-root10_modelA-strongVM-root100_modelA-strongVM-root1000/modelA-strongVM-root1_modelA-strongVM-root10_modelA-strongVM-root100_modelA-strongVM-root1000_fta.svg", width: 80%)
         ]
       ]
     ),
@@ -55,10 +55,10 @@
       #grid(
         columns: (1fr, 1fr, 1fr, 1fr),
         gutter: 0pt,
-        [#image("../plots/modelA-strongVM-root1/modelA-strongVM-root1_leaf_conc.png", width: 110%) #v(-5pt) #align(center)[#text(size: subtitlefontsize)[1x multiplier]]],
-        [#image("../plots/modelA-strongVM-root10/modelA-strongVM-root10_leaf_conc.png", width: 110%) #v(-5pt) #align(center)[#text(size: subtitlefontsize)[10x multiplier]]],
-        [#image("../plots/modelA-strongVM-root100/modelA-strongVM-root100_leaf_conc.png", width: 110%) #v(-5pt) #align(center)[#text(size: subtitlefontsize)[100x multiplier]]],
-        [#image("../plots/modelA-strongVM-root1000/modelA-strongVM-root1000_leaf_conc.png", width: 110%) #v(-5pt) #align(center)[#text(size: subtitlefontsize)[1000x multiplier]]]
+        [#image("../plots/modelA-strongVM-root1/modelA-strongVM-root1_leaf_conc.svg", width: 110%) #v(-5pt) #align(center)[#text(size: subtitlefontsize)[1x multiplier]]],
+        [#image("../plots/modelA-strongVM-root10/modelA-strongVM-root10_leaf_conc.svg", width: 110%) #v(-5pt) #align(center)[#text(size: subtitlefontsize)[10x multiplier]]],
+        [#image("../plots/modelA-strongVM-root100/modelA-strongVM-root100_leaf_conc.svg", width: 110%) #v(-5pt) #align(center)[#text(size: subtitlefontsize)[100x multiplier]]],
+        [#image("../plots/modelA-strongVM-root1000/modelA-strongVM-root1000_leaf_conc.svg", width: 110%) #v(-5pt) #align(center)[#text(size: subtitlefontsize)[1000x multiplier]]]
       )
       #v(-20pt)
     ]
