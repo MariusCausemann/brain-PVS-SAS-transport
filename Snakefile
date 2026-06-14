@@ -54,17 +54,17 @@ def getconfig(model, key, default=[]):
 
 rule all:
     input:
-        expand("plots/comparisons/{c}/{c}_{type}.png",c=model_comparisons, type=types),
-        expand("plots/{modelname}/{modelname}_total_conc.png", modelname=models),
-        expand("plots/{modelname}/{modelname}_overview_1-6-12-24.png", modelname=models),
-        expand("plots/{modelname}/{modelname}_overview_1-3-6-9-12-24.png", modelname=models),
-        expand("plots/{modelname}/{modelname}_overview_4-6.png", modelname=models),
-        expand("plots/{modelname}/{modelname}_overview_9-12-24.png", modelname=models),
+        expand("plots/comparisons/{c}/{c}_{type}.svg",c=model_comparisons, type=types),
+        expand("plots/{modelname}/{modelname}_total_conc.svg", modelname=models),
+        expand("plots/{modelname}/{modelname}_overview_1-6-12-24.svg", modelname=models),
+        expand("plots/{modelname}/{modelname}_overview_1-3-6-9-12-24.svg", modelname=models),
+        expand("plots/{modelname}/{modelname}_overview_4-6.svg", modelname=models),
+        expand("plots/{modelname}/{modelname}_overview_9-12-24.svg", modelname=models),
         expand("plots/{modelname}/{modelname}.mp4", modelname=models),
         expand("plots/{modelname}/{modelname}_300.html", modelname=models),
         expand("plots/{modelname}/timeview3D/timeview3D_volume_{s}.png", modelname=models, s=np.array((1,6,12,24))*3600),
-        expand("plots/{modelname}/{modelname}_ridgeline_pvs_total_smoothed.png", modelname=models),
-        expand("plots/{modelname}/{modelname}_conc_at_label_annotated.png", modelname=models),
+        expand("plots/{modelname}/{modelname}_ridgeline_pvs_total_smoothed.svg", modelname=models),
+        expand("plots/{modelname}/{modelname}_conc_at_label_annotated.svg", modelname=models),
         expand("results/csf_flow/cardiac_sas_flow_{proc}/R.png",proc=["0.25", "0.5", "0.75"]),
         expand("plots/{modelname}/{modelname}_1+2+3+6+9+12_all_0_details.png", modelname=models),
         "plots/pvs_flow_prod/sas_flow-arteries/",
@@ -127,7 +127,7 @@ rule generatePlot:
         art="results/{modelname}/{modelname}_artery.xdmf",
         ven="results/{modelname}/{modelname}_vein.xdmf",
     output:
-        plot="plots/{modelname}/{modelname}_{type}_{time,[0-9]*}.png"
+        plot="plots/{modelname}/{modelname}_{type}_{time,[0-9]*}.svg"
     shell:
         "python scripts/generate_plot.py {wildcards.modelname} {wildcards.time} {wildcards.type} --filename {output.plot}"
 
@@ -171,7 +171,7 @@ rule compareModels:
         metrics_yaml1="results/{model1}/mean_concentrations.yml",
         metrics_yaml2="results/{model2}/mean_concentrations.yml",
     output:
-        plot="plots/comparisons/{model1}_{model2}/{model1}_{model2}_{type}.png"
+        plot="plots/comparisons/{model1}_{model2}/{model1}_{model2}_{type}.svg"
     params:
         cmax= lambda wildcards: cmax[wildcards.type][f"{wildcards.model1}_{wildcards.model2}"],
         diffmax= lambda wildcards: diffmax[wildcards.type][f"{wildcards.model1}_{wildcards.model2}"]
@@ -200,7 +200,7 @@ rule totalTracer:
         art="results/{modelname}/{modelname}_artery.xdmf",
         ven="results/{modelname}/{modelname}_vein.xdmf",
     output:
-        plot="plots/{modelname}/{modelname}_total_conc.png",
+        plot="plots/{modelname}/{modelname}_total_conc.svg",
         metrics_yaml="results/{modelname}/mean_concentrations.yml",
     shell:
         "python scripts/mean_concentrations.py {wildcards.modelname} && " +
@@ -346,7 +346,7 @@ rule generateT1OverviewPlot:
         art1="results/{m}/{m}_artery.xdmf",
         ven1="results/{m}/{m}_vein.xdmf",    
     output:
-        "plots/{m}/{m}_overview_{times}.png"
+        "plots/{m}/{m}_overview_{times}.svg"
     params:
         times=lambda wildcards: wildcards.times.split("-")
     shell:
@@ -403,7 +403,7 @@ rule makeRidgeLinePlot:
         art="results/{m}/{m}_artery.xdmf",
         metrics_yaml="results/{m}/mean_concentrations.yml",
     output:
-        "plots/{m}/{m}_ridgeline_pvs_total_smoothed.png"
+        "plots/{m}/{m}_ridgeline_pvs_total_smoothed.svg"
     shell:
         "python scripts/plot_conc_ridgeline.py {wildcards.m}"
 
@@ -414,7 +414,7 @@ rule makeConcAtLabelPlot:
         art="results/{m}/{m}_artery.xdmf",
         metrics_yaml="results/{m}/mean_concentrations.yml",
     output:
-        "plots/{m}/{m}_conc_at_label_annotated.png"
+        "plots/{m}/{m}_conc_at_label_annotated.svg"
     shell:
         "python scripts/plot_conc_at_label.py {wildcards.m}"
 
