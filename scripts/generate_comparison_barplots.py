@@ -32,8 +32,6 @@ def compare_models(models: List[str]):
         # get CSF flow stats
         csfm = tmconfig["csf_velocity_file"].split("/")[-2]
         md.update(read_config(f"results/csf_flow/{csfm}/metrics.yml"))
-        # get PVS flow stats
-        #md.update(read_config(f"results/csf_flow/{csfm}/pvs_metrics.yml"))
         # get cardiac PVS flow stats
         dispersion_file = tmconfig["csf_dispersion_file"]
         if isinstance(dispersion_file, list): dispersion_file=dispersion_file[0]
@@ -55,17 +53,6 @@ def compare_models(models: List[str]):
         results[m] = md
 
     df = pd.DataFrame(results)
-    #dfstr = df.applymap('{:,.3g}'.format)
-    #fig, ax = plt.subplots(figsize=(6,22))
-    #ax.axis('tight')
-    #ax.axis('off')
-    #the_table = ax.table(cellText=dfstr.values,
-    #                        rowLabels=dfstr.index,
-    #                        colLabels=dfstr.columns,
-    #                        loc="center")
-    #fig.tight_layout()
-    #fig.savefig(f"plots/comparisons/{v}/table.png")
-
     set_plotting_defaults()
 
     barplot_groups = [
@@ -92,6 +79,9 @@ def compare_models(models: List[str]):
     "ylabel":"mmol/l", "title":f"mean concentration ({dom})"} for
     dom in ["CSF", "parenchyma", "PVS artery", "PVS vein"]]
 
+    # ==========================================================================
+    # PATTERN 1: Multi-Panel Grid Spec Bar Plots (Unified CSV generation)
+    # ==========================================================================
     nfigs = len(barplot_groups)
     fig_width = [ 1  + int(len(bp["vars"]) / 4) for bp in barplot_groups]
     nrows, ncols = 4,4
@@ -102,11 +92,22 @@ def compare_models(models: List[str]):
     rowi, coli = 0, 0
     plot_order = range(len(barplot_groups))
     alphabet = "ABCDEFGHIJKLMNO"
+    
+    # Dictionary to combine all layout matrices into one shared sheet
+    source_data_bars = {}
+
     for i in plot_order:
         bp,w = barplot_groups[i], fig_width[i]
         subdf = df.transpose()[bp["vars"]].transpose()
         subdf *= bp.get("scale", 1)
         subdf.index = bp["varnames"]
+        
+        # Capture panel metadata alongside configuration rows
+        panel_prefix = f"Panel_{alphabet[i]}_{bp['title'].replace(' ', '_')}"
+        source_data_bars[f"{panel_prefix}_metric"] = pd.Series(subdf.index.values)
+        for m in df.columns:
+            source_data_bars[f"{panel_prefix}_{m}"] = pd.Series(subdf[m].values)
+
         if coli + w > ncols: rowi += 1; coli = 0
         ax = fig.add_subplot(gs[rowi, coli:coli + w])
         bars = subdf.plot(ax=ax, kind="bar", ylabel=bp["ylabel"],
@@ -117,12 +118,24 @@ def compare_models(models: List[str]):
     
     plt.figlegend(df.columns, loc = 'outside upper center', ncol=len(models), 
                 bbox_to_anchor=(0.5, 0.97), frameon=False)
-    plt.savefig(f"plots/comparisons/{v}/{v}.pdf")
+    
+    grid_filename = f"plots/comparisons/{v}/{v}.pdf"
+    plt.savefig(grid_filename)
+    plt.close()
+    
+    # Save Bar Charts Matrix Source Data CSV
+    pd.DataFrame(source_data_bars).to_csv(grid_filename.replace(".pdf", "_source_data.csv"), index=False)
+    print(f"--> Exported consolidated bar chart grid data to: {grid_filename.replace('.pdf', '_source_data.csv')}")
 
-    # investigate undershoots
+    # ==========================================================================
+    # PATTERN 2: Boundary Undershoot Continuous Min/Max Overlays
+    # ==========================================================================
     linestyles = ["dotted", "dashed", "solid"]
     for dom in ["par", "csf","art", "ven"]:
         plt.figure()
+        
+        # Initialize tracking dictionary for this specific domain file run
+        source_data_minmax = {}
 
         for m,ls in zip(models, linestyles):
             tm = m
@@ -131,37 +144,68 @@ def compare_models(models: List[str]):
             dmax = trmetrics[f"{dom}_max"]
             dmin = trmetrics[f"{dom}_min"]
             times = np.arange(0, tmconfig["T"], tmconfig["dt"]) / (60*60)
+            
             plt.plot(times, dmax, label=f"max {m}", ls=ls, color="maroon")
             plt.plot(times, dmin, label=f"min {m}", ls=ls, color="teal")
+            
+            # Map structural columns into safely padded rows using pd.Series
+            source_data_minmax[f"{m}_time_hours"] = pd.Series(times)
+            source_data_minmax[f"{m}_max_concentration"] = pd.Series(dmax)
+            source_data_minmax[f"{m}_min_concentration"] = pd.Series(dmin)
+            
         plt.xlabel("time (h)")
         plt.ylabel("tracer concentration (mmol/l)")
         plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol=len(models),
                 columnspacing=0.7, frameon=False)
-        plt.savefig(f"plots/comparisons/{v}/{dom}_minmax.png")
+        
+        minmax_filename = f"plots/comparisons/{v}/{dom}_minmax.png"
+        plt.savefig(minmax_filename)
+        plt.close()
+        
+        # Save MinMax Source Data CSV
+        pd.DataFrame(source_data_minmax).to_csv(minmax_filename.replace(".png", "_source_data.csv"), index=False)
+        print(f"--> Exported undershoot line data to: {minmax_filename.replace('.png', '_source_data.csv')}")
 
-    ### plot tracer content
+    # ==========================================================================
+    # PATTERN 3: Compartmental Tracer Concentration Means Over Time
+    # ==========================================================================
     for doms, colors in zip([["par", "csf"],["art", "ven"]],
                             [["mediumvioletred","navy"], ["maroon", "teal"]]):
         plt.figure()
         marker = ["s", "o", "D"]
+        
+        # Initialize dictionary to track the dual domain plot outputs
+        source_data_mean = {}
+
         for i, (m, mark, ls) in enumerate(zip(models, marker, linestyles)):
             tm = m
             tmconfig = read_config(f"configfiles/{tm}.yml")
             trmetrics = read_config(f"results/{tm}/{tm}_metrics.yml")
             times = np.arange(0, tmconfig["T"], tmconfig["dt"]) / (60*60)
+            
+            source_data_mean[f"{m}_time_hours"] = pd.Series(times)
+            
             for dom,c in zip(doms,colors):
                 dmean = trmetrics[f"{dom}_mean"]
                 plt.plot(times, dmean, label=f"{dom.upper()} {m}", ls=ls, markerfacecolor="white",
                         marker=mark, color=c, ms=8, markevery=(0.05*i, 0.2))
+                
+                # Append individual spatial target measurements
+                source_data_mean[f"{m}_{dom.upper()}_mean_concentration"] = pd.Series(dmean)
+                
         plt.xlabel("time (h)")
         plt.ylabel("tracer concentration (mmol/l)")
         plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol=len(models),
                     columnspacing=0.7, frameon=False)
-        plt.savefig(f"plots/comparisons/{v}/{v}_{'_'.join(doms)}_mean.png")
+        
+        mean_filename = f"plots/comparisons/{v}/{v}_{'_'.join(doms)}_mean.png"
+        plt.savefig(mean_filename)
+        plt.close()
+        
+        # Save Mean Values Source Data CSV
+        pd.DataFrame(source_data_mean).to_csv(mean_filename.replace(".png", "_source_data.csv"), index=False)
+        print(f"--> Exported regional mean trend line data to: {mean_filename.replace('.png', '_source_data.csv')}")
 
 
 if __name__ == "__main__":
     typer.run(compare_models)
-
-
-
