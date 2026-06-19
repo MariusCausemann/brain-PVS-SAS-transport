@@ -14,8 +14,9 @@ In this folder
 
 ./Author_checklist_NCOMMS-25-18042B_1780496372_32.docx
 
-[ ] The main manuscript file in LaTeX format, with associated style files
+[x] The main manuscript file in LaTeX format, with associated style files
 
+./causemann2026insilico-submission.tex
 
 [x] The Supplementary Information in PDF format
 
