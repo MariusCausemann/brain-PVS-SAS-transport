@@ -17,7 +17,7 @@ In this folder
 [ ] The main manuscript file in LaTeX format, with associated style files
 
 
-[ ] The Supplementary Information in PDF format
+[x] The Supplementary Information in PDF format
 
 ./causemann2026insilico-r3-supplementary.pdf
 
@@ -30,3 +30,5 @@ In this folder
 ./supporting_information_inventory.docx
 
 [x] BioRender licence files.
+
+./biorender_licences/licence_figure[1A, 2A, 4B, 6A, 8A].pdf

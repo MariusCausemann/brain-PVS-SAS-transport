@@ -34,13 +34,13 @@
 \affil[3]{K. G. Jebsen Centre for Brain Fluid Research, University of Oslo, Norway}
 \affil[*]{meg@simula.no}
 
-\newcommand{\rami}[1]{\textcolor{blue}{#1}}
+%\newcommand{\rami}[1]{\textcolor{blue}{#1}}
 %\newcommand{\mer}[1]{\textcolor{magenta}{#1}}
-\newcommand{\mar}[1]{\textcolor{violet}{#1}}
-\newcommand{\mk}[1]{\textcolor{orange}{#1}}
-\newcommand{\discuss}[1]{\textcolor{red}{#1}}
-\newcommand{\fixme}[1]{\textcolor{red}{#1}}
-\newcommand{\draft}[1]{\textcolor{lightgray}{#1}}
+%\newcommand{\mar}[1]{\textcolor{violet}{#1}}
+%\newcommand{\mk}[1]{\textcolor{orange}{#1}}
+%\newcommand{\discuss}[1]{\textcolor{red}{#1}}
+%\newcommand{\fixme}[1]{\textcolor{red}{#1}}
+%\newcommand{\draft}[1]{\textcolor{lightgray}{#1}}
 
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\foralls}{\forall \,}
@@ -209,12 +209,7 @@ flow~\cite{hornkjol2022csf} and (ii) dispersive effects resulting from
 pulsatile CSF flow~\cite{sweetman2011cerebrospinal,
   vinje2019respiratory, ray2021quantitative}. In the surface
 periarterial spaces, in addition to diffusion, we account for
-convection via net fluid flow induced by peristaltic
-pumping~\cite{mestre2018flow, gjerde2023directional}. At the arterial PVS leaf nodes,
-we assume that the solute can distribute evenly into (or exit from) a local
-region of the surrounding 3D domain, at a rate governed by the difference
-between the average concentration in said region and at the leaf node
-and a diffusive conductance, together with the convective contribution from the periarterial net flow.
+convection via net fluid flow induced by peristaltic pumping~\cite{mestre2018flow, gjerde2023directional}. At the arterial PVS leaf nodes, we assume that the solute can distribute evenly into (or exit from) a local region of the surrounding 3D domain, at a rate governed by the difference between the average concentration in said region and at the leaf node and a diffusive conductance, together with the convective contribution from the periarterial net flow.
 
 Specifically, we
 introduce the geometrically-reduced representation of the PVSs to
@@ -873,9 +868,7 @@ and integrating insights from experimental and clinical studies and
 theoretical analysis to a virtual human setting. The complete
 simulation pipeline is openly available, including interactive
 visualization of simulation results for all model
-variations~\cite{ZENODO}. 
-Advancing this open platform to a fully coupled flow framework requires a stable discretization of a 3D-1D Stokes-Darcy flow model that integrates vascular pulsations into a net flow field, alongside resolving open biophysical questions regarding PVS-tissue and PVS-SAS fluid exchange, and the boundary treatment of the artificially truncated network ends.
-Future studies will focus on direct model validation including
+variations~\cite{ZENODO}. Advancing this platform to a fully coupled flow framework requires a stable discretization of a 3D-1D Stokes-Darcy flow model that integrates vascular pulsations into a net flow field, alongside resolving open biophysical questions regarding PVS-tissue and PVS-SAS fluid exchange, and the boundary treatment of the artificially truncated network ends. Future studies will focus on direct model validation including
 comparisons between in-silico predictions and contrast-enhanced MRI
 for a number of subjects across several patient cohorts. Moreover, the
 rapid development of new CSF flow and mobility imaging
@@ -1254,7 +1247,7 @@ literature (see Supplementary Discussion).
 
 Numerical simulation results generated as part of this study have been deposited on Zenodo with the identifier DOI \href{https://doi.org/10.5281/zenodo.14749162}{10.5281/zenodo.14749162}. This archive includes surface triangulations used for geometry representation, computational meshes (3D meshes and
 1D networks), segmentations, sample simulation outputs from the
-baseline and high PVS flow models, animations, and relevant raw data
+baseline and high PVS flow models, animations, and relevant source data files
 for the figures and tables.
 
 \section*{Code availability}
@@ -1262,7 +1255,7 @@ for the figures and tables.
 The software developed to generate and analyze the numerical results
 of this study have been deposited on Zenodo with the identifier DOI \href{https://doi.org/10.5281/zenodo.14749162}{10.5281/zenodo.14749162}. In addition to simulation and analysis software, this archive also includes surface triangulations used for geometry representation, computational meshes (3D meshes and 1D
 networks), segmentations, sample simulation outputs from the baseline
-and high PVS flow models, animations, and relevant raw data for the
+and high PVS flow models, animations, and relevant source data files for the
 figures and tables.
 
 \bibliography{references}
