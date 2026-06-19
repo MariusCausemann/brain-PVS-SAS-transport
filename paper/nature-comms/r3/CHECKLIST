@@ -10,21 +10,23 @@ In this folder
 
 ./response-to-reviewers-causemann-2026-insilico-nature-comms-r3.pdf
 
-[x] A completed copy of this checklist in .docx format
+[x] A completed copy of this checklist in DOCX format
 
 ./Author_checklist_NCOMMS-25-18042B_1780496372_32.docx
 
-[ ] The main manuscript file in either Microsoft Word or LaTeX format
+[ ] The main manuscript file in LaTeX format, with associated style files
 
 
-Separate Figure files (one file per figure)
 
+[ ] The supplementary information in PDF format
 
-Separate Source Data files
-N/A
-Inventory of Supporting Information in .docx format
+./causemann2026insilico-r3-supplementary.pdf
 
+[x] Separate Figure files (one file per figure) in PDF format
 
-ChemDraw files
-N/A
+./pdf_figures/figure1..7.pdf
+
+[x] Inventory of Supporting Information in DOCX format
+
+./supporting_information_inventory.docx
 
