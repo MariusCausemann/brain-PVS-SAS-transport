@@ -56,6 +56,9 @@ fontsize: 10pt
 | Supplementary Data | 28 | figureS10_1.00.csv | Source data for Supplementary Fig. S10 (parameter value 1.00) |
 | Supplementary Data | 29 | figureS11c.csv | Source data for Supplementary Fig. S11, panel C |
 | Supplementary Data | 30 | figureS11d.csv | Source data for Supplementary Fig. S11, panel D |
+| Supplementary Data | 31 | modelA.mp4 | Animation of the tracer spreading for the baseline model |
+| Supplementary Data | 32 | modelA-strongVM.mp4 | Animation of the tracer spreading for the high PVS flow model. |
+
 
 ---
 
