@@ -2,7 +2,11 @@ In this folder
 
 [x] Cover letter with 250 char summary 
 
+./causemann2026insilico-r3-editor-coverletter.pdf
+
 [x] Cover letter 2 as requested per editorial team July 30 2026
+
+./causemann2026insilico-r3-editor-coverletter-2.pdf
 
 [x] Completed Third Party Rights Table  
 
@@ -18,7 +22,11 @@ In this folder
 
 [x] The main manuscript file in LaTeX format, with associated style files
 
-./causemann2026insilico-submission.tex
+./causemann2026insilico-submission.tex 
+./jabbrv*
+./references.bib
+./wlscirep.cls
+./naturemag-doi.bst
 
 [x] Separate Figure files (one file per figure) in PDF format
 
@@ -30,8 +38,8 @@ In this folder
 
 [x] Inventory of Supporting Information in DOCX format
 
-./supporting_information_inventory.docx
+./causeman2026insilico-supporting_information_inventory.docx
 
 [x] BioRender licence files.
 
-./biorender_licences/licence_figure[1A, 2A, 4B, 6A, 8A].pdf
+./biorender_licences/licence_figure[1A, 2A, 4B, 6A, 7A].pdf
