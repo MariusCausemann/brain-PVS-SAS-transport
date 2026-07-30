@@ -6,6 +6,7 @@ where each float was, so references and surrounding text are untouched.
 
 Usage:
     python3 endfloat_source.py master.tex submission.tex
+    python3 endfloat_source.py master.tex submission.tex --tables-first
     python3 endfloat_source.py master.tex submission.tex --envs figure table algorithm
     python3 endfloat_source.py master.tex submission.tex --clearpage --markers
 
@@ -63,9 +64,11 @@ def main():
     ap.add_argument("--markers", action="store_true",
                     help="leave a visible [Figure/Table about here] marker, not just a comment")
     ap.add_argument("--figures-first", action="store_true",
-                    help="group all figures before all tables instead of source order")
+                    help="group all figures first instead of source order")
+    ap.add_argument("--tables-first", action="store_true",
+                    help="group all tables first instead of source order (overrides --figures-first)")
     args = ap.parse_args()
-
+    
     with open(args.infile, encoding="utf-8") as f:
         text = f.read()
 
@@ -92,9 +95,20 @@ def main():
 
     if args.figures_first:
         collected.sort(key=lambda x: 0 if x[0] == "figure" else 1)
+    elif args.tables_first:
+        collected.sort(key=lambda x: 0 if x[0] == "table" else 1)
 
     block_parts = ["\n\n%% ===== Floats relocated to end of document =====\n"]
+
+    nature_comms_headings = {"figure": "Figure Legends", "table": "Tables"}
+    float_types = set()
+    #section_headings = ["\section*{%s}" % s for s in 
     for base, body in collected:
+        if base not in float_types:
+            heading = "\\FloatBarrier\n" + "\\section*{%s}" % nature_comms_headings[base]
+            print("Adding section heading %s" % heading)
+            block_parts.append(heading + "\n")
+            float_types.add(base)
         if args.clearpage:
             block_parts.append("\\clearpage\n")
         block_parts.append(body + "\n\n")

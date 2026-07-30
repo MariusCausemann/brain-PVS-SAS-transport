@@ -1,4 +1,5 @@
 FILE=main
+SUB=causemann2026insilico-submission
 
 default:
 	pdflatex $(FILE).tex
@@ -16,10 +17,19 @@ final:
 	pdflatex supplementary.tex
 	pdflatex supplementary.tex
 
+submission:
+	python3 endfloat.py $(FILE).tex $(SUB).tex --tables-first 
+	pdflatex $(SUB).tex
+	bibtex $(SUB)
+	pdflatex $(SUB).tex
+	pdflatex $(SUB).tex
+	pdflatex $(SUB).tex
+
 diff: diff_main diff_supp
 
 DIFF_MAIN_FILE=causemann2026insilico-r3-diff
 DIFF_SUPP_FILE=causemann2026insilico-r3-supplementary-diff
+
 diff_main: 
 	latexdiff --graphics-markup=none main_r2.tex main.tex > $(DIFF_MAIN_FILE).tex
 	pdflatex $(DIFF_MAIN_FILE).tex
