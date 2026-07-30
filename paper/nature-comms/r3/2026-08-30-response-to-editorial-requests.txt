@@ -1,0 +1,20 @@
+ARTICLE FILE:
+1) There are several citations of '???' within the manuscript text. Please amend as necessary
+
+Thank you for pointing this out. These were LaTeX compilation artifacts. 
+
+2) Please include the reference list within the references section
+
+3) Please provide the tables section following the competing interests statement
+
+4) Please provide the end section with the heading 'Figure Legends'
+
+5) Please provide all main manuscript tables within the tables section
+
+6) Tables must be free from bold/italic formatting unless this has been clearly defined in the footnote. Text should be split into separate cells and aligned using the appropriate columns and rows (e.g. to put data on a second line). Please format your tables accordingly.
+
+SUPPLEMENTARY INFORMATION:
+7) Please amend the references heading to read 'Supplementary References'
+
+SUPPLEMENTARY MATERIALS:
+8) Please upload the source data files you have cited in the manuscript text
