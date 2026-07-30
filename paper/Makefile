@@ -36,11 +36,13 @@ diff_main:
 	bibtex $(DIFF_MAIN_FILE)
 	pdflatex $(DIFF_MAIN_FILE).tex
 	pdflatex $(DIFF_MAIN_FILE).tex
+	pdflatex $(DIFF_MAIN_FILE).tex
 
 diff_supp:
 	latexdiff --no-del --graphics-markup=none supplementary_r2.tex supplementary.tex > $(DIFF_SUPP_FILE).tex
 	pdflatex $(DIFF_SUPP_FILE).tex
 	bibtex $(DIFF_SUPP_FILE)
+	pdflatex $(DIFF_SUPP_FILE).tex
 	pdflatex $(DIFF_SUPP_FILE).tex
 	pdflatex $(DIFF_SUPP_FILE).tex
 

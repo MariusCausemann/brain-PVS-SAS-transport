@@ -46,7 +46,7 @@
 \newcommand{\foralls}{\forall \,}
 
 \begin{abstract}
-   The mechanisms of intracranial solute transport are fundamental to human brain health. However, our understanding of their interplay remains incomplete, in part due to the complexity of integrating insights across scales, between species, and from different modalities. In this work, we combine mixed-dimensional mathematical modelling, multi-modal magnetic resonance images, and high performance computing to present a computational framework for calculating the spatiotemporal spreading of a solute across the subarachnoid space, ventricular system, and brain parenchyma, including surface perivascular spaces. To illustrate applicability, we simulate a series of scenarios relating to intrathecal tracer injections, including variations in cerebrospinal fluid production, intracranial pulsatility, perivascular fluid flow and -structure. This openly available framework allows for evaluating the integrated effect of different transport mechanisms, bridging from the vascular mesoscale to the organ-level macroscale and across time scales of seconds to hours, in subject-specific geometries.
+  The mechanisms of intracranial solute transport are fundamental to human brain health. However, our understanding of their interplay remains incomplete, in part due to the complexity of integrating insights across scales, between species, and from different modalities. In this work, we combine mixed-dimensional mathematical modelling, multi-modal magnetic resonance images, and high performance computing to present a computational framework for calculating the spatiotemporal spreading of a solute across the subarachnoid space, ventricular system, and brain parenchyma, including surface perivascular spaces. To illustrate applicability, we simulate a series of scenarios relating to intrathecal tracer injections, including variations in cerebrospinal fluid production, intracranial pulsatility, perivascular fluid flow and -structure. This openly available framework allows for evaluating the integrated effect of different transport mechanisms, bridging from the vascular mesoscale to the organ-level macroscale and across time scales of seconds to hours, in subject-specific geometries.
 \end{abstract}
 \begin{document}
 
@@ -1295,6 +1295,78 @@ The authors declare no competing interests.
 
 
 %% ===== Floats relocated to end of document =====
+\FloatBarrier
+\section*{Tables}
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ll|ccc}
+      \toprule
+      Parameter& Symbol & Value & Unit& Reference\\
+      \midrule
+      %Extracellular space volume fraction & $\phi_{\rm PAR}$ & 0.2 & -- & \cite{nicholson1981ion} \\
+      Extracellular space volume fraction & $\phi_{\rm ECS}$ & 0.2 & -- & \cite{nicholson1981ion} \\
+      Free diffusion coefficient, Gadobutrol & $D^{\rm Gad}$ & $3.8 \cdot 10^{-4}$& $\text{mm}^2/\text{s}$ & \cite{valnes2020apparent}\\
+      Parenchymal diffusion coefficient, Gadobutrol & $D^{\rm Gad}_{\rm PAR}$ & $1.2 \cdot 10^{-4}$ & $\text{mm}^2/\text{s}$  & \cite{hornkjol2022csf} \\
+      %Permeability coefficient, endfoot sheath & $\xi_{\rm EF}$ & $3.8\cdot 10^{-7}$  & m/s & \cite{koch2023estimates} \\
+      Diffusive permeability coefficient, endfoot sheath & $\xi_{\rm EF}$ & $3.8\cdot 10^{-7}$  & m/s & \cite{koch2023estimates} \\
+      Diffusive permeability coefficient, PVS--CSF & $\xi_{\rm PVS}$ & $3.8\cdot 10^{-7}$  & m/s & \cite{koch2023estimates} \\
+      Diffusive permeability coefficient, pia & $\beta_{\rm pia}$ & $2.6 \cdot 10^{-8}$ & m/s & \cite{riseth2025twocompartment} \\
+      Solute efflux rate & $\beta_{\rm exit}$ & $8.0 \cdot 10^{-7}$ & m/s & $\ast$ \\
+      Total amount of injected tracer & $m_{\rm tot}$ & $0.5$ & mmol & \cite{eide2024functional} \\
+      Solute influx, time-to-peak & $T_{\rm max}$ & $1$ & h & $\ast$ \\
+      CSF production rate & $u_{\mathrm{in}}$ & $0.4$  & l / day & \cite{nilsson1992circadian} \\
+      CSF viscosity & $\mu$ & $0.7$ & mPa$ \cdot $s & \cite{bloomfield1998effects} \\ 
+      CSF outflow resistance & $R_{\rm CSF, 0}$ & $10^{4}$  & Pa$\cdot$s/m & $\ast$ \\ 
+      Dispersion factor, CSF spaces & $R$ & $\dagger$ & -- & $\ast$ \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+  \caption{Model parameters. $\dagger$/$\ast$ denotes
+    computed/estimated within this work. The diffusion coefficient
+    $D^{\rm Gad}$ represent the diffusion coefficient of Gadobutrol in
+    CSF (water), and $D^{\rm Gad}_{\rm PAR}$ its effective diffusion
+    coefficient in human cortical tissue, both at body
+    temperature~\cite{sykova2008diffusion, valnes2020apparent,
+      hornkjol2022csf}. We use the astrocytic endfeet diffusive permeability
+    $\xi_{\rm EF}$ estimated by Koch et al.~\cite{koch2023estimates},
+    and we set $\xi_{\rm PVS} = \xi_{\rm EF}$ as a baseline.}
+  \label{tab:parameters}
+\end{table}
+
+\begin{table}
+  \begin{center}
+  \begin{tabular}{ll|lll|lll}
+    \toprule
+    No. & Model description & $\mathbf{u}_{\rm CSF}$ & $\hat{u}|_{\Lambda_a}$ & $\hat{u}|_{\Lambda_v}$ & $R$ & $\xi_{\rm PVS}$ & $R_2$ \\
+    \midrule
+    0 & baseline & $\mathbf{u}_{\rm CSF}$ & $\hat{u}_a^c$ & $0$                & $R_c + R_r$ & $\xi_{\rm EF}$ & $2 R_1$   \\
+    1 & no CSF production & \blue{$\mathbf{0}$} & $\hat{u}_a^c$ & $0$                   & $R_c + R_r$ & $\xi_{\rm EF}$ & $2 R_1$   \\
+    2 & reduced CSF pulsatility & $\mathbf{u}_{\rm CSF}$ & $\hat{u}_a^c$ & $0$  & \blue{$ R_c^{\rm red} + R_r^{\rm red}$} & $\xi_{\rm EF}$ & $2 R_1$  \\
+    3 & increased CSF pulsatility & $\mathbf{u}_{\rm CSF}$ & $\hat{u}_a^c$ & $0$  & \blue{$ R_c^{\rm inc} + R_r^{\rm inc}$} & $\xi_{\rm EF}$ & $2 R_1$  \\
+    4 & higher PVS flow & $\mathbf{u}_{\rm CSF}$ & \blue{$\hat{u}_a^c + \hat{u}_a^v$} & $0$  & $R_c + R_r$ & $\xi_{\rm EF}$ & $2 R_1$  \\
+    5 & higher PVS exchange & $\mathbf{u}_{\rm CSF}$ & \blue{$\hat{u}_a^c + \hat{u}_a^v$} & $0$ & $R_c + R_r$ & \blue{100 $\xi_{\rm EF}$} & $2 R_1$   \\
+    6 & dilated PVS in the SAS & $\mathbf{u}_{\rm CSF}$ & \blue{$\tilde{u}_a^c + \tilde{u}_a^v$} & $0$ & $R_c + R_r$ & $\xi_{\rm EF}$ & \blue{$3 R_1$}\\ 
+    \bottomrule
+    \end{tabular}
+    \end{center}
+  \caption{Overview of model variations, with color highlighting
+    changes from the baseline model. $\mathbf{u}_{\rm CSF}$ is the CSF
+    velocity field induced by CSF production in $\Omega_{\rm CSF}$.
+    Moreover, $\hat{u}_a^c$ and $\hat{u}_a^v$ are the periarterial velocities
+    induced by arterial pulse wave wall motion and slow vasomotion,
+    respectively. $R_c + R_r$ is the combined cardiac and
+    respiratory dispersion factor in the CSF spaces, with model
+    variations $R_{r/c}^{\rm red}$ and $R_{r/c}^{\rm inc}$ corresponding to
+    reduced pulsatility and increased pulsatility, respectively.  Each
+    PVS cross-section is modelled as a concentric annulus with inner
+    radius $R_1$ and outer radius $R_2 > R_1$. Finally,
+    $\tilde{u}_a^c$ and $\tilde{u}_a^v$ are as $\hat{u}_a^c$
+    and $\hat{u}_a^v$, respectively, but with a dilated PVS ($R_2 = 3R_1$).}
+\label{tab:scenarios}
+\end{table}
+
+\FloatBarrier
+\section*{Figure Legends}
 \begin{figure}
     \centering
     \includegraphics[width=1\textwidth]{pdf_figures/figure1.pdf}
@@ -1418,73 +1490,5 @@ Source data for panels F), G) and H) are provided as Source data files.
 }
     \label{fig:enlargement}
 \end{figure}
-
-\begin{table}
-  \begin{center}
-    \begin{tabular}{ll|ccc}
-      \toprule
-      Parameter& Symbol & Value & Unit& Reference\\
-      \midrule
-      %Extracellular space volume fraction & $\phi_{\rm PAR}$ & 0.2 & -- & \cite{nicholson1981ion} \\
-      Extracellular space volume fraction & $\phi_{\rm ECS}$ & 0.2 & -- & \cite{nicholson1981ion} \\
-      Free diffusion coefficient, Gadobutrol & $D^{\rm Gad}$ & $3.8 \cdot 10^{-4}$& $\text{mm}^2/\text{s}$ & \cite{valnes2020apparent}\\
-      Parenchymal diffusion coefficient, Gadobutrol & $D^{\rm Gad}_{\rm PAR}$ & $1.2 \cdot 10^{-4}$ & $\text{mm}^2/\text{s}$  & \cite{hornkjol2022csf} \\
-      %Permeability coefficient, endfoot sheath & $\xi_{\rm EF}$ & $3.8\cdot 10^{-7}$  & m/s & \cite{koch2023estimates} \\
-      Diffusive permeability coefficient, endfoot sheath & $\xi_{\rm EF}$ & $3.8\cdot 10^{-7}$  & m/s & \cite{koch2023estimates} \\
-      Diffusive permeability coefficient, PVS--CSF & $\xi_{\rm PVS}$ & $3.8\cdot 10^{-7}$  & m/s & \cite{koch2023estimates} \\
-      Diffusive permeability coefficient, pia & $\beta_{\rm pia}$ & $2.6 \cdot 10^{-8}$ & m/s & \cite{riseth2025twocompartment} \\
-      Solute efflux rate & $\beta_{\rm exit}$ & $8.0 \cdot 10^{-7}$ & m/s & $\ast$ \\
-      Total amount of injected tracer & $m_{\rm tot}$ & $0.5$ & mmol & \cite{eide2024functional} \\
-      Solute influx, time-to-peak & $T_{\rm max}$ & $1$ & h & $\ast$ \\
-      CSF production rate & $u_{\mathrm{in}}$ & $0.4$  & l / day & \cite{nilsson1992circadian} \\
-      CSF viscosity & $\mu$ & $0.7$ & mPa$ \cdot $s & \cite{bloomfield1998effects} \\ 
-      CSF outflow resistance & $R_{\rm CSF, 0}$ & $10^{4}$  & Pa$\cdot$s/m & $\ast$ \\ 
-      Dispersion factor, CSF spaces & $R$ & $\dagger$ & -- & $\ast$ \\
-      \bottomrule
-    \end{tabular}
-  \end{center}
-  \caption{Model parameters. $\dagger$/$\ast$ denotes
-    computed/estimated within this work. The diffusion coefficient
-    $D^{\rm Gad}$ represent the diffusion coefficient of Gadobutrol in
-    CSF (water), and $D^{\rm Gad}_{\rm PAR}$ its effective diffusion
-    coefficient in human cortical tissue, both at body
-    temperature~\cite{sykova2008diffusion, valnes2020apparent,
-      hornkjol2022csf}. We use the astrocytic endfeet diffusive permeability
-    $\xi_{\rm EF}$ estimated by Koch et al.~\cite{koch2023estimates},
-    and we set $\xi_{\rm PVS} = \xi_{\rm EF}$ as a baseline.}
-  \label{tab:parameters}
-\end{table}
-
-\begin{table}
-  \begin{center}
-  \begin{tabular}{ll|lll|lll}
-    \toprule
-    No. & Model description & $\mathbf{u}_{\rm CSF}$ & $\hat{u}|_{\Lambda_a}$ & $\hat{u}|_{\Lambda_v}$ & $R$ & $\xi_{\rm PVS}$ & $R_2$ \\
-    \midrule
-    0 & baseline & $\mathbf{u}_{\rm CSF}$ & $\hat{u}_a^c$ & $0$                & $R_c + R_r$ & $\xi_{\rm EF}$ & $2 R_1$   \\
-    1 & no CSF production & \blue{$\mathbf{0}$} & $\hat{u}_a^c$ & $0$                   & $R_c + R_r$ & $\xi_{\rm EF}$ & $2 R_1$   \\
-    2 & reduced CSF pulsatility & $\mathbf{u}_{\rm CSF}$ & $\hat{u}_a^c$ & $0$  & \blue{$ R_c^{\rm red} + R_r^{\rm red}$} & $\xi_{\rm EF}$ & $2 R_1$  \\
-    3 & increased CSF pulsatility & $\mathbf{u}_{\rm CSF}$ & $\hat{u}_a^c$ & $0$  & \blue{$ R_c^{\rm inc} + R_r^{\rm inc}$} & $\xi_{\rm EF}$ & $2 R_1$  \\
-    4 & higher PVS flow & $\mathbf{u}_{\rm CSF}$ & \blue{$\hat{u}_a^c + \hat{u}_a^v$} & $0$  & $R_c + R_r$ & $\xi_{\rm EF}$ & $2 R_1$  \\
-    5 & higher PVS exchange & $\mathbf{u}_{\rm CSF}$ & \blue{$\hat{u}_a^c + \hat{u}_a^v$} & $0$ & $R_c + R_r$ & \blue{100 $\xi_{\rm EF}$} & $2 R_1$   \\
-    6 & dilated PVS in the SAS & $\mathbf{u}_{\rm CSF}$ & \blue{$\tilde{u}_a^c + \tilde{u}_a^v$} & $0$ & $R_c + R_r$ & $\xi_{\rm EF}$ & \blue{$3 R_1$}\\ 
-    \bottomrule
-    \end{tabular}
-    \end{center}
-  \caption{Overview of model variations, with color highlighting
-    changes from the baseline model. $\mathbf{u}_{\rm CSF}$ is the CSF
-    velocity field induced by CSF production in $\Omega_{\rm CSF}$.
-    Moreover, $\hat{u}_a^c$ and $\hat{u}_a^v$ are the periarterial velocities
-    induced by arterial pulse wave wall motion and slow vasomotion,
-    respectively. $R_c + R_r$ is the combined cardiac and
-    respiratory dispersion factor in the CSF spaces, with model
-    variations $R_{r/c}^{\rm red}$ and $R_{r/c}^{\rm inc}$ corresponding to
-    reduced pulsatility and increased pulsatility, respectively.  Each
-    PVS cross-section is modelled as a concentric annulus with inner
-    radius $R_1$ and outer radius $R_2 > R_1$. Finally,
-    $\tilde{u}_a^c$ and $\tilde{u}_a^v$ are as $\hat{u}_a^c$
-    and $\hat{u}_a^v$, respectively, but with a dilated PVS ($R_2 = 3R_1$).}
-\label{tab:scenarios}
-\end{table}
 
 \end{document}
